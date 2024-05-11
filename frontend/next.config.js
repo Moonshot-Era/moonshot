@@ -1,4 +1,3 @@
-/** @type {import('next').NextConfig} */
 // Configuration options for Next.js
 const nextConfig = {
   reactStrictMode: true, // Enable React strict mode for improved error handling
@@ -16,4 +15,5 @@ const withPWA = require('next-pwa')({
   skipWaiting: true, // Skip waiting for service worker activation
 });
 
-export default withPWA(nextConfig);
+// Export the combined configuration for Next.js with PWA support
+module.exports = withPWA(nextConfig);
