@@ -1,25 +1,31 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "sb:link": "source .env && supabase link --project-ref $SUPABASE_PROJECT_REF_ID",
+    "sb:types": "source .env && supabase gen types typescript --linked | tail +1 > src/supabase/schema.tsx",
+    "sb:db:pull": "source .env && supabase db pull -p $SUPABASE_DB_PASSWORD -s all",
+    "sb:migration:new": "supabase migration new",
+    "sb:migration:apply": "supabase migration up"
   },
   "dependencies": {
-    "react": "^18",
-    "react-dom": "^18",
-    "next": "14.2.3"
+    "@supabase/ssr": "latest",
+    "@supabase/supabase-js": "latest",
+    "autoprefixer": "10.4.17",
+    "geist": "^1.2.1",
+    "next": "latest",
+    "postcss": "8.4.33",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "3.4.1",
+    "typescript": "5.3.3"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "14.2.3"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "@types/node": "20.11.5",
+    "@types/react": "18.2.48",
+    "@types/react-dom": "18.2.18",
+    "encoding": "^0.1.13"
+  }
 }
