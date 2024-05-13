@@ -1,11 +1,16 @@
-import type { Metadata, Viewport } from 'next';
-
+import { GeistSans } from 'geist/font/sans';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { Metadata, Viewport } from 'next';
+
+const defaultUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : `${process.env.SITE_URL}`;
 
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(defaultUrl),
   title: 'Moonshot',
   description: 'Moonshot application',
   generator: 'Next.js',
@@ -28,12 +33,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className={GeistSans.className}>
+      <body className="bg-background text-foreground">
+        <main className="min-h-screen flex flex-col items-center">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
