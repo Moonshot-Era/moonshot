@@ -11,14 +11,15 @@
     "sb:migration:apply": "supabase migration up"
   },
   "dependencies": {
+    "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.1",
     "autoprefixer": "10.4.17",
     "geist": "^1.2.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
     "next": "14.2.3",
-    "next-pwa": "^5.6.0"
+    "next-pwa": "^5.6.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@types/node": "20.11.5",

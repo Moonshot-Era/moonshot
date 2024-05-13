@@ -1,5 +1,5 @@
 import AuthButton from '../components/AuthButton';
-import { createClient } from '@/supabase/server';
+import { createServerClient } from '@/supabase/server';
 import ConnectSupabaseSteps from '@/components/tutorial/ConnectSupabaseSteps';
 import SignUpUserSteps from '@/components/tutorial/SignUpUserSteps';
 import Header from '@/components/Header';
@@ -9,7 +9,7 @@ export default async function Index() {
     // This function is just for the interactive tutorial.
     // Feel free to remove it once you have Supabase connected.
     try {
-      createClient();
+      createServerClient();
       return true;
     } catch (e) {
       return false;

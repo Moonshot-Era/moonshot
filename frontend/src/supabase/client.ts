@@ -1,8 +1,8 @@
-import { createBrowserClient } from '@supabase/ssr';
+import { createBrowserClient as createClient } from '@supabase/ssr';
 import { Database } from './schema';
 
-export const createClient = () =>
-  createBrowserClient<Database>(
+export const createBrowserClient = () =>
+  createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
