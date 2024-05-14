@@ -1,13 +1,35 @@
-import { GeistSans } from 'geist/font/sans';
-import { Inter } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
+import { Theme } from '@radix-ui/themes';
+import '@radix-ui/themes/styles.css';
+
+import './globals.scss';
 import './globals.css';
-import { Metadata, Viewport } from 'next';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : `${process.env.SITE_URL}`;
 
-const inter = Inter({ subsets: ['latin'] });
+
+const clashDisplayFont = localFont({
+  src: [
+    {
+      path: './fonts/ClashDisplay-Regular.woff2',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: './fonts/ClashDisplay-Medium.woff2',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: './fonts/ClashDisplay-Semibold.woff2',
+      weight: '600',
+      style: 'normal',
+    },
+  ],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
@@ -37,11 +59,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
-      <body className="bg-background text-foreground">
-        <main className="min-h-screen flex flex-col items-center">
-          {children}
-        </main>
+    <html lang="en">
+      <body className={clashDisplayFont.className}>
+        <Theme>{children}</Theme>
       </body>
     </html>
   );

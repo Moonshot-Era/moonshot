@@ -1,0 +1,38 @@
+import { IconsNamesMapType } from './types';
+import {
+  Google,
+  Apple,
+  Home,
+  Explore,
+  Settings,
+  ArrowRight,
+  ArrowRight2,
+  TrendingUp,
+  ChevronsUpDown,
+  Wallet,
+  Deposit,
+  Convert,
+  Withdraw,
+  Share,
+  Solana,
+  BaseStatus,
+} from './Icons';
+
+export const IconsMap: IconsNamesMapType = {
+  google: Google,
+  apple: Apple,
+  home: Home,
+  explore: Explore,
+  settings: Settings,
+  arrowRight: ArrowRight,
+  arrowRight2: ArrowRight2,
+  trendingUp: TrendingUp,
+  chevronsUpDown: ChevronsUpDown,
+  wallet: Wallet,
+  deposit: Deposit,
+  convert: Convert,
+  withdraw: Withdraw,
+  share: Share,
+  solana: Solana,
+  baseStatus: BaseStatus,
+};

@@ -11,6 +11,7 @@
     "sb:migration:apply": "supabase migration up"
   },
   "dependencies": {
+    "@radix-ui/themes": "^3.0.3",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.1",
@@ -19,7 +20,9 @@
     "next": "14.2.3",
     "next-pwa": "^5.6.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "sass": "^1.77.1",
+    "save-dev": "^0.0.1-security"
   },
   "devDependencies": {
     "@types/node": "20.11.5",
