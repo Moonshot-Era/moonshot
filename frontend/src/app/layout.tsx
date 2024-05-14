@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
 import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 
@@ -9,7 +10,6 @@ const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : `${process.env.SITE_URL}`;
 
-import localFont from 'next/font/local';
 
 const clashDisplayFont = localFont({
   src: [
