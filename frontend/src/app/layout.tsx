@@ -3,6 +3,11 @@ import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 
 import './globals.scss';
+import './globals.css';
+
+const defaultUrl = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : `${process.env.SITE_URL}`;
 
 import localFont from 'next/font/local';
 
@@ -27,6 +32,7 @@ const clashDisplayFont = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(defaultUrl),
   title: 'Moonshot',
   description: 'Moonshot application',
   generator: 'Next.js',
@@ -49,9 +55,9 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body className={clashDisplayFont.className}>
