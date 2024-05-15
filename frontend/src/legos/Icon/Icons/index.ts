@@ -14,3 +14,4 @@ export { Withdraw } from './Withdraw';
 export { Share } from './Share';
 export { Solana } from './Solana';
 export { BaseStatus } from './BaseStatus';
+export { TrendingDown } from './TrendingDown';

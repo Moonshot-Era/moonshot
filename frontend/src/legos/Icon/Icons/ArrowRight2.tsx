@@ -12,9 +12,9 @@ export const ArrowRight2 = (style: IconCommonProps) => (
     <path
       d="M19 1.6L30.2 12.8M30.2 12.8L19 24M30.2 12.8L1.40002 12.8"
       stroke="black"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
