@@ -1,0 +1,16 @@
+@import '../../styles/variables.scss';
+
+.default-input {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  @include border-dark;
+  &:focus-visible {
+    @include border-dark;
+    outline: none;
+  }
+}
+
+.default-input-error {
+  color: $error;
+}
