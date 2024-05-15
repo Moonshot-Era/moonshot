@@ -1,22 +1,20 @@
-import Link from 'next/link';
-import { headers } from 'next/headers';
-import { createServerClient } from '@/supabase/server';
-import { redirect } from 'next/navigation';
-import { SubmitButton } from './submit-button';
-import { SocialAuth } from './socialAuth';
+import { createServerClient } from "@/supabase/server";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { SocialAuth } from "./socialAuth";
+import { SubmitButton } from "./submit-button";
 
-export default function Login({
+export default async function Login({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
-  const supabase = createServerClient();
-
   const signIn = async (formData: FormData) => {
-    'use server';
+    "use server";
 
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
     const supabase = createServerClient();
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -25,19 +23,20 @@ export default function Login({
     });
 
     if (error) {
-      return redirect('/login?message=Could not authenticate user');
+      return redirect("/login?message=Could not authenticate user");
     }
 
-    return redirect('/protected');
+    return redirect("/protected");
   };
 
   const signUp = async (formData: FormData) => {
-    'use server';
+    "use server";
 
-    const origin = headers().get('origin');
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
+    const origin = headers().get("origin");
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
+    const supabase = createServerClient();
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -47,14 +46,35 @@ export default function Login({
     });
 
     if (error) {
-      return redirect('/login?message=Could not authenticate user');
+      return redirect("/login?message=Could not authenticate user");
     }
 
-    return redirect('/login?message=Check email to continue sign in process');
+    return redirect("/login?message=Check email to continue sign in process");
+  };
+
+  const signUpWithToken = async (formData: FormData) => {
+    "use server";
+    const token = formData.get("token") as string;
+
+    const supabase = createServerClient();
+
+    const { error } = await supabase.auth.signInWithIdToken({
+      provider: "google",
+      token,
+      // nonce: '',
+    });
+
+    if (error) {
+      return redirect("/login?message=Could not authenticate user");
+    }
+
+    return redirect("/protected");
   };
 
   return (
     <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+      <script src="https://accounts.google.com/gsi/client" async></script>
+
       <Link
         href="/"
         className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
@@ -72,7 +92,7 @@ export default function Login({
           className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
         >
           <polyline points="15 18 9 12 15 6" />
-        </svg>{' '}
+        </svg>{" "}
         Back
       </Link>
 
@@ -115,7 +135,7 @@ export default function Login({
             {searchParams.message}
           </p>
         )}
-        <SocialAuth />
+        <SocialAuth signUpWithToken={signUpWithToken} />
       </form>
     </div>
   );

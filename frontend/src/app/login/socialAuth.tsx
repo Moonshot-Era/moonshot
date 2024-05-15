@@ -1,19 +1,44 @@
-'use client';
+"use client";
 
-import { createBrowserClient } from '@/supabase/client';
-import { Auth } from '@supabase/auth-ui-react';
+declare global {
+  interface Window {
+    handleSignInWithGoogle: (response: { credential: string }) => void; // Adjust the type signature as needed
+  }
+}
 
-export const SocialAuth = () => {
-  const supabase = createBrowserClient();
+interface SocialAuthProps {
+  signUpWithToken: (response: FormData) => void;
+}
+
+export const SocialAuth = ({ signUpWithToken }: SocialAuthProps) => {
+  window.handleSignInWithGoogle = (response) => {
+    const formData = new FormData();
+    formData.append("token", response.credential);
+    signUpWithToken(formData);
+  };
 
   return (
-    <Auth
-      theme="default"
-      view="sign_in"
-      showLinks={false}
-      supabaseClient={supabase}
-      providers={['google']}
-      redirectTo={`${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`}
-    />
+    <>
+      <div
+        id="g_id_onload"
+        data-client_id={process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID}
+        data-context="signin"
+        data-ux_mode="popup"
+        data-callback="handleSignInWithGoogle"
+        // data-nonce=''
+        data-auto_select="true"
+        data-itp_support="true"
+      ></div>
+
+      <div
+        className="g_id_signin"
+        data-type="standard"
+        data-shape="pill"
+        data-theme="outline"
+        data-text="signin_with"
+        data-size="large"
+        data-logo_alignment="left"
+      ></div>
+    </>
   );
 };
