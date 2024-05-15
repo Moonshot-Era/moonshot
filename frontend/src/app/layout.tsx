@@ -10,7 +10,6 @@ const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : `${process.env.SITE_URL}`;
 
-
 const clashDisplayFont = localFont({
   src: [
     {

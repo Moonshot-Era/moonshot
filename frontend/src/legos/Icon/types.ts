@@ -16,7 +16,8 @@ export type IconsNames =
   | 'withdraw'
   | 'share'
   | 'solana'
-  | 'baseStatus';
+  | 'baseStatus'
+  | 'trendingDown';
 
 export type IconsNamesMapType = {
   [key in IconsNames]: ElementType;

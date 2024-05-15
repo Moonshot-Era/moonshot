@@ -16,6 +16,7 @@ import {
   Share,
   Solana,
   BaseStatus,
+  TrendingDown,
 } from './Icons';
 
 export const IconsMap: IconsNamesMapType = {
@@ -35,4 +36,5 @@ export const IconsMap: IconsNamesMapType = {
   share: Share,
   solana: Solana,
   baseStatus: BaseStatus,
+  trendingDown: TrendingDown,
 };
