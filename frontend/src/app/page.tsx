@@ -1,10 +1,11 @@
 import { Flex, Text } from '@radix-ui/themes';
 import { createServerClient } from '@/supabase/server';
 
+import Header from '@/components/Header';
 import AuthButton from '../components/AuthButton';
+import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 import ConnectSupabaseSteps from '@/components/tutorial/ConnectSupabaseSteps';
 import SignUpUserSteps from '@/components/tutorial/SignUpUserSteps';
-import Header from '@/components/Header';
 
 import {
   Badge,
@@ -34,6 +35,7 @@ export default async function Index() {
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
+      <SplashScreen />
       <Flex direction="column" gap="4" width="100%" maxWidth="300px">
         <Flex m="7" gap="2">
           <NavButton>

@@ -13,17 +13,17 @@ const defaultUrl = process.env.VERCEL_URL
 const clashDisplayFont = localFont({
   src: [
     {
-      path: './fonts/ClashDisplay-Regular.woff2',
+      path: '../assets/fonts/ClashDisplay-Regular.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: './fonts/ClashDisplay-Medium.woff2',
+      path: '../assets/fonts/ClashDisplay-Medium.woff2',
       weight: '500',
       style: 'normal',
     },
     {
-      path: './fonts/ClashDisplay-Semibold.woff2',
+      path: '../assets/fonts/ClashDisplay-Semibold.woff2',
       weight: '600',
       style: 'normal',
     },
@@ -60,7 +60,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={clashDisplayFont.className}>
-        <Theme>{children}</Theme>
+        <Theme className="bg-transparent">{children}</Theme>
       </body>
     </html>
   );
