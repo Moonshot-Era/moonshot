@@ -1,0 +1,1 @@
+export { BadgeSecond } from './BadgeSecond';

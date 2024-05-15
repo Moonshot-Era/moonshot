@@ -1,0 +1,33 @@
+@import '../../styles/variables.scss';
+
+#button-slider-container {
+  position: relative;
+  background-color: $greeny-3;
+  max-width: 339px;
+  height: 56px;
+  @include border-dark;
+  border-radius: 32px;
+  @include flex-center;
+}
+
+#button-slider {
+  transition: width 0.3s, border-radius 0.3s, height 0.3s;
+  position: absolute;
+  left: -1px;
+  background-color: $greeny;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  @include border-dark;
+  @include flex-center;
+  &.unlocked {
+    transition: all 0.3s;
+    right: 0 !important;
+    pointer-events: none;
+  }
+}
+
+.button-slide-text {
+  @include nonselect;
+  letter-spacing: 0.02rem;
+}

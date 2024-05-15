@@ -1,6 +1,6 @@
 import { IconCommonProps } from '../types';
 
-export const TrendingUp = (style: IconCommonProps) => (
+export const TrendingDown = (style: IconCommonProps) => (
   <svg
     width="22"
     height="20"
@@ -9,16 +9,16 @@ export const TrendingUp = (style: IconCommonProps) => (
     xmlns="http://www.w3.org/2000/svg"
     style={style}
   >
-    <g clipPath="url(#clip0_118_1330)">
+    <g clipPath="url(#clip0_119_1534)">
       <path
-        d="M3.125 14.1667L8.375 9.16668L11.875 12.5L18.875 5.83334"
+        d="M3.125 5.83332L8.375 10.8333L11.875 7.49999L18.875 14.1667"
         stroke="black"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
-        d="M12.75 5.83334H18.875V11.6667"
+        d="M12.75 14.1667H18.875V8.33332"
         stroke="black"
         strokeWidth="1.5"
         strokeLinecap="round"
@@ -26,8 +26,13 @@ export const TrendingUp = (style: IconCommonProps) => (
       />
     </g>
     <defs>
-      <clipPath id="clip0_118_1330">
-        <rect width="21" height="20" fill="white" transform="translate(0.5)" />
+      <clipPath id="clip0_119_1534">
+        <rect
+          width="21"
+          height="20"
+          fill="white"
+          transform="matrix(1 0 0 -1 0.5 20)"
+        />
       </clipPath>
     </defs>
   </svg>

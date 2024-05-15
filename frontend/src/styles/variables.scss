@@ -1,0 +1,43 @@
+// DEFAULT TONES
+$dark: #000000;
+$white: #ffffff;
+$info: #0095ff;
+$success: #00d68f;
+$warning: #ffaa00;
+$error: #ff3d71;
+$greyscale: #2e3a59;
+
+// BRAND COLOR
+$grey: #efefef;
+$magenta: #fd9fdd;
+$orange: #fc7339;
+$greeny: #beff6c;
+$violet: #af96fb;
+$blue: #49dbc8;
+$yellow: #fff172;
+
+$greeny-2: #effcdc;
+$greeny-3: #e3ffc0;
+
+$shadow-1: 4px 6px 0px 0px $dark;
+$shadow-2: 2px 1px 0px 0px $dark;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin border-dark {
+  border: 1px solid $dark;
+}
+
+@mixin nonselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
