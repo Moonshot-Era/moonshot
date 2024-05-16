@@ -32,24 +32,22 @@ export const CubeSignerInstance = new CubeSigner();
 
 const getCubistUsers = async () => {
   const client = await CubeSignerInstance.getClient();
-  console.log('debug > client ==== ', JSON.stringify(client.env));
   return client.org().users();
 };
 
 const findUser = async (email: string) => {
   const users = await getCubistUsers();
   return users.find(
-    user => user.email === email && user.membership === 'Alien',
+    (user) => user.email === email && user.membership === 'Alien'
   );
 };
 
 export const getUserWallet = async (oidcToken: string) => {
+  let userWallet = {};
   try {
     const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
     const user = await findUser(email);
-
     const cubeClient = await CubeSignerInstance.getClient();
-
     const org = cubeClient.org();
 
     let userId = user?.id;
@@ -60,11 +58,9 @@ export const getUserWallet = async (oidcToken: string) => {
         memberRole: 'Alien',
       });
     }
-    console.log('debug > userId ==== ', userId);
-
-    const key = await org.createKey(Ed25519.Solana, userId);
-    console.log('debug > key ==== ', key);
+    userWallet = await org.createKey(Ed25519.Solana, userId);
   } catch (err) {
     console.log('debug > err ==== ', err);
   }
+  return userWallet;
 };
