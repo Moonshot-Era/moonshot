@@ -56,7 +56,6 @@ export default async function Login() {
     const { error } = await supabase.auth.signInWithIdToken({
       provider: 'google',
       token,
-      // nonce: '',
     });
 
     if (error) {
