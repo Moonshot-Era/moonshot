@@ -7,9 +7,9 @@
     "sb:link": "source .env && supabase link --project-ref $SUPABASE_PROJECT_REF_ID",
     "sb:types": "source .env && supabase gen types typescript --linked | tail +1 > src/supabase/schema.tsx",
     "sb:db:pull": "source .env && supabase db pull -p $SUPABASE_DB_PASSWORD -s all",
-    "sb:db:diff": "source .env && supabase db diff --linked",
+    "sb:db:diff": "source .env && supabase db diff --local",
     "sb:migration:new": "supabase migration new",
-    "sb:migration:apply": "supabase migration up",
+    "sb:migration:apply": "supabase migration up --linked",
     "sb:migration:ls": "source .env && supabase migration list"
   },
   "dependencies": {
