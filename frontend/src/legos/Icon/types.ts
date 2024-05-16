@@ -17,7 +17,8 @@ export type IconsNames =
   | 'share'
   | 'solana'
   | 'baseStatus'
-  | 'trendingDown';
+  | 'trendingDown'
+  | 'twitter';
 
 export type IconsNamesMapType = {
   [key in IconsNames]: ElementType;

@@ -1,6 +1,8 @@
 import { Flex, Text } from '@radix-ui/themes';
 import React, { FC, InputHTMLAttributes } from 'react';
 
+import './style.scss';
+
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   label?: string;

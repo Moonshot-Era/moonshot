@@ -1,0 +1,75 @@
+@import '../../styles/variables.scss';
+
+.splash-container {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  @include flex-center;
+  background-image: url('../../assets/images/bg.svg');
+  background-size: contain;
+  flex-direction: column;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+  overflow: hidden;
+}
+
+.splash-figure1 {
+  position: absolute;
+  top: 18%;
+  left: 14%;
+  background-image: url('../../assets/images/splash-screen/figure1.svg');
+  background-repeat: no-repeat;
+  width: 95px;
+  height: 95px;
+}
+
+.splash-figure2 {
+  position: absolute;
+  top: 9%;
+  right: 0;
+  background-image: url('../../assets/images/splash-screen/figure2.svg');
+  background-repeat: no-repeat;
+  width: 32px;
+  height: 127px;
+}
+
+.splash-figure3 {
+  position: absolute;
+  top: 33%;
+  right: 13%;
+  background-image: url('../../assets/images/splash-screen/figure3.svg');
+  background-repeat: no-repeat;
+  width: 81px;
+  height: 66px;
+}
+
+.splash-figure4 {
+  position: absolute;
+  bottom: 28%;
+  left: 9%;
+  background-image: url('../../assets/images/splash-screen/figure4.svg');
+  background-repeat: no-repeat;
+  width: 79px;
+  height: 79px;
+}
+
+.splash-figure5 {
+  position: absolute;
+  bottom: 16%;
+  right: 16%;
+  background-image: url('../../assets/images/splash-screen/figure5.svg');
+  background-repeat: no-repeat;
+  width: 100px;
+  height: 113px;
+}
+
+.splash-figure6 {
+  position: absolute;
+  bottom: 11%;
+  left: 0;
+  background-image: url('../../assets/images/splash-screen/figure6.svg');
+  background-repeat: no-repeat;
+  width: 70px;
+  height: 18px;
+}

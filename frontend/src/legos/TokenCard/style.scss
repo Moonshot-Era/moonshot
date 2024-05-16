@@ -1,0 +1,30 @@
+@import '../../styles/variables.scss';
+
+.token-card {
+  position: relative;
+  @include border-dark;
+  border-radius: 16px;
+  box-shadow: 4px 2px 0px 0px #000000;
+  cursor: pointer;
+}
+
+.token-card-label {
+  height: 26px;
+  position: absolute;
+  right: 12%;
+  top: -13px;
+  @include border-dark;
+  border-radius: 100px;
+  padding: 0 16px;
+}
+
+.token-card-label-shadow {
+  z-index: -1;
+  height: 26px;
+  width: 40px;
+  position: absolute;
+  right: -6px;
+  top: 4px;
+  border-radius: 100px;
+  @include border-dark;
+}

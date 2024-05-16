@@ -2,9 +2,10 @@ import Image from 'next/image';
 import React, { FC } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
+import './style.scss';
 import { Icon } from '../Icon';
 
-import image from '../../app/images/IMG.png';
+import image from '../../assets/images/IMG.png';
 
 interface Props {
   name: string;

@@ -13,9 +13,9 @@
     "sb:migration:ls": "source .env && supabase migration list"
   },
   "dependencies": {
-    "@radix-ui/themes": "^3.0.3",
     "@cubist-labs/cubesigner-sdk": "^0.4.24-0",
     "@cubist-labs/cubesigner-sdk-fs-storage": "^0.4.24-0",
+    "@radix-ui/themes": "^3.0.3",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.1",
@@ -26,7 +26,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sass": "^1.77.1",
-    "save-dev": "^0.0.1-security"
+    "save-dev": "^0.0.1-security",
+    "swiper": "^11.1.3"
   },
   "devDependencies": {
     "@types/node": "20.11.5",

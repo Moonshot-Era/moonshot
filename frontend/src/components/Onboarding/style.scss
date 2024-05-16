@@ -1,0 +1,103 @@
+@import '../../styles/variables.scss';
+
+.onboarding-bg-orange {
+  height: 100vh;
+  background-image: url('../../assets/images/onboarding/bg-orange.svg');
+  background-size: contain;
+}
+
+.onboarding-bg-blue {
+  height: 100vh;
+  background-image: url('../../assets/images/onboarding/bg-blue.svg');
+  background-size: contain;
+}
+
+.onboarding-bg-violet {
+  height: 100vh;
+  background-image: url('../../assets/images/onboarding/bg-violet.svg');
+  background-size: contain;
+}
+
+.onboarding-info-label1 {
+  position: absolute;
+  right: -41px;
+  top: -46px;
+  width: 92px;
+  height: 120px;
+  background-image: url('../../assets/images/onboarding/label1.svg');
+  background-repeat: no-repeat;
+}
+
+.onboarding-info-label2 {
+  position: absolute;
+  right: -41px;
+  top: -28px;
+  width: 81px;
+  height: 104px;
+  background-image: url('../../assets/images/onboarding/label2.svg');
+  background-repeat: no-repeat;
+}
+
+.onboarding-info-label3 {
+  position: absolute;
+  right: -41px;
+  top: -34px;
+  width: 91px;
+  height: 109px;
+  background-image: url('../../assets/images/onboarding/label3.svg');
+  background-repeat: no-repeat;
+}
+
+.onboarding-image {
+  margin: 116px 0 64px;
+}
+
+.onboarding-info {
+  position: relative;
+  @include border-dark;
+  box-shadow: $shadow-1;
+  border-radius: 8px;
+}
+
+.swiper {
+  width: auto;
+  height: auto;
+}
+
+.swiper-pagination {
+  width: 100%;
+  position: fixed !important;
+  top: 80px !important;
+  bottom: auto !important;
+  left: 0 !important;
+  right: 0 !important;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 5px;
+}
+
+.swiper-pagination-bullet {
+  height: 8px !important;
+  width: 24px !important;
+  cursor: pointer;
+  border-radius: 4px !important;
+  @include border-dark;
+  margin: 0 !important;
+}
+
+.swiper-pagination-bullet-active {
+  width: 48px !important;
+}
+
+.swiper-pagination-bg-0 .swiper-pagination-bullet-active {
+  background-color: $warning;
+}
+
+.swiper-pagination-bg-1 .swiper-pagination-bullet-active {
+  background-color: $blue;
+}
+
+.swiper-pagination-bg-2 .swiper-pagination-bullet-active {
+  background-color: $magenta;
+}

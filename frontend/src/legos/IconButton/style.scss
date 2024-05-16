@@ -1,0 +1,13 @@
+@import '../../styles/variables.scss';
+
+.icon-button {
+  width: 48px;
+  height: 48px;
+  @include flex-center;
+  @include border-dark;
+  border-radius: 100%;
+  transition: all 0.3s;
+  &:active {
+    box-shadow: none;
+  }
+}

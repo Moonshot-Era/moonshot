@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Text } from '@radix-ui/themes';
 
+import './style.scss';
 import { Icon } from '../Icon';
 
 interface Props {

@@ -17,6 +17,7 @@ import {
   Solana,
   BaseStatus,
   TrendingDown,
+  Twitter,
 } from './Icons';
 
 export const IconsMap: IconsNamesMapType = {
@@ -37,4 +38,5 @@ export const IconsMap: IconsNamesMapType = {
   solana: Solana,
   baseStatus: BaseStatus,
   trendingDown: TrendingDown,
+  twitter: Twitter,
 };

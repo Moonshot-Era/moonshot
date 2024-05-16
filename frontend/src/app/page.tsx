@@ -2,10 +2,11 @@ import { Flex, Text } from '@radix-ui/themes';
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@/supabase/server';
 
+import Header from '@/components/Header';
 import AuthButton from '../components/AuthButton';
+import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 import ConnectSupabaseSteps from '@/components/tutorial/ConnectSupabaseSteps';
 import SignUpUserSteps from '@/components/tutorial/SignUpUserSteps';
-import Header from '@/components/Header';
 
 import {
   Badge,
@@ -30,6 +31,7 @@ export default async function Index() {
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
+      <SplashScreen />
       <Flex direction="column" gap="4" width="100%" maxWidth="300px">
         <Flex m="7" gap="2">
           <NavButton>
@@ -45,25 +47,6 @@ export default async function Index() {
             <Text size="1">Settings</Text>
           </NavButton>
         </Flex>
-        <IconButton className="box-shadow-second bg-magenta">
-          <Icon icon="deposit" width={24} />
-        </IconButton>
-        <IconButton className="box-shadow-second bg-yellow">
-          <Icon icon="convert" width={24} />
-        </IconButton>
-        <IconButton className="box-shadow-second bg-violet">
-          <Icon icon="withdraw" width={24} />
-        </IconButton>
-        <IconButton className="box-shadow-second bg-blue">
-          <Icon icon="share" width={24} />
-        </IconButton>
-
-        <IconButton className="box-shadow">
-          <Icon icon="google" width={24} />
-        </IconButton>
-        <IconButton className="box-shadow">
-          <Icon icon="apple" width={24} />
-        </IconButton>
 
         <Button>
           <Icon icon="google" width={24} />

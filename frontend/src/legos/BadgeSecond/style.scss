@@ -1,0 +1,29 @@
+@import '../../styles/variables.scss';
+
+.badge-second-container {
+  @include flex-center;
+  width: fit-content;
+  height: 36px;
+  flex-direction: row;
+  @include border-dark;
+  border-radius: 20px;
+  background-color: $dark;
+  color: $white;
+}
+
+.badge-second-total {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 8px;
+  border-radius: 18px;
+  color: $dark;
+}
+
+.badge-second-percent {
+  padding: 0 8px;
+}

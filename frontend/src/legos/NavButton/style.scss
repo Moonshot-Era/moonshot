@@ -1,0 +1,17 @@
+@import '../../styles/variables.scss';
+
+.nav-button {
+  width: 92px;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 8px;
+  @include border-dark;
+  padding: 4px 24px;
+  background-color: $greeny-2;
+  transition: all 0.3s;
+  &:active {
+    box-shadow: none;
+  }
+}
