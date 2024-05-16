@@ -1,0 +1,41 @@
+@import '../../styles/variables.scss';
+
+.login-figure1 {
+  position: absolute;
+  top: 16%;
+  left: 9%;
+  background-image: url('../../assets/images/login/figure1.svg');
+  background-repeat: no-repeat;
+  width: 61px;
+  height: 59px;
+}
+
+.login-figure2 {
+  position: absolute;
+  top: 6%;
+  right: -16px;
+  background-image: url('../../assets/images/login/figure2.svg');
+  background-repeat: no-repeat;
+  width: 93px;
+  height: 125px;
+}
+
+.login-figure3 {
+  position: absolute;
+  bottom: 16%;
+  left: -16px;
+  background-image: url('../../assets/images/login/figure3.svg');
+  background-repeat: no-repeat;
+  width: 98px;
+  height: 102px;
+}
+
+.login-figure4 {
+  position: absolute;
+  bottom: 11%;
+  right: 24%;
+  background-image: url('../../assets/images/login/figure4.svg');
+  background-repeat: no-repeat;
+  width: 59px;
+  height: 59px;
+}
