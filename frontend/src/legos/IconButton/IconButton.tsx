@@ -1,17 +1,15 @@
 import React, { ReactNode, ButtonHTMLAttributes, FC } from 'react';
 
 import './style.scss';
+import { IconsNames } from '../Icon/types';
+import { Icon } from '../Icon/Icon';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
+  icon: IconsNames;
 }
 
-export const IconButton: FC<ButtonProps> = ({
-  children,
-  className,
-  ...props
-}) => (
+export const IconButton: FC<ButtonProps> = ({ className, icon, ...props }) => (
   <button className={`icon-button ${className}`} {...props}>
-    {children}
+    <Icon icon={icon} />
   </button>
 );

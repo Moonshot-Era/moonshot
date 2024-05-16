@@ -14,7 +14,13 @@ export default function Login({
   return (
     <>
       <SplashScreen />
-      <Flex height="100vh" direction="column" align="center" justify="center">
+      <Flex
+        className="main-wrapper"
+        height="100vh"
+        direction="column"
+        align="center"
+        justify="center"
+      >
         <div className="login-figure1"></div>
         <div className="login-figure2"></div>
         <div className="login-figure3"></div>

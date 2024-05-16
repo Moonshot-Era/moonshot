@@ -51,25 +51,6 @@ export default async function Index() {
             <Text size="1">Settings</Text>
           </NavButton>
         </Flex>
-        <IconButton className="box-shadow-second bg-magenta">
-          <Icon icon="deposit" width={24} />
-        </IconButton>
-        <IconButton className="box-shadow-second bg-yellow">
-          <Icon icon="convert" width={24} />
-        </IconButton>
-        <IconButton className="box-shadow-second bg-violet">
-          <Icon icon="withdraw" width={24} />
-        </IconButton>
-        <IconButton className="box-shadow-second bg-blue">
-          <Icon icon="share" width={24} />
-        </IconButton>
-
-        <IconButton className="box-shadow">
-          <Icon icon="google" width={24} />
-        </IconButton>
-        <IconButton className="box-shadow">
-          <Icon icon="apple" width={24} />
-        </IconButton>
 
         <Button>
           <Icon icon="google" width={24} />
