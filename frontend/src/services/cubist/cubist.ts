@@ -1,8 +1,4 @@
-import {
-  CubeSignerClient,
-  Secp256k1,
-  Ed25519,
-} from '@cubist-labs/cubesigner-sdk';
+import { CubeSignerClient, Ed25519 } from '@cubist-labs/cubesigner-sdk';
 import { defaultManagementSessionManager } from '@cubist-labs/cubesigner-sdk-fs-storage';
 
 class CubeSigner {
@@ -47,14 +43,16 @@ const findUser = async (email: string) => {
   );
 };
 
-export const getCubistUserKey = async (oidcToken: string) => {
+export const getUserWallet = async (oidcToken: string) => {
   try {
     const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
     const user = await findUser(email);
+
     const cubeClient = await CubeSignerInstance.getClient();
 
     const org = cubeClient.org();
-    let userId;
+
+    let userId = user?.id;
 
     if (!user) {
       userId = await org.createOidcUser({ iss, sub }, email, {
@@ -62,6 +60,10 @@ export const getCubistUserKey = async (oidcToken: string) => {
         memberRole: 'Alien',
       });
     }
+    console.log('debug > userId ==== ', userId);
+
+    const key = await org.createKey(Ed25519.Solana, userId);
+    console.log('debug > key ==== ', key);
   } catch (err) {
     console.log('debug > err ==== ', err);
   }
