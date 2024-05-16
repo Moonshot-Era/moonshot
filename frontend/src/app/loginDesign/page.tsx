@@ -43,15 +43,15 @@ export default function Login({
 
           <Flex direction="column" gap="4" width="100%">
             <Button className="bg-white">
-              <Icon icon="google" width={24} />
+              <Icon icon="google" width={16} />
               <Text size="2" weight="medium">
                 Sign in with Google
               </Text>
             </Button>
             <Button disabled className="bg-white">
-              <Icon icon="apple" width={24} />
+              <Icon icon="twitter" width={16} />
               <Text size="2" weight="medium">
-                Sign in with Apple
+                Sign in with Twitter
               </Text>
             </Button>
           </Flex>
