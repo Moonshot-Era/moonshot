@@ -4,21 +4,16 @@ import { Flex, Text } from '@radix-ui/themes';
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@/supabase/server';
 
-import Header from '@/components/Header';
 import AuthButton from '../components/AuthButton';
 import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
-import ConnectSupabaseSteps from '@/components/tutorial/ConnectSupabaseSteps';
-import SignUpUserSteps from '@/components/tutorial/SignUpUserSteps';
 
 import {
   Badge,
   BadgeSecond,
   Button,
   Icon,
-  IconButton,
   Input,
   NavButton,
-  SlideButton,
   TokenCard,
 } from '@/legos';
 import { Test } from '@/components/Test';
@@ -33,36 +28,11 @@ export default async function Index() {
     redirect('/login');
   }
 
-  console.log(
-    'debug > cookies().ge)===',
-    cookies().get('sb-lmeghvxxxrzawjsqcmij-auth-token.0'),
-  );
-
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
       <SplashScreen />
-      <Flex direction="column" gap="4" width="100%" maxWidth="300px">
-        <Flex m="7" gap="2">
-          <NavButton>
-            <Icon icon="home" width={16} />
-            <Text size="1">Home</Text>
-          </NavButton>
-          <NavButton>
-            <Icon icon="search" width={16} />
-            <Text size="1">Explore</Text>
-          </NavButton>
-          <NavButton>
-            <Icon icon="settings" width={16} />
-            <Text size="1">Settings</Text>
-          </NavButton>
-        </Flex>
-
+      <Flex mt="3" direction="column" gap="4" width="100%" maxWidth="300px">
         <Test oidc={cookies().get('gc')?.value || ''} />
-        <IconButton icon="home" className="bg-magenta" />
-        <IconButton icon="transfer" className="bg-magenta" />
-        <IconButton icon="send" className="bg-blue" />
-        <Icon icon="selector" />
-        <Icon icon="wallet" />
 
         <Button>
           <Icon icon="google" width={24} />
@@ -70,16 +40,9 @@ export default async function Index() {
             Sign in with Google
           </Text>
         </Button>
-        <Button>
-          <Icon icon="twitter" width={24} />
-          <Text size="2" weight="medium">
-            Sign in with Apple
-          </Text>
-        </Button>
+
         <Badge percent={2.7} total={9578.45} />
-        <Badge percent={2.7} total={-9578.45} />
         <BadgeSecond percent={2.7} total={9578.45} />
-        <BadgeSecond percent={2.7} total={-9578.45} />
         <TokenCard
           name="jeo boden"
           currencyType="baseStatus"
@@ -87,16 +50,7 @@ export default async function Index() {
           total={21938}
           description="43,453 BODEN"
         />
-        <TokenCard
-          name="jeo boden"
-          currencyType="solana"
-          percent={2.7}
-          total={-21938}
-          description="43,453 BODEN"
-          isLabel
-        />
         <Input label="Email" error errorText="Error text" />
-        <SlideButton></SlideButton>
       </Flex>
 
       <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
@@ -104,28 +58,20 @@ export default async function Index() {
           <AuthButton />
         </div>
       </nav>
-
-      <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
-        <Header />
-        <main className="flex-1 flex flex-col gap-6">
-          <h2 className="font-bold text-4xl mb-4">Next steps</h2>
-          <ConnectSupabaseSteps />
-        </main>
-      </div>
-
-      <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
-        <p>
-          Powered by
-          <a
-            href="https://supabase.com/?utm_source=create-next-app&utm_medium=template&utm_term=nextjs"
-            target="_blank"
-            className="font-bold hover:underline"
-            rel="noreferrer"
-          >
-            Supabase
-          </a>
-        </p>
-      </footer>
+      <Flex gap="2">
+        <NavButton>
+          <Icon icon="home" width={16} />
+          <Text size="1">Home</Text>
+        </NavButton>
+        <NavButton>
+          <Icon icon="search" width={16} />
+          <Text size="1">Explore</Text>
+        </NavButton>
+        <NavButton>
+          <Icon icon="settings" width={16} />
+          <Text size="1">Settings</Text>
+        </NavButton>
+      </Flex>
     </div>
   );
 }

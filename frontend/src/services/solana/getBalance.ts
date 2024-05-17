@@ -1,12 +1,18 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 export const getSolanaBalance = async (fromAddress: string) => {
   try {
     const connection = new Connection(
       process.env.SOLANA_RPC_PROVIDER,
-      'confirmed',
+      'confirmed'
     );
     const fromPubkey = new PublicKey(fromAddress);
+
+    // const airdropSignature = await connection.requestAirdrop(
+    //   fromPubkey,
+    //   LAMPORTS_PER_SOL
+    // );
+    // console.log('Got an airdrop!', airdropSignature);
 
     const balance = await connection.getBalance(fromPubkey);
 

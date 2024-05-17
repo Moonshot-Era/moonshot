@@ -1,4 +1,4 @@
-import { CubeSignerClient, Ed25519, Key } from '@cubist-labs/cubesigner-sdk';
+import { CubeSignerClient, Ed25519 } from '@cubist-labs/cubesigner-sdk';
 import { defaultManagementSessionManager } from '@cubist-labs/cubesigner-sdk-fs-storage';
 
 class CubeSigner {
@@ -7,7 +7,7 @@ class CubeSigner {
   async getManagementSessionClient(): Promise<CubeSignerClient> {
     if (!this.managementSessionClient) {
       this.managementSessionClient = await CubeSignerClient.create(
-        defaultManagementSessionManager(),
+        defaultManagementSessionManager()
       );
     }
     return this.managementSessionClient;
@@ -20,7 +20,7 @@ class CubeSigner {
       managerSessionClient.env,
       managerSessionClient.orgId,
       oidcToken,
-      ['sign:*'],
+      ['sign:*']
     );
 
     const sessionData = resp.data();
@@ -33,7 +33,7 @@ class CubeSigner {
     email: string;
   } {
     const payload = JSON.parse(
-      Buffer.from(token.split('.')[1], 'base64url').toString('utf8'),
+      Buffer.from(token.split('.')[1], 'base64url').toString('utf8')
     );
     const iss = payload.iss;
     const sub = payload.sub;
@@ -52,12 +52,12 @@ const getCubistUsers = async () => {
 const findUser = async (email: string) => {
   const users = await getCubistUsers();
   return users.find(
-    user => user.email === email && user.membership === 'Alien',
+    (user) => user.email === email && user.membership === 'Alien'
   );
 };
 
 export const getUserWallet = async (
-  oidcToken: string,
+  oidcToken: string
 ): Promise<string | null> => {
   let key;
 
@@ -78,9 +78,10 @@ export const getUserWallet = async (
       key = await org.createKey(Ed25519.Solana, userId, {});
     } else {
       const userCubeSigner = await CubeSignerInstance.getUserSessionClient(
-        oidcToken,
+        oidcToken
       );
       const keys = await userCubeSigner.sessionKeys();
+      console.log('debug > keys===', keys?.[0]?.cached);
       key = keys?.[0];
     }
 
