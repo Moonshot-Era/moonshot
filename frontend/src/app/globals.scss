@@ -102,6 +102,10 @@ a {
   box-shadow: $shadow-2;
 }
 
+.border-1 {
+  @include border-dark;
+}
+
 .icon-success-color path {
   stroke: $success;
 }

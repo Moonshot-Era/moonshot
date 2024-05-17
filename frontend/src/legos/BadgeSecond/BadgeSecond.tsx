@@ -15,12 +15,12 @@ export const BadgeSecond: FC<Props> = ({ percent, total }) => (
       className={`badge-second-total ${total > 0 ? 'bg-success' : 'bg-error'}`}
     >
       <Icon icon={total > 0 ? 'trendingUp' : 'trendingDown'} />
-      <Text size="2" weight="regular">{`($${total})`}</Text>
+      <Text size="2" weight="medium">{`($${total})`}</Text>
     </div>
     <Text
       className="badge-second-percent"
       size="2"
-      weight="regular"
+      weight="medium"
     >{`${percent}%`}</Text>
   </div>
 );
