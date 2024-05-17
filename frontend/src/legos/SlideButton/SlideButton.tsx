@@ -122,7 +122,7 @@ export const SlideButton = () => {
         onMouseDown={handleMouseDown}
         onTouchStart={handleMouseDown}
       >
-        <Icon icon="arrowRight2" />
+        <Icon icon="arrowRight" width={36} height={36} />
       </div>
     </div>
   );

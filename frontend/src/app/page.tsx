@@ -39,7 +39,7 @@ export default async function Index() {
             <Text size="1">Home</Text>
           </NavButton>
           <NavButton>
-            <Icon icon="explore" width={16} />
+            <Icon icon="search" width={16} />
             <Text size="1">Explore</Text>
           </NavButton>
           <NavButton>
@@ -48,6 +48,12 @@ export default async function Index() {
           </NavButton>
         </Flex>
 
+        <IconButton icon="home" className="bg-magenta" />
+        <IconButton icon="transfer" className="bg-magenta" />
+        <IconButton icon="send" className="bg-blue" />
+        <Icon icon="selector" />
+        <Icon icon="wallet" />
+
         <Button>
           <Icon icon="google" width={24} />
           <Text size="2" weight="medium">
@@ -55,7 +61,7 @@ export default async function Index() {
           </Text>
         </Button>
         <Button>
-          <Icon icon="apple" width={24} />
+          <Icon icon="twitter" width={24} />
           <Text size="2" weight="medium">
             Sign in with Apple
           </Text>

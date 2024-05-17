@@ -70,7 +70,7 @@ export const TokenCard: FC<Props> = ({
             <Text size="1" weight="medium">{`${percent}%`}</Text>
           </Flex>
         </Flex>
-        <Icon icon="arrowRight" />
+        <Icon icon="chevronRight" />
       </Flex>
     </Flex>
   );
