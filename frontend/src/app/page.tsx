@@ -30,35 +30,22 @@ export default async function Index() {
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <SplashScreen />
-      <Flex mt="3" direction="column" gap="4" width="100%" maxWidth="300px">
-        <Test oidc={cookies().get('gc')?.value || ''} />
-
-        <Button>
-          <Icon icon="google" width={24} />
-          <Text size="2" weight="medium">
-            Sign in with Google
-          </Text>
-        </Button>
-
-        <Badge percent={2.7} total={9578.45} />
-        <BadgeSecond percent={2.7} total={9578.45} />
-        <TokenCard
-          name="jeo boden"
-          currencyType="baseStatus"
-          percent={2.7}
-          total={21938}
-          description="43,453 BODEN"
-        />
-        <Input label="Email" error errorText="Error text" />
-      </Flex>
-
       <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
         <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
           <AuthButton />
         </div>
       </nav>
-      <Flex gap="2">
+      <Flex mt="3" direction="column" gap="4" width="100%" maxWidth="300px">
+        <Test oidc={cookies().get('gc')?.value || ''} />
+      </Flex>
+      <Flex
+        gap="2"
+        justify="center"
+        position="fixed"
+        bottom="50px"
+        left="0"
+        right="0"
+      >
         <NavButton>
           <Icon icon="home" width={16} />
           <Text size="1">Home</Text>
@@ -72,6 +59,8 @@ export default async function Index() {
           <Text size="1">Settings</Text>
         </NavButton>
       </Flex>
+
+      <SplashScreen />
     </div>
   );
 }
