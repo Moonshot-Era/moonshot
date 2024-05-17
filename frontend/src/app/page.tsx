@@ -57,7 +57,7 @@ export default async function Index() {
           </NavButton>
         </Flex>
 
-        <Test oidc={cookies().get('gc').value} />
+        <Test oidc={cookies().get('gc')?.value || ''} />
         <IconButton icon="home" className="bg-magenta" />
         <IconButton icon="transfer" className="bg-magenta" />
         <IconButton icon="send" className="bg-blue" />
