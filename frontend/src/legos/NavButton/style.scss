@@ -12,6 +12,7 @@
   background-color: $greeny-2;
   transition: all 0.3s;
   &:active {
-    box-shadow: none;
+    box-shadow: 2px 2px 0 0 $dark;
+    filter: brightness(0.9);
   }
 }
