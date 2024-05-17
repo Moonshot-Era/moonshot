@@ -1,3 +1,5 @@
+'use server';
+
 import { Flex, Text } from '@radix-ui/themes';
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@/supabase/server';
@@ -19,6 +21,8 @@ import {
   SlideButton,
   TokenCard,
 } from '@/legos';
+import { Test } from '@/components/Test';
+import { cookies } from 'next/headers';
 
 export default async function Index() {
   const supabaseClient = createServerClient();
@@ -28,6 +32,11 @@ export default async function Index() {
   if (!user) {
     redirect('/login');
   }
+
+  console.log(
+    'debug > cookies().ge)===',
+    cookies().get('sb-lmeghvxxxrzawjsqcmij-auth-token.0'),
+  );
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">
@@ -48,6 +57,7 @@ export default async function Index() {
           </NavButton>
         </Flex>
 
+        <Test oidc={cookies().get('gc').value} />
         <Button>
           <Icon icon="google" width={24} />
           <Text size="2" weight="medium">
