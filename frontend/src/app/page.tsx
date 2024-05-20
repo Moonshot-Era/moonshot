@@ -24,9 +24,9 @@ export default async function Index() {
 
   const user = (await supabaseClient.auth.getSession()).data.session?.user;
 
-  if (!user) {
-    redirect('/login');
-  }
+  // if (!user) {
+  //   redirect('/login');
+  // }
 
   return (
     <div className="flex-1 w-full flex flex-col gap-20 items-center">

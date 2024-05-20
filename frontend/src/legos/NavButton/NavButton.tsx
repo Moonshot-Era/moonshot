@@ -11,7 +11,7 @@ export const NavButton: FC<ButtonProps> = ({
   className,
   ...props
 }) => (
-  <button className={`box-shadow nav-button ${className}`} {...props}>
+  <button className={`nav-button ${className}`} {...props}>
     {children}
   </button>
 );
