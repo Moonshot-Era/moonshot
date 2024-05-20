@@ -22,18 +22,20 @@ export const ConvertDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
   const [isTransfer, setIsTransfer] = useState(false);
 
   const toggleTransfer = () => setIsTransfer(!isTransfer);
+
+  const handleClose = () => {
+    setIsTransfer(false);
+    toggleOpen();
+  };
   return (
     <Sheet
       isOpen={isOpen}
       detent="content-height"
-      onClose={() => {
-        setIsTransfer(false);
-        toggleOpen();
-      }}
       style={{
         display: 'flex',
         justifyContent: 'center',
       }}
+      onClose={handleClose}
     >
       <Sheet.Container
         className="bg-yellow-1"
