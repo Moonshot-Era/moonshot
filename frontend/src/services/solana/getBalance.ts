@@ -1,4 +1,24 @@
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import {
+  clusterApiUrl,
+  Connection,
+  Keypair,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction,
+  sendAndConfirmTransaction,
+} from '@solana/web3.js';
+import {
+  NATIVE_MINT,
+  createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddress,
+  createSyncNativeInstruction,
+  getAccount,
+  AccountLayout,
+  TOKEN_PROGRAM_ID,
+} from '@solana/spl-token';
+
+import { getTokenAccounts } from './getTokensAccountList';
 
 export const getSolanaBalance = async (fromAddress: string) => {
   try {
@@ -8,15 +28,9 @@ export const getSolanaBalance = async (fromAddress: string) => {
     );
     const fromPubkey = new PublicKey(fromAddress);
 
-    // const airdropSignature = await connection.requestAirdrop(
-    //   fromPubkey,
-    //   LAMPORTS_PER_SOL
-    // );
-    // console.log('Got an airdrop!', airdropSignature);
-
     const balance = await connection.getBalance(fromPubkey);
 
-    return balance;
+    return balance / LAMPORTS_PER_SOL;
   } catch (err) {
     throw Error('Error retrieving balance');
   }

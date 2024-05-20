@@ -23,8 +23,17 @@ export function Test({ oidc }: { oidc: string }) {
       }
     );
 
-    console.log('debug > data===', balanceData);
     setBalance(balanceData?.balance);
+  };
+
+  const handleSendTransaction = async () => {
+    const { data: txData } = await axios.post(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`,
+      {
+        oidcToken: oidc,
+        toAddress: 'B8xaui7xwQSZmuPwjem7Ka5Qobag7khJHNCPWzDpmXrD',
+      }
+    );
   };
 
   return (
@@ -35,6 +44,11 @@ export function Test({ oidc }: { oidc: string }) {
       <Button onClick={() => handleGetBalance()}>
         <Text size="2" weight="medium">
           {!!balance ? 'REFRESH BALANCE' : 'GET BALANCE'}
+        </Text>
+      </Button>
+      <Button onClick={() => handleSendTransaction()}>
+        <Text size="2" weight="medium">
+          SEND 0.1 SOL
         </Text>
       </Button>
     </Flex>
