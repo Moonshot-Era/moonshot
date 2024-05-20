@@ -1,9 +1,13 @@
+'use client';
+
+import { useState } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { formatNumber } from '@/helpers/helpers';
 import { Header } from '@/components/Header/Header';
 import { BadgeSecond, IconButton, TokenCard } from '@/legos';
+import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 
 const mockBalance = 123831.74;
@@ -11,11 +15,14 @@ const mockBalance = 123831.74;
 const formatBalance = formatNumber(mockBalance);
 
 export const HomeDesign = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleConvertDrawer = () => setIsOpen(!isOpen);
   return (
     <>
       <Header />
       <SplashScreen />
-
+      <ConvertDrawer isOpen={isOpen} toggleOpen={toggleConvertDrawer} />
       <Flex
         direction="column"
         align="center"
@@ -44,7 +51,11 @@ export const HomeDesign = () => {
 
         <Flex width="100%" direction="row" justify="between" px="43px" mb="8">
           <Flex direction="column" align="center" gap="1">
-            <IconButton icon="transfer" className="bg-yellow" />
+            <IconButton
+              icon="transfer"
+              className="bg-yellow"
+              onClick={toggleConvertDrawer}
+            />
             <Text size="2">Convert</Text>
           </Flex>
           <Flex direction="column" align="center" gap="1">

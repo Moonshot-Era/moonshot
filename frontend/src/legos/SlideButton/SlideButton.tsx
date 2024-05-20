@@ -48,7 +48,7 @@ export const SlideButton = () => {
     if (slider && text) {
       if (relativeMouse < slideMovementTotal) {
         text.style.opacity = '1';
-        slider.style.left = '-10px';
+        slider.style.left = '-1px';
         return;
       }
       slider.classList.add('unlocked');
@@ -79,14 +79,14 @@ export const SlideButton = () => {
       text.style.opacity = slidePercent.toString();
 
       if (relativeMouse <= 0) {
-        slider.style.left = '-10px';
+        slider.style.left = '-1px';
         return;
       }
-      if (relativeMouse >= slideMovementTotal + 10) {
+      if (relativeMouse >= slideMovementTotal + 1) {
         slider.style.left = `${slideMovementTotal}px`;
         return;
       }
-      slider.style.left = `${relativeMouse - 10}px`;
+      slider.style.left = `${relativeMouse - 1}px`;
     }
   };
 
