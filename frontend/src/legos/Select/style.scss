@@ -1,0 +1,28 @@
+@import '../../styles/variables.scss';
+
+.convert-select {
+  position: relative;
+  cursor: pointer;
+  height: 32px;
+  box-shadow: 2px 1px 0px 0px #000000;
+  @include border-dark;
+  border-radius: 6px;
+  padding-left: 8px;
+  padding-right: 28px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: $white url('../../assets/images/transfer.svg') no-repeat right 8px
+    center;
+  background-size: 24px;
+  font-size: 16px;
+  font-weight: 500;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &::-ms-expand {
+    display: none;
+  }
+}

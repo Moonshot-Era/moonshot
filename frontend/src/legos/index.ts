@@ -7,3 +7,4 @@ export { BadgeSecond } from './BadgeSecond';
 export { Input } from './Input';
 export { TokenCard } from './TokenCard';
 export { SlideButton } from './SlideButton';
+export { Select } from './Select';
