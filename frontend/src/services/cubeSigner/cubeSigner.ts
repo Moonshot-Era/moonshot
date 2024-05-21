@@ -68,13 +68,6 @@ export const getUserWallet = async (
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();
 
     const org = cubeClient.org();
-
-    // key = await org.createKey(Ed25519.Solana, user?.id, {
-    //   policy: ['AllowRawBlobSigning'],
-    // });
-
-    // console.log('debug > keys===', key?.cached);
-
     if (!user) {
       const userId = await org.createOidcUser({ iss, sub }, email, {
         mfaPolicy: undefined,
