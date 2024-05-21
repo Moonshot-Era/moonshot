@@ -1,8 +1,8 @@
-@import '../styles/variables.scss';
+@import "../styles/variables.scss";
 
 .radix-themes {
-  --default-font-family: '__clashDisplayFont_85a4c5',
-    '__clashDisplayFont_Fallback_85a4c5';
+  --default-font-family: "__clashDisplayFont_85a4c5",
+    "__clashDisplayFont_Fallback_85a4c5";
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -44,6 +44,10 @@
   background-color: $blue;
 }
 
+.bg-orange {
+  background-color: $orange;
+}
+
 .bg-success {
   background-color: $success;
 }
@@ -78,7 +82,7 @@ body {
 body {
   max-width: 390px;
   margin: auto !important;
-  background-image: url('../assets/images/bg.svg');
+  background-image: url("../assets/images/bg.svg");
 }
 
 a {

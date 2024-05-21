@@ -1,4 +1,4 @@
-import { IconsNamesMapType } from './types';
+import { IconsNamesMapType } from "./types";
 import {
   Google,
   Apple,
@@ -14,11 +14,14 @@ import {
   Transfer,
   Withdraw,
   Send,
+  Share,
   Solana,
   BaseStatus,
   TrendingDown,
   Twitter,
-} from './Icons';
+  Message,
+  FileDownload,
+} from "./Icons";
 
 export const IconsMap: IconsNamesMapType = {
   google: Google,
@@ -35,8 +38,11 @@ export const IconsMap: IconsNamesMapType = {
   transfer: Transfer,
   withdraw: Withdraw,
   send: Send,
+  share: Share,
   solana: Solana,
   baseStatus: BaseStatus,
   trendingDown: TrendingDown,
   twitter: Twitter,
+  message: Message,
+  fileDownload: FileDownload,
 };

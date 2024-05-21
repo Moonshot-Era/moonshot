@@ -1,24 +1,27 @@
-import { CSSProperties, ElementType } from 'react';
+import { CSSProperties, ElementType } from "react";
 
 export type IconsNames =
-  | 'google'
-  | 'apple'
-  | 'home'
-  | 'search'
-  | 'settings'
-  | 'chevronRight'
-  | 'arrowRight'
-  | 'trendingUp'
-  | 'selector'
-  | 'wallet'
-  | 'deposit'
-  | 'transfer'
-  | 'withdraw'
-  | 'send'
-  | 'solana'
-  | 'baseStatus'
-  | 'trendingDown'
-  | 'twitter';
+  | "google"
+  | "apple"
+  | "home"
+  | "search"
+  | "settings"
+  | "chevronRight"
+  | "arrowRight"
+  | "trendingUp"
+  | "selector"
+  | "wallet"
+  | "deposit"
+  | "transfer"
+  | "withdraw"
+  | "send"
+  | "share"
+  | "solana"
+  | "baseStatus"
+  | "message"
+  | "trendingDown"
+  | "fileDownload"
+  | "twitter";
 
 export type IconsNamesMapType = {
   [key in IconsNames]: ElementType;
