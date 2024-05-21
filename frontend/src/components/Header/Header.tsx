@@ -11,9 +11,7 @@ export const Header = () => {
   const router = useRouter();
 
   const isVisible =
-    pathname === '/home-design' ||
-    pathname === '/explore' ||
-    pathname === '/settings';
+    pathname === '/' || pathname === '/explore' || pathname === '/settings';
 
   return (
     <>
@@ -22,10 +20,8 @@ export const Header = () => {
           <nav>
             <Flex width="100%" justify="between" gap="2">
               <NavButton
-                className={
-                  pathname === '/home-design' ? 'nav-button-active' : ''
-                }
-                onClick={() => router.push('/home-design')}
+                className={pathname === '/' ? 'nav-button-active' : ''}
+                onClick={() => router.push('/')}
               >
                 <Icon icon="home" width={16} />
                 <Text size="1">Home</Text>

@@ -8,7 +8,7 @@ import './style.scss';
 import userIcon from '../../assets/images/user-icon.png';
 
 import { formatNumber } from '@/helpers/helpers';
-import { Icon, IconButton, TokenCard } from '@/legos';
+import { Icon, IconButton, Input, TokenCard } from '@/legos';
 
 const mockUserData = {
   name: 'jeo boden',
@@ -23,7 +23,7 @@ const mockUserData = {
     'Joe Boden is da hartfelt leeder of Amuriku. His mishun is to bild bak betta, to unify da divided, n to counter da wild claims of Doland Tremp. We’re here to bring togetha all da Amuriku memes and support one anotha thru da highs and lows. Make sure to stand by Boden for real change!',
 };
 
-export const ExploreDesign = () => {
+export const ExploreContent = () => {
   const [isProfile, setIsProfile] = useState(false);
 
   const toggleIsProfile = () => setIsProfile(!isProfile);
@@ -38,7 +38,8 @@ export const ExploreDesign = () => {
         className="main-wrapper explore-wrapper"
       >
         {!isProfile ? (
-          <Flex width="100%" direction="column" gap="4" mb="100px">
+          <Flex width="100%" direction="column" gap="4">
+            <Input placeholder="Search assets" icon="search" />
             {Array(10)
               .fill(10)
               .map((item, index) => (

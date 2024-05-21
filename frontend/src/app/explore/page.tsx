@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@/supabase/server';
 
-import { ExploreDesign } from '@/components/ExploreDesign/ExploreDesign';
+import { ExploreContent } from '@/components/ExploreContent/ExploreContent';
 
 export default async function Explore() {
   const supabaseClient = createServerClient();
@@ -12,5 +12,5 @@ export default async function Explore() {
   //   redirect('/login');
   // }
 
-  return <ExploreDesign />;
+  return <ExploreContent />;
 }
