@@ -31,11 +31,12 @@ export const Toolbar = ({ withShare }: ToolbarProps) => {
       />
       <Flex
         width="100%"
+        maxWidth="390px"
         direction="row"
         justify="between"
         gap="2"
         mb="8"
-        px={withShare ? '0' : '7'}
+        px={withShare ? '5' : '7'}
       >
         <Flex direction="column" align="center" gap="1">
           <IconButton
