@@ -5,35 +5,19 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { formatNumber } from '@/helpers/helpers';
-import { Header } from '@/components/Header/Header';
 import { BadgeSecond, IconButton, TokenCard } from '@/legos';
 import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
 import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
-import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
+import { Toolbar } from '../Toolbar/Toolbar';
 
 const mockBalance = 123831.74;
 
 const formatBalance = formatNumber(mockBalance);
 
-export const HomeDesign = () => {
-  const [isConvertOpen, setIsConvertOpen] = useState(false);
-  const [isDepositOpen, setIsDepositOpen] = useState(false);
-  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
-
-  const toggleConvertDrawer = () => setIsConvertOpen(!isConvertOpen);
-  const toggleDepositDrawer = () => setIsDepositOpen(!isDepositOpen);
-  const toggleWithdrawDrawer = () => setIsWithdrawOpen(!isWithdrawOpen);
+export const HomeContent = () => {
   return (
     <>
-      <Header />
-      <SplashScreen />
-      <ConvertDrawer isOpen={isConvertOpen} toggleOpen={toggleConvertDrawer} />
-      <DepositDrawer isOpen={isDepositOpen} toggleOpen={toggleDepositDrawer} />
-      <WithdrawDrawer
-        isOpen={isWithdrawOpen}
-        toggleOpen={toggleWithdrawDrawer}
-      />
       <Flex
         direction="column"
         align="center"
@@ -60,32 +44,7 @@ export const HomeDesign = () => {
           )}
         </Box>
 
-        <Flex width="100%" direction="row" justify="between" px="43px" mb="8">
-          <Flex direction="column" align="center" gap="1">
-            <IconButton
-              icon="transfer"
-              className="bg-yellow"
-              onClick={toggleConvertDrawer}
-            />
-            <Text size="2">Convert</Text>
-          </Flex>
-          <Flex direction="column" align="center" gap="1">
-            <IconButton
-              icon="deposit"
-              className="bg-magenta"
-              onClick={toggleDepositDrawer}
-            />
-            <Text size="2">Deposit</Text>
-          </Flex>
-          <Flex direction="column" align="center" gap="1">
-            <IconButton
-              icon="withdraw"
-              className="bg-violet"
-              onClick={toggleWithdrawDrawer}
-            />
-            <Text size="2">Withdraw</Text>
-          </Flex>
-        </Flex>
+        <Toolbar />
 
         <Flex
           width="100%"
