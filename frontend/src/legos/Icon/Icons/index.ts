@@ -16,3 +16,5 @@ export { Solana } from './Solana';
 export { BaseStatus } from './BaseStatus';
 export { TrendingDown } from './TrendingDown';
 export { Twitter } from './Twitter';
+export { Shift4 } from './Shift4';
+export { SwitchHorizontal } from './SwitchHorizontal';

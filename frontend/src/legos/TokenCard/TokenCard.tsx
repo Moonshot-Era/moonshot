@@ -14,6 +14,7 @@ interface Props {
   total: number;
   isLabel?: boolean;
   currencyType: 'solana' | 'baseStatus';
+  handler?: () => void;
 }
 
 export const TokenCard: FC<Props> = ({
@@ -23,6 +24,7 @@ export const TokenCard: FC<Props> = ({
   description,
   isLabel,
   currencyType,
+  handler,
 }) => {
   return (
     <Flex
@@ -31,6 +33,7 @@ export const TokenCard: FC<Props> = ({
       align="center"
       p="3"
       className="token-card  bg-white"
+      onClick={handler}
     >
       {isLabel ? (
         <Flex className="token-card-label bg-warning">

@@ -1,0 +1,8 @@
+@import '../../styles/variables.scss';
+
+.withdraw-info-card {
+  @include border-dark;
+  box-shadow: $shadow-2;
+  border-radius: 6px;
+  background-color: $violet;
+}

@@ -18,7 +18,9 @@ export type IconsNames =
   | 'solana'
   | 'baseStatus'
   | 'trendingDown'
-  | 'twitter';
+  | 'twitter'
+  | 'shift4'
+  | 'switchHorizontal';
 
 export type IconsNamesMapType = {
   [key in IconsNames]: ElementType;

@@ -1,9 +1,9 @@
 @import '../../styles/variables.scss';
 
 #button-slider-container {
+  width: 100%;
   position: relative;
   background-color: $greeny-3;
-  max-width: 339px;
   height: 56px;
   @include border-dark;
   border-radius: 32px;
@@ -22,7 +22,8 @@
   @include flex-center;
   &.unlocked {
     transition: all 0.3s;
-    right: 0 !important;
+    right: -1px !important;
+    left: auto !important;
     pointer-events: none;
   }
 }
