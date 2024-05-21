@@ -22,6 +22,17 @@ export function Test({ oidc }: { oidc: string }) {
         wallet: walletData.wallet,
       }
     );
+     const { data: portfolio } = await axios.post(
+       `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`,
+       { walletAddress: '' }
+     );
+     console.log('debug > portfolio===', portfolio);
+
+     const { data: tokenList } = await axios.post(
+       `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/token-list`,
+       { offset: 0, limit: 50 }
+     );
+     console.log('debug > tokenList===', tokenList);
 
     setBalance(balanceData?.balance);
   };

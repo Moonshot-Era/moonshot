@@ -22,6 +22,8 @@ import {
   ChartPie,
   ChartLine,
   Coins,
+  Shift4,
+  SwitchHorizontal,
 } from './Icons';
 
 export const IconsMap: IconsNamesMapType = {
@@ -47,4 +49,6 @@ export const IconsMap: IconsNamesMapType = {
   chartPie: ChartPie,
   chartLine: ChartLine,
   coins: Coins,
+  shift4: Shift4,
+  switchHorizontal: SwitchHorizontal,
 };

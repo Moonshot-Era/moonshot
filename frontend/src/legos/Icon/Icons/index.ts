@@ -20,3 +20,5 @@ export { ChartBar } from './ChartBar';
 export { ChartPie } from './ChartPie';
 export { ChartLine } from './ChartLine';
 export { Coins } from './Coins';
+export { Shift4 } from './Shift4';
+export { SwitchHorizontal } from './SwitchHorizontal';

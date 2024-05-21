@@ -1,14 +1,21 @@
+'use client';
+
+import { useState } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { formatNumber } from '@/helpers/helpers';
 import { BadgeSecond, IconButton, TokenCard } from '@/legos';
+import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
+import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
+import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
+import { Toolbar } from '../Toolbar/Toolbar';
 
 const mockBalance = 123831.74;
 
 const formatBalance = formatNumber(mockBalance);
 
-export const HomeDesign = () => {
+export const HomeContent = () => {
   return (
     <>
       <Flex
@@ -36,20 +43,7 @@ export const HomeDesign = () => {
           )}
         </Box>
 
-        <Flex width="100%" direction="row" justify="between" px="43px" mb="8">
-          <Flex direction="column" align="center" gap="1">
-            <IconButton icon="transfer" className="bg-yellow" />
-            <Text size="2">Convert</Text>
-          </Flex>
-          <Flex direction="column" align="center" gap="1">
-            <IconButton icon="deposit" className="bg-magenta" />
-            <Text size="2">Deposit</Text>
-          </Flex>
-          <Flex direction="column" align="center" gap="1">
-            <IconButton icon="withdraw" className="bg-violet" />
-            <Text size="2">Withdraw</Text>
-          </Flex>
-        </Flex>
+        <Toolbar />
 
         <Flex
           width="100%"

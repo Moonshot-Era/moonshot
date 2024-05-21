@@ -22,7 +22,9 @@ export type IconsNames =
   | 'chartBar'
   | 'chartPie'
   | 'chartLine'
-  | 'coins';
+  | 'coins'
+  | 'shift4'
+  | 'switchHorizontal';
 
 export type IconsNamesMapType = {
   [key in IconsNames]: ElementType;
