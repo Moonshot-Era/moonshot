@@ -17,8 +17,8 @@ export const Header = () => {
         <Flex width="100%" justify="between" gap="2">
           <Link href="/">
             <NavButton
-              className={pathname === '/home-design' ? 'nav-button-active' : ''}
-              onClick={() => router.push('/home-design')}
+              className={pathname === '/' ? 'nav-button-active' : ''}
+              onClick={() => router.push('/')}
             >
               <Icon icon="home" width={16} />
               <Text size="1">Home</Text>
