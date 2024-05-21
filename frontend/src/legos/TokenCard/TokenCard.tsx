@@ -5,15 +5,14 @@ import { Flex, Text } from '@radix-ui/themes';
 import './style.scss';
 import { Icon } from '../Icon';
 
-import image from '../../assets/images/user-icon.png';
-
 interface Props {
   name: string;
+  logo: string;
   description: string;
   percent: number;
   total: number;
   isLabel?: boolean;
-  currencyType: 'solana' | 'baseStatus';
+  currencyType: string;
   handler?: () => void;
 }
 
@@ -23,7 +22,7 @@ export const TokenCard: FC<Props> = ({
   total,
   description,
   isLabel,
-  currencyType,
+  logo,
   handler,
 }) => {
   return (
@@ -42,12 +41,9 @@ export const TokenCard: FC<Props> = ({
         </Flex>
       ) : null}
       <Flex direction="row">
-        <Flex position="relative">
-          <Image alt="img" src={image} />
-          <Flex position="absolute" right="0" bottom="0">
-            <Icon icon={currencyType} />
-          </Flex>
-        </Flex>
+        {/* <Flex position="relative">
+          <Image alt="img" width={50} height={50} src={logo} />
+        </Flex> */}
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
             {name}
