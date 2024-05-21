@@ -1,21 +1,24 @@
 'use client';
 
-import { useState } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import './style.scss';
 import { formatNumber } from '@/helpers/helpers';
-import { BadgeSecond, IconButton, TokenCard } from '@/legos';
-import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
-import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
-import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
+import { BadgeSecond, TokenCard } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
+import './style.scss';
 
 const mockBalance = 123831.74;
 
 const formatBalance = formatNumber(mockBalance);
 
-export const HomeContent = () => {
+interface HomeContentProps {
+  portfolio: {
+    balance: number;
+  };
+}
+
+export const HomeContent = ({ portfolio }: HomeContentProps) => {
+  console.log('debug > portfolio===', portfolio);
   return (
     <>
       <Flex
