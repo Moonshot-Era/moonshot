@@ -5,19 +5,22 @@ import { Sheet } from 'react-modal-sheet';
 import { Box, Flex, Text, Theme } from '@radix-ui/themes';
 
 import './style.scss';
-import { formatNumber } from '@/helpers/helpers';
-import { Icon, Input, Select, SlideButton, TokenCard } from '@/legos';
+import { Icon, Input, SlideButton, TokenCard } from '@/legos';
 
-const mockBalance = 123831;
-
-const formatBalance = formatNumber(mockBalance);
+const mockWithdrawData = {
+  currencyName: 'MICHI',
+  wallet: '5CxsB1BH...3whqAKYa',
+  processingTime: '< 1 minute',
+  minDeposit: '10,000 MICHI',
+  balance: 435,
+};
 
 interface Props {
   isOpen: boolean;
   toggleOpen: () => void;
 }
 
-export const ConvertDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
+export const WithdrawDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
   const [isTransfer, setIsTransfer] = useState(false);
 
   const toggleTransfer = () => setIsTransfer(!isTransfer);
@@ -59,8 +62,9 @@ export const ConvertDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
                 pb="6"
               >
                 <Text size="4" weight="bold">
-                  Convert
+                  Withdraw
                 </Text>
+
                 <Input placeholder="Search assets" icon="search" />
                 <Flex width="100%" direction="column" gap="4">
                   <TokenCard
@@ -121,66 +125,45 @@ export const ConvertDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
                 align="center"
                 px="4"
                 pb="6"
-                gap="5"
+                gap="6"
               >
                 <Text size="4" weight="bold">
-                  Convert MICHI to USDC
+                  {`Withdraw ${mockWithdrawData.currencyName}`}
                 </Text>
                 <Flex
                   width="100%"
-                  justify="between"
-                  py="3"
-                  px="4"
-                  className="bg-yellow transfer-card"
+                  justify="center"
+                  align="center"
+                  position="relative"
                 >
-                  <Flex direction="column" justify="between" gap="1">
-                    <Text size="5" weight="bold">
-                      {formatBalance[0]}
-                    </Text>
-                    <Text size="1">{`Available: 3,210,563`}</Text>
-                  </Flex>
+                  <Text size="7" weight="medium">
+                    {`${mockWithdrawData.balance}$`}
+                  </Text>
                   <Flex
                     direction="column"
-                    justify="between"
-                    align="end"
-                    gap="1"
+                    align="center"
+                    position="absolute"
+                    right="0"
                   >
-                    <Select
-                      values={[
-                        { id: 1, value: 'USDT' },
-                        { id: 2, value: 'MICHI' },
-                        { id: 3, value: 'BTC' },
-                      ]}
-                    />
-
-                    <Text size="1" className="transfer-card-max">
-                      Max
+                    <Icon icon="switchHorizontal" />
+                    <Text size="4" weight="medium">
+                      {mockWithdrawData.currencyName}
                     </Text>
                   </Flex>
                 </Flex>
-                <Box className="convert-icon-arrow">
-                  <Icon icon="arrowRight" />
-                </Box>
-                <Flex
-                  width="100%"
-                  justify="between"
-                  py="3"
-                  px="4"
-                  className="bg-yellow transfer-card"
-                >
-                  <Text size="5" weight="bold">
-                    342,659
-                  </Text>
 
-                  <Select
-                    defaultValue={2}
-                    values={[
-                      { id: 1, value: 'USDT' },
-                      { id: 2, value: 'MICHI' },
-                      { id: 3, value: 'BTC' },
-                    ]}
-                  />
-                </Flex>
+                <Box
+                  width="100%"
+                  py="2"
+                  pl="2"
+                  pr="4"
+                  className="withdraw-info-card"
+                >
+                  <Text size="1" weight="medium">
+                    You need at least 1,000 MICHI to complete a withdrawal
+                  </Text>
+                </Box>
+                <Input placeholder="Wallet address" />
                 <SlideButton />
               </Flex>
             </Theme>

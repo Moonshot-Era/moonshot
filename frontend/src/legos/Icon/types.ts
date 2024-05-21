@@ -19,7 +19,8 @@ export type IconsNames =
   | 'baseStatus'
   | 'trendingDown'
   | 'twitter'
-  | 'shift4';
+  | 'shift4'
+  | 'switchHorizontal';
 
 export type IconsNamesMapType = {
   [key in IconsNames]: ElementType;

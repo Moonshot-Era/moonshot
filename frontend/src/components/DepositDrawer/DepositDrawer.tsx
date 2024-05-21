@@ -1,8 +1,12 @@
 'use client';
 
+import Image from 'next/image';
+import { FC, useState } from 'react';
+import { Sheet } from 'react-modal-sheet';
 import { Box, Flex, Text, Theme } from '@radix-ui/themes';
 
 import './style.scss';
+import { copyToClipboard } from '@/helpers/helpers';
 import qrCode from '../../assets/images/qr-code.png';
 import { Button, Icon, Input, TokenCard } from '@/legos';
 
@@ -18,11 +22,6 @@ interface Props {
   toggleOpen: () => void;
 }
 
-import { Sheet } from 'react-modal-sheet';
-import { FC, useState } from 'react';
-import { copyToClipboard, formatNumber } from '@/helpers/helpers';
-import Image from 'next/image';
-
 export const DepositDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
   const [isTransfer, setIsTransfer] = useState(false);
 
@@ -33,28 +32,29 @@ export const DepositDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
     toggleOpen();
   };
   return (
-    <Sheet
-      isOpen={isOpen}
-      detent="content-height"
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-      onClose={handleClose}
-    >
-      <Sheet.Container
-        className="bg-yellow-1"
+    <>
+      <Sheet
+        isOpen={isOpen && !isTransfer}
+        snapPoints={[800, 540]}
+        initialSnap={1}
         style={{
-          maxWidth: '390px',
-          left: 'auto',
-          borderTopLeftRadius: '24px',
-          borderTopRightRadius: '24px',
+          display: 'flex',
+          justifyContent: 'center',
         }}
+        onClose={handleClose}
       >
-        <Sheet.Header />
-        <Sheet.Content>
-          <Theme>
-            {!isTransfer ? (
+        <Sheet.Container
+          className="bg-yellow-1"
+          style={{
+            maxWidth: '390px',
+            left: 'auto',
+            borderTopLeftRadius: '24px',
+            borderTopRightRadius: '24px',
+          }}
+        >
+          <Sheet.Header />
+          <Sheet.Content>
+            <Theme>
               <Flex
                 width="100%"
                 direction="column"
@@ -118,7 +118,32 @@ export const DepositDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
                   />
                 </Flex>
               </Flex>
-            ) : (
+            </Theme>
+          </Sheet.Content>
+        </Sheet.Container>
+        <Sheet.Backdrop />
+      </Sheet>
+      <Sheet
+        isOpen={isOpen && isTransfer}
+        detent="content-height"
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+        onClose={handleClose}
+      >
+        <Sheet.Container
+          className="bg-yellow-1"
+          style={{
+            maxWidth: '390px',
+            left: 'auto',
+            borderTopLeftRadius: '24px',
+            borderTopRightRadius: '24px',
+          }}
+        >
+          <Sheet.Header />
+          <Sheet.Content>
+            <Theme>
               <Flex
                 width="100%"
                 direction="column"
@@ -175,11 +200,11 @@ export const DepositDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
                   </Flex>
                 </Flex>
               </Flex>
-            )}
-          </Theme>
-        </Sheet.Content>
-      </Sheet.Container>
-      <Sheet.Backdrop />
-    </Sheet>
+            </Theme>
+          </Sheet.Content>
+        </Sheet.Container>
+        <Sheet.Backdrop />
+      </Sheet>
+    </>
   );
 };
