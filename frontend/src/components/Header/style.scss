@@ -3,9 +3,10 @@
 header {
   position: fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
   width: 100%;
-  max-width: 390px;
-  padding: 20px 48px;
+  padding: 20px;
   border-top: 1.5px solid $dark;
 }

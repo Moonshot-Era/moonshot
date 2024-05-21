@@ -24,8 +24,7 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
         align="center"
         justify="center"
         width="100%"
-        mt="147px"
-        className="main-wrapper"
+        className="main-wrapper home-wrapper"
       >
         <Flex direction="row">
           <Text size="8" weight="bold">

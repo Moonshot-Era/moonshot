@@ -28,7 +28,14 @@ export const Toolbar = ({ withShare }: ToolbarProps) => {
         isOpen={isWithdrawOpen}
         toggleOpen={toggleWithdrawDrawer}
       />
-      <Flex width="100%" direction="row" justify="between" px="43px" mb="8">
+      <Flex
+        width="100%"
+        direction="row"
+        justify="between"
+        gap="2"
+        mb="8"
+        px={withShare ? '0' : '7'}
+      >
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="transfer"
@@ -56,8 +63,8 @@ export const Toolbar = ({ withShare }: ToolbarProps) => {
         {withShare ? (
           <Flex direction="column" align="center" gap="1">
             <IconButton
-              icon="search"
-              className="bg-violet"
+              icon="send"
+              className="bg-blue"
               onClick={toggleWithdrawDrawer}
             />
             <Text size="2">Share</Text>
