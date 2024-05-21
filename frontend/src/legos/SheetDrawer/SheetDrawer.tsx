@@ -4,8 +4,6 @@ import { FC, ReactNode } from 'react';
 import { Theme } from '@radix-ui/themes';
 import { Sheet } from 'react-modal-sheet';
 
-import './style.scss';
-
 interface Props {
   isOpen: boolean;
   handleClose: () => void;
