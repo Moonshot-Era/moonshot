@@ -7,8 +7,9 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 import './style.scss';
 import userIcon from '../../assets/images/user-icon.png';
 
+import { Toolbar } from '../Toolbar/Toolbar';
 import { formatNumber } from '@/helpers/helpers';
-import { Icon, IconButton, Input, TokenCard } from '@/legos';
+import { Icon, Input, TokenCard } from '@/legos';
 
 const mockUserData = {
   name: 'jeo boden',
@@ -76,24 +77,8 @@ export const ExploreContent = () => {
                 <Icon icon="arrowRight" />
               </Box>
             </Flex>
-            <Flex width="100%" direction="row" justify="between">
-              <Flex direction="column" align="center" gap="1">
-                <IconButton icon="transfer" className="bg-yellow" />
-                <Text size="2">Convert</Text>
-              </Flex>
-              <Flex direction="column" align="center" gap="1">
-                <IconButton icon="deposit" className="bg-magenta" />
-                <Text size="2">Deposit</Text>
-              </Flex>
-              <Flex direction="column" align="center" gap="1">
-                <IconButton icon="withdraw" className="bg-violet" />
-                <Text size="2">Withdraw</Text>
-              </Flex>
-              <Flex direction="column" align="center" gap="1">
-                <IconButton icon="send" className="bg-blue" />
-                <Text size="2">Share</Text>
-              </Flex>
-            </Flex>
+            <Toolbar withShare />
+
             <Flex
               direction="row"
               p="4"

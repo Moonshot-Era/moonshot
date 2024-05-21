@@ -43,7 +43,9 @@ export const HomeContent = () => {
           )}
         </Box>
 
-        <Toolbar />
+        <Box px="43px">
+          <Toolbar />
+        </Box>
 
         <Flex
           width="100%"
