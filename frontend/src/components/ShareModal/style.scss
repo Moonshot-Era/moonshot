@@ -1,0 +1,14 @@
+@import "../../styles/variables.scss";
+
+.dialog-content {
+  padding: 32px;
+  background-color: $yellow-1;
+  border: 2px solid $dark;
+}
+
+.share-image-wrapper {
+  border: 1px solid $dark;
+  box-shadow: $shadow-1;
+  padding: 8px;
+  background-color: $white;
+}
