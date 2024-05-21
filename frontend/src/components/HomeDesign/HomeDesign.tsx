@@ -8,6 +8,7 @@ import { formatNumber } from '@/helpers/helpers';
 import { Header } from '@/components/Header/Header';
 import { BadgeSecond, IconButton, TokenCard } from '@/legos';
 import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
+import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
 import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 
 const mockBalance = 123831.74;
@@ -15,14 +16,17 @@ const mockBalance = 123831.74;
 const formatBalance = formatNumber(mockBalance);
 
 export const HomeDesign = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isConvertOpen, setIsConvertOpen] = useState(false);
+  const [isDepositOpen, setIsDepositOpen] = useState(false);
 
-  const toggleConvertDrawer = () => setIsOpen(!isOpen);
+  const toggleConvertDrawer = () => setIsConvertOpen(!isConvertOpen);
+  const toggleDepositDrawer = () => setIsDepositOpen(!isDepositOpen);
   return (
     <>
       <Header />
       <SplashScreen />
-      <ConvertDrawer isOpen={isOpen} toggleOpen={toggleConvertDrawer} />
+      <ConvertDrawer isOpen={isConvertOpen} toggleOpen={toggleConvertDrawer} />
+      <DepositDrawer isOpen={isDepositOpen} toggleOpen={toggleDepositDrawer} />
       <Flex
         direction="column"
         align="center"
@@ -59,7 +63,11 @@ export const HomeDesign = () => {
             <Text size="2">Convert</Text>
           </Flex>
           <Flex direction="column" align="center" gap="1">
-            <IconButton icon="deposit" className="bg-magenta" />
+            <IconButton
+              icon="deposit"
+              className="bg-magenta"
+              onClick={toggleDepositDrawer}
+            />
             <Text size="2">Deposit</Text>
           </Flex>
           <Flex direction="column" align="center" gap="1">
