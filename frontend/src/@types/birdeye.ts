@@ -10,7 +10,7 @@ export interface TokenItemType {
   chainId: string;
   decimals: number;
   logoURI: string;
-  name: number;
+  name: string;
   priceUsd: number;
   symbol: string;
   uiAmount: number;

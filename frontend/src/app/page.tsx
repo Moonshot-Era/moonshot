@@ -15,7 +15,7 @@ export default async function Index() {
     redirect('/login');
   }
 
-  const { data: portfolio } = await axios.post(
+  const { data } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`,
     { walletAddress: '' }
   );
@@ -24,7 +24,7 @@ export default async function Index() {
     <>
       <Header />
       <SplashScreen />
-      <HomeContent portfolio={portfolio} />
+      <HomeContent portfolio={data?.walletPortfolio} />
     </>
   );
 }
