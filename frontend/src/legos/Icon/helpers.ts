@@ -18,6 +18,10 @@ import {
   BaseStatus,
   TrendingDown,
   Twitter,
+  ChartBar,
+  ChartPie,
+  ChartLine,
+  Coins,
 } from './Icons';
 
 export const IconsMap: IconsNamesMapType = {
@@ -39,4 +43,8 @@ export const IconsMap: IconsNamesMapType = {
   baseStatus: BaseStatus,
   trendingDown: TrendingDown,
   twitter: Twitter,
+  chartBar: ChartBar,
+  chartPie: ChartPie,
+  chartLine: ChartLine,
+  coins: Coins,
 };

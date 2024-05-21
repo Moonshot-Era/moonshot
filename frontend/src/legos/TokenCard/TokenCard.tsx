@@ -5,7 +5,7 @@ import { Flex, Text } from '@radix-ui/themes';
 import './style.scss';
 import { Icon } from '../Icon';
 
-import image from '../../assets/images/IMG.png';
+import image from '../../assets/images/user-icon.png';
 
 interface Props {
   name: string;

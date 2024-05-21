@@ -2,8 +2,17 @@
 
 .explore-wrapper {
   padding-top: 80px;
+  padding-bottom: 120px;
 }
 
 .explore-icon-arrow {
   transform: rotate(180deg);
+  cursor: pointer;
+}
+
+.explore-card {
+  @include border-dark;
+  box-shadow: $shadow-2;
+  border-radius: 8px;
+  background-color: $white;
 }
