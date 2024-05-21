@@ -2,9 +2,7 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { formatNumber } from '@/helpers/helpers';
-import { Header } from '@/components/Header/Header';
 import { BadgeSecond, IconButton, TokenCard } from '@/legos';
-import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 
 const mockBalance = 123831.74;
 
@@ -13,16 +11,12 @@ const formatBalance = formatNumber(mockBalance);
 export const HomeDesign = () => {
   return (
     <>
-      <Header />
-      <SplashScreen />
-
       <Flex
         direction="column"
         align="center"
         justify="center"
         width="100%"
-        mt="147px"
-        className="main-wrapper"
+        className="main-wrapper home-wrapper"
       >
         <Flex direction="row">
           <Text size="8" weight="bold">
