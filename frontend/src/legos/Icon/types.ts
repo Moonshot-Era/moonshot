@@ -21,7 +21,9 @@ export type IconsNames =
   | "message"
   | "trendingDown"
   | "fileDownload"
-  | "twitter";
+  | "twitter"
+  | "shift4"
+  | "switchHorizontal";
 
 export type IconsNamesMapType = {
   [key in IconsNames]: ElementType;

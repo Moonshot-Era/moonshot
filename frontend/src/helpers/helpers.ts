@@ -13,3 +13,7 @@ export const formatNumber = (num: number) => {
 
   return [formattedIntegerPart, '.' + decimalPart];
 };
+
+export const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text);
+};

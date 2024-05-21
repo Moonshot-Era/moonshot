@@ -68,21 +68,21 @@ export const getUserWallet = async (
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();
 
     const org = cubeClient.org();
-
     if (!user) {
       const userId = await org.createOidcUser({ iss, sub }, email, {
         mfaPolicy: undefined,
         memberRole: 'Alien',
       });
 
-      key = await org.createKey(Ed25519.Solana, userId, {});
+      key = await org.createKey(Ed25519.Solana, userId, {
+        policy: ['AllowRawBlobSigning'],
+      });
     } else {
       const userCubeSigner = await CubeSignerInstance.getUserSessionClient(
         oidcToken
       );
       const keys = await userCubeSigner.sessionKeys();
-      console.log('debug > keys===', keys?.[0]?.cached);
-      key = keys?.[0];
+      key = keys?.[keys?.length - 1];
     }
 
     if (!key) {
@@ -91,6 +91,5 @@ export const getUserWallet = async (
   } catch (err) {
     throw err;
   }
-
   return key.materialId;
 };

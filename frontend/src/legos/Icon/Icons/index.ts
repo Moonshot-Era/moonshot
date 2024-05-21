@@ -19,3 +19,5 @@ export { TrendingDown } from "./TrendingDown";
 export { Twitter } from "./Twitter";
 export { Message } from "./Message";
 export { FileDownload } from "./FileDownload";
+export { Shift4 } from "./Shift4";
+export { SwitchHorizontal } from "./SwitchHorizontal";

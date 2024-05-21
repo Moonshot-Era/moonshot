@@ -21,6 +21,8 @@ import {
   Twitter,
   Message,
   FileDownload,
+  Shift4,
+  SwitchHorizontal,
 } from "./Icons";
 
 export const IconsMap: IconsNamesMapType = {
@@ -45,4 +47,6 @@ export const IconsMap: IconsNamesMapType = {
   twitter: Twitter,
   message: Message,
   fileDownload: FileDownload,
+  shift4: Shift4,
+  switchHorizontal: SwitchHorizontal,
 };

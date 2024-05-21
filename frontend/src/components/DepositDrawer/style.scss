@@ -1,0 +1,26 @@
+@import '../../styles/variables.scss';
+
+.deposit-transfer-card-bank {
+  @include border-dark;
+  box-shadow: $shadow-2;
+  border-radius: 8px;
+  background-color: $white;
+  cursor: pointer;
+}
+
+.deposit-transfer-card-bank-border {
+  border-bottom: 1px solid $dark;
+}
+
+.deposit-copy-button {
+  height: 24px;
+  width: 56px;
+  box-shadow: 2px 1px 0px 0px #000000;
+}
+
+.deposit-info-card {
+  @include border-dark;
+  box-shadow: $shadow-2;
+  border-radius: 6px;
+  background-color: $magenta;
+}
