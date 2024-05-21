@@ -18,7 +18,13 @@ export const Header = () => {
       {isVisible ? (
         <header className="bg-white">
           <nav>
-            <Flex width="100%" justify="between" gap="2">
+            <Flex
+              width="100%"
+              justify="between"
+              gap="2"
+              maxWidth="430px"
+              m="auto"
+            >
               <NavButton
                 className={pathname === '/' ? 'nav-button-active' : ''}
                 onClick={() => router.push('/')}

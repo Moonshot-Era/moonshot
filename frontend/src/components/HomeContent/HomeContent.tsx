@@ -44,9 +44,7 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
           )}
         </Box>
 
-        <Box px="43px">
-          <Toolbar />
-        </Box>
+        <Toolbar />
 
         <Flex
           width="100%"

@@ -35,7 +35,7 @@ export const SheetDrawer: FC<Props> = ({
     <Sheet.Container
       className="bg-yellow-1"
       style={{
-        maxWidth: '390px',
+        maxWidth: '430px',
         left: 'auto',
         borderTopLeftRadius: '24px',
         borderTopRightRadius: '24px',
