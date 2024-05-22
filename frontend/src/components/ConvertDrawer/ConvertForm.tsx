@@ -10,10 +10,10 @@ const mockBalance = 123831;
 
 const formatBalance = formatNumber(mockBalance);
 
-export const ConvertItem = () => (
+export const ConvertForm = ({ selectedTokens }) => (
   <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="5">
     <Text size="4" weight="bold">
-      Convert MICHI to USDC
+      Convert {selectedTokens.from.name} to {selectedTokens.to.name}
     </Text>
     <Flex
       width="100%"
@@ -30,11 +30,8 @@ export const ConvertItem = () => (
       </Flex>
       <Flex direction="column" justify="between" align="end" gap="1">
         <Select
-          values={[
-            { id: 1, value: 'USDT' },
-            { id: 2, value: 'MICHI' },
-            { id: 3, value: 'BTC' },
-          ]}
+          values={[{ id: 1, value: selectedTokens.from.name }]}
+          value={selectedTokens.from.name}
         />
 
         <Text size="1" className="transfer-card-max">
@@ -58,11 +55,8 @@ export const ConvertItem = () => (
 
       <Select
         defaultValue={2}
-        values={[
-          { id: 1, value: 'USDT' },
-          { id: 2, value: 'MICHI' },
-          { id: 3, value: 'BTC' },
-        ]}
+        values={[{ id: 1, value: selectedTokens.to.name }]}
+        value={selectedTokens.to.name}
       />
     </Flex>
     <SlideButton />

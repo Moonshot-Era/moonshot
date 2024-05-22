@@ -4,16 +4,18 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '../Icon';
+import { currencyFormatter } from '@/helpers/currencyFormatter';
 
 interface Props {
   name: string;
-  logo: string;
+  logoSrc: string;
   description: string;
   percent: number;
   total: number;
   isLabel?: boolean;
   currencyType: string;
-  handler?: () => void;
+  onClick?: () => void;
+  type?: 'default' | 'convert';
 }
 
 export const TokenCard: FC<Props> = ({
@@ -22,9 +24,12 @@ export const TokenCard: FC<Props> = ({
   total,
   description,
   isLabel,
-  logo,
-  handler,
+  logoSrc,
+  type = 'default',
+  onClick,
 }) => {
+  const percentChange = percent ? (+percent).toFixed(2) : null
+
   return (
     <Flex
       direction="row"
@@ -32,7 +37,7 @@ export const TokenCard: FC<Props> = ({
       align="center"
       p="3"
       className="token-card  bg-white"
-      onClick={handler}
+      onClick={onClick}
     >
       {isLabel ? (
         <Flex className="token-card-label bg-warning">
@@ -41,9 +46,11 @@ export const TokenCard: FC<Props> = ({
         </Flex>
       ) : null}
       <Flex direction="row">
-        {/* <Flex position="relative">
-          <Image alt="img" width={50} height={50} src={logo} />
-        </Flex> */}
+        {type === 'convert' && (
+          <Flex position="relative">
+            <img alt="img" width={50} height={50} src={logoSrc} className="token-card-img" />
+          </Flex>
+        )}
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
             {name}
@@ -55,19 +62,30 @@ export const TokenCard: FC<Props> = ({
       </Flex>
       <Flex direction="row" align="center" my="1">
         <Flex direction="column" justify="between" align="end" height="40px">
-          <Text size="3" weight="medium">{`($${total})`}</Text>
-          <Flex direction="row" align="center" gap="1">
-            <div
-              className={total > 0 ? 'icon-success-color' : 'icon-error-color'}
-            >
-              <Icon
-                icon={total > 0 ? 'trendingUp' : 'trendingDown'}
-                width={16}
-                height={16}
-              />
-            </div>
-            <Text size="1" weight="medium">{`${percent}%`}</Text>
-          </Flex>
+          <Text size="3" weight="medium">{currencyFormatter(total, { minimumFractionDigits: type === 'default' ? 0 : 4 })}</Text>
+          {percentChange && (
+            <Flex direction="row" align="center" gap="1">
+              <Flex
+                direction="row"
+                align="center"
+                justify="center"
+                className={percentChange > 0 ? 'icon-success-color' : 'icon-error-color'}
+              >
+                <Icon
+                  icon={percentChange > 0 ? 'trendingUp' : 'trendingDown'}
+                  width={16}
+                  height={16}
+                />
+                <Text
+                  size="1"
+                  weight="medium"
+                  className={percentChange > 0 ? 'text-success-color' : 'text-error-color'}
+                >
+                  {`${percentChange}%`}
+                </Text>
+              </Flex>
+            </Flex>
+          )}
         </Flex>
         <Icon icon="chevronRight" />
       </Flex>

@@ -5,6 +5,7 @@ import axios from 'axios';
 
 import { Button } from '@/legos';
 import { Flex, Text } from '@radix-ui/themes';
+import { Convert } from '@/components/convert/Convert';
 
 export function Test({ oidc }: { oidc: string }) {
   const [balance, setBalance] = useState(null);
@@ -62,6 +63,8 @@ export function Test({ oidc }: { oidc: string }) {
           SEND 0.1 SOL
         </Text>
       </Button>
+
+      <Convert />
     </Flex>
   );
 }

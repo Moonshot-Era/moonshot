@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
+import { ReactQueryProvider } from '@/helpers/ReactQueryProvider'
 
 import './globals.scss';
 import './globals.css';
@@ -60,7 +61,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={clashDisplayFont.className}>
-        <Theme className="bg-transparent">{children}</Theme>
+        <ReactQueryProvider>
+          <Theme className="bg-transparent">{children}</Theme>
+        </ReactQueryProvider>
       </body>
     </html>
   );

@@ -15,6 +15,7 @@ export const getTokenList = async (offset: number, limit: number) => {
         },
       }
     );
+
     return tokenList;
   } catch (err) {
     console.log('Error', err);

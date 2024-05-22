@@ -22,6 +22,7 @@
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.1",
     "@tabler/icons-react": "^3.4.0",
+    "@tanstack/react-query": "^5.37.1",
     "autoprefixer": "10.4.17",
     "axios": "^1.6.8",
     "framer-motion": "^11.2.4",

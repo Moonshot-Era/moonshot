@@ -113,7 +113,7 @@ export const SlideButton = () => {
 
   return (
     <div id="button-slider-container" ref={backgroundRef}>
-      <Text className="button-slide-text" ref={textRef} size="2">
+      <Text className="button-slide-text" ref={textRef} size="2" weight="medium">
         Swipe to confirm
       </Text>
       <div
