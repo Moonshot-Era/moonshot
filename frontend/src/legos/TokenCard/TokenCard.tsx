@@ -4,27 +4,15 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '../Icon';
+import { formatNumberToUsd } from '@/helpers/helpers';
+import { WalletPortfolioDetailsType } from '@/services/birdeye/getWalletPortfolio';
 
 interface Props {
-  name: string;
-  logo: string;
-  description: string;
-  percent: number;
-  total: number;
-  isLabel?: boolean;
-  currencyType: string;
+  token?: WalletPortfolioDetailsType;
   handler?: () => void;
 }
 
-export const TokenCard: FC<Props> = ({
-  name,
-  percent,
-  total,
-  description,
-  isLabel,
-  logo,
-  handler,
-}) => {
+export const TokenCard: FC<Props> = ({ token, handler }) => {
   return (
     <Flex
       direction="row"
@@ -34,41 +22,73 @@ export const TokenCard: FC<Props> = ({
       className="token-card  bg-white"
       onClick={handler}
     >
-      {isLabel ? (
+      {token?.percentage_change_h24 && +token.percentage_change_h24 > 100 ? (
         <Flex className="token-card-label bg-warning">
-          🔥🔥🔥
+          {(+token.percentage_change_h24 > 100 && '🔥') ||
+            (+token.percentage_change_h24 > 1000 && '🔥🔥') ||
+            (+token.percentage_change_h24 > 1000 && '🔥🔥🔥')}
           <div className="token-card-label-shadow bg-dark"></div>
         </Flex>
       ) : null}
       <Flex direction="row">
-        {/* <Flex position="relative">
-          <Image alt="img" width={50} height={50} src={logo} />
-        </Flex> */}
+        <Flex position="relative">
+          {!!token?.imageUrl && (
+            <Image
+              alt="img"
+              width={50}
+              height={50}
+              src={token?.imageUrl}
+              style={{ borderRadius: '50%' }}
+            />
+          )}
+        </Flex>
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
-            {name}
+            {token?.name}
           </Text>
           <Text size="1" weight="regular">
-            {description}
+            {token?.uiAmount} {token?.symbol}
           </Text>
         </Flex>
       </Flex>
       <Flex direction="row" align="center" my="1">
-        <Flex direction="column" justify="between" align="end" height="40px">
-          <Text size="3" weight="medium">{`($${total})`}</Text>
-          <Flex direction="row" align="center" gap="1">
-            <div
-              className={total > 0 ? 'icon-success-color' : 'icon-error-color'}
-            >
-              <Icon
-                icon={total > 0 ? 'trendingUp' : 'trendingDown'}
-                width={16}
-                height={16}
-              />
-            </div>
-            <Text size="1" weight="medium">{`${percent}%`}</Text>
+        {!!token?.valueUsd && (
+          <Flex direction="column" justify="between" align="end" height="40px">
+            <Text size="3" weight="medium">
+              {formatNumberToUsd.format(token?.valueUsd)}
+            </Text>
+            {token?.percentage_change_h24 && (
+              <Flex direction="row" align="center" gap="1">
+                <div
+                  className={
+                    +token?.percentage_change_h24 > 0
+                      ? 'icon-success-color'
+                      : 'icon-error-color'
+                  }
+                >
+                  <Icon
+                    icon={
+                      +token?.percentage_change_h24 > 0
+                        ? 'trendingUp'
+                        : 'trendingDown'
+                    }
+                    width={16}
+                    height={16}
+                  />
+                </div>
+                <Text
+                  className={
+                    +token?.percentage_change_h24 > 0
+                      ? 'text-color-success'
+                      : 'text-color-error'
+                  }
+                  size="1"
+                  weight="medium"
+                >{`${+token?.percentage_change_h24}%`}</Text>
+              </Flex>
+            )}
           </Flex>
-        </Flex>
+        )}
         <Icon icon="chevronRight" />
       </Flex>
     </Flex>

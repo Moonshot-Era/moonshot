@@ -3,12 +3,7 @@
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
-import { formatNumber } from '@/helpers/helpers';
 import { Icon, Select, SlideButton } from '@/legos';
-
-const mockBalance = 123831;
-
-const formatBalance = formatNumber(mockBalance);
 
 export const ConvertItem = () => (
   <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="5">
@@ -24,7 +19,7 @@ export const ConvertItem = () => (
     >
       <Flex direction="column" justify="between" gap="1">
         <Text size="5" weight="bold">
-          {formatBalance.numbersArray[0]}
+          {123831}
         </Text>
         <Text size="1">{`Available: 3,210,563`}</Text>
       </Flex>

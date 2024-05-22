@@ -1,10 +1,10 @@
 export interface WalletPortfolioType {
-  items: TokenItemType[];
+  items: TokenItemBirdEyeType[];
   totalUsd: number;
   wallet: string;
 }
 
-export interface TokenItemType {
+export interface TokenItemBirdEyeType {
   address: string;
   balance: number;
   chainId: string;
