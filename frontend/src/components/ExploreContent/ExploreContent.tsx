@@ -46,6 +46,7 @@ export const ExploreContent = () => {
               .map((item, index) => (
                 <TokenCard
                   key={index}
+                  logo=""
                   name="jeo boden"
                   currencyType="baseStatus"
                   percent={2.7}
@@ -90,7 +91,7 @@ export const ExploreContent = () => {
                   Your balance
                 </Text>
                 <Text size="2" weight="medium">
-                  {`$${mockUserData.balance}`}
+                  {`$${mockUserData.balance.numbersArray[0]}`}
                 </Text>
               </Flex>
               <Flex

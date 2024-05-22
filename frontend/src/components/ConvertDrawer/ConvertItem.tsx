@@ -24,7 +24,7 @@ export const ConvertItem = () => (
     >
       <Flex direction="column" justify="between" gap="1">
         <Text size="5" weight="bold">
-          {formatBalance[0]}
+          {formatBalance.numbersArray[0]}
         </Text>
         <Text size="1">{`Available: 3,210,563`}</Text>
       </Flex>

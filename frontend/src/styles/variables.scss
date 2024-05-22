@@ -21,7 +21,8 @@ $greeny-2: #effcdc;
 $greeny-3: #e3ffc0;
 
 $shadow-1: 4px 6px 0px 0px $dark;
-$shadow-2: 2px 1px 0px 0px $dark;
+$shadow-2: 4px 2px 0px 0px $dark;
+$shadow-3: 2px 1px 0px 0px $dark;
 
 @mixin flex-center {
   display: flex;

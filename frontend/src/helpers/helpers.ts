@@ -11,7 +11,10 @@ export const formatNumber = (num: number) => {
     decimalPart = decimalPart + '0';
   }
 
-  return [formattedIntegerPart, '.' + decimalPart];
+  return {
+    number: formattedIntegerPart + '.' + decimalPart,
+    numbersArray: [formattedIntegerPart, '.' + decimalPart],
+  };
 };
 
 export const copyToClipboard = (text: string) => {
