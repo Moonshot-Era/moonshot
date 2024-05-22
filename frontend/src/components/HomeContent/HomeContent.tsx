@@ -2,11 +2,7 @@
 
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import {
-  formatNumber,
-  formatNumberToUsd,
-  isSolanaAddress,
-} from '@/helpers/helpers';
+import { formatNumberToUsd, isSolanaAddress } from '@/helpers/helpers';
 import { BadgeSecond, TokenCard } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 import './style.scss';

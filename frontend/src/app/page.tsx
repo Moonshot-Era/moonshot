@@ -20,7 +20,6 @@ export default async function Index() {
     { walletAddress: '' }
   );
 
-  console.log('debug > data===', data);
   return (
     <>
       <Header />

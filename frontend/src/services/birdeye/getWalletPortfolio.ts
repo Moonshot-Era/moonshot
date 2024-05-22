@@ -25,7 +25,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       .join(',');
 
     const { data: tokensListGecko } = await axios.get(
-      `https://api.geckoterminal.com/api/v2/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`
+      `${process.env.GECKO_URL_API}/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`
     );
 
     return walletPortfolio?.success
