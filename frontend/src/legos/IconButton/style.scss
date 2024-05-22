@@ -1,11 +1,11 @@
-@import "../../styles/variables.scss";
+@import '../../styles/variables.scss';
 
 .icon-button {
   @include flex-center;
   @include border-dark;
   border-radius: 100%;
   transition: all 0.3s;
-  box-shadow: 2px 1px 0px 0px #000000;
+  box-shadow: $shadow-3;
   &:active {
     box-shadow: none;
     filter: brightness(0.9);
