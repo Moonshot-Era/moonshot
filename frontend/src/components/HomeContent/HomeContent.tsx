@@ -2,42 +2,24 @@
 
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import { formatNumberToUsd, isSolanaAddress } from '@/helpers/helpers';
+import { formatNumberToUsd } from '@/helpers/helpers';
 import { BadgeSecond, TokenCard } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 import './style.scss';
-import { TokenItemBirdEyeType, WalletPortfolioType } from '@/@types/birdeye';
 import {
-  PoolGeckoType,
-  TokenAttributes,
-  TokenItemGeckoType,
-} from '@/@types/gecko';
+  WalletPortfolioDetailsType,
+  WalletPortfolioNormilizedType,
+} from '@/services/birdeye/getWalletPortfolio';
 
 interface HomeContentProps {
-  portfolio: {
-    walletDetails: WalletPortfolioType;
-    tokensDetails: TokenItemGeckoType[];
-    tokensIncludedDetails: PoolGeckoType[];
-  };
+  portfolio: WalletPortfolioNormilizedType;
 }
 
 export const HomeContent = ({ portfolio }: HomeContentProps) => {
-  const { walletDetails, tokensDetails, tokensIncludedDetails } = portfolio;
-
-  const getTokenDetails = (asset: string) => {
-    const tokenDetails = tokensDetails?.find(
-      (token) => token.attributes.address === (isSolanaAddress(asset) || asset)
-    )?.attributes as TokenAttributes;
-
-    const percentage_change_h24 = tokensIncludedDetails?.find(
-      (included) =>
-        included?.relationships?.base_token?.data?.id ===
-        `solana_${isSolanaAddress(asset) || asset}`
-    )?.attributes?.price_change_percentage?.h24;
-
-    return { ...tokenDetails, percentage_change_h24 };
-  };
-
+  const { walletDetails, totalUsd } = portfolio;
+  const totalH24 = walletDetails?.reduce((acc, cur) => {
+    return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
+  }, 0);
   return (
     <>
       <Flex
@@ -49,17 +31,20 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
       >
         <Flex direction="row">
           <Text size="8" weight="bold">
-            {walletDetails?.totalUsd > 0
-              ? formatNumberToUsd.format(walletDetails.totalUsd).split('.')[0]
+            {totalUsd > 0
+              ? formatNumberToUsd.format(totalUsd).split('.')[0]
               : '-'}
           </Text>
           <Text size="5" weight="medium" mt="2" ml="2px">
-            {((walletDetails?.totalUsd % 1) * 100).toFixed(0)}
+            {((totalUsd % 1) * 100).toFixed(0)}
           </Text>
         </Flex>
         <Box mb="8">
-          {walletDetails?.totalUsd > 0 ? (
-            <BadgeSecond percent={2.7} total={9578.45} />
+          {totalUsd > 0 ? (
+            <BadgeSecond
+              percent={totalUsd / totalH24}
+              total={totalUsd - totalH24}
+            />
           ) : (
             '-'
           )}
@@ -71,18 +56,14 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
           width="100%"
           direction="column"
           gap="4"
-          mb={walletDetails?.totalUsd > 0 ? '100px' : '1'}
+          mb={totalUsd > 0 ? '100px' : '1'}
         >
           <Text size="3" weight="medium" mb="2">
             My portfolio
           </Text>
-          {walletDetails?.items?.length ? (
-            walletDetails.items.map((asset: TokenItemBirdEyeType) => (
-              <TokenCard
-                key={asset.address}
-                token={getTokenDetails(asset.address)}
-                asset={asset}
-              />
+          {walletDetails?.length ? (
+            walletDetails.map((asset: WalletPortfolioDetailsType) => (
+              <TokenCard key={asset.address} token={asset} />
             ))
           ) : (
             <Box

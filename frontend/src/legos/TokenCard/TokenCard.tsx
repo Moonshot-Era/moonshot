@@ -4,21 +4,15 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '../Icon';
-import { TokenAttributes } from '@/@types/gecko';
-import { TokenItemBirdEyeType } from '@/@types/birdeye';
 import { formatNumberToUsd } from '@/helpers/helpers';
+import { WalletPortfolioDetailsType } from '@/services/birdeye/getWalletPortfolio';
 
-interface TokenType extends TokenAttributes {
-  percentage_change_h24?: string;
-}
 interface Props {
-  token?: TokenType;
-  asset?: TokenItemBirdEyeType;
+  token?: WalletPortfolioDetailsType;
   handler?: () => void;
 }
 
-export const TokenCard: FC<Props> = ({ token, asset, handler }) => {
-  console.log('debug > token===', token, asset);
+export const TokenCard: FC<Props> = ({ token, handler }) => {
   return (
     <Flex
       direction="row"
@@ -38,30 +32,30 @@ export const TokenCard: FC<Props> = ({ token, asset, handler }) => {
       ) : null}
       <Flex direction="row">
         <Flex position="relative">
-          {!!token?.image_url && (
+          {!!token?.imageUrl && (
             <Image
               alt="img"
               width={50}
               height={50}
-              src={token?.image_url}
+              src={token?.imageUrl}
               style={{ borderRadius: '50%' }}
             />
           )}
         </Flex>
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
-            {asset?.name}
+            {token?.name}
           </Text>
           <Text size="1" weight="regular">
-            {asset?.uiAmount} {asset?.symbol}
+            {token?.uiAmount} {token?.symbol}
           </Text>
         </Flex>
       </Flex>
       <Flex direction="row" align="center" my="1">
-        {!!asset?.valueUsd && (
+        {!!token?.valueUsd && (
           <Flex direction="column" justify="between" align="end" height="40px">
             <Text size="3" weight="medium">
-              {formatNumberToUsd.format(asset?.valueUsd)}
+              {formatNumberToUsd.format(token?.valueUsd)}
             </Text>
             {token?.percentage_change_h24 && (
               <Flex direction="row" align="center" gap="1">

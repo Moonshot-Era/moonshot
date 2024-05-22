@@ -5,6 +5,7 @@ import { createServerClient } from '@/supabase/server';
 
 import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
+import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
 
 export default async function Index() {
   const supabaseClient = createServerClient();
@@ -23,7 +24,9 @@ export default async function Index() {
   return (
     <>
       <Header />
-      <HomeContent portfolio={data?.walletPortfolio} />
+      <HomeContent
+        portfolio={data?.walletPortfolio as WalletPortfolioNormilizedType}
+      />
     </>
   );
 }
