@@ -8,7 +8,6 @@ import './style.scss';
 import userIcon from '../../assets/images/user-icon.png';
 
 import { Icon } from '@/legos';
-import { formatNumber } from '@/helpers/helpers';
 
 const mockRecentActivityData = [
   {
@@ -18,7 +17,7 @@ const mockRecentActivityData = [
       {
         id: 1,
         transactionType: 'Deposit',
-        total: formatNumber(34),
+        total: 34,
         currencyType: 'SOL',
         time: '3:31 PM',
         icon: userIcon,
@@ -27,7 +26,7 @@ const mockRecentActivityData = [
       {
         id: 2,
         transactionType: 'Withdraw',
-        total: formatNumber(12),
+        total: 12,
         currencyType: 'SOL',
         time: '8:31 AM',
         icon: userIcon,
@@ -42,7 +41,7 @@ const mockRecentActivityData = [
       {
         id: 1,
         transactionType: 'Convert',
-        total: formatNumber(1348),
+        total: 1248,
         currencyType: 'SOL',
         time: '3:31 PM',
         icon: userIcon,
@@ -121,10 +120,10 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => (
                 <Flex direction="column" align="end" justify="between">
                   <Text size="2" weight="medium">
                     {transactionType === 'Deposit'
-                      ? `+${total.number} ${currencyType}`
+                      ? `+${total} ${currencyType}`
                       : transactionType === 'Withdraw'
-                      ? `-${total.number} ${currencyType}`
-                      : `+${total.number} ${currencyType}`}
+                      ? `-${total} ${currencyType}`
+                      : `+${total} ${currencyType}`}
                   </Text>
                   <Text className="font-size-xs">
                     {transactionType === 'Convert' ? `-32,980 WIF` : time}
