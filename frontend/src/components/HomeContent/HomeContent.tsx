@@ -35,9 +35,11 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
               ? formatNumberToUsd.format(totalUsd).split('.')[0]
               : '-'}
           </Text>
-          <Text size="5" weight="medium" mt="2" ml="2px">
-            {((totalUsd % 1) * 100).toFixed(0)}
-          </Text>
+          {totalUsd > 0 ? (
+            <Text size="5" weight="medium" mt="2" ml="2px">
+              {((totalUsd % 1) * 100).toFixed(0)}
+            </Text>
+          ) : null}
         </Flex>
         <Box mb="8">
           {totalUsd > 0 ? (
