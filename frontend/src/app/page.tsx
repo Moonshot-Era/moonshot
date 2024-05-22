@@ -23,7 +23,6 @@ export default async function Index() {
   return (
     <>
       <Header />
-      <SplashScreen />
       <HomeContent portfolio={data?.walletPortfolio} />
     </>
   );
