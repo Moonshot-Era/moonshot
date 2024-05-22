@@ -21,6 +21,10 @@ import {
   Twitter,
   Message,
   FileDownload,
+  ChartBar,
+  ChartPie,
+  ChartLine,
+  Coins,
   Shift4,
   SwitchHorizontal,
 } from "./Icons";
@@ -47,6 +51,10 @@ export const IconsMap: IconsNamesMapType = {
   twitter: Twitter,
   message: Message,
   fileDownload: FileDownload,
+  chartBar: ChartBar,
+  chartPie: ChartPie,
+  chartLine: ChartLine,
+  coins: Coins,
   shift4: Shift4,
   switchHorizontal: SwitchHorizontal,
 };

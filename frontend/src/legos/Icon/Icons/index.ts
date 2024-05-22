@@ -21,3 +21,7 @@ export { Message } from "./Message";
 export { FileDownload } from "./FileDownload";
 export { Shift4 } from "./Shift4";
 export { SwitchHorizontal } from "./SwitchHorizontal";
+export { ChartBar } from "./ChartBar";
+export { ChartPie } from "./ChartPie";
+export { ChartLine } from "./ChartLine";
+export { Coins } from "./Coins";

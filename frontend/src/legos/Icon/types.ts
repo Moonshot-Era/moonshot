@@ -23,6 +23,11 @@ export type IconsNames =
   | "fileDownload"
   | "twitter"
   | "shift4"
+  | "chartBar"
+  | "chartPie"
+  | "chartLine"
+  | "coins"
+  | "shift4"
   | "switchHorizontal";
 
 export type IconsNamesMapType = {
@@ -36,6 +41,7 @@ export interface IconProps {
   icon: IconsNames;
   size?: string | number;
   fill?: string;
+  stroke?: string;
   style?: CSSProperties & { pathColor?: string; circleOpacity?: number };
 }
 
@@ -47,4 +53,5 @@ export type IconCommonProps = {
   style?: CSSProperties & { pathColor?: string; circleOpacity?: number };
   color?: string;
   fill?: string;
+  stroke?: string;
 };

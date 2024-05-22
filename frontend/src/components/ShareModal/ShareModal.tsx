@@ -39,34 +39,22 @@ export const ShareModal = () => {
             />
           </div>
           <Flex width="100%" direction="row" justify="between">
-            <Flex>
-              <TwitterShareButton url="">
-                <button className="icon-button small">
-                  <XIcon round size={32} />
-                </button>
-              </TwitterShareButton>
-            </Flex>
-            <Flex>
-              <TelegramShareButton url="">
-                <button className="icon-button small">
-                  <TelegramIcon round size={32} />
-                </button>
-              </TelegramShareButton>
-            </Flex>
-            <Flex>
-              <TelegramShareButton url="">
-                <IconButton icon="message" size="small" className="bg-violet" />
-              </TelegramShareButton>
-            </Flex>
-            <Flex>
-              <TelegramShareButton url="">
-                <IconButton
-                  icon="fileDownload"
-                  size="small"
-                  className="bg-orange"
-                />
-              </TelegramShareButton>
-            </Flex>
+            <TwitterShareButton url="">
+              <button className="icon-button small">
+                <XIcon round size={32} />
+              </button>
+            </TwitterShareButton>
+            <TelegramShareButton url="">
+              <button className="icon-button small">
+                <TelegramIcon round size={32} />
+              </button>
+            </TelegramShareButton>
+            <IconButton icon="message" size="small" className="bg-violet" />
+            <IconButton
+              icon="fileDownload"
+              size="small"
+              className="bg-orange"
+            />
           </Flex>
         </Flex>
       </Dialog.Content>

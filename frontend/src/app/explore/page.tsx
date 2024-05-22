@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 import { createServerClient } from '@/supabase/server';
 
-import { HomeDesign } from '@/components/HomeDesign/HomeDesign';
+import { ExploreContent } from '@/components/ExploreContent/ExploreContent';
 
-export default async function Index() {
+export default async function Explore() {
   const supabaseClient = createServerClient();
 
   const user = (await supabaseClient.auth.getSession()).data.session?.user;
@@ -12,5 +12,5 @@ export default async function Index() {
   //   redirect('/login');
   // }
 
-  return <HomeDesign />;
+  return <ExploreContent />;
 }
