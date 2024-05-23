@@ -7,6 +7,7 @@ import "./globals.scss";
 import "./globals.css";
 import { Header } from "@/components/Header/Header";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import { SplashScreen } from "@/components/SplashScreen/SplashScreen";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -71,6 +72,7 @@ export default function RootLayout({
           src={`https://progressier.app/${process.env.NEXT_PUBLIC_PROGRESSIER_ID}/script.js`}
         ></script>
         <ServiceWorkerRegister />
+        <SplashScreen />
         <Header />
         <Theme className="bg-transparent">{children}</Theme>
       </body>

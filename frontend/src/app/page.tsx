@@ -1,10 +1,11 @@
 import { redirect } from 'next/navigation';
+import axios from 'axios';
+
 import { createServerClient } from '@/supabase/server';
 
 import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
-import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
-import axios from 'axios';
+import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
 
 export default async function Index() {
   const supabaseClient = createServerClient();
@@ -23,8 +24,9 @@ export default async function Index() {
   return (
     <>
       <Header />
-      <SplashScreen />
-      <HomeContent portfolio={data?.walletPortfolio} />
+      <HomeContent
+        portfolio={data?.walletPortfolio as WalletPortfolioNormilizedType}
+      />
     </>
   );
 }

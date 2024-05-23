@@ -2,21 +2,24 @@
 
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import { formatNumber } from '@/helpers/helpers';
+import { formatNumberToUsd } from '@/helpers/helpers';
 import { BadgeSecond, TokenCard } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 import './style.scss';
-import { TokenItemType, WalletPortfolioType } from '@/@types/birdeye';
-
-const mockBalance = 123831.74;
-
-const formatBalance = formatNumber(mockBalance);
+import {
+  WalletPortfolioDetailsType,
+  WalletPortfolioNormilizedType,
+} from '@/services/birdeye/getWalletPortfolio';
 
 interface HomeContentProps {
-  portfolio: WalletPortfolioType;
+  portfolio: WalletPortfolioNormilizedType;
 }
 
 export const HomeContent = ({ portfolio }: HomeContentProps) => {
+  const { walletDetails, totalUsd } = portfolio;
+  const totalH24 = walletDetails?.reduce((acc, cur) => {
+    return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
+  }, 0);
   return (
     <>
       <Flex
@@ -28,17 +31,22 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
       >
         <Flex direction="row">
           <Text size="8" weight="bold">
-            {portfolio?.totalUsd > 0 ? portfolio.totalUsd.toFixed(2) : '-'}
+            {totalUsd > 0
+              ? formatNumberToUsd.format(totalUsd).split('.')[0]
+              : '-'}
           </Text>
-          {portfolio?.totalUsd > 0 ? (
+          {totalUsd > 0 ? (
             <Text size="5" weight="medium" mt="2" ml="2px">
-              {portfolio?.totalUsd.toFixed(2)}
+              {((totalUsd % 1) * 100).toFixed(0)}
             </Text>
           ) : null}
         </Flex>
         <Box mb="8">
-          {portfolio?.totalUsd > 0 ? (
-            <BadgeSecond percent={2.7} total={9578.45} />
+          {totalUsd > 0 ? (
+            <BadgeSecond
+              percent={totalUsd / totalH24}
+              total={totalUsd - totalH24}
+            />
           ) : (
             '-'
           )}
@@ -50,23 +58,14 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
           width="100%"
           direction="column"
           gap="4"
-          mb={portfolio?.totalUsd > 0 ? '100px' : '1'}
+          mb={totalUsd > 0 ? '100px' : '1'}
         >
           <Text size="3" weight="medium" mb="2">
             My portfolio
           </Text>
-          {portfolio?.items?.length ? (
-            portfolio.items.map((asset: TokenItemType) => (
-              <TokenCard
-                key={asset.address}
-                name={asset.name}
-                logo={asset.logoURI}
-                currencyType={asset.symbol}
-                percent={2.7}
-                total={-21938}
-                description="43,453 BODEN"
-                isLabel
-              />
+          {walletDetails?.length ? (
+            walletDetails.map((asset: WalletPortfolioDetailsType) => (
+              <TokenCard key={asset.address} token={asset} />
             ))
           ) : (
             <Box
