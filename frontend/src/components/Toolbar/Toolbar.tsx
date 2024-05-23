@@ -8,12 +8,14 @@ import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
 import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
 import { ShareModal } from '../ShareModal/ShareModal';
+import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 interface ToolbarProps {
+  walletAssets: WalletPortfolioAssetType[];
   withShare?: boolean;
 }
 
-export const Toolbar = ({ withShare }: ToolbarProps) => {
+export const Toolbar = ({ withShare, walletAssets }: ToolbarProps) => {
   const [isConvertOpen, setIsConvertOpen] = useState(false);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
@@ -28,6 +30,7 @@ export const Toolbar = ({ withShare }: ToolbarProps) => {
       <WithdrawDrawer
         isOpen={isWithdrawOpen}
         toggleOpen={toggleWithdrawDrawer}
+        walletAssets={walletAssets}
       />
       <Flex
         width="100%"

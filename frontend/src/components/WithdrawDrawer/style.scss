@@ -6,3 +6,14 @@
   border-radius: 6px;
   background-color: $violet;
 }
+
+.withdraw-input {
+  border: 0;
+  background-color: unset;
+  text-align: center;
+}
+
+.withdraw-input-error {
+  text-align: center;
+    width: 100%;
+}

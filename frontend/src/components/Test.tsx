@@ -42,7 +42,9 @@ export function Test({ oidc }: { oidc: string }) {
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`,
       {
         oidcToken: oidc,
+        fromAddress: '',
         toAddress: 'B8xaui7xwQSZmuPwjem7Ka5Qobag7khJHNCPWzDpmXrD',
+        amount: 0.1,
       }
     );
   };

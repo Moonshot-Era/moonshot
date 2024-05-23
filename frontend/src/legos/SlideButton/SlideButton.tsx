@@ -12,7 +12,7 @@ import { Text } from '@radix-ui/themes';
 import './style.scss';
 import { Icon } from '../Icon';
 
-export const SlideButton = () => {
+export const SlideButton = ({ disabled }: { disabled: boolean }) => {
   const [initialMouse, setInitialMouse] = useState(0);
   const [slideMovementTotal, setSlideMovementTotal] = useState(0);
   const [mouseIsDown, setMouseIsDown] = useState(false);
@@ -21,6 +21,9 @@ export const SlideButton = () => {
   const textRef = useRef<HTMLSpanElement>(null);
 
   const handleMouseDown = (event: ReactMouseEvent | ReactTouchEvent) => {
+    if (disabled) {
+      return;
+    }
     setMouseIsDown(true);
     const slider = sliderRef.current;
     const background = backgroundRef.current;
@@ -112,12 +115,17 @@ export const SlideButton = () => {
   }, [mouseIsDown, initialMouse, slideMovementTotal]);
 
   return (
-    <div id="button-slider-container" ref={backgroundRef}>
+    <div
+      id="button-slider-container"
+      className={`button-slider-container ${disabled ? 'disabled' : ''}`}
+      ref={backgroundRef}
+    >
       <Text className="button-slide-text" ref={textRef} size="2">
         Swipe to confirm
       </Text>
       <div
         id="button-slider"
+        className={`button-slider ${disabled ? 'disabled' : ''}`}
         ref={sliderRef}
         onMouseDown={handleMouseDown}
         onTouchStart={handleMouseDown}

@@ -8,9 +8,12 @@ import {
 
 import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
 
-const AMOUNT = 0.1;
-
-export const sendTransaction = async (oidcToken: string, toAddress: string) => {
+export const sendTransaction = async (
+  oidcToken: string,
+  fromAddress: string,
+  toAddress: string,
+  amount: number
+) => {
   try {
     const client = await CubeSignerInstance.getUserSessionClient(oidcToken);
 
@@ -19,22 +22,22 @@ export const sendTransaction = async (oidcToken: string, toAddress: string) => {
       'confirmed'
     );
 
-    const fromAddress = await getUserWallet(oidcToken);
-    if (!fromAddress) {
-      throw Error('Wallet not found');
-    }
+    // const fromAddress = await getUserWallet(oidcToken);
+    // if (!fromAddress) {
+    //   throw Error('Wallet not found');
+    // }
     const fromPubkey = new PublicKey(fromAddress);
     const toPubkey = new PublicKey(toAddress);
 
     console.log(
-      `Transferring ${AMOUNT} SOL from ${fromPubkey} to ${toPubkey}...`
+      `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}...`
     );
 
     const tx = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey,
         toPubkey,
-        lamports: AMOUNT * LAMPORTS_PER_SOL,
+        lamports: amount * LAMPORTS_PER_SOL,
       })
     );
     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;

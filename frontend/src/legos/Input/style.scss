@@ -20,6 +20,8 @@
 
 .default-input-error {
   color: $error;
+  position: absolute;
+  bottom: -16px;
 }
 
 .default-input-icon {

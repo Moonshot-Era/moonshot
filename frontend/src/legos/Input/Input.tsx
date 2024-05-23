@@ -6,6 +6,7 @@ import { Icon, IconsNames } from '../Icon';
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
+  errorClassName?: string;
   label?: string;
   error?: boolean;
   errorText?: string;
@@ -14,13 +15,14 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input: FC<Props> = ({
   className,
+  errorClassName,
   label,
   error,
   errorText,
   icon,
   ...props
 }) => (
-  <Flex width="100%" direction="column">
+  <Flex width="100%" direction="column" position="relative">
     {label ? <Text size="2">{label}</Text> : null}
     <div className="default-input-wrapper">
       <input className={`default-input ${className ?? ''}`} {...props} />
@@ -31,7 +33,11 @@ export const Input: FC<Props> = ({
       ) : null}
     </div>
     {error ? (
-      <Text size="1" mt="1" className="default-input-error">
+      <Text
+        size="1"
+        mt="1"
+        className={`default-input-error ${errorClassName ?? ''}`}
+      >
         {errorText}
       </Text>
     ) : null}

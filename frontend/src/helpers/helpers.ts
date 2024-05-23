@@ -7,6 +7,8 @@ export const formatNumberToUsd = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 });
 
+export const formatNumber = new Intl.NumberFormat('en-US');
+
 export const isSolanaAddress = (address: string) => {
   if (
     address === 'So11111111111111111111111111111111111111111' ||

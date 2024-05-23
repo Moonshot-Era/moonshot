@@ -7,7 +7,7 @@ import {
 import { isSolanaAddress } from '@/helpers/helpers';
 import axios from 'axios';
 
-export interface WalletPortfolioDetailsType {
+export interface WalletPortfolioAssetType {
   imageUrl: string;
   percentage_change_h24: any;
   address: string;
@@ -23,7 +23,7 @@ export interface WalletPortfolioDetailsType {
 }
 
 export interface WalletPortfolioNormilizedType {
-  walletDetails: WalletPortfolioDetailsType[];
+  walletAssets: WalletPortfolioAssetType[];
   totalUsd: number;
   wallet: string;
 }
@@ -75,7 +75,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
 
     return data?.success
       ? {
-          walletDetails: walletPortfolioNormalized,
+          walletAssets: walletPortfolioNormalized,
           totalUsd: walletPortfolio?.totalUsd,
           walletAddress: walletPortfolio?.wallet,
         }

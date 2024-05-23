@@ -6,29 +6,32 @@ import './style.scss';
 import { SheetDrawer } from '@/legos';
 import { WithdrawList } from './WithdrawList';
 import { WithdrawItem } from './WithdrawItem';
-
-const mockWithdrawData = {
-  currencyName: 'MICHI',
-  wallet: '5CxsB1BH...3whqAKYa',
-  processingTime: '< 1 minute',
-  minDeposit: '10,000 MICHI',
-  balance: 435,
-};
+import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 interface Props {
   isOpen: boolean;
   toggleOpen: () => void;
+  walletAssets: WalletPortfolioAssetType[];
 }
 
-export const WithdrawDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
+export const WithdrawDrawer: FC<Props> = ({
+  isOpen,
+  toggleOpen,
+  walletAssets,
+}) => {
   const [isTransfer, setIsTransfer] = useState(false);
+  const [fromAsset, setFromAsset] = useState<WalletPortfolioAssetType>();
 
-  const toggleTransfer = () => setIsTransfer(!isTransfer);
+  const toggleTransfer = (asset: WalletPortfolioAssetType) => {
+    setFromAsset(asset);
+    setIsTransfer(!isTransfer);
+  };
 
   const handleClose = () => {
     setIsTransfer(false);
     toggleOpen();
   };
+
   return (
     <>
       <SheetDrawer
@@ -37,15 +40,24 @@ export const WithdrawDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
         snapPoints={[800, 540]}
         initialSnap={1}
       >
-        <WithdrawList toggleTransfer={toggleTransfer} />
+        <WithdrawList
+          toggleTransfer={toggleTransfer}
+          walletAssets={walletAssets}
+        />
       </SheetDrawer>
-      <SheetDrawer
-        isOpen={isOpen && isTransfer}
-        detent="content-height"
-        handleClose={handleClose}
-      >
-        <WithdrawItem />
-      </SheetDrawer>
+      {fromAsset && (
+        <SheetDrawer
+          isOpen={isOpen && isTransfer}
+          detent="content-height"
+          handleClose={handleClose}
+        >
+          <WithdrawItem
+            asset={fromAsset}
+            onSlideHandler={handleClose}
+            onAssetChange={() => setIsTransfer(false)}
+          />
+        </SheetDrawer>
+      )}
     </>
   );
 };
