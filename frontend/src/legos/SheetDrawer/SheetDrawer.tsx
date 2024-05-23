@@ -13,6 +13,7 @@ interface Props {
   detent?: 'content-height' | 'full-height';
   disableDrag?: boolean;
   onSnap?: (snapPoint: number) => void;
+  onScroll: () => void;
 }
 
 export const SheetDrawer: FC<Props> = ({
@@ -24,6 +25,7 @@ export const SheetDrawer: FC<Props> = ({
   snapPoints,
   disableDrag,
   onSnap,
+  onScroll,
 }) => (
   <Sheet
     isOpen={isOpen}
@@ -49,7 +51,7 @@ export const SheetDrawer: FC<Props> = ({
     >
       <Sheet.Header />
       <Sheet.Content>
-        <Sheet.Scroller draggableAt="both">
+        <Sheet.Scroller draggableAt="both" onScroll={onScroll}>
           <Theme>{children}</Theme>
         </Sheet.Scroller>
       </Sheet.Content>

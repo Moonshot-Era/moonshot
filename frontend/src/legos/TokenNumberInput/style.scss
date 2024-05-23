@@ -1,0 +1,16 @@
+.token-input {
+  border: none;
+  outline: none;
+  font-size: 25px;
+  font-weight: bold;
+  padding: 0;
+  width: 100%;
+  background-color: transparent;
+
+  &:focus {
+  }
+  &::placeholder{
+    opacity: 1;
+    color: black;
+  }
+}

@@ -1,21 +1,29 @@
 'use client';
 
 // TODO:
-// 1) price of tokens in tokensList
-// 2) Show available tokens to convert
-// 3) Add input of tokens to convert with validation???
-// 4) Add max btn for tokens to convert
-// 5) Find routes for convert in jupiter
-// 6) Convert
-// 7) Infinite scroll
+// - Price of tokens in tokensList
+// + Show available tokens to convert
+// + Add input of tokens to convert
+// - validate number in input
+// + Add max btn for tokens to convert
+// + Find routes for convert in jupiter
+// - Convert
+// + Infinite scroll for tokens
+// + Selects as a btn
+// - Snap on scroll
+// - Search a token
+// - do not allow non-tradable tokens
+// - 
 
-import { FC, useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import { FC, memo, useState, forwardRef, useImperativeHandle, useCallback } from 'react';
 import './style.scss';
 import { SheetDrawer } from '@/legos';
 import { TokensSelect } from './TokensSelect';
 import { ConvertForm } from './ConvertForm';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { Flex, Spinner } from '@radix-ui/themes';
+import debounce from 'lodash.debounce';
 
 interface Props {
   isOpen: boolean;
@@ -24,34 +32,47 @@ interface Props {
 
 type Portfolio = {}
 
-const fetchPortfolip = (): Promise<Portfolio[]> => axios.post(
+const fetchPortfolio = (): Promise<Portfolio[]> => axios.post(
   `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`,
   { walletAddress: '' }
 ).then((response) => response.data.walletPortfolio)
 
-const fetchTokensList = (): Promise<Portfolio[]> => axios.post(
+const fetchTokensList = ({ pageParam = 0 }): Promise<Portfolio[]> => axios.post(
   `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/token-list`,
-  { offset: 0, limit: 50 }
-).then((response) => response.data.tokenList.data.tokens)
-
+  { offset: pageParam, limit: 50 }
+).then((response) => response.data.tokenList.data)
 
 const usePortfolio = () => {
   const { data, ...rest } = useQuery({
     queryKey: ['portfolio'],
-    queryFn: fetchPortfolip,
+    queryFn: fetchPortfolio,
   })
 
   return { portfolio: data, ...rest }
 };
 
 const useTokensList = () => {
-  const { data, ...rest } = useQuery({
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    ...rest
+  } = useInfiniteQuery({
     queryKey: ['tokensList'],
     queryFn: fetchTokensList,
-  })
+    getNextPageParam: (lastPage, pages) => {
+      const totalTokens = lastPage.total;
+      const nextPage = pages.length * 50;
+      return nextPage < totalTokens ? nextPage : undefined;
+    }
+  });
 
   return {
-    tokensList: data,
+    tokensList: data?.pages.flatMap(page => page.tokens),
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     ...rest,
   };
 };
@@ -61,10 +82,15 @@ const DEFAULT_TOKENS = {
   to: null,
 }
 
-export const ConvertDrawer: FC<Props> = forwardRef(function ConvertDrawer({}, ref) {
+export const ConvertDrawer: FC<Props> = memo(forwardRef(function ConvertDrawer({}, ref) {
   const [state, setState] = useState<string|null>(null);
   const { portfolio } = usePortfolio();
-  const { tokensList } = useTokensList();
+  const {
+    tokensList,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useTokensList();
   const [selectedTokens, setSelectedTokens] = useState(DEFAULT_TOKENS)
 
   const handleTokenSelect = (token) => {
@@ -92,14 +118,28 @@ export const ConvertDrawer: FC<Props> = forwardRef(function ConvertDrawer({}, re
     };
   }, []);
 
-  console.log('portfolio', portfolio)
+  const debouncedFetchNextPage = useCallback(debounce(async () => {
+    if (hasNextPage) {
+      await fetchNextPage();
+    }
+  }, 300), [fetchNextPage, hasNextPage]);
+
+  const handleTokensListScroll = async (event) => {
+    const { scrollTop, scrollHeight, clientHeight } = event.target;
+
+    if (scrollHeight - scrollTop <= clientHeight * 1.5) {
+      if (hasNextPage) {
+        await debouncedFetchNextPage();
+      }
+    }
+  };
 
   return (
     <>
       <SheetDrawer
         isOpen={state === 'from'}
         handleClose={handleClose}
-        snapPoints={[window?.innerHeight, 450]}
+        snapPoints={[800, 450]}
         initialSnap={1}
       >
         <TokensSelect handleTokenSelect={handleTokenSelect} selectMode="from" tokensList={portfolio?.items} />
@@ -107,18 +147,27 @@ export const ConvertDrawer: FC<Props> = forwardRef(function ConvertDrawer({}, re
       <SheetDrawer
         isOpen={state === 'to'}
         handleClose={handleClose}
-        snapPoints={[window?.innerHeight, 450]}
+        snapPoints={[800, 450]}
         initialSnap={1}
+        onScroll={handleTokensListScroll}
       >
         <TokensSelect handleTokenSelect={handleTokenSelect} selectMode="to" tokensList={tokensList} />
+        {isFetchingNextPage && (
+          <Flex align="center" justify="center" pb="5">
+            <Spinner size="3" />
+          </Flex>
+        )}
       </SheetDrawer>
       <SheetDrawer
         isOpen={state === 'convert'}
         detent="content-height"
         handleClose={handleClose}
       >
-        <ConvertForm selectedTokens={selectedTokens} />
+        <ConvertForm
+          selectedTokens={selectedTokens}
+          changeSelected={(reselect) => setState(reselect)}
+        />
       </SheetDrawer>
     </>
   );
-});
+}));
