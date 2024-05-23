@@ -14,4 +14,8 @@
     box-shadow: 2px 2px 0 0 $dark;
     filter: brightness(0.9);
   }
+  &:disabled {
+    pointer-events: none;
+    filter: brightness(0.9);
+  }
 }

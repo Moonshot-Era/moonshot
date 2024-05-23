@@ -28,7 +28,12 @@ export type IconsNames =
   | "chartLine"
   | "coins"
   | "shift4"
-  | "switchHorizontal";
+  | "switchHorizontal"
+  | "userCircle"
+  | "notes"
+  | "key"
+  | "logout"
+  | "alertTriangle";
 
 export type IconsNamesMapType = {
   [key in IconsNames]: ElementType;

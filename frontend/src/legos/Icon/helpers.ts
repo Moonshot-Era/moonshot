@@ -1,4 +1,4 @@
-import { IconsNamesMapType } from "./types";
+import { IconsNamesMapType } from './types';
 import {
   Google,
   Apple,
@@ -27,7 +27,12 @@ import {
   Coins,
   Shift4,
   SwitchHorizontal,
-} from "./Icons";
+  UserCircle,
+  Notes,
+  Key,
+  Logout,
+  AlertTriangle,
+} from './Icons';
 
 export const IconsMap: IconsNamesMapType = {
   google: Google,
@@ -57,4 +62,9 @@ export const IconsMap: IconsNamesMapType = {
   coins: Coins,
   shift4: Shift4,
   switchHorizontal: SwitchHorizontal,
+  userCircle: UserCircle,
+  notes: Notes,
+  key: Key,
+  logout: Logout,
+  alertTriangle: AlertTriangle,
 };

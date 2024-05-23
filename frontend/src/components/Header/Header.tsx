@@ -40,7 +40,6 @@ export const Header = () => {
                 <Text size="1">Explore</Text>
               </NavButton>
               <NavButton
-                disabled
                 className={pathname === '/settings' ? 'nav-button-active' : ''}
                 onClick={() => router.push('/settings')}
               >

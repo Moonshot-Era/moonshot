@@ -8,12 +8,11 @@ import './style.scss';
 import userIcon from '../../assets/images/user-icon.png';
 
 import { Toolbar } from '../Toolbar/Toolbar';
-import { formatNumber } from '@/helpers/helpers';
 import { Icon, Input, TokenCard } from '@/legos';
 
 const mockUserData = {
   name: 'jeo boden',
-  balance: formatNumber(21439),
+  balance: 21439,
   subtitle: '43,453 BODEN',
   marketCap: '$400.5M',
   volume: '$10.6M',
@@ -46,6 +45,7 @@ export const ExploreContent = () => {
               .map((item, index) => (
                 <TokenCard
                   key={index}
+                  logo=""
                   name="jeo boden"
                   currencyType="baseStatus"
                   percent={2.7}
@@ -90,7 +90,7 @@ export const ExploreContent = () => {
                   Your balance
                 </Text>
                 <Text size="2" weight="medium">
-                  {`$${mockUserData.balance}`}
+                  {`$${mockUserData.balance.numbersArray[0]}`}
                 </Text>
               </Flex>
               <Flex

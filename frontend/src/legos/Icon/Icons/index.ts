@@ -25,3 +25,8 @@ export { ChartBar } from "./ChartBar";
 export { ChartPie } from "./ChartPie";
 export { ChartLine } from "./ChartLine";
 export { Coins } from "./Coins";
+export { UserCircle } from "./UserCircle";
+export { Notes } from "./Notes";
+export { Key } from "./Key";
+export { Logout } from "./Logout";
+export { AlertTriangle } from "./AlertTriangle";
