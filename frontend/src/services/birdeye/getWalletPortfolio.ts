@@ -30,6 +30,11 @@ export interface WalletPortfolioNormilizedType {
 
 export const getWalletPortfolio = async (walletAddress: string) => {
   try {
+
+    if (!walletAddress && !process.env.WALLET_MAINNET) {
+      throw Error(`User don't have a wallet`);
+    }
+
     const { data } = await axios.get(
       `${process.env.BIRDEYE_URL_API}/v1/wallet/token_list?wallet=${
         walletAddress || process.env.WALLET_MAINNET
@@ -51,33 +56,40 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       )
       .join(',');
 
-    const { data: tokensListGecko } = await axios.get(
-      `${process.env.GECKO_URL_API}/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`
-    );
+    let walletPortfolioNormalized: WalletPortfolioAssetType[] = [];
 
-    const walletPortfolioNormalized = walletPortfolio?.items?.map(
-      (asset: TokenItemBirdEyeType) => {
-        const token: TokenAttributes = tokensListGecko?.data?.find(
-          (token: TokenItemGeckoType) =>
-            token.attributes.address ===
-            (isSolanaAddress(asset?.address) || asset?.address)
-        )?.attributes;
+    if (tokensAddresses?.length) {
+      const { data: tokensListGecko } = await axios.get(
+        `${process.env.GECKO_URL_API}/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`
+      );
+      walletPortfolioNormalized = walletPortfolio?.items?.map(
+        (asset: TokenItemBirdEyeType) => {
+          const token: TokenAttributes = tokensListGecko?.data?.find(
+            (token: TokenItemGeckoType) =>
+              token.attributes.address ===
+              (isSolanaAddress(asset?.address) || asset?.address)
+          )?.attributes;
 
-        const percentage_change_h24 = tokensListGecko?.included?.find(
-          (included: PoolGeckoType) =>
-            included?.relationships?.base_token?.data?.id ===
-            `solana_${isSolanaAddress(asset?.address) || asset?.address}`
-        )?.attributes?.price_change_percentage?.h24;
+          const percentage_change_h24 = tokensListGecko?.included?.find(
+            (included: PoolGeckoType) =>
+              included?.relationships?.base_token?.data?.id ===
+              `solana_${isSolanaAddress(asset?.address) || asset?.address}`
+          )?.attributes?.price_change_percentage?.h24;
 
-        return { ...asset, imageUrl: token?.image_url, percentage_change_h24 };
-      }
-    );
+          return {
+            ...asset,
+            imageUrl: token?.image_url,
+            percentage_change_h24,
+          };
+        }
+      );
+    }
 
     return data?.success
       ? {
           walletAssets: walletPortfolioNormalized,
           totalUsd: walletPortfolio?.totalUsd,
-          walletAddress: walletPortfolio?.wallet,
+          wallet: walletPortfolio?.wallet,
         }
       : {};
   } catch (err) {

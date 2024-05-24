@@ -52,7 +52,7 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
           )}
         </Box>
 
-        <Toolbar walletAssets={walletAssets} />
+        <Toolbar portfolio={portfolio} />
 
         <Flex
           width="100%"

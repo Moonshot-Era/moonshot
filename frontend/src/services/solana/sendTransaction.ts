@@ -40,6 +40,16 @@ export const sendTransaction = async (
         lamports: amount * LAMPORTS_PER_SOL,
       })
     );
+
+    // const transaction = new Transaction().add(
+    //   transfer(
+    //     senderTokenAccount.address,
+    //     receiverTokenAccount.address,
+    //     senderPublicKey,
+    //     50 // Amount of tokens to transfer
+    //   )
+    // );
+
     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
     tx.feePayer = fromPubkey;
     const base64 = tx.serializeMessage().toString('base64');

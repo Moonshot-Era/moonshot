@@ -6,18 +6,23 @@ import './style.scss';
 import { SheetDrawer } from '@/legos';
 import { WithdrawList } from './WithdrawList';
 import { WithdrawItem } from './WithdrawItem';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import {
+  WalletPortfolioAssetType,
+  WalletPortfolioNormilizedType,
+} from '@/services/birdeye/getWalletPortfolio';
+import axios from 'axios';
+import { cookies } from 'next/headers';
 
 interface Props {
   isOpen: boolean;
   toggleOpen: () => void;
-  walletAssets: WalletPortfolioAssetType[];
+  portfolio: WalletPortfolioNormilizedType;
 }
 
 export const WithdrawDrawer: FC<Props> = ({
   isOpen,
   toggleOpen,
-  walletAssets,
+  portfolio,
 }) => {
   const [isTransfer, setIsTransfer] = useState(false);
   const [fromAsset, setFromAsset] = useState<WalletPortfolioAssetType>();
@@ -32,6 +37,18 @@ export const WithdrawDrawer: FC<Props> = ({
     toggleOpen();
   };
 
+  const handleConfirmWithdraw = async () => {
+    const { data: txData } = await axios.post(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`,
+      {
+        fromAddress: '',
+        toAddress: 'B8xaui7xwQSZmuPwjem7Ka5Qobag7khJHNCPWzDpmXrD',
+        amount: 0.1,
+      }
+    );
+    handleClose();
+  };
+
   return (
     <>
       <SheetDrawer
@@ -42,7 +59,7 @@ export const WithdrawDrawer: FC<Props> = ({
       >
         <WithdrawList
           toggleTransfer={toggleTransfer}
-          walletAssets={walletAssets}
+          walletAssets={portfolio?.walletAssets}
         />
       </SheetDrawer>
       {fromAsset && (
@@ -53,8 +70,7 @@ export const WithdrawDrawer: FC<Props> = ({
         >
           <WithdrawItem
             asset={fromAsset}
-            onSlideHandler={handleClose}
-            onAssetChange={() => setIsTransfer(false)}
+            onSlideHandler={handleConfirmWithdraw}
           />
         </SheetDrawer>
       )}
