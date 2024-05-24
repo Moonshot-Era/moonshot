@@ -16,6 +16,9 @@
     @include border-dark;
     outline: none;
   }
+  &.error {
+    border-color: $error;
+  }
 }
 
 .default-input-error {

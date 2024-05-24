@@ -6,27 +6,71 @@ import './style.scss';
 import { Icon, Input, SlideButton } from '@/legos';
 import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 import { ChangeEvent, useState } from 'react';
-import { formatNumber } from '@/helpers/helpers';
+import { formatNumberToUsd } from '@/helpers/helpers';
 
 interface WithdrawItemProps {
   asset?: WalletPortfolioAssetType;
   onSlideHandler(): void;
-  onAssetChange(): void;
 }
 
-export const WithdrawItem = ({
-  asset,
-  onSlideHandler,
-  onAssetChange,
-}: WithdrawItemProps) => {
-  const [transactionAmount, setTransactionAmount] = useState(asset?.uiAmount);
-  const [amountError, setAmountError] = useState('');
+const TO_ADDRESS_ERROR = 'Invalid Solana address';
+const AMOUNT_ERR = 'Please porvide correct value';
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTransactionAmount(+formatNumber.format(+event.target.value));
-    if (asset?.uiAmount && +event.target.value > +asset?.uiAmount) {
-      setAmountError('Please porvide correct value');
-    } else if (amountError) {
+export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
+  const [toAddress, setToAddress] = useState<string | undefined>();
+  const [transactionAmount, setTransactionAmount] = useState<
+    number | string | undefined
+  >();
+  const [toAddressError, setToAddressError] = useState('');
+  const [amountError, setAmountError] = useState('');
+  const [amountInputInUsd, setAmountInputInUsd] = useState(true);
+
+  const decimalLength = `${asset?.uiAmount}`.split('.')?.[1]?.length || 0;
+
+  const handleChangeCurrency = () => {
+    setAmountInputInUsd(!amountInputInUsd);
+    if (!amountInputInUsd) {
+      if (asset?.valueUsd && +(transactionAmount || 0) > +asset?.valueUsd) {
+        setAmountError(AMOUNT_ERR);
+      } else if (amountError) {
+        setAmountError('');
+      }
+    } else {
+      if (asset?.uiAmount && +(transactionAmount || 0) > +asset?.uiAmount) {
+        setAmountError(AMOUNT_ERR);
+      } else if (amountError) {
+        setAmountError('');
+      }
+    }
+  };
+
+  const handleChangeToAddress = async () => {};
+
+  const handleChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
+    if (amountInputInUsd && event.target.value) {
+      setTransactionAmount(event.target.value);
+      if (asset?.valueUsd && +event.target.value > +asset?.valueUsd) {
+        setAmountError(AMOUNT_ERR);
+      } else if (amountError) {
+        setAmountError('');
+      }
+    } else if (event.target.value || event.target.value === '') {
+      setTransactionAmount(event.target.value);
+      if (asset?.uiAmount && +event.target.value > +asset?.uiAmount) {
+        setAmountError(AMOUNT_ERR);
+      } else if (amountError) {
+        setAmountError('');
+      }
+    }
+  };
+
+  const handleSetMax = () => {
+    if (amountInputInUsd) {
+      setTransactionAmount(asset?.valueUsd.toFixed(2) || 0);
+    } else {
+      setTransactionAmount(asset?.uiAmount || 0);
+    }
+    if (amountError) {
       setAmountError('');
     }
   };
@@ -36,31 +80,47 @@ export const WithdrawItem = ({
       <Text size="4" weight="bold">
         {`Withdraw ${asset?.name}`}
       </Text>
-      <Flex width="100%" justify="center" align="center" gap="3" height="80px">
-        <Flex direction="column" align="center" px="3" style={{ opacity: 0 }}>
+      <Flex
+        width="100%"
+        maxWidth="100%"
+        justify="center"
+        align="center"
+        gap="2"
+        direction="row"
+        wrap="wrap"
+      >
+        <Flex direction="column" align="center" style={{ opacity: 0 }}>
           <Icon icon="switchHorizontal" />
           <Text size="4" weight="medium">
             {asset?.name}
           </Text>
         </Flex>
-        <Flex>
-          <Text size="7" weight="medium">
-            <Input
-              className="withdraw-input"
-              value={transactionAmount}
-              error={!!amountError}
-              errorText={amountError}
-              errorClassName="withdraw-input-error"
-              onChange={handleChange}
-              type="number"
-              lang="en-US"
-            />
+        <Flex flexGrow="1" maxWidth="100%" justify="center" align="end">
+          <Text
+            size="7"
+            weight="medium"
+            style={{
+              lineHeight: '46px',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              textWrap: 'nowrap',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {amountInputInUsd
+              ? (+(transactionAmount || 0) / (asset?.priceUsd || 0)).toFixed(
+                  transactionAmount && +transactionAmount ? decimalLength : 0
+                )
+              : formatNumberToUsd.format(
+                  +(transactionAmount || 0) * (asset?.priceUsd || 0)
+                )}
           </Text>
+          {amountInputInUsd && <Text size="4">{asset?.name}</Text>}
         </Flex>
-        <Flex direction="column" align="center" px="3" onClick={onAssetChange}>
+        <Flex direction="column" align="center" onClick={handleChangeCurrency}>
           <Icon icon="switchHorizontal" />
           <Text size="4" weight="medium">
-            {asset?.name}
+            {amountInputInUsd ? 'USD' : asset?.name}
           </Text>
         </Flex>
       </Flex>
@@ -70,8 +130,33 @@ export const WithdrawItem = ({
         You need at least 1,000 MICHI to complete a withdrawal
       </Text>
     </Box> */}
-      <Input placeholder="Wallet address" />
-      <SlideButton disabled={!!amountError} />
+      <Input
+        placeholder="Wallet address"
+        value={toAddress}
+        error={!!amountError}
+        onChange={handleChangeToAddress}
+      />
+      <Flex width="100%" direction="column" gap="1">
+        <Input
+          placeholder="Amount"
+          value={transactionAmount}
+          error={!!amountError}
+          onChange={handleChangeAmount}
+          type={'number'}
+          endAdornment={<Text>{amountInputInUsd ? 'USD' : asset?.name}</Text>}
+        />
+        <Flex justify="between">
+          <Text size="2">
+            Available {asset?.uiAmount} {asset?.name}
+          </Text>
+          <Text size="1" className="transfer-card-max" onClick={handleSetMax}>
+            Max
+          </Text>
+        </Flex>
+      </Flex>
+      <SlideButton
+        disabled={!!amountError || !transactionAmount || !toAddress}
+      />
     </Flex>
   );
 };
