@@ -13,7 +13,6 @@ import { QUERY_PARAM_CULTURE_REF } from '@/utils';
 export default function Login({ searchParams }: ServerPageProps) {
   const router = useRouter();
   const cultureRef = searchParams[QUERY_PARAM_CULTURE_REF];
-  console.log('debug > cultureRef===', cultureRef);
 
   const handleGoogleLogin = () => {
     router.push(
