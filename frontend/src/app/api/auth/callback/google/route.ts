@@ -1,4 +1,6 @@
 import { createServerClient } from '@/supabase/server';
+import { COOKIE_PROVIDER_TOKEN } from '@/utils';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -32,6 +34,8 @@ export async function GET(request: Request) {
       provider: 'google',
       token: data.id_token,
     });
+
+    cookies().set(COOKIE_PROVIDER_TOKEN, data.id_token);
 
     return NextResponse.redirect(`${process.env.SITE_URL}`);
   } catch (error) {

@@ -1,6 +1,6 @@
 import { createBrowserClient } from '@/supabase/client';
+import axios from 'axios';
 
 export const logout = async () => {
-  const supabaseClient = createBrowserClient();
-  supabaseClient.auth.signOut();
+  await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/auth/logout`);
 };
