@@ -9,15 +9,20 @@ import cubistLogo from '../../assets/images/cubist_logo.svg';
 import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 import { useRouter } from 'next/navigation';
 
-export default function Login({
-  searchParams,
-}: {
-  searchParams: { message: string };
-}) {
-  const router = useRouter();
+type LoginProps = {
+  searchParams: { cultureRef: string };
+};
 
-  const handleLogin = () => {
-    router.push(`${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google`);
+export default function Login({ searchParams }: LoginProps) {
+  const router = useRouter();
+  const { cultureRef } = searchParams;
+
+  const handleGoogleLogin = () => {
+    router.push(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google?${
+        cultureRef ? `cultureRef=${cultureRef}` : ''
+      }`,
+    );
   };
 
   return (
@@ -51,7 +56,7 @@ export default function Login({
           </Flex>
 
           <Flex direction="column" gap="4" width="100%">
-            <Button className="bg-white" onClick={handleLogin}>
+            <Button className="bg-white" onClick={handleGoogleLogin}>
               <Icon icon="google" width={16} />
               <Text size="2" weight="medium">
                 Sign in with Google

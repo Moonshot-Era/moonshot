@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
+  const cultureRef = searchParams.get('state');
 
   if (error || !code) {
     return NextResponse.redirect(`${process.env.SITE_URL}${ROUTES.login}`);
@@ -30,10 +31,17 @@ export async function GET(request: Request) {
     const data = await response.json();
 
     const supabaseServerClient = createServerClient();
-    await supabaseServerClient.auth.signInWithIdToken({
+    const {
+      data: { user },
+      error,
+    } = await supabaseServerClient.auth.signInWithIdToken({
       provider: 'google',
       token: data.id_token,
     });
+
+    if (user && cultureRef) {
+      // TODO store cultureRef in profiles
+    }
 
     cookies().set(COOKIE_PROVIDER_TOKEN, data.id_token);
 
