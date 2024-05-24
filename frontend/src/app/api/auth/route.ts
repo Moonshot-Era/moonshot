@@ -26,14 +26,13 @@ export async function GET(request) {
 
     const data = await response.json();
     const accessToken = data.access_token;
-    console.log('debug > data===', data);
     console.log('debug > accessToken===', accessToken);
 
     // Set the token in Supabase
     // await supabase.auth.setAuth(accessToken);
 
     // Redirect to the home page or user profile
-    return NextResponse.redirect('http://localhost:3000');
+    return NextResponse.redirect('/');
   } catch (error) {
     console.error('Error exchanging code for token:', error);
     return NextResponse.json(

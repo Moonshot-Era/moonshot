@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { Flex, Text } from '@radix-ui/themes';
 
@@ -5,12 +7,19 @@ import './style.scss';
 import { Button, Icon } from '@/legos';
 import cubistLogo from '../../assets/images/cubist_logo.svg';
 import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
+import { useRouter } from 'next/navigation';
 
 export default function Login({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
+  const router = useRouter();
+
+  const handleLogin = () => {
+    router.push('/api/auth/google');
+  };
+
   return (
     <>
       <SplashScreen />
@@ -42,7 +51,7 @@ export default function Login({
           </Flex>
 
           <Flex direction="column" gap="4" width="100%">
-            <Button className="bg-white">
+            <Button className="bg-white" onClick={handleLogin}>
               <Icon icon="google" width={16} />
               <Text size="2" weight="medium">
                 Sign in with Google
