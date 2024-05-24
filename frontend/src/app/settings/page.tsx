@@ -8,9 +8,9 @@ export default async function Settings() {
 
   const user = (await supabaseClient.auth.getSession()).data.session?.user;
 
-  // if (!user) {
-  //   redirect('/login');
-  // }
+  if (!user) {
+    redirect('/login');
+  }
 
   return <SettingsContent />;
 }

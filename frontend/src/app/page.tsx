@@ -18,7 +18,7 @@ export default async function Index() {
 
   const { data } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`,
-    { walletAddress: '' }
+    { walletAddress: '' },
   );
 
   return (

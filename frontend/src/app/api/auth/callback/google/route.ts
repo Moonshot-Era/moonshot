@@ -1,12 +1,13 @@
+import { createServerClient } from '@/supabase/server';
 import { NextResponse } from 'next/server';
-// import { supabase } from '../../../../lib/supabaseClient';
 
-export async function GET(request) {
+export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
+  const error = searchParams.get('error');
 
-  if (!code) {
-    return NextResponse.json({ error: 'Missing code' }, { status: 400 });
+  if (error || !code) {
+    return NextResponse.redirect(`${process.env.SITE_URL}/login`);
   }
 
   try {
@@ -25,20 +26,15 @@ export async function GET(request) {
     });
 
     const data = await response.json();
-    const accessToken = data.access_token;
-    console.log('debug > data===', data);
-    console.log('debug > accessToken===', accessToken);
 
-    // Set the token in Supabase
-    // await supabase.auth.setAuth(accessToken);
+    const supabaseServerClient = createServerClient();
+    await supabaseServerClient.auth.signInWithIdToken({
+      provider: 'google',
+      token: data.id_token,
+    });
 
-    // Redirect to the home page or user profile
-    return NextResponse.redirect('http://localhost:3000');
+    return NextResponse.redirect(`${process.env.SITE_URL}`);
   } catch (error) {
-    console.error('Error exchanging code for token:', error);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
+    return NextResponse.redirect(`${process.env.SITE_URL}/login`);
   }
 }
