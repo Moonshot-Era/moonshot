@@ -40,7 +40,12 @@ export async function GET(request: Request) {
     });
 
     if (user && cultureRef) {
-      // TODO store cultureRef in profiles
+      const { data, error } = await supabaseServerClient.rpc(
+        'insert_culture_ref',
+        {
+          culture_ref: cultureRef,
+        },
+      );
     }
 
     cookies().set(COOKIE_PROVIDER_TOKEN, data.id_token);

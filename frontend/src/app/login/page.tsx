@@ -8,19 +8,17 @@ import { Button, Icon } from '@/legos';
 import cubistLogo from '../../assets/images/cubist_logo.svg';
 import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 import { useRouter } from 'next/navigation';
+import { QUERY_PARAM_CULTURE_REF } from '@/utils';
 
-type LoginProps = {
-  searchParams: { culture_ref: string };
-};
-
-export default function Login({ searchParams }: LoginProps) {
+export default function Login({ searchParams }: ServerPageProps) {
   const router = useRouter();
-  const cultureRef = searchParams.culture_ref;
+  const cultureRef = searchParams[QUERY_PARAM_CULTURE_REF];
+  console.log('debug > cultureRef===', cultureRef);
 
   const handleGoogleLogin = () => {
     router.push(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google?${
-        cultureRef ? `culture_ref=${cultureRef}` : ''
+        cultureRef ? `${QUERY_PARAM_CULTURE_REF}=${cultureRef}` : ''
       }`,
     );
   };
