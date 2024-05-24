@@ -62,12 +62,6 @@ export default function Login({ searchParams }: LoginProps) {
                 Sign in with Google
               </Text>
             </Button>
-            <Button disabled className="bg-white">
-              <Icon icon="twitter" width={16} />
-              <Text size="2" weight="medium">
-                Sign in with Twitter
-              </Text>
-            </Button>
           </Flex>
         </Flex>
         <Flex direction="row" position="absolute" bottom="50px">
