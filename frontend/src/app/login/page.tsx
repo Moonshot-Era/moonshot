@@ -10,17 +10,17 @@ import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 import { useRouter } from 'next/navigation';
 
 type LoginProps = {
-  searchParams: { cultureRef: string };
+  searchParams: { culture_ref: string };
 };
 
 export default function Login({ searchParams }: LoginProps) {
   const router = useRouter();
-  const { cultureRef } = searchParams;
+  const cultureRef = searchParams.culture_ref;
 
   const handleGoogleLogin = () => {
     router.push(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google?${
-        cultureRef ? `cultureRef=${cultureRef}` : ''
+        cultureRef ? `culture_ref=${cultureRef}` : ''
       }`,
     );
   };
