@@ -9,7 +9,7 @@ import { Icon } from '@/legos';
 import { RecentTab } from './RecentTab';
 import { AccountTab } from './AccountTab';
 import { ExportKeyTab } from './ExportKeyTab';
-import { logout } from '@/utils';
+import { ROUTES, logout } from '@/utils';
 import { useRouter } from 'next/navigation';
 
 export const SettingsContent = () => {
@@ -24,7 +24,7 @@ export const SettingsContent = () => {
 
   const handleLogout = () => {
     logout().then(() => {
-      router.push('/login');
+      router.push(ROUTES.login);
     });
   };
 

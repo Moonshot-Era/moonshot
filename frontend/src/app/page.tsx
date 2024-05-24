@@ -6,6 +6,7 @@ import { createServerClient } from '@/supabase/server';
 import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
 import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
+import { ROUTES } from '@/utils';
 
 export default async function Index() {
   const supabaseClient = createServerClient();
@@ -13,7 +14,7 @@ export default async function Index() {
   const user = (await supabaseClient.auth.getSession()).data.session?.user;
 
   if (!user) {
-    redirect('/login');
+    redirect(ROUTES.login);
   }
 
   const { data } = await axios.post(

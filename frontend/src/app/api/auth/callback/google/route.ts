@@ -1,5 +1,5 @@
 import { createServerClient } from '@/supabase/server';
-import { COOKIE_PROVIDER_TOKEN } from '@/utils';
+import { COOKIE_PROVIDER_TOKEN, ROUTES } from '@/utils';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const error = searchParams.get('error');
 
   if (error || !code) {
-    return NextResponse.redirect(`${process.env.SITE_URL}/login`);
+    return NextResponse.redirect(`${process.env.SITE_URL}${ROUTES.login}`);
   }
 
   try {
@@ -39,6 +39,6 @@ export async function GET(request: Request) {
 
     return NextResponse.redirect(`${process.env.SITE_URL}`);
   } catch (error) {
-    return NextResponse.redirect(`${process.env.SITE_URL}/login`);
+    return NextResponse.redirect(`${process.env.SITE_URL}${ROUTES.login}`);
   }
 }
