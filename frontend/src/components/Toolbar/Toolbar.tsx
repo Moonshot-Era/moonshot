@@ -23,6 +23,7 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
   const toggleConvertDrawer = () => setIsConvertOpen(!isConvertOpen);
   const toggleDepositDrawer = () => setIsDepositOpen(!isDepositOpen);
   const toggleWithdrawDrawer = () => setIsWithdrawOpen(!isWithdrawOpen);
+
   return (
     <>
       <ConvertDrawer isOpen={isConvertOpen} toggleOpen={toggleConvertDrawer} />
@@ -36,22 +37,21 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
         width="100%"
         maxWidth="390px"
         direction="row"
-        justify="between"
+        justify={portfolio?.totalUsd ? 'between' : 'center'}
         gap="2"
         mb="8"
         px={withShare ? '5' : '7'}
       >
-        <Flex direction="column" align="center" gap="1">
-          <IconButton
-            icon="transfer"
-            className={`bg-yellow ${
-              !portfolio?.totalUsd ? 'bg-disabled disabled' : ''
-            }`}
-            disabled={!portfolio?.totalUsd}
-            onClick={toggleConvertDrawer}
-          />
-          <Text size="2">Convert</Text>
-        </Flex>
+        {!!portfolio?.totalUsd && (
+          <Flex direction="column" align="center" gap="1">
+            <IconButton
+              icon="transfer"
+              className="bg-yellow"
+              onClick={toggleConvertDrawer}
+            />
+            <Text size="2">Convert</Text>
+          </Flex>
+        )}
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="deposit"
@@ -60,17 +60,16 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
           />
           <Text size="2">Deposit</Text>
         </Flex>
-        <Flex direction="column" align="center" gap="1">
-          <IconButton
-            icon="withdraw"
-            className={`bg-violet ${
-              !portfolio?.totalUsd ? 'bg-disabled disabled' : ''
-            }`}
-            disabled={!portfolio?.totalUsd}
-            onClick={toggleWithdrawDrawer}
-          />
-          <Text size="2">Withdraw</Text>
-        </Flex>
+        {!!portfolio?.totalUsd && (
+          <Flex direction="column" align="center" gap="1">
+            <IconButton
+              icon="withdraw"
+              className="bg-violet"
+              onClick={toggleWithdrawDrawer}
+            />
+            <Text size="2">Withdraw</Text>
+          </Flex>
+        )}
         {withShare ? <ShareModal /> : null}
       </Flex>
     </>

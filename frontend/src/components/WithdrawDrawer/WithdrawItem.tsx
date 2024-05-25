@@ -1,11 +1,12 @@
 'use client';
 
+import axios from 'axios';
+import { ChangeEvent, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon, Input, SlideButton } from '@/legos';
 import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
-import { ChangeEvent, useState } from 'react';
 import { formatNumberToUsd } from '@/helpers/helpers';
 
 interface WithdrawItemProps {
@@ -17,10 +18,10 @@ const TO_ADDRESS_ERROR = 'Invalid Solana address';
 const AMOUNT_ERR = 'Please porvide correct value';
 
 export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
-  const [toAddress, setToAddress] = useState<string | undefined>();
-  const [transactionAmount, setTransactionAmount] = useState<
-    number | string | undefined
-  >();
+  const [toAddress, setToAddress] = useState<string>('');
+  const [transactionAmount, setTransactionAmount] = useState<number | string>(
+    ''
+  );
   const [toAddressError, setToAddressError] = useState('');
   const [amountError, setAmountError] = useState('');
   const [amountInputInUsd, setAmountInputInUsd] = useState(true);
@@ -48,6 +49,9 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
     event: ChangeEvent<HTMLInputElement>
   ) => {
     setToAddress(event.target.value);
+    if (toAddressError) {
+      setToAddressError('');
+    }
   };
 
   const handleChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
@@ -76,6 +80,26 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
     }
     if (amountError) {
       setAmountError('');
+    }
+  };
+
+  const handleSubmitWithdrawal = async () => {
+    try {
+      const { data: isSolanaWallet } = await axios.post(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/validate-wallet`,
+        {
+          wallet: toAddress,
+        }
+      );
+      console.log('debug > isSolanaWallet===', isSolanaWallet);
+      if (!isSolanaWallet) {
+        setToAddressError(TO_ADDRESS_ERROR);
+      }
+      if (toAddress && transactionAmount) {
+        onSlideHandler(toAddress, transactionAmount);
+      }
+    } catch (err) {
+      console.log('Err:', err);
     }
   };
 
@@ -137,7 +161,8 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
       <Input
         placeholder="Wallet address"
         value={toAddress}
-        error={!!amountError}
+        error={!!toAddressError}
+        errorText={toAddressError}
         onChange={handleChangeToAddress}
       />
       <Flex width="100%" direction="column" gap="1">
@@ -159,12 +184,10 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         </Flex>
       </Flex>
       <SlideButton
-        // disabled={!!amountError || !transactionAmount || !toAddress}
-        handleSubmit={() => {
-          if (toAddress && transactionAmount) {
-            onSlideHandler(toAddress, transactionAmount);
-          }
-        }}
+        disabled={
+          !!amountError || !!toAddressError || !transactionAmount || !toAddress
+        }
+        handleSubmit={handleSubmitWithdrawal}
       />
     </Flex>
   );
