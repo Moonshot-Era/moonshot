@@ -1,6 +1,6 @@
 @import '../../styles/variables.scss';
 
-#button-slider-container {
+.button-slider-container {
   width: 100%;
   position: relative;
   background-color: $greeny-3;
@@ -8,6 +8,9 @@
   @include border-dark;
   border-radius: 32px;
   @include flex-center;
+  &.disabled {
+    background-color: $grey;
+  }
 }
 
 #button-slider {
@@ -25,6 +28,9 @@
     right: -1px !important;
     left: auto !important;
     pointer-events: none;
+  }
+  &.disabled {
+    background-color: $grey-1;
   }
 }
 
