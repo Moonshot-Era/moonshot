@@ -1,16 +1,11 @@
 'use client';
 
-import Image from 'next/image';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Button, QrCodeImage } from '@/legos';
 import { copyToClipboard } from '@/helpers/helpers';
-import qrCode from '../../assets/images/qr-code.png';
 import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
-
-const MIN_DEPOSIT = '10,000 MICHI';
-const PROCESSING_TIME = '< 1 minute';
 
 export const DepositItem = ({ token }: { token: WalletPortfolioAssetType }) => (
   <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
@@ -43,25 +38,11 @@ export const DepositItem = ({ token }: { token: WalletPortfolioAssetType }) => (
         </Flex>
       </>
     )}
-    <Box py="2" px="4" className="deposit-info-card">
+    <Box className="deposit-info-card" py="2" px="4" mb="9">
       <Text size="1" weight="medium">
         Only deposit MICHI from the Solana network. Deposits of other assets or
         from other networks will be lost.
       </Text>
     </Box>
-    <Flex width="100%" direction="column">
-      <Flex direction="row" justify="between">
-        <Text size="1">Processing time</Text>
-        <Text size="1" weight="medium">
-          {PROCESSING_TIME}
-        </Text>
-      </Flex>
-      <Flex direction="row" justify="between">
-        <Text size="1">Minimum deposit</Text>
-        <Text size="1" weight="medium">
-          {MIN_DEPOSIT}
-        </Text>
-      </Flex>
-    </Flex>
   </Flex>
 );
