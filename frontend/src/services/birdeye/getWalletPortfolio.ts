@@ -59,9 +59,14 @@ export const getWalletPortfolio = async (walletAddress: string) => {
     let walletPortfolioNormalized: WalletPortfolioAssetType[] = [];
 
     if (tokensAddresses?.length) {
-      const { data: tokensListGecko } = await axios.get(
-        `${process.env.GECKO_URL_API}/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`
-      );
+    const { data: tokensListGecko } = await axios.get(
+      `${process.env.GECKO_URL_API}/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`,
+      {
+        headers: {
+          'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`,
+        },
+      }
+    );
       walletPortfolioNormalized = walletPortfolio?.items?.map(
         (asset: TokenItemBirdEyeType) => {
           const token: TokenAttributes = tokensListGecko?.data?.find(

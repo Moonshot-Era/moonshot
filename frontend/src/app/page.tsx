@@ -18,13 +18,14 @@ export default async function Home() {
     redirect(ROUTES.login);
   }
 
-  const oidc = cookies()?.get('gc')?.value;
+  const oidc = cookies()?.get('pt')?.value;
 
   const { data: walletData } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/cube/get-wallet`,
     {
       oidc,
-    })
+    }
+  );
 
   const { data } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`,
