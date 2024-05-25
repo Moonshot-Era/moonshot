@@ -3,7 +3,7 @@
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import { formatNumberToUsd } from '@/helpers/helpers';
-import { BadgeSecond, TokenCard } from '@/legos';
+import { BadgeSecond, AssetCard } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 import './style.scss';
 import {
@@ -65,7 +65,7 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
           </Text>
           {walletAssets?.length ? (
             walletAssets.map((asset: WalletPortfolioAssetType) => (
-              <TokenCard key={asset.address} token={asset} />
+              <AssetCard key={asset.address} asset={asset} />
             ))
           ) : (
             <Box

@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
-import { Input, TokenCard } from '@/legos';
+import { Input, AssetCard } from '@/legos';
 import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 interface Props {
@@ -21,9 +21,9 @@ export const WithdrawList: FC<Props> = ({ toggleTransfer, walletAssets }) => (
     <Input placeholder="Search assets" icon="search" />
     <Flex width="100%" direction="column" gap="4">
       {walletAssets?.map((asset) => (
-        <TokenCard
+        <AssetCard
           key={asset.address}
-          token={asset}
+          asset={asset}
           handler={() => toggleTransfer(asset)}
         />
       ))}
