@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
@@ -17,6 +18,10 @@ export default async function Home({ searchParams }: ServerPageProps) {
       oidc,
     }
   );
+  console.log('debug > wallet===', walletData);
+  if (!walletData?.wallet) {
+    redirect('/login');
+  }
 
   const { data } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`,
