@@ -9,6 +9,7 @@ import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio'
 
 interface Props {
   toggleTransfer: (token: WalletPortfolioAssetType) => void;
+  handleClose(): void;
 }
 
 const mockAsset: WalletPortfolioAssetType = {
@@ -24,9 +25,17 @@ const mockAsset: WalletPortfolioAssetType = {
   valueUsd: 23,
 };
 
-export const DepositList: FC<Props> = ({ toggleTransfer }) => {
+export const DepositList: FC<Props> = ({ toggleTransfer, handleClose }) => {
+  const formConfiguration = {
+    apiKey: 'pk_fad9eca9a5a5dba43bf2294041f58526',
+  };
+  const handleShowShift4Form =
+    // @ts-ignore
+    Shift4CryptoSDK.createForm(formConfiguration).append();
+
   const handleDepositWithShift4 = () => {
-    console.log('debug > handleDepositWithShift4===');
+    handleClose();
+    handleShowShift4Form.show();
   };
   return (
     <Flex width="100%" direction="column" align="center" gap="4" px="4" pb="6">

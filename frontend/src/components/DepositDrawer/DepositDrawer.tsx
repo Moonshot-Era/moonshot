@@ -34,7 +34,10 @@ export const DepositDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
         snapPoints={[800, 540]}
         initialSnap={1}
       >
-        <DepositList toggleTransfer={toggleTransfer} />
+        <DepositList
+          toggleTransfer={toggleTransfer}
+          handleClose={handleClose}
+        />
       </SheetDrawer>
       {token && (
         <SheetDrawer
