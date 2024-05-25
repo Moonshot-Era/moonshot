@@ -10,6 +10,9 @@
     box-shadow: none;
     filter: brightness(0.9);
   }
+  &:disabled {
+    cursor: not-allowed;
+  }
 }
 
 .default {

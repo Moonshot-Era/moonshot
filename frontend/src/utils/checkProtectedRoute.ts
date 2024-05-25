@@ -10,7 +10,7 @@ export const checkProtectedRoute = async (searchParams?: {
   const {
     data: { user },
   } = await supabaseClient.auth.getUser();
-
+return;
   if (!user) {
     const cultureRef = searchParams
       ? searchParams[QUERY_PARAM_CULTURE_REF]

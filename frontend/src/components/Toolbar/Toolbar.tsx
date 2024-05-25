@@ -44,7 +44,10 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="transfer"
-            className="bg-yellow"
+            className={`bg-yellow ${
+              !portfolio?.totalUsd ? 'bg-disabled disabled' : ''
+            }`}
+            disabled={!portfolio?.totalUsd}
             onClick={toggleConvertDrawer}
           />
           <Text size="2">Convert</Text>
@@ -60,7 +63,10 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="withdraw"
-            className="bg-violet"
+            className={`bg-violet ${
+              !portfolio?.totalUsd ? 'bg-disabled disabled' : ''
+            }`}
+            disabled={!portfolio?.totalUsd}
             onClick={toggleWithdrawDrawer}
           />
           <Text size="2">Withdraw</Text>
