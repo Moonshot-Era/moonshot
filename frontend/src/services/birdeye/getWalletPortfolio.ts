@@ -31,14 +31,12 @@ export interface WalletPortfolioNormilizedType {
 export const getWalletPortfolio = async (walletAddress: string) => {
   try {
 
-    if (!walletAddress && !process.env.WALLET_MAINNET) {
+    if (!walletAddress) {
       throw Error(`User don't have a wallet`);
     }
 
     const { data } = await axios.get(
-      `${process.env.BIRDEYE_URL_API}/v1/wallet/token_list?wallet=${
-        walletAddress || process.env.WALLET_MAINNET
-      }`,
+      `${process.env.BIRDEYE_URL_API}/v1/wallet/token_list?wallet=${walletAddress}`,
       {
         headers: {
           'x-chain': 'solana',
@@ -46,9 +44,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
         },
       }
     );
-
     const walletPortfolio: WalletPortfolioType = data?.data;
-
     const tokensAddresses = walletPortfolio?.items
       ?.map(
         (tok: TokenItemBirdEyeType) =>
@@ -59,14 +55,14 @@ export const getWalletPortfolio = async (walletAddress: string) => {
     let walletPortfolioNormalized: WalletPortfolioAssetType[] = [];
 
     if (tokensAddresses?.length) {
-    const { data: tokensListGecko } = await axios.get(
-      `${process.env.GECKO_URL_API}/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`,
-      {
-        headers: {
-          'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`,
-        },
-      }
-    );
+      const { data: tokensListGecko } = await axios.get(
+        `${process.env.GECKO_URL_API}/onchain/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`,
+        {
+          headers: {
+            'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`,
+          },
+        }
+      );
       walletPortfolioNormalized = walletPortfolio?.items?.map(
         (asset: TokenItemBirdEyeType) => {
           const token: TokenAttributes = tokensListGecko?.data?.find(
@@ -98,7 +94,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
         }
       : {};
   } catch (err) {
-    console.log('Error', err);
+    console.log('Error:', err);
   }
   return {};
 };

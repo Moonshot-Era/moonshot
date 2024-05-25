@@ -84,17 +84,17 @@ export const sendTransaction = async (
     console.log(`txHash: ${txHash}`);
 
     // get balance
-    console.log(
-      `${fromPubkey} has ${
-        (await connection.getBalance(fromPubkey)) / LAMPORTS_PER_SOL
-      } SOL`
-    );
-    console.log(
-      `${toPubkey} has ${
-        (await connection.getBalance(toPubkey)) / LAMPORTS_PER_SOL
-      } SOL`
-    );
+    // console.log(
+    //   `${fromPubkey} has ${
+    //     (await connection.getBalance(fromPubkey)) / LAMPORTS_PER_SOL
+    //   } SOL`
+    // );
+    // console.log(
+    //   `${toPubkey} has ${
+    //     (await connection.getBalance(toPubkey)) / LAMPORTS_PER_SOL
+    //   } SOL`
+    // );
   } catch (err) {
-    throw Error('Error retrieving balance');
+    throw Error('Error sending transaction:' + err);
   }
 };

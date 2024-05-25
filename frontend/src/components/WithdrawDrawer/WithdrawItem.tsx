@@ -10,7 +10,7 @@ import { formatNumberToUsd } from '@/helpers/helpers';
 
 interface WithdrawItemProps {
   asset?: WalletPortfolioAssetType;
-  onSlideHandler(): void;
+  onSlideHandler(toAddress: string, transactionAmount: number | string): void;
 }
 
 const TO_ADDRESS_ERROR = 'Invalid Solana address';
@@ -44,7 +44,11 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
     }
   };
 
-  const handleChangeToAddress = async () => {};
+  const handleChangeToAddress = async (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setToAddress(event.target.value);
+  };
 
   const handleChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
     if (amountInputInUsd && event.target.value) {
@@ -155,7 +159,12 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         </Flex>
       </Flex>
       <SlideButton
-        disabled={!!amountError || !transactionAmount || !toAddress}
+        // disabled={!!amountError || !transactionAmount || !toAddress}
+        handleSubmit={() => {
+          if (toAddress && transactionAmount) {
+            onSlideHandler(toAddress, transactionAmount);
+          }
+        }}
       />
     </Flex>
   );

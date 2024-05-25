@@ -1,6 +1,7 @@
 'use client';
 
 import { FC, useState } from 'react';
+import axios from 'axios';
 
 import './style.scss';
 import { SheetDrawer } from '@/legos';
@@ -10,8 +11,6 @@ import {
   WalletPortfolioAssetType,
   WalletPortfolioNormilizedType,
 } from '@/services/birdeye/getWalletPortfolio';
-import axios from 'axios';
-import { cookies } from 'next/headers';
 
 interface Props {
   isOpen: boolean;
@@ -37,13 +36,16 @@ export const WithdrawDrawer: FC<Props> = ({
     toggleOpen();
   };
 
-  const handleConfirmWithdraw = async () => {
+  const handleConfirmWithdraw = async (
+    toAddress: string,
+    amount: number | string
+  ) => {
     const { data: txData } = await axios.post(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`,
       {
-        fromAddress: '',
-        toAddress: 'B8xaui7xwQSZmuPwjem7Ka5Qobag7khJHNCPWzDpmXrD',
-        amount: 0.1,
+        fromAddress: fromAsset,
+        toAddress,
+        amount,
       }
     );
     handleClose();

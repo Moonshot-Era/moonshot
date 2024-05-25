@@ -12,7 +12,13 @@ import { Text } from '@radix-ui/themes';
 import './style.scss';
 import { Icon } from '../Icon';
 
-export const SlideButton = ({ disabled }: { disabled: boolean }) => {
+export const SlideButton = ({
+  disabled,
+  handleSubmit,
+}: {
+  disabled?: boolean;
+  handleSubmit(): void;
+}) => {
   const [initialMouse, setInitialMouse] = useState(0);
   const [slideMovementTotal, setSlideMovementTotal] = useState(0);
   const [mouseIsDown, setMouseIsDown] = useState(false);
@@ -64,6 +70,7 @@ export const SlideButton = ({ disabled }: { disabled: boolean }) => {
         };
       }, 0);
     }
+    handleSubmit();
   };
 
   const handleMouseMove = (
