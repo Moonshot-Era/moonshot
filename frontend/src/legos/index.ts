@@ -9,3 +9,5 @@ export { TokenCard } from './TokenCard';
 export { SlideButton } from './SlideButton';
 export { Select } from './Select';
 export { SheetDrawer } from './SheetDrawer';
+export { AssetCard } from './AssetCard';
+export { QrCodeImage } from './QrCodeImage';

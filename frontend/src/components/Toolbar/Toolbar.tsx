@@ -8,12 +8,14 @@ import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
 import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
 import { ShareModal } from '../ShareModal/ShareModal';
+import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
 
 interface ToolbarProps {
+  portfolio: WalletPortfolioNormilizedType;
   withShare?: boolean;
 }
 
-export const Toolbar = ({ withShare }: ToolbarProps) => {
+export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
   const [isConvertOpen, setIsConvertOpen] = useState(false);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
@@ -28,6 +30,7 @@ export const Toolbar = ({ withShare }: ToolbarProps) => {
       <WithdrawDrawer
         isOpen={isWithdrawOpen}
         toggleOpen={toggleWithdrawDrawer}
+        portfolio={portfolio}
       />
       <Flex
         width="100%"
@@ -41,7 +44,10 @@ export const Toolbar = ({ withShare }: ToolbarProps) => {
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="transfer"
-            className="bg-yellow"
+            className={`bg-yellow ${
+              !portfolio?.totalUsd ? 'bg-disabled disabled' : ''
+            }`}
+            disabled={!portfolio?.totalUsd}
             onClick={toggleConvertDrawer}
           />
           <Text size="2">Convert</Text>
@@ -57,7 +63,10 @@ export const Toolbar = ({ withShare }: ToolbarProps) => {
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="withdraw"
-            className="bg-violet"
+            className={`bg-violet ${
+              !portfolio?.totalUsd ? 'bg-disabled disabled' : ''
+            }`}
+            disabled={!portfolio?.totalUsd}
             onClick={toggleWithdrawDrawer}
           />
           <Text size="2">Withdraw</Text>

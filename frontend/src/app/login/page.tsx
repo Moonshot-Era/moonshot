@@ -1,94 +1,71 @@
-import { createServerClient } from '@/supabase/server';
-import { headers } from 'next/headers';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { SocialAuth } from './socialAuth';
+'use client';
 
-export default async function Login() {
-  const signIn = async (formData: FormData) => {
-    'use server';
+import Image from 'next/image';
+import { Flex, Text } from '@radix-ui/themes';
 
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const supabase = createServerClient();
+import './style.scss';
+import { Button, Icon } from '@/legos';
+import cubistLogo from '../../assets/images/cubist_logo.svg';
+import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
+import { useRouter } from 'next/navigation';
+import { QUERY_PARAM_CULTURE_REF } from '@/utils';
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+export default function Login({ searchParams }: ServerPageProps) {
+  const router = useRouter();
+  const cultureRef = searchParams[QUERY_PARAM_CULTURE_REF];
 
-    if (error) {
-      return redirect('/login?message=Could not authenticate user');
-    }
-
-    return redirect('/protected');
-  };
-
-  const signUp = async (formData: FormData) => {
-    'use server';
-
-    const origin = headers().get('origin');
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-
-    const supabase = createServerClient();
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      return redirect('/login?message=Could not authenticate user');
-    }
-
-    return redirect('/login?message=Check email to continue sign in process');
-  };
-
-  const signUpWithToken = async (formData: FormData) => {
-    'use server';
-    const token = formData.get('token') as string;
-
-    const supabase = createServerClient();
-
-    const { error } = await supabase.auth.signInWithIdToken({
-      provider: 'google',
-      token,
-    });
-
-    if (error) {
-      return redirect('/login?message=Could not authenticate user');
-    }
-
-    return redirect('/protected');
+  const handleGoogleLogin = () => {
+    router.push(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google?${
+        cultureRef ? `${QUERY_PARAM_CULTURE_REF}=${cultureRef}` : ''
+      }`,
+    );
   };
 
   return (
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-      <Link
-        href="/"
-        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
+    <>
+      <SplashScreen />
+      <Flex
+        className="main-wrapper"
+        height="100vh"
+        direction="column"
+        align="center"
+        justify="center"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+        <div className="login-figure1"></div>
+        <div className="login-figure2"></div>
+        <div className="login-figure3"></div>
+        <div className="login-figure4"></div>
+        <Flex
+          direction="column"
+          align="center"
+          justify="center"
+          flexGrow="1"
+          gap="8"
         >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>{' '}
-        Back
-      </Link>
+          <Flex direction="column" align="center">
+            <Text size="8" weight="bold">
+              Moonshot
+            </Text>
+            <Text size="3" weight="medium">
+              Trade Culture
+            </Text>
+          </Flex>
 
-      <SocialAuth />
-    </div>
+          <Flex direction="column" gap="4" width="100%">
+            <Button className="bg-white" onClick={handleGoogleLogin}>
+              <Icon icon="google" width={16} />
+              <Text size="2" weight="medium">
+                Sign in with Google
+              </Text>
+            </Button>
+          </Flex>
+        </Flex>
+        <Flex direction="row" position="absolute" bottom="50px">
+          <Text size="1">Powered by</Text>
+          <Image src={cubistLogo} alt="cubist-logo" />
+        </Flex>
+      </Flex>
+    </>
   );
 }
