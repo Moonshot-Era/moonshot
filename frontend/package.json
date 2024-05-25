@@ -30,8 +30,9 @@
     "next-pwa": "^5.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-share": "^5.1.0",
     "react-modal-sheet": "^3.1.0",
+    "react-qr-code": "^2.0.13",
+    "react-share": "^5.1.0",
     "sass": "^1.77.1",
     "save-dev": "^0.0.1-security",
     "swiper": "^11.1.3"
