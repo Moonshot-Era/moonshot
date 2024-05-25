@@ -1,17 +1,8 @@
-import { redirect } from 'next/navigation';
-import { createServerClient } from '@/supabase/server';
-
 import { SettingsContent } from '@/components/SettingsContent/SettingsContent';
-import { ROUTES } from '@/utils';
+import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
 
-export default async function Settings() {
-  const supabaseClient = createServerClient();
-
-  const user = (await supabaseClient.auth.getSession()).data.session?.user;
-
-  if (!user) {
-    redirect(ROUTES.login);
-  }
+export default async function Settings({ searchParams }: ServerPageProps) {
+  await checkProtectedRoute(searchParams);
 
   return <SettingsContent />;
 }

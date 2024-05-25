@@ -8,19 +8,16 @@ import { Button, Icon } from '@/legos';
 import cubistLogo from '../../assets/images/cubist_logo.svg';
 import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 import { useRouter } from 'next/navigation';
+import { QUERY_PARAM_CULTURE_REF } from '@/utils';
 
-type LoginProps = {
-  searchParams: { cultureRef: string };
-};
-
-export default function Login({ searchParams }: LoginProps) {
+export default function Login({ searchParams }: ServerPageProps) {
   const router = useRouter();
-  const { cultureRef } = searchParams;
+  const cultureRef = searchParams[QUERY_PARAM_CULTURE_REF];
 
   const handleGoogleLogin = () => {
     router.push(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google?${
-        cultureRef ? `cultureRef=${cultureRef}` : ''
+        cultureRef ? `${QUERY_PARAM_CULTURE_REF}=${cultureRef}` : ''
       }`,
     );
   };
@@ -60,12 +57,6 @@ export default function Login({ searchParams }: LoginProps) {
               <Icon icon="google" width={16} />
               <Text size="2" weight="medium">
                 Sign in with Google
-              </Text>
-            </Button>
-            <Button disabled className="bg-white">
-              <Icon icon="twitter" width={16} />
-              <Text size="2" weight="medium">
-                Sign in with Twitter
               </Text>
             </Button>
           </Flex>

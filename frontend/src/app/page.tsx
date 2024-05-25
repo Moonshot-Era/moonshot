@@ -1,22 +1,13 @@
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
 import axios from 'axios';
-
-import { createServerClient } from '@/supabase/server';
+import { cookies } from 'next/headers';
 
 import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
 import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
-import { ROUTES } from '@/utils';
+import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
 
-export default async function Home() {
-  const supabaseClient = createServerClient();
-
-  const user = (await supabaseClient.auth.getSession()).data.session?.user;
-
-  if (!user) {
-    redirect(ROUTES.login);
-  }
+export default async function Home({ searchParams }: ServerPageProps) {
+  await checkProtectedRoute(searchParams);
 
   const oidc = cookies()?.get('pt')?.value;
 
