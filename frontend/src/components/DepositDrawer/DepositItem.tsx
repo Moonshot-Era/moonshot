@@ -23,13 +23,7 @@ export const DepositItem = ({ token }: { token: WalletPortfolioAssetType }) => (
     {token?.address && (
       <>
         <QrCodeImage value={token.address} maxWidth={144} />
-        <Flex
-          width="100%"
-          direction="row"
-          align="center"
-          justify="center"
-          gap="2"
-        >
+        <Flex direction="row" align="center" justify="center" gap="2">
           <Text wrap="nowrap" size="3" weight="medium">
             {token.address.slice(0, 8)}...
             {token.address.slice(

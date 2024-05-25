@@ -6,6 +6,7 @@ import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
 import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
+import { logout } from '@/utils';
 
 export default async function Home({ searchParams }: ServerPageProps) {
   await checkProtectedRoute(searchParams);
@@ -18,9 +19,11 @@ export default async function Home({ searchParams }: ServerPageProps) {
       oidc,
     }
   );
-  console.log('debug > wallet===', walletData);
+
   if (!walletData?.wallet) {
-    redirect('/login');
+    logout().then(() => {
+      redirect('/login');
+    });
   }
 
   const { data } = await axios.post(
