@@ -1,26 +1,28 @@
-"use client";
+'use client';
 
-import { IconButton } from "@/legos";
-import { Dialog, Flex, Text } from "@radix-ui/themes";
-import Image from "next/image";
+import { IconButton } from '@/legos';
+import { Dialog, Flex, Text } from '@radix-ui/themes';
+import Image from 'next/image';
 import {
   TelegramIcon,
   TelegramShareButton,
   TwitterShareButton,
   XIcon,
-} from "react-share";
-import "./style.scss";
+} from 'react-share';
+import './style.scss';
 
 export const ShareModal = () => {
   const imageUrl = new URL(
-    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/og-image`
+    '/api/functions/v1/og-image',
+    process.env.NEXT_PUBLIC_SITE_URL
   );
-  imageUrl.searchParams.append("name", "Michi");
-  imageUrl.searchParams.append("profitPercent", "2700");
-  imageUrl.searchParams.append("entry", "372");
-  imageUrl.searchParams.append("profit", "10070");
-  imageUrl.searchParams.append("purchaseDate", "4/05/24");
-  imageUrl.searchParams.append("soldDate ", "5/08/24");
+
+  imageUrl.searchParams.append('name', 'Michi');
+  imageUrl.searchParams.append('profitPercent', '2700');
+  imageUrl.searchParams.append('entry', '372');
+  imageUrl.searchParams.append('profit', '10070');
+  imageUrl.searchParams.append('purchaseDate', '4/05/24');
+  imageUrl.searchParams.append('soldDate', '5/08/24');
 
   const imageLoader = () => {
     return imageUrl.href;
@@ -30,7 +32,29 @@ export const ShareModal = () => {
     navigator.share({ url: process.env.NEXT_PUBLIC_SITE_URL });
   };
 
-  const downloadFile = () => {};
+  const isMobileDevice = () => {
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  };
+
+  const downloadImage = async () => {
+    try {
+      const response = await fetch(imageUrl.href);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'moonshot.jpg';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading the image:', error);
+    }
+  };
 
   return (
     <Dialog.Root>
@@ -64,18 +88,26 @@ export const ShareModal = () => {
                 <TelegramIcon round size={32} />
               </button>
             </TelegramShareButton>
-            <IconButton
-              icon="message"
-              size="small"
-              className="bg-violet"
-              onClick={shareMessage}
-            />
-            <IconButton
-              icon="fileDownload"
-              size="small"
-              className="bg-orange"
-              onClick={downloadFile}
-            />
+            {isMobileDevice() ? (
+              <a href="sms:?body=Check out my Moonshot at https://moonshot.tech/culture/WIF">
+                <IconButton icon="message" size="small" className="bg-violet" />
+              </a>
+            ) : (
+              <IconButton
+                icon="message"
+                size="small"
+                className="bg-violet"
+                onClick={shareMessage}
+              />
+            )}
+            <a id="moonshot-image">
+              <IconButton
+                icon="fileDownload"
+                size="small"
+                className="bg-orange"
+                onClick={downloadImage}
+              />
+            </a>
           </Flex>
         </Flex>
       </Dialog.Content>
