@@ -11,7 +11,9 @@ export async function POST(request: Request) {
       },
     });
   }
-  const wallet = await getUserWallet(response.oidc);
+  const wallet = await getUserWallet(response.oidc).catch((err) => {
+    console.log('Err', err);
+  });
 
   return NextResponse.json({ wallet });
 }
