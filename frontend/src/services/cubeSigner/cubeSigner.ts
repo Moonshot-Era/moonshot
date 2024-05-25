@@ -75,6 +75,7 @@ export const getUserWallet = async (
       });
 
       key = await org.createKey(Ed25519.Solana, userId, {
+        // @ts-ignore
         policy: ['AllowRawBlobSigning'],
       });
     } else {
