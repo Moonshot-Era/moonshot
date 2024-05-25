@@ -6,6 +6,7 @@ import '@radix-ui/themes/styles.css';
 import './globals.scss';
 import './globals.css';
 import { Header } from '@/components/Header/Header';
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
 
 const defaultUrl = process.env.VERCEL_URL
@@ -44,6 +45,11 @@ export const metadata: Metadata = {
     { rel: 'apple-touch-icon', url: 'icons/icon-128x128.png' },
     { rel: 'icon', url: 'icons/icon-128x128.png' },
   ],
+  openGraph: {
+    images: {
+      url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/og-image`,
+    },
+  },
 };
 
 export const viewport: Viewport = {
@@ -62,7 +68,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={clashDisplayFont.className}>
-        <SplashScreen/>
+        <link
+          rel="manifest"
+          href={`https://progressier.app/${process.env.NEXT_PUBLIC_PROGRESSIER_ID}/progressier.json`}
+        />
+        <script
+          defer
+          src={`https://progressier.app/${process.env.NEXT_PUBLIC_PROGRESSIER_ID}/script.js`}
+        ></script>
+        <ServiceWorkerRegister />
+        <SplashScreen />
         <Header />
         <Theme className="bg-transparent">{children}</Theme>
       </body>

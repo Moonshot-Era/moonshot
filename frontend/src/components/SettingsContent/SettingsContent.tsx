@@ -9,15 +9,24 @@ import { Icon } from '@/legos';
 import { RecentTab } from './RecentTab';
 import { AccountTab } from './AccountTab';
 import { ExportKeyTab } from './ExportKeyTab';
+import { ROUTES, logout } from '@/utils';
+import { useRouter } from 'next/navigation';
 
 export const SettingsContent = () => {
   const [activeTab, setActiveTab] = useState<
     'account' | 'recent' | 'export' | 'logout' | null
   >(null);
+  const router = useRouter();
 
   const handleActiveTab = (
-    tab: 'account' | 'recent' | 'export' | 'logout' | null
+    tab: 'account' | 'recent' | 'export' | 'logout' | null,
   ) => setActiveTab(tab);
+
+  const handleLogout = () => {
+    logout().then(() => {
+      router.push(ROUTES.login);
+    });
+  };
 
   return (
     <>
@@ -80,7 +89,7 @@ export const SettingsContent = () => {
               gap="3"
               p="4"
               className="settings-card"
-              onClick={() => handleActiveTab('logout')}
+              onClick={handleLogout}
             >
               <Icon icon="logout" />
               <Text size="3" weight="medium">

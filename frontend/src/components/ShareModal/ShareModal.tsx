@@ -12,10 +12,25 @@ import {
 import "./style.scss";
 
 export const ShareModal = () => {
-  const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/og-image`;
+  const imageUrl = new URL(
+    `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/og-image`
+  );
+  imageUrl.searchParams.append("name", "Michi");
+  imageUrl.searchParams.append("profitPercent", "2700");
+  imageUrl.searchParams.append("entry", "372");
+  imageUrl.searchParams.append("profit", "10070");
+  imageUrl.searchParams.append("purchaseDate", "4/05/24");
+  imageUrl.searchParams.append("soldDate ", "5/08/24");
+
   const imageLoader = () => {
-    return imageUrl;
+    return imageUrl.href;
   };
+
+  const shareMessage = () => {
+    navigator.share({ url: process.env.NEXT_PUBLIC_SITE_URL });
+  };
+
+  const downloadFile = () => {};
 
   return (
     <Dialog.Root>
@@ -32,28 +47,34 @@ export const ShareModal = () => {
           <div className="share-image-wrapper">
             <Image
               loader={imageLoader}
-              src={imageUrl}
+              src={imageUrl.href}
               alt="monshootShareImage"
               width={235}
               height={237}
             />
           </div>
           <Flex width="100%" direction="row" justify="between">
-            <TwitterShareButton url="">
+            <TwitterShareButton url={process.env.NEXT_PUBLIC_SITE_URL}>
               <button className="icon-button small">
                 <XIcon round size={32} />
               </button>
             </TwitterShareButton>
-            <TelegramShareButton url="">
+            <TelegramShareButton url={process.env.NEXT_PUBLIC_SITE_URL}>
               <button className="icon-button small">
                 <TelegramIcon round size={32} />
               </button>
             </TelegramShareButton>
-            <IconButton icon="message" size="small" className="bg-violet" />
+            <IconButton
+              icon="message"
+              size="small"
+              className="bg-violet"
+              onClick={shareMessage}
+            />
             <IconButton
               icon="fileDownload"
               size="small"
               className="bg-orange"
+              onClick={downloadFile}
             />
           </Flex>
         </Flex>
