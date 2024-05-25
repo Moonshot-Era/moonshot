@@ -12,9 +12,9 @@ export interface WalletPortfolioAssetType {
   percentage_change_h24: any;
   address: string;
   balance: number;
-  chainId: string;
-  decimals: number;
-  logoURI: string;
+  chainId?: string;
+  decimals?: number;
+  logoURI?: string;
   name: string;
   priceUsd: number;
   symbol: string;
