@@ -7,7 +7,7 @@ import {
 import { isSolanaAddress } from '@/helpers/helpers';
 import axios from 'axios';
 
-export interface WalletPortfolioDetailsType {
+export interface WalletPortfolioAssetType {
   imageUrl: string;
   percentage_change_h24: any;
   address: string;
@@ -23,17 +23,20 @@ export interface WalletPortfolioDetailsType {
 }
 
 export interface WalletPortfolioNormilizedType {
-  walletDetails: WalletPortfolioDetailsType[];
+  walletAssets: WalletPortfolioAssetType[];
   totalUsd: number;
   wallet: string;
 }
 
 export const getWalletPortfolio = async (walletAddress: string) => {
   try {
+
+    if (!walletAddress) {
+      throw Error(`User don't have a wallet`);
+    }
+
     const { data } = await axios.get(
-      `${process.env.BIRDEYE_URL_API}/v1/wallet/token_list?wallet=${
-        walletAddress || process.env.WALLET_MAINNET
-      }`,
+      `${process.env.BIRDEYE_URL_API}/v1/wallet/token_list?wallet=${walletAddress}`,
       {
         headers: {
           'x-chain': 'solana',
@@ -41,9 +44,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
         },
       }
     );
-
     const walletPortfolio: WalletPortfolioType = data?.data;
-
     const tokensAddresses = walletPortfolio?.items
       ?.map(
         (tok: TokenItemBirdEyeType) =>
@@ -51,42 +52,49 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       )
       .join(',');
 
-    const { data: tokensListGecko } = await axios.get(
-      `${process.env.GECKO_URL_API}/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`,
-      {
-        headers: {
-          'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`,
-        },
-      }
-    );
+    let walletPortfolioNormalized: WalletPortfolioAssetType[] = [];
 
-    const walletPortfolioNormalized = walletPortfolio?.items?.map(
-      (asset: TokenItemBirdEyeType) => {
-        const token: TokenAttributes = tokensListGecko?.data?.find(
-          (token: TokenItemGeckoType) =>
-            token.attributes.address ===
-            (isSolanaAddress(asset?.address) || asset?.address)
-        )?.attributes;
+    if (tokensAddresses?.length) {
+      const { data: tokensListGecko } = await axios.get(
+        `${process.env.GECKO_URL_API}/onchain/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`,
+        {
+          headers: {
+            'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`,
+          },
+        }
+      );
+      walletPortfolioNormalized = walletPortfolio?.items?.map(
+        (asset: TokenItemBirdEyeType) => {
+          const token: TokenAttributes = tokensListGecko?.data?.find(
+            (token: TokenItemGeckoType) =>
+              token.attributes.address ===
+              (isSolanaAddress(asset?.address) || asset?.address)
+          )?.attributes;
 
-        const percentage_change_h24 = tokensListGecko?.included?.find(
-          (included: PoolGeckoType) =>
-            included?.relationships?.base_token?.data?.id ===
-            `solana_${isSolanaAddress(asset?.address) || asset?.address}`
-        )?.attributes?.price_change_percentage?.h24;
+          const percentage_change_h24 = tokensListGecko?.included?.find(
+            (included: PoolGeckoType) =>
+              included?.relationships?.base_token?.data?.id ===
+              `solana_${isSolanaAddress(asset?.address) || asset?.address}`
+          )?.attributes?.price_change_percentage?.h24;
 
-        return { ...asset, imageUrl: token?.image_url, percentage_change_h24 };
-      }
-    );
+          return {
+            ...asset,
+            imageUrl: token?.image_url,
+            percentage_change_h24,
+          };
+        }
+      );
+    }
 
     return data?.success
       ? {
-          walletDetails: walletPortfolioNormalized,
+          walletAssets: walletPortfolioNormalized,
           totalUsd: walletPortfolio?.totalUsd,
-          walletAddress: walletPortfolio?.wallet,
+          wallet: walletPortfolio?.wallet,
         }
       : {};
   } catch (err) {
-    console.log('Error', err);
+    console.log('Error:', err);
   }
   return {};
 };

@@ -7,7 +7,7 @@ import { BadgeSecond, TokenCard } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 import './style.scss';
 import {
-  WalletPortfolioDetailsType,
+  WalletPortfolioAssetType,
   WalletPortfolioNormilizedType,
 } from '@/services/birdeye/getWalletPortfolio';
 
@@ -16,8 +16,8 @@ interface HomeContentProps {
 }
 
 export const HomeContent = ({ portfolio }: HomeContentProps) => {
-  const { walletDetails, totalUsd } = portfolio;
-  const totalH24 = walletDetails?.reduce((acc, cur) => {
+  const { walletAssets, totalUsd } = portfolio;
+  const totalH24 = walletAssets?.reduce((acc, cur) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
   }, 0);
   return (
@@ -52,7 +52,7 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
           )}
         </Box>
 
-        <Toolbar />
+        <Toolbar portfolio={portfolio} />
 
         <Flex
           width="100%"
@@ -63,8 +63,8 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
           <Text size="3" weight="medium" mb="2">
             My portfolio
           </Text>
-          {walletDetails?.length ? (
-            walletDetails.map((asset: WalletPortfolioDetailsType) => (
+          {walletAssets?.length ? (
+            walletAssets.map((asset: WalletPortfolioAssetType) => (
               <TokenCard key={asset.address} token={asset} />
             ))
           ) : (

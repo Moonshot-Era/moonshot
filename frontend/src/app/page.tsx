@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import axios from 'axios';
 
 import { createServerClient } from '@/supabase/server';
@@ -7,7 +8,6 @@ import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
 import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
 import { ROUTES } from '@/utils';
-import { cookies } from 'next/headers';
 
 export default async function Home() {
   const supabaseClient = createServerClient();

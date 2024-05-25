@@ -8,9 +8,12 @@ import {
 
 import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
 
-const AMOUNT = 0.1;
-
-export const sendTransaction = async (oidcToken: string, toAddress: string) => {
+export const sendTransaction = async (
+  oidcToken: string,
+  fromAddress: string,
+  toAddress: string,
+  amount: number
+) => {
   try {
     const client = await CubeSignerInstance.getUserSessionClient(oidcToken);
 
@@ -19,24 +22,34 @@ export const sendTransaction = async (oidcToken: string, toAddress: string) => {
       'confirmed'
     );
 
-    const fromAddress = await getUserWallet(oidcToken);
-    if (!fromAddress) {
-      throw Error('Wallet not found');
-    }
+    // const fromAddress = await getUserWallet(oidcToken);
+    // if (!fromAddress) {
+    //   throw Error('Wallet not found');
+    // }
     const fromPubkey = new PublicKey(fromAddress);
     const toPubkey = new PublicKey(toAddress);
 
     console.log(
-      `Transferring ${AMOUNT} SOL from ${fromPubkey} to ${toPubkey}...`
+      `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}...`
     );
 
     const tx = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey,
         toPubkey,
-        lamports: AMOUNT * LAMPORTS_PER_SOL,
+        lamports: amount * LAMPORTS_PER_SOL,
       })
     );
+
+    // const transaction = new Transaction().add(
+    //   transfer(
+    //     senderTokenAccount.address,
+    //     receiverTokenAccount.address,
+    //     senderPublicKey,
+    //     50 // Amount of tokens to transfer
+    //   )
+    // );
+
     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
     tx.feePayer = fromPubkey;
     const base64 = tx.serializeMessage().toString('base64');
@@ -71,17 +84,17 @@ export const sendTransaction = async (oidcToken: string, toAddress: string) => {
     console.log(`txHash: ${txHash}`);
 
     // get balance
-    console.log(
-      `${fromPubkey} has ${
-        (await connection.getBalance(fromPubkey)) / LAMPORTS_PER_SOL
-      } SOL`
-    );
-    console.log(
-      `${toPubkey} has ${
-        (await connection.getBalance(toPubkey)) / LAMPORTS_PER_SOL
-      } SOL`
-    );
+    // console.log(
+    //   `${fromPubkey} has ${
+    //     (await connection.getBalance(fromPubkey)) / LAMPORTS_PER_SOL
+    //   } SOL`
+    // );
+    // console.log(
+    //   `${toPubkey} has ${
+    //     (await connection.getBalance(toPubkey)) / LAMPORTS_PER_SOL
+    //   } SOL`
+    // );
   } catch (err) {
-    throw Error('Error retrieving balance');
+    throw Error('Error sending transaction:' + err);
   }
 };
