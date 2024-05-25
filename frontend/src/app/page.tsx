@@ -24,11 +24,12 @@ export default async function Home() {
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/cube/get-wallet`,
     {
       oidc,
-    });
+    }
+  );
 
   const { data } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`,
-    { walletAddress: '' },
+    { walletAddress: walletData?.wallet }
   );
 
   return (

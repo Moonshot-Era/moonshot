@@ -52,7 +52,12 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       .join(',');
 
     const { data: tokensListGecko } = await axios.get(
-      `${process.env.GECKO_URL_API}/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`
+      `${process.env.GECKO_URL_API}/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`,
+      {
+        headers: {
+          'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`,
+        },
+      }
     );
 
     const walletPortfolioNormalized = walletPortfolio?.items?.map(
