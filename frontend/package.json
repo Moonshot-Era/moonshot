@@ -5,7 +5,7 @@
     "build": "next build",
     "start": "next start",
     "sb:link": "source .env && supabase link --project-ref $SUPABASE_PROJECT_REF_ID",
-    "sb:types": "source .env && supabase gen types typescript --linked | tail +1 > src/supabase/schema.tsx",
+    "sb:types": "source .env && supabase gen types typescript --linked --schema public | tail +1 > src/supabase/schema.tsx",
     "sb:db:pull": "source .env && supabase db pull -p $SUPABASE_DB_PASSWORD -s all",
     "sb:db:diff": "source .env && supabase db diff --local",
     "sb:migration:new": "supabase migration new",
@@ -34,6 +34,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-modal-sheet": "^3.1.0",
+    "react-qr-code": "^2.0.13",
+    "react-share": "^5.1.0",
     "sass": "^1.77.1",
     "save-dev": "^0.0.1-security",
     "swiper": "^11.1.3"

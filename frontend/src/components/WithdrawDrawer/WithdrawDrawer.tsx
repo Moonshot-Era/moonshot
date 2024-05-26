@@ -1,34 +1,56 @@
 'use client';
 
 import { FC, useState } from 'react';
+import axios from 'axios';
 
 import './style.scss';
 import { SheetDrawer } from '@/legos';
 import { WithdrawList } from './WithdrawList';
 import { WithdrawItem } from './WithdrawItem';
-
-const mockWithdrawData = {
-  currencyName: 'MICHI',
-  wallet: '5CxsB1BH...3whqAKYa',
-  processingTime: '< 1 minute',
-  minDeposit: '10,000 MICHI',
-  balance: 435,
-};
+import {
+  WalletPortfolioAssetType,
+  WalletPortfolioNormilizedType,
+} from '@/services/birdeye/getWalletPortfolio';
 
 interface Props {
   isOpen: boolean;
   toggleOpen: () => void;
+  portfolio: WalletPortfolioNormilizedType;
 }
 
-export const WithdrawDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
+export const WithdrawDrawer: FC<Props> = ({
+  isOpen,
+  toggleOpen,
+  portfolio,
+}) => {
   const [isTransfer, setIsTransfer] = useState(false);
+  const [fromAsset, setFromAsset] = useState<WalletPortfolioAssetType>();
 
-  const toggleTransfer = () => setIsTransfer(!isTransfer);
+  const toggleTransfer = (asset: WalletPortfolioAssetType) => {
+    setFromAsset(asset);
+    setIsTransfer(!isTransfer);
+  };
 
   const handleClose = () => {
     setIsTransfer(false);
     toggleOpen();
   };
+
+  const handleConfirmWithdraw = async (
+    toAddress: string,
+    amount: number | string
+  ) => {
+    const { data: txData } = await axios.post(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`,
+      {
+        fromAddress: fromAsset,
+        toAddress,
+        amount,
+      }
+    );
+    handleClose();
+  };
+
   return (
     <>
       <SheetDrawer
@@ -37,15 +59,23 @@ export const WithdrawDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
         snapPoints={[800, 540]}
         initialSnap={1}
       >
-        <WithdrawList toggleTransfer={toggleTransfer} />
+        <WithdrawList
+          toggleTransfer={toggleTransfer}
+          walletAssets={portfolio?.walletAssets}
+        />
       </SheetDrawer>
-      <SheetDrawer
-        isOpen={isOpen && isTransfer}
-        detent="content-height"
-        handleClose={handleClose}
-      >
-        <WithdrawItem />
-      </SheetDrawer>
+      {fromAsset && (
+        <SheetDrawer
+          isOpen={isOpen && isTransfer}
+          detent="content-height"
+          handleClose={handleClose}
+        >
+          <WithdrawItem
+            asset={fromAsset}
+            onSlideHandler={handleConfirmWithdraw}
+          />
+        </SheetDrawer>
+      )}
     </>
   );
 };

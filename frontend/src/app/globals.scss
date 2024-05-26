@@ -48,6 +48,10 @@
   background-color: $blue;
 }
 
+.bg-orange {
+  background-color: $orange;
+}
+
 .bg-success {
   background-color: $success;
 }
@@ -68,6 +72,10 @@
   background-color: $white;
 }
 
+.bg-disabled {
+  background-color: $grey;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -80,7 +88,7 @@ body {
 }
 
 body {
-  max-width: 390px;
+  max-width: 430px;
   margin: auto !important;
   background-image: url('../assets/images/bg.svg');
 }
@@ -110,6 +118,10 @@ a {
   @include border-dark;
 }
 
+.font-size-xs {
+  font-size: 10px;
+}
+
 .icon-success-color path {
   stroke: $success;
 }
@@ -118,10 +130,10 @@ a {
   stroke: $error;
 }
 
-.text-success-color {
+.text-color-success {
   color: $success;
 }
 
-.text-error-color {
+.text-color-error {
   color: $error;
 }

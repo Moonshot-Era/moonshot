@@ -1,30 +1,42 @@
+import axios from 'axios';
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { createServerClient } from '@/supabase/server';
 
 import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
-import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
-import axios from 'axios';
+import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
+import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
+import { logout } from '@/utils';
 
-export default async function Index() {
-  const supabaseClient = createServerClient();
+export default async function Home({ searchParams }: ServerPageProps) {
+  await checkProtectedRoute(searchParams);
 
-  const user = (await supabaseClient.auth.getSession()).data.session?.user;
+  const oidc = cookies()?.get('pt')?.value;
 
-  if (!user) {
-    redirect('/login');
+  const { data: walletData } = await axios.post(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/cube/get-wallet`,
+    {
+      oidc,
+    }
+  );
+
+  if (!walletData?.wallet) {
+    logout().then(() => {
+      redirect('/login');
+    });
   }
 
   const { data } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`,
-    { walletAddress: '' }
+    { walletAddress: walletData?.wallet }
   );
 
   return (
     <>
       <Header />
-      <SplashScreen />
-      <HomeContent portfolio={data?.walletPortfolio} />
+      <HomeContent
+        portfolio={data?.walletPortfolio as WalletPortfolioNormilizedType}
+      />
     </>
   );
 }

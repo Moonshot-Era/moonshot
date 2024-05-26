@@ -1,5 +1,8 @@
 import { OnboardingLayout } from '@/components/Onboarding/Onboarding';
+import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
 
-export default function Onboarding() {
+export default async function Onboarding({ searchParams }: ServerPageProps) {
+  await checkProtectedRoute(searchParams);
+
   return <OnboardingLayout />;
 }

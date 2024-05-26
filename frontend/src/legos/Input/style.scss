@@ -16,10 +16,15 @@
     @include border-dark;
     outline: none;
   }
+  &.error {
+    border-color: $error;
+  }
 }
 
 .default-input-error {
   color: $error;
+  position: absolute;
+  bottom: -16px;
 }
 
 .default-input-icon {
