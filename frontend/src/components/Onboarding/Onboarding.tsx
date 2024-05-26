@@ -22,13 +22,15 @@ export const OnboardingLayout = () => {
     const supabaseClient = createBrowserClient();
     const { data } = await supabaseClient.auth.getSession();
 
-    if (data.session?.user?.id) {
+    const userId = data.session?.user?.id;
+
+    if (userId) {
       await supabaseClient
         .from('profiles')
         .update({
           onboarding_completed: true,
         })
-        .eq('user_id', data.session?.user?.id);
+        .eq('user_id', userId);
 
       route.replace(ROUTES.home);
     }
