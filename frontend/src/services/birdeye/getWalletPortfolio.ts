@@ -28,8 +28,9 @@ export interface WalletPortfolioNormilizedType {
   wallet: string;
 }
 
-export const getWalletPortfolio = async (walletAddress: string) => {
+export const getWalletPortfolio = async () => {
   try {
+    const walletAddress = 'HTnKf3f3vtLaGVVtYkZ8oCTyWEA64n5a1P4Dkkk5vjmH'
 
     if (!walletAddress) {
       throw Error(`User don't have a wallet`);

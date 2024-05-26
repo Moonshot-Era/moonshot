@@ -110,30 +110,3 @@ export const TokenCard: FC<Props> = ({
     </Flex>
   );
 };
-
-
-// <Text size="3" weight="medium">{currencyFormatter(total, { minimumFractionDigits: type === 'default' ? 0 : 4 })}</Text>
-// {percentChange && (
-//   <Flex direction="row" align="center" gap="1">
-//     <Flex
-//       direction="row"
-//       align="center"
-//       justify="center"
-//       className={percentChange > 0 ? 'icon-success-color' : 'icon-error-color'}
-//     >
-//       <Icon
-//         icon={percentChange > 0 ? 'trendingUp' : 'trendingDown'}
-//         width={16}
-//         height={16}
-//       />
-//       <Text
-//         size="1"
-//         weight="medium"
-//         className={percentChange > 0 ? 'text-success-color' : 'text-error-color'}
-//       >
-//         {`${percentChange}%`}
-//       </Text>
-//     </Flex>
-//   </Flex>
-// )}
-// </Flex>

@@ -7,7 +7,7 @@ export const getSwapRoutes = async (
   slippageBps: string,
 ) => {
   try {
-    const routesResponse = await axios.get('https://quote-api.jup.ag/v6/quote', {
+    const quoteResponse = await axios.get(`${process.env.JUPITER_URL}/v6/quote`, {
       params: {
         inputMint,
         outputMint,
@@ -15,7 +15,8 @@ export const getSwapRoutes = async (
         slippageBps,
       },
     });
-    return routesResponse;
+
+    return quoteResponse;
   } catch (err) {
     throw Error(`Can't get swap routes: ${err}`);
   }
