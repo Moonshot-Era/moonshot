@@ -10,6 +10,7 @@ import {
   WalletPortfolioAssetType,
   WalletPortfolioNormilizedType,
 } from '@/services/birdeye/getWalletPortfolio';
+import axios from 'axios';
 
 interface HomeContentProps {
   portfolio: WalletPortfolioNormilizedType;
@@ -20,6 +21,20 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
   const totalH24 = walletAssets?.reduce((acc, cur) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
   }, 0);
+
+  // const handleConfirmWithdraw = async () => {
+  //   const { data: txData } = await axios.post(
+  //     `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`,
+  //     {
+  //       fromAddress: '',
+  //       toAddress: '',
+  //       amount: 0.001,
+  //     }
+  //   );
+
+  //   console.log('debug > txData===', txData);
+  // };
+
   return (
     <>
       <Flex
@@ -29,6 +44,7 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
         width="100%"
         className="main-wrapper home-wrapper"
       >
+        {/* <button onClick={() => handleConfirmWithdraw()}>Transaction</button> */}
         <Flex direction="row">
           <Text size="8" weight="bold">
             {totalUsd > 0

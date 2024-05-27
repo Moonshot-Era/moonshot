@@ -3,6 +3,7 @@ import {
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
+  Signer,
 } from '@solana/web3.js';
 import {
   createMint,
@@ -42,9 +43,9 @@ const sendTokensTransaction = async (
   // Get the token account of the fromWallet address, and if it does not exist, create it
   // const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
   //   connection,
-  //   fromWallet,
+  //   fromPubkey,
   //   mint,
-  //   fromWallet.publicKey
+  //   fromPubkey
   // );
 
   // // Get the token account of the toWallet address, and if it does not exist, create it
