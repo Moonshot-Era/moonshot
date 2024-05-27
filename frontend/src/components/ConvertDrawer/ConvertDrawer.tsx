@@ -1,19 +1,20 @@
 "use client";
 
 // TODO:
-// - Price of tokens in tokensList
 // + Show available assets to convert
 // + Show price change of assets
 // + Add input of tokens to convert
-// - validate number in input
 // + Add max btn for tokens to convert
 // + Find routes for convert in jupiter
 // - Convert
 // + Infinite scroll for tokens
 // + Selects as a btn
-// - Snap on scroll
-// - Search a token
+// - validate number in input
+// - Search an asset
+// - Price of tokens in tokensList
 // - do not allow non-tradable tokens
+// - better types
+// - Snap on scroll
 
 import {
   FC,
@@ -149,7 +150,7 @@ export const ConvertDrawer: FC<Props> = memo(
       }
     };
 
-    if (!portfolio || !tokensList) {
+    if (!portfolio?.walletAssets || !tokensList) {
       return null;
     }
 

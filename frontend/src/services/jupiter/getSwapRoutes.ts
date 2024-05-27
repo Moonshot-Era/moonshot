@@ -13,6 +13,7 @@ export const getSwapRoutes = async (
         outputMint,
         amount,
         slippageBps,
+        wrapAndUnwrapSol: true,
       },
     });
 

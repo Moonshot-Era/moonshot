@@ -2,15 +2,15 @@ import {
   Connection,
   PublicKey,
   Transaction,
+  VersionedTransaction,
 } from '@solana/web3.js';
 import axios from 'axios';
 import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
 
 export const swapTokens = async (oidcToken: string, swapRoutes: void) => {
   try {
+    const client = await CubeSignerInstance.getUserSessionClient(oidcToken);
     const walletAddress = await getUserWallet(oidcToken);
-    
-    console.log('walletAddress, swapRoutes', walletAddress, swapRoutes);
 
     const { data: swapTransaction } = await axios.post(`${process.env.JUPITER_URL}/v6/swap`, {
       // quoteResponse from /quote api
@@ -27,6 +27,17 @@ export const swapTokens = async (oidcToken: string, swapRoutes: void) => {
 
     // 1 Sign transaction
     // 2 execute transaction
+
+    const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
+    const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+
+    const resp = await client.apiClient.signSolana(fromAddress, {
+      message_base64: base64,
+    });
+    const sig = resp.data().signature;
+    // conver the signature 0x... to bytes
+    const sigBytes = Buffer.from(sig.slice(2), 'hex');
+
 
   } catch (err) {
     throw Error('Error during token swap: ' + err);
