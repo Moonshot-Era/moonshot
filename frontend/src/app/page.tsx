@@ -44,7 +44,7 @@ export default async function Home({ searchParams }: ServerPageProps) {
       <Header />
       <HomeContent
         portfolio={data?.walletPortfolio as WalletPortfolioNormilizedType}
-        walletBalance={walletBalance?.balance}
+        walletBalance={walletBalance?.balance || 0}
       />
     </>
   );

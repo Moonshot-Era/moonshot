@@ -9,6 +9,7 @@ import userIcon from '../../assets/images/user-icon.png';
 
 import { Toolbar } from '../Toolbar/Toolbar';
 import { Icon, Input, TokenCard } from '@/legos';
+import { PoolGeckoType } from '@/@types/gecko';
 
 const mockUserData = {
   name: 'jeo boden',
@@ -23,7 +24,11 @@ const mockUserData = {
     'Joe Boden is da hartfelt leeder of Amuriku. His mishun is to bild bak betta, to unify da divided, n to counter da wild claims of Doland Tremp. We’re here to bring togetha all da Amuriku memes and support one anotha thru da highs and lows. Make sure to stand by Boden for real change!',
 };
 
-export const ExploreContent = () => {
+export const ExploreContent = ({
+  trendingPools,
+}: {
+  trendingPools: PoolGeckoType[];
+}) => {
   const [isProfile, setIsProfile] = useState(false);
 
   const toggleIsProfile = () => setIsProfile(!isProfile);
@@ -40,20 +45,9 @@ export const ExploreContent = () => {
         {!isProfile ? (
           <Flex width="100%" direction="column" gap="4">
             <Input placeholder="Search assets" icon="search" />
-            {Array(10)
-              .fill(10)
-              .map((item, index) => (
-                <TokenCard
-                  key={index}
-                  logo=""
-                  name="jeo boden"
-                  currencyType="baseStatus"
-                  percent={2.7}
-                  total={21938}
-                  description="43,453 BODEN"
-                  handler={toggleIsProfile}
-                />
-              ))}
+            {trendingPools?.map((pool, index) => (
+              <TokenCard key={index} token={pool} handler={toggleIsProfile} />
+            ))}
           </Flex>
         ) : (
           <Flex direction="column" width="100%" gap="4">
@@ -77,7 +71,7 @@ export const ExploreContent = () => {
                 <Icon icon="arrowRight" />
               </Box>
             </Flex>
-            <Toolbar withShare />
+            {/* <Toolbar withShare /> */}
 
             <Flex
               direction="row"
@@ -89,9 +83,9 @@ export const ExploreContent = () => {
                 <Text size="3" weight="medium">
                   Your balance
                 </Text>
-                <Text size="2" weight="medium">
+                {/* <Text size="2" weight="medium">
                   {`$${mockUserData.balance.numbersArray[0]}`}
-                </Text>
+                </Text> */}
               </Flex>
               <Flex
                 width="100%"

@@ -27,10 +27,6 @@ export const sendTransactionWrappedSol = async (
       'confirmed'
     );
 
-    // const fromAddress = await getUserWallet(oidcToken);
-    // if (!fromAddress) {
-    //   throw Error('Wallet not found');
-    // }
     const fromPubkey = new PublicKey(fromAddress);
     const toPubkey = new PublicKey(toAddress);
 
@@ -55,7 +51,7 @@ export const sendTransactionWrappedSol = async (
       createAssociatedTokenAccountInstruction(
         fromPubkey,
         associatedTokenAccount,
-        fromPubkey,
+        toPubkey,
         NATIVE_MINT
       )
     );
@@ -90,6 +86,7 @@ export const sendTransactionWrappedSol = async (
     tx.addSignature(fromPubkey, sigBytes);
 
     // send transaction
+    connection.sendTransaction;
     const txHash = await connection.sendRawTransaction(tx.serialize());
     console.log(`txHash: ${txHash}`);
 
@@ -105,6 +102,6 @@ export const sendTransactionWrappedSol = async (
     //   } SOL`
     // );
   } catch (err) {
-    throw Error('Error sending transaction:' + err);
+    throw Error(`${err}`);
   }
 };

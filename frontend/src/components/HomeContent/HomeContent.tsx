@@ -14,7 +14,7 @@ import axios from 'axios';
 
 interface HomeContentProps {
   portfolio: WalletPortfolioNormilizedType;
-  walletBalance: string;
+  walletBalance?: string;
 }
 
 export const HomeContent = ({ portfolio, walletBalance }: HomeContentProps) => {
@@ -23,18 +23,16 @@ export const HomeContent = ({ portfolio, walletBalance }: HomeContentProps) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
   }, 0);
 
-  // const handleConfirmWithdraw = async () => {
-  //   const { data: txData } = await axios.post(
-  //     `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`,
-  //     {
-  //       fromAddress: '',
-  //       toAddress: '',
-  //       amount: 0.001,
-  //     }
-  //   );
-
-  //   console.log('debug > txData===', txData);
-  // };
+  const handleTransaction = async () => {
+    const { data: txData } = await axios.post(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`,
+      {
+        fromAddress: portfolio?.wallet,
+        toAddress: portfolio?.wallet,
+        amount: 0.1,
+      }
+    );
+  };
 
   return (
     <>
@@ -45,16 +43,16 @@ export const HomeContent = ({ portfolio, walletBalance }: HomeContentProps) => {
         width="100%"
         className="main-wrapper home-wrapper"
       >
-        {/* <button onClick={() => handleConfirmWithdraw()}>Transaction</button> */}
-        {/* <Flex direction="row">
+        <button onClick={() => handleTransaction()}>Transaction 0.1 SOL</button>
+        <Flex direction="row">
           <Text size="2" weight="bold">
-            SOL balance (devnet): {walletBalance}
+            SOL balance (devnet): {walletBalance || 0}
           </Text>
-        </Flex> */}
+        </Flex>
         <Flex direction="row">
           <Text size="8" weight="bold">
             {totalUsd > 0
-              ? formatNumberToUsd.format(totalUsd).split('.')[0]
+              ? formatNumberToUsd().format(totalUsd).split('.')[0]
               : '-'}
           </Text>
           {totalUsd > 0 ? (
