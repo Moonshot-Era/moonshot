@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { getUserWallet } from '@/services';
 import { getSolanaBalance } from '@/services/solana';
 
 export async function POST(request: Request) {

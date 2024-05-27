@@ -36,7 +36,7 @@ export const sendTransactionWrappedSol = async (
     );
 
     console.log(
-      `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}...`
+      `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}... associatedTokenAccount: ${associatedTokenAccount}`
     );
 
     // const tx = new Transaction().add(

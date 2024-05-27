@@ -1,24 +1,4 @@
-import {
-  clusterApiUrl,
-  Connection,
-  Keypair,
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SystemProgram,
-  Transaction,
-  sendAndConfirmTransaction,
-} from '@solana/web3.js';
-import {
-  NATIVE_MINT,
-  createAssociatedTokenAccountInstruction,
-  getAssociatedTokenAddress,
-  createSyncNativeInstruction,
-  getAccount,
-  AccountLayout,
-  TOKEN_PROGRAM_ID,
-} from '@solana/spl-token';
-
-import { getTokenAccounts } from './getTokensAccountList';
+import { Connection, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 
 export const getSolanaBalance = async (fromAddress: string) => {
   try {
