@@ -13,7 +13,7 @@ import {
   getAssociatedTokenAddress,
 } from '@solana/spl-token';
 
-export const sendTransaction = async (
+export const sendTransactionWrappedSol = async (
   oidcToken: string,
   fromAddress: string,
   toAddress: string,
