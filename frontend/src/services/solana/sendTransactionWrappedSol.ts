@@ -7,6 +7,11 @@ import {
 } from '@solana/web3.js';
 
 import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
+import {
+  NATIVE_MINT,
+  createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddress,
+} from '@solana/spl-token';
 
 export const sendTransaction = async (
   oidcToken: string,
@@ -29,16 +34,30 @@ export const sendTransaction = async (
     const fromPubkey = new PublicKey(fromAddress);
     const toPubkey = new PublicKey(toAddress);
 
+    const associatedTokenAccount = await getAssociatedTokenAddress(
+      NATIVE_MINT,
+      fromPubkey
+    );
+
     console.log(
       `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}...`
     );
 
+    // const tx = new Transaction().add(
+    //   SystemProgram.transfer({
+    //     nativeTokenPubkey,
+    //     toPubkey,
+    //     lamports: amount * LAMPORTS_PER_SOL,
+    //   })
+    // );
+
     const tx = new Transaction().add(
-      SystemProgram.transfer({
+      createAssociatedTokenAccountInstruction(
         fromPubkey,
-        toPubkey,
-        lamports: amount * LAMPORTS_PER_SOL,
-      })
+        associatedTokenAccount,
+        fromPubkey,
+        NATIVE_MINT
+      )
     );
 
     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
