@@ -7,29 +7,29 @@ import { Button, QrCodeImage } from '@/legos';
 import { copyToClipboard } from '@/helpers/helpers';
 import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
-export const DepositItem = ({ token }: { token: WalletPortfolioAssetType }) => (
+export const DepositItem = ({ walletAddress }: { walletAddress: string }) => (
   <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
     <Text size="4" weight="bold">
-      {`Deposit ${token?.symbol}`}
+      {`Deposit to wallet`}
     </Text>
     <Text size="3" weight="medium">
       Solana network
     </Text>
-    {token?.address && (
+    {walletAddress && (
       <>
-        <QrCodeImage value={token.address} maxWidth={144} />
+        <QrCodeImage value={walletAddress} maxWidth={144} />
         <Flex direction="row" align="center" justify="center" gap="2">
           <Text wrap="nowrap" size="3" weight="medium">
-            {token.address.slice(0, 8)}...
-            {token.address.slice(
-              token.address.length - 8 > 0 ? token.address.length - 8 : 0,
-              token.address.length
+            {walletAddress.slice(0, 8)}...
+            {walletAddress.slice(
+              walletAddress.length - 8 > 0 ? walletAddress.length - 8 : 0,
+              walletAddress.length
             )}
           </Text>
 
           <Button
             className="deposit-copy-button bg-magenta"
-            onClick={() => copyToClipboard(token?.address)}
+            onClick={() => copyToClipboard(walletAddress)}
           >
             <Text size="2" weight="medium">
               Copy

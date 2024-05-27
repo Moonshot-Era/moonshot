@@ -26,6 +26,14 @@ export default async function Home({ searchParams }: ServerPageProps) {
     });
   }
 
+  // get balance from solana/web3
+  const { data: walletBalance } = await axios.post(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/get-balance`,
+    {
+      wallet: walletData?.wallet,
+    }
+  );
+
   const { data } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`,
     { walletAddress: walletData?.wallet }
@@ -36,6 +44,7 @@ export default async function Home({ searchParams }: ServerPageProps) {
       <Header />
       <HomeContent
         portfolio={data?.walletPortfolio as WalletPortfolioNormilizedType}
+        walletBalance={walletBalance?.balance || 0}
       />
     </>
   );

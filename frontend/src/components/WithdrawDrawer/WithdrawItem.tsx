@@ -139,7 +139,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
               ? (+(transactionAmount || 0) / (asset?.priceUsd || 0)).toFixed(
                   transactionAmount && +transactionAmount ? decimalLength : 0
                 )
-              : formatNumberToUsd.format(
+              : formatNumberToUsd().format(
                   +(transactionAmount || 0) * (asset?.priceUsd || 0)
                 )}
           </Text>
