@@ -14,9 +14,10 @@ import axios from 'axios';
 
 interface HomeContentProps {
   portfolio: WalletPortfolioNormilizedType;
+  walletBalance: string;
 }
 
-export const HomeContent = ({ portfolio }: HomeContentProps) => {
+export const HomeContent = ({ portfolio, walletBalance }: HomeContentProps) => {
   const { walletAssets, totalUsd } = portfolio;
   const totalH24 = walletAssets?.reduce((acc, cur) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
@@ -45,6 +46,11 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
         className="main-wrapper home-wrapper"
       >
         {/* <button onClick={() => handleConfirmWithdraw()}>Transaction</button> */}
+        {/* <Flex direction="row">
+          <Text size="2" weight="bold">
+            SOL balance (devnet): {walletBalance}
+          </Text>
+        </Flex> */}
         <Flex direction="row">
           <Text size="8" weight="bold">
             {totalUsd > 0
