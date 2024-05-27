@@ -15,9 +15,9 @@ export type Database = {
           created_at: string
           culture_ref: string | null
           email: string
-          flash_screen_completed: boolean | null
           full_name: string | null
           id: number
+          onboarding_completed: boolean | null
           roles: Database["public"]["Enums"]["role"][]
           user_id: string
         }
@@ -26,9 +26,9 @@ export type Database = {
           created_at?: string
           culture_ref?: string | null
           email: string
-          flash_screen_completed?: boolean | null
           full_name?: string | null
           id?: number
+          onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
           user_id: string
         }
@@ -37,9 +37,9 @@ export type Database = {
           created_at?: string
           culture_ref?: string | null
           email?: string
-          flash_screen_completed?: boolean | null
           full_name?: string | null
           id?: number
+          onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
           user_id?: string
         }

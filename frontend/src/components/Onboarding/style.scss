@@ -18,6 +18,12 @@
   background-size: contain;
 }
 
+.onboarding-bg-green {
+  height: 100vh;
+  background-image: url('../../assets/images/onboarding/bg-green.svg');
+  background-size: contain;
+}
+
 .onboarding-info-label1 {
   position: absolute;
   right: -41px;
@@ -45,6 +51,16 @@
   width: 91px;
   height: 109px;
   background-image: url('../../assets/images/onboarding/label3.svg');
+  background-repeat: no-repeat;
+}
+
+.onboarding-info-label4 {
+  position: absolute;
+  right: -42px;
+  top: -60px;
+  width: 113px;
+  height: 123px;
+  background-image: url('../../assets/images/onboarding/label4.svg');
   background-repeat: no-repeat;
 }
 
