@@ -68,6 +68,7 @@ export const getUserWallet = async (
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();
 
     const org = cubeClient.org();
+
     if (!user) {
       const userId = await org.createOidcUser({ iss, sub }, email, {
         mfaPolicy: undefined,
@@ -88,6 +89,42 @@ export const getUserWallet = async (
 
     if (!key) {
       throw Error('Wallet not created');
+    }
+  } catch (err) {
+    throw err;
+  }
+  return key.materialId;
+};
+
+export const exportUserInfo = async (
+  oidcToken: string
+): Promise<string | null> => {
+  let key;
+
+  try {
+    const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
+    const user = await findUser(email);
+
+    const cubeClient = await CubeSignerInstance.getManagementSessionClient();
+
+    const org = cubeClient.org();
+    if (!user) {
+      throw Error('User not found');
+    } else {
+      const userCubeSigner = await CubeSignerInstance.getUserSessionClient(
+        oidcToken
+      );
+      const keys = await userCubeSigner.sessionKeys();
+      key = keys?.[keys?.length - 1];
+      // console.log('debug > org===', await org?.roles({ all: true }));
+      // await org.createSession('Export users keys', ['export:*']);
+      // await org.initExport(key.id);
+      // const keypairExport = await org.completeExport(key.id, key.publicKey);
+      // console.log('debug > keypairExport===', keypairExport);
+
+      // if (!keypairExport) {
+      //   throw Error('Wallet not created');
+      // }
     }
   } catch (err) {
     throw err;
