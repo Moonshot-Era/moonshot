@@ -8,8 +8,8 @@ import { formatNumberToUsd, tokenAddressWithDots } from '@/helpers/helpers';
 import { PoolGeckoType } from '@/@types/gecko';
 
 interface Props {
-  token?: PoolGeckoType;
-  handler?: () => void;
+  token: PoolGeckoType;
+  handler: (token: PoolGeckoType) => void;
 }
 
 export const TokenCard: FC<Props> = ({ token, handler }) => {
@@ -20,7 +20,7 @@ export const TokenCard: FC<Props> = ({ token, handler }) => {
       align="center"
       p="3"
       className="token-card  bg-white"
-      onClick={handler}
+      onClick={() => handler(token)}
     >
       <Flex direction="row">
         {/* <Flex position="relative">
