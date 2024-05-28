@@ -12,49 +12,59 @@ const sleep = async (ms: number) => {
 
 export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
   try {
+    console.log("Initializing client session...");
     const client = await CubeSignerInstance.getUserSessionClient(oidcToken);
     const walletAddress = await getUserWallet(oidcToken);
     const connection = new Connection(process.env.SOLANA_RPC_PROVIDER, 'confirmed');
-    const publicKey = new PublicKey(walletAddress!)
+    const publicKey = new PublicKey(walletAddress!);
 
-    const blockhashResponse = await connection.getLatestBlockhashAndContext();
-    const lastValidBlockHeight = blockhashResponse.context.slot + 150;  
-
+    console.log("Fetching latest blockhash...");
+    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+    
+    console.log("Requesting swap transaction...");
     const { data: { swapTransaction } } = await axios.post(`${process.env.JUPITER_URL}/v6/swap`, {
-      // quoteResponse from /quote api
       quoteResponse: swapRoutes,
-      // user public key to be used for the swap
       userPublicKey: publicKey,
-      // auto wrap and unwrap SOL. default is true
       wrapAndUnwrapSol: true,
-      // feeAccount is optional. Use if you want to charge a fee.  feeBps must have been passed in /quote API.
-      // feeAccount: "fee_account_public_key"
     });
+
+    console.log('swapTransaction', swapTransaction);
 
     const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
     const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
 
-    const resp = await client.apiClient.signSolana(publicKey.toString(), {
-      message_base64: swapTransaction,
+    console.log("Signing transaction...");
+    const resp = await client.apiClient.signSolana(walletAddress!, {
+      message_base64: Buffer.from(transaction.serialize()).toString('base64'),
     });
     const sig = resp.data().signature;
-    // conver the signature 0x... to bytes
     const sigBytes = Buffer.from(sig.slice(2), 'hex');
 
     transaction.addSignature(publicKey, sigBytes);
 
-    const rawTransaction = transaction.serialize()
-    let blockheight = await connection.getBlockHeight();
+    const rawTransaction = Buffer.from(transaction.serialize());
 
+    console.log("Sending raw transaction...", rawTransaction);
     const txid = await connection.sendRawTransaction(rawTransaction, {
-      skipPreflight: true,
+      skipPreflight: false,
+      maxRetries: 1,
     });
 
-    console.log(blockheight, lastValidBlockHeight);
+    console.log(`Transaction sent. Txid: ${txid}`);
+    // Wait for a short time before confirming the transaction
+    await sleep(5000);
 
-    await connection.confirmTransaction(txid);
-    console.log(`https://solscan.io/tx/${txid}`);    
+    console.log("Confirming transaction...", blockhash, lastValidBlockHeight);
+    const confirmation = await connection.confirmTransaction({
+      signature: txid,
+      blockhash,
+      lastValidBlockHeight
+    }, 'confirmed');
+
+    console.log(`Transaction confirmed: ${confirmation}`);
+    console.log(`https://solscan.io/tx/${txid}`);
   } catch (err) {
-    throw Error('Error during token swap: ' + err);
+    console.error('Error during token swap:', err);
+    throw new Error('Error during token swap: ' + err);
   }
 };
