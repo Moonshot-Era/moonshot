@@ -7,9 +7,14 @@ import { Header } from '@/components/Header/Header';
 import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
 import { logout } from '@/utils';
+import { createBrowserClient } from '@/supabase/client';
 
 export default async function Home({ searchParams }: ServerPageProps) {
   await checkProtectedRoute(searchParams);
+  const supabaseClient = createBrowserClient();
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+
+  const userId = sessionData.session?.user?.id;
 
   const oidc = cookies()?.get('pt')?.value;
 
@@ -36,6 +41,7 @@ export default async function Home({ searchParams }: ServerPageProps) {
       <Header />
       <HomeContent
         portfolio={data?.walletPortfolio as WalletPortfolioNormilizedType}
+        userId={userId}
       />
     </>
   );

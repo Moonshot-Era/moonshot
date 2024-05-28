@@ -10,16 +10,36 @@ import {
   WalletPortfolioAssetType,
   WalletPortfolioNormilizedType,
 } from '@/services/birdeye/getWalletPortfolio';
+import { useEffect } from 'react';
 
 interface HomeContentProps {
   portfolio: WalletPortfolioNormilizedType;
+  userId?: string;
 }
 
-export const HomeContent = ({ portfolio }: HomeContentProps) => {
+export const HomeContent = ({ portfolio, userId }: HomeContentProps) => {
   const { walletAssets, totalUsd } = portfolio;
   const totalH24 = walletAssets?.reduce((acc, cur) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
   }, 0);
+
+  useEffect(() => {
+    window.addEventListener('load', function () {
+      // @ts-ignore
+      progressier.add({
+        id: userId,
+      });
+    });
+    return () => {
+      window.removeEventListener('load', function () {
+        // @ts-ignore
+        progressier.add({
+          id: userId,
+        });
+      });
+    };
+  }, []);
+
   return (
     <>
       <Flex
