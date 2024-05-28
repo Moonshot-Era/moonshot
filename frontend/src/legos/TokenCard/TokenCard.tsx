@@ -21,19 +21,7 @@ interface Props {
   type?: "default" | "convert";
 }
 
-export const TokenCard: FC<Props> = ({
-  name,
-  percent,
-  total,
-  description,
-  isLabel,
-  logoSrc,
-  type = "default",
-  onClick,
-  token,
-}) => {
-  const percentChange = percent ? (+percent).toFixed(2) : null;
-
+export const TokenCard: FC<Props> = ({ percent, onClick, token }) => {
   return (
     <Flex
       direction="row"
@@ -54,7 +42,13 @@ export const TokenCard: FC<Props> = ({
       <Flex direction="row">
         {(token?.imageUrl || token?.logoURI) && (
           <Flex position="relative">
-            <img alt="img" width={50} height={50} className="token-card-img" />
+            <img
+              alt="img"
+              width={50}
+              height={50}
+              src={token?.imageUrl || token?.logoURI}
+              className="token-card-img"
+            />
           </Flex>
         )}
         <Flex direction="column" justify="between" ml="2" my="1">
@@ -70,7 +64,7 @@ export const TokenCard: FC<Props> = ({
         {!!token?.valueUsd && (
           <Flex direction="column" justify="between" align="end" height="40px">
             <Text size="3" weight="medium">
-              {formatNumberToUsd.format(token?.valueUsd)}
+              {formatNumberToUsd(token?.decimals).format(token?.valueUsd)}
             </Text>
             {token?.percentage_change_h24 && (
               <Flex direction="row" align="center" gap="1">

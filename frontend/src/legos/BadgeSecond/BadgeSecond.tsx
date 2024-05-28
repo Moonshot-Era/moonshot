@@ -17,7 +17,7 @@ export const BadgeSecond: FC<Props> = ({ percent, total }) => (
     >
       <Icon icon={total > 0 ? 'trendingUp' : 'trendingDown'} />
       <Text size="2" weight="medium">
-        {formatNumberToUsd.format(total)}
+        {formatNumberToUsd().format(total)}
       </Text>
     </div>
     <Text className="badge-second-percent" size="2" weight="medium">{`${(

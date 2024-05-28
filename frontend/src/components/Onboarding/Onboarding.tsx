@@ -1,38 +1,57 @@
 'use client';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
+import { useRouter } from 'next/navigation';
 
 import './style.scss';
-
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-
 import { IconButton } from '@/legos';
-import { onboadingData } from './helpers';
+import { onboardingData } from './helpers';
+import { createBrowserClient } from '@/supabase/client';
+import { ROUTES } from '@/utils';
 
 export const OnboardingLayout = () => {
   const [activeSlide, setActiveSlide] = useState(0);
+  const route = useRouter();
+
+  const handleOnboardingComplete = async () => {
+    const supabaseClient = createBrowserClient();
+    const { data } = await supabaseClient.auth.getSession();
+
+    const userId = data.session?.user?.id;
+
+    if (userId) {
+      await supabaseClient
+        .from('profiles')
+        .update({
+          onboarding_completed: true,
+        })
+        .eq('user_id', userId);
+
+      route.replace(ROUTES.home);
+    }
+  };
 
   return (
     <Swiper
       modules={[Pagination]}
       direction="horizontal"
-      loop={true}
+      loop={false}
       pagination={{
         el: '.swiper-pagination',
         type: 'bullets',
         clickable: true,
       }}
-      onSlideChange={(swiper) => setActiveSlide(swiper.realIndex)}
+      onSlideChange={swiper => setActiveSlide(swiper.realIndex)}
     >
-      {onboadingData.map(
+      {onboardingData.map(
         (
           { id, bgClassName, description, imgSrc, labelClassName, title },
-          index
+          index,
         ) => (
           <SwiperSlide key={id}>
             <Flex className={bgClassName} direction="column" align="center">
@@ -55,16 +74,14 @@ export const OnboardingLayout = () => {
                   {description}
                 </Text>
               </Flex>
-              {onboadingData.length - 1 === index ? (
+              {onboardingData.length - 1 === index ? (
                 <Box position="absolute" bottom="8">
-                  <Link href="/">
-                    <IconButton icon="home" />
-                  </Link>
+                  <IconButton icon="home" onClick={handleOnboardingComplete} />
                 </Box>
               ) : null}
             </Flex>
           </SwiperSlide>
-        )
+        ),
       )}
       <div
         className={`swiper-pagination swiper-pagination-bg-${activeSlide}`}

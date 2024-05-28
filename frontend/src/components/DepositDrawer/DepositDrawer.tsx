@@ -11,14 +11,17 @@ import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio'
 interface Props {
   isOpen: boolean;
   toggleOpen: () => void;
+  walletAddress: string;
 }
 
-export const DepositDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
+export const DepositDrawer: FC<Props> = ({
+  isOpen,
+  toggleOpen,
+  walletAddress,
+}) => {
   const [isTransfer, setIsTransfer] = useState(false);
-  const [token, setToken] = useState<WalletPortfolioAssetType | undefined>();
 
-  const toggleTransfer = (item: WalletPortfolioAssetType) => {
-    setToken(item);
+  const toggleTransfer = () => {
     setIsTransfer(!isTransfer);
   };
 
@@ -37,17 +40,16 @@ export const DepositDrawer: FC<Props> = ({ isOpen, toggleOpen }) => {
         <DepositList
           toggleTransfer={toggleTransfer}
           handleClose={handleClose}
+          walletAddress={walletAddress}
         />
       </SheetDrawer>
-      {token && (
-        <SheetDrawer
-          isOpen={isOpen && isTransfer}
-          detent="content-height"
-          handleClose={handleClose}
-        >
-          <DepositItem token={token} />
-        </SheetDrawer>
-      )}
+      <SheetDrawer
+        isOpen={isOpen && isTransfer}
+        detent="content-height"
+        handleClose={handleClose}
+      >
+        <DepositItem walletAddress={walletAddress} />
+      </SheetDrawer>
     </>
   );
 };

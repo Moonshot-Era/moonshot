@@ -12,6 +12,7 @@
     "sb:migration:apply": "supabase migration up --linked",
     "sb:migration:ls": "source .env && supabase migration list"
   },
+  "proxy": "https://lmeghvxxxrzawjsqcmij.supabase.co",
   "dependencies": {
     "@cubist-labs/cubesigner-sdk": "^0.4.24-0",
     "@cubist-labs/cubesigner-sdk-fs-storage": "^0.4.24-0",

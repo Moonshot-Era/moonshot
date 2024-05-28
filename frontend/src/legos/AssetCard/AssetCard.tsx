@@ -54,7 +54,7 @@ export const AssetCard: FC<Props> = ({ asset, handler }) => {
         {!!asset?.valueUsd && (
           <Flex direction="column" justify="between" align="end" height="40px">
             <Text size="3" weight="medium">
-              {formatNumberToUsd.format(asset?.valueUsd)}
+              {formatNumberToUsd().format(asset?.valueUsd)}
             </Text>
             {asset?.percentage_change_h24 && (
               <Flex direction="row" align="center" gap="1">

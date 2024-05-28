@@ -1,6 +1,7 @@
 import { createServerClient } from '@/supabase/server';
 import { QUERY_PARAM_CULTURE_REF, ROUTES } from './constants';
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 
 export const checkProtectedRoute = async (searchParams?: {
   [key: string]: string | string[] | undefined;
@@ -21,6 +22,18 @@ export const checkProtectedRoute = async (searchParams?: {
         cultureRef ? `?${QUERY_PARAM_CULTURE_REF}=${cultureRef}` : ''
       }`,
     );
+  }
+  const header = headers();
+  const pathname = header.get('x-pathname');
+
+  const { data } = await supabaseClient
+    .from('profiles')
+    .select('onboarding_completed')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (!pathname?.startsWith(ROUTES.onboarding) && !data?.onboarding_completed) {
+    redirect(ROUTES.onboarding);
   }
 
   return user;
