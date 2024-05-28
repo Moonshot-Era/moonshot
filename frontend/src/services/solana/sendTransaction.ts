@@ -29,9 +29,7 @@ export const sendTransaction = async (
     const fromPubkey = new PublicKey(fromAddress);
     const toPubkey = new PublicKey(toAddress);
 
-    console.log(
-      `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}...`
-    );
+    console.log(`Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}`);
 
     const tx = new Transaction().add(
       SystemProgram.transfer({
@@ -59,19 +57,7 @@ export const sendTransaction = async (
     // send transaction
     const txHash = await connection.sendRawTransaction(tx.serialize());
     console.log(`txHash: ${txHash}`);
-
-    // get balance
-    // console.log(
-    //   `${fromPubkey} has ${
-    //     (await connection.getBalance(fromPubkey)) / LAMPORTS_PER_SOL
-    //   } SOL`
-    // );
-    // console.log(
-    //   `${toPubkey} has ${
-    //     (await connection.getBalance(toPubkey)) / LAMPORTS_PER_SOL
-    //   } SOL`
-    // );
   } catch (err) {
-    throw Error('Error sending transaction:' + err);
+    throw Error('Error sending transaction: ' + err);
   }
 };

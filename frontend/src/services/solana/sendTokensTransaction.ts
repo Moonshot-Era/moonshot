@@ -2,11 +2,10 @@ import {
   Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
-  SystemProgram,
   Transaction,
 } from '@solana/web3.js';
 
-import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
+import { CubeSignerInstance } from '../cubeSigner';
 import {
   createTransferCheckedInstruction,
   TOKEN_PROGRAM_ID,
@@ -16,16 +15,13 @@ import {
   getAccount,
 } from '@solana/spl-token';
 
-const tokenMint = {
-  address: 'FwBixtdcmxawRFzBNeUmzhQzaFuvv6czs5wCQuLgWWsg',
-  decimals: 6,
-};
-
 export const sendTokensTransaction = async (
   oidcToken: string,
   fromAddress: string,
   toAddress: string,
-  amount: number
+  amount: number,
+  tokenAddress: string,
+  tokenDecimals: number
 ) => {
   try {
     const client = await CubeSignerInstance.getUserSessionClient(oidcToken);
@@ -34,12 +30,11 @@ export const sendTokensTransaction = async (
       process.env.SOLANA_RPC_PROVIDER,
       'confirmed'
     );
-    const tx = new Transaction();
 
     const fromPubkey = new PublicKey(fromAddress);
     const toPubkey = new PublicKey(toAddress);
 
-    const mintPubkey = new PublicKey(tokenMint.address);
+    const mintPubkey = new PublicKey(tokenAddress);
 
     console.log(`Transferring ${amount} from ${fromPubkey} to ${toPubkey}`);
 
@@ -60,7 +55,16 @@ export const sendTokensTransaction = async (
       ASSOCIATED_TOKEN_PROGRAM_ID
     );
 
-    const tokenAccount = await getAccount(connection, toTokenAccount);
+    let tokenAccount;
+    const tx = new Transaction();
+    try {
+      const res = await getAccount(connection, toTokenAccount);
+      if (res) {
+        tokenAccount = res;
+      }
+    } catch (err) {
+      console.log(`Token account error: ${err}`);
+    }
 
     if (!tokenAccount) {
       tx.add(
@@ -81,8 +85,8 @@ export const sendTokensTransaction = async (
         mintPubkey, // mint
         toTokenAccount, // to
         fromPubkey, // from's owner
-        amount * LAMPORTS_PER_SOL, // amount
-        tokenMint?.decimals // decimals
+        amount * (10 ** +tokenDecimals / LAMPORTS_PER_SOL) * LAMPORTS_PER_SOL, // amount
+        tokenDecimals // decimals
       )
     );
 
@@ -108,6 +112,6 @@ export const sendTokensTransaction = async (
     console.log(`txHash: ${txHash}`);
     return txHash;
   } catch (err) {
-    throw Error('Error sending transaction:' + err);
+    throw Error('Error sending transaction: ' + err);
   }
 };
