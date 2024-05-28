@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { Flex, Text } from '@radix-ui/themes';
+import { Flex, Text } from "@radix-ui/themes";
 
-import { IconButton } from '@/legos';
-import { useState } from 'react';
-import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
-import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
-import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
-import { ShareModal } from '../ShareModal/ShareModal';
-import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
+import { IconButton } from "@/legos";
+import { useRef, useState } from "react";
+import { ConvertDrawer } from "../ConvertDrawer/ConvertDrawer";
+import { DepositDrawer } from "../DepositDrawer/DepositDrawer";
+import { WithdrawDrawer } from "../WithdrawDrawer/WithdrawDrawer";
+import { ShareModal } from "../ShareModal/ShareModal";
+import { WalletPortfolioNormilizedType } from "@/services/birdeye/getWalletPortfolio";
 
 interface ToolbarProps {
   portfolio: WalletPortfolioNormilizedType;
@@ -16,17 +16,16 @@ interface ToolbarProps {
 }
 
 export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
-  const [isConvertOpen, setIsConvertOpen] = useState(false);
+  const convertDrawerRef = useRef(null);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
 
-  const toggleConvertDrawer = () => setIsConvertOpen(!isConvertOpen);
   const toggleDepositDrawer = () => setIsDepositOpen(!isDepositOpen);
   const toggleWithdrawDrawer = () => setIsWithdrawOpen(!isWithdrawOpen);
 
   return (
     <>
-      <ConvertDrawer isOpen={isConvertOpen} toggleOpen={toggleConvertDrawer} />
+      <ConvertDrawer ref={convertDrawerRef} />
       <DepositDrawer
         isOpen={isDepositOpen}
         toggleOpen={toggleDepositDrawer}
@@ -41,17 +40,17 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
         width="100%"
         maxWidth="390px"
         direction="row"
-        justify={portfolio?.totalUsd ? 'between' : 'center'}
+        justify={portfolio?.totalUsd ? "between" : "center"}
         gap="2"
         mb="8"
-        px={withShare ? '5' : '7'}
+        px={withShare ? "5" : "7"}
       >
         {!!portfolio?.totalUsd && (
           <Flex direction="column" align="center" gap="1">
             <IconButton
               icon="transfer"
               className="bg-yellow"
-              onClick={toggleConvertDrawer}
+              onClick={() => convertDrawerRef.current?.open()}
             />
             <Text size="2">Convert</Text>
           </Flex>

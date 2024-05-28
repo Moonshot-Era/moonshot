@@ -1,10 +1,10 @@
-import Image from 'next/image';
-import React, { FC } from 'react';
-import { Flex, Text } from '@radix-ui/themes';
+import Image from "next/image";
+import React, { FC } from "react";
+import { Flex, Text } from "@radix-ui/themes";
 
-import { Icon } from '../Icon';
-import { formatNumberToUsd } from '@/helpers/helpers';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { Icon } from "../Icon";
+import { formatNumberToUsd } from "@/helpers/helpers";
+import { WalletPortfolioAssetType } from "@/services/birdeye/getWalletPortfolio";
 
 interface Props {
   asset?: WalletPortfolioAssetType;
@@ -23,21 +23,21 @@ export const AssetCard: FC<Props> = ({ asset, handler }) => {
     >
       {asset?.percentage_change_h24 && +asset.percentage_change_h24 > 100 ? (
         <Flex className="token-card-label bg-warning">
-          {(+asset.percentage_change_h24 > 100 && '🔥') ||
-            (+asset.percentage_change_h24 > 1000 && '🔥🔥') ||
-            (+asset.percentage_change_h24 > 1000 && '🔥🔥🔥')}
+          {(+asset.percentage_change_h24 > 100 && "🔥") ||
+            (+asset.percentage_change_h24 > 1000 && "🔥🔥") ||
+            (+asset.percentage_change_h24 > 1000 && "🔥🔥🔥")}
           <div className="token-card-label-shadow bg-dark"></div>
         </Flex>
       ) : null}
       <Flex direction="row">
         <Flex position="relative">
-          {!!asset?.imageUrl && (
-            <Image
+          {!!asset?.imageUrl?.includes("http") && (
+            <img
               alt="img"
               width={50}
               height={50}
               src={asset?.imageUrl}
-              style={{ borderRadius: '50%' }}
+              style={{ borderRadius: "50%" }}
             />
           )}
         </Flex>
@@ -61,15 +61,15 @@ export const AssetCard: FC<Props> = ({ asset, handler }) => {
                 <div
                   className={
                     +asset?.percentage_change_h24 > 0
-                      ? 'icon-success-color'
-                      : 'icon-error-color'
+                      ? "icon-success-color"
+                      : "icon-error-color"
                   }
                 >
                   <Icon
                     icon={
                       +asset?.percentage_change_h24 > 0
-                        ? 'trendingUp'
-                        : 'trendingDown'
+                        ? "trendingUp"
+                        : "trendingDown"
                     }
                     width={16}
                     height={16}
@@ -78,8 +78,8 @@ export const AssetCard: FC<Props> = ({ asset, handler }) => {
                 <Text
                   className={
                     +asset?.percentage_change_h24 > 0
-                      ? 'text-color-success'
-                      : 'text-color-error'
+                      ? "text-color-success"
+                      : "text-color-error"
                   }
                   size="1"
                   weight="medium"

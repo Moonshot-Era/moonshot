@@ -10,6 +10,8 @@ import {
   XIcon,
 } from 'react-share';
 import './style.scss';
+import { createBrowserClient } from '@/supabase/client';
+import { useEffect } from 'react';
 
 export const ShareModal = () => {
   const imageUrl = new URL(
@@ -17,12 +19,66 @@ export const ShareModal = () => {
     process.env.NEXT_PUBLIC_SITE_URL
   );
 
-  imageUrl.searchParams.append('name', 'Michi');
-  imageUrl.searchParams.append('profitPercent', '2700');
-  imageUrl.searchParams.append('entry', '372');
-  imageUrl.searchParams.append('profit', '10070');
-  imageUrl.searchParams.append('purchaseDate', '4/05/24');
-  imageUrl.searchParams.append('soldDate', '5/08/24');
+  useEffect(() => {
+    generateImageSearchParams();
+  }, []);
+
+  const generateImageSearchParams = async () => {
+    const supabaseClient = createBrowserClient();
+    const { data } = await supabaseClient.auth.getSession();
+    const userId = data.session?.user?.id;
+
+    //TODO: change to real data
+    const tokenName = 'test_token';
+
+    const { data: transactions } = await supabaseClient
+      .from('transactions')
+      .select('*')
+      .eq('user_id', userId || '')
+      .eq('token_name', tokenName);
+
+    if (transactions?.length) {
+      const lastTransaction = transactions[transactions.length - 1];
+
+      const purchaseTransactions = transactions.filter(
+        (item) => !!item.date_purchased
+      );
+      const sellTransactions = transactions.filter((item) => !!item.date_sold);
+
+      const lastPurchaseTransaction =
+        purchaseTransactions[purchaseTransactions.length - 1];
+      const lastSellTransaction = sellTransactions[sellTransactions.length - 1];
+
+      const tokenAmount = lastTransaction.token_amount || 0;
+      const totalCost = purchaseTransactions.reduce((acc, transaction) => {
+        return (
+          acc + (transaction.token_amount || 0) * (transaction.token_price || 0)
+        );
+      }, 0);
+      const totalRevenue = sellTransactions.reduce((acc, transaction) => {
+        return (
+          acc + (transaction.token_amount || 0) * (transaction.token_price || 0)
+        );
+      }, 0);
+      const profit = totalRevenue - totalCost;
+
+      const profitPercent = (profit / totalCost) * 100;
+
+      const datePurchased = new Date(
+        lastPurchaseTransaction.date_purchased || ''
+      ).toLocaleDateString('en-US');
+      const dateSold = new Date(
+        lastSellTransaction.date_sold || ''
+      ).toLocaleDateString('en-US');
+
+      imageUrl.searchParams.append('name', tokenName);
+      imageUrl.searchParams.append('profitPercent', profitPercent.toString());
+      imageUrl.searchParams.append('entry', tokenAmount.toString());
+      imageUrl.searchParams.append('profit', profit.toFixed(2));
+      imageUrl.searchParams.append('purchaseDate', datePurchased);
+      imageUrl.searchParams.append('soldDate', dateSold);
+    }
+  };
 
   const imageLoader = () => {
     return imageUrl.href;
