@@ -13,8 +13,9 @@ export const getSwapRoutes = async (
           ? 'So11111111111111111111111111111111111111112' : inputMint,
         outputMint,
         amount,
-        slippageBps,
         wrapAndUnwrapSol: true,
+        asLegacyTransaction: true,
+        autoSlippage: true,
       },
     });
 

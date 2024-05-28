@@ -1,6 +1,9 @@
 import {
   Connection,
+  Message,
+  MessageV0,
   PublicKey,
+  Transaction,
   VersionedTransaction,
 } from '@solana/web3.js';
 import axios from 'axios';
@@ -26,16 +29,16 @@ export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
       quoteResponse: swapRoutes,
       userPublicKey: publicKey,
       wrapAndUnwrapSol: true,
+      asLegacyTransaction: true,
     });
 
     console.log('swapTransaction', swapTransaction);
-
+    
     const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
-    const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+    const transaction = Transaction.from(swapTransactionBuf);
 
-    console.log("Signing transaction...");
     const resp = await client.apiClient.signSolana(walletAddress!, {
-      message_base64: Buffer.from(transaction.serialize()).toString('base64'),
+      message_base64: transaction.serializeMessage().toString('base64'),
     });
     const sig = resp.data().signature;
     const sigBytes = Buffer.from(sig.slice(2), 'hex');
@@ -47,12 +50,12 @@ export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
     console.log("Sending raw transaction...", rawTransaction);
     const txid = await connection.sendRawTransaction(rawTransaction, {
       skipPreflight: false,
-      maxRetries: 1,
+      maxRetries: 10,
     });
 
     console.log(`Transaction sent. Txid: ${txid}`);
     // Wait for a short time before confirming the transaction
-    await sleep(5000);
+    // await sleep(5000);
 
     console.log("Confirming transaction...", blockhash, lastValidBlockHeight);
     const confirmation = await connection.confirmTransaction({
