@@ -3,6 +3,7 @@ import Script from 'next/script';
 import localFont from 'next/font/local';
 import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
+import { ReactQueryProvider } from '@/helpers/ReactQueryProvider'
 
 import './globals.scss';
 import './globals.css';
@@ -80,7 +81,9 @@ export default function RootLayout({
         <ServiceWorkerRegister />
         <SplashScreen />
         <Header />
-        <Theme className="bg-transparent">{children}</Theme>
+        <ReactQueryProvider>
+          <Theme className="bg-transparent">{children}</Theme>
+        </ReactQueryProvider>
       </body>
     </html>
   );

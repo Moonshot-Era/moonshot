@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {
   useState,
@@ -6,19 +6,28 @@ import React, {
   useEffect,
   MouseEvent as ReactMouseEvent,
   TouchEvent as ReactTouchEvent,
-} from 'react';
-import { Text } from '@radix-ui/themes';
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import { Spinner, Text } from "@radix-ui/themes";
 
-import './style.scss';
-import { Icon } from '../Icon';
+import "./style.scss";
+import { Icon } from "../Icon";
 
-export const SlideButton = ({
-  disabled,
-  handleSubmit,
-}: {
-  disabled?: boolean;
-  handleSubmit(): void;
-}) => {
+export const SlideButton = forwardRef(function SlideButton(
+  {
+    disabled,
+    handleSubmit,
+    loading,
+    label = "Swipe to confirm",
+  }: {
+    disabled?: boolean;
+    handleSubmit(): void;
+    loading?: boolean;
+    label?: string;
+  },
+  ref
+) {
   const [initialMouse, setInitialMouse] = useState(0);
   const [slideMovementTotal, setSlideMovementTotal] = useState(0);
   const [mouseIsDown, setMouseIsDown] = useState(false);
@@ -56,16 +65,16 @@ export const SlideButton = ({
 
     if (slider && text) {
       if (relativeMouse < slideMovementTotal) {
-        text.style.opacity = '1';
-        slider.style.left = '-1px';
+        text.style.opacity = "1";
+        slider.style.left = "-1px";
         return;
       }
-      slider.classList.add('unlocked');
+      slider.classList.add("unlocked");
 
       setTimeout(() => {
         slider.onclick = () => {
-          if (!slider.classList.contains('unlocked')) return;
-          slider.classList.remove('unlocked');
+          if (!slider.classList.contains("unlocked")) return;
+          slider.classList.remove("unlocked");
           slider.onclick = null;
         };
       }, 0);
@@ -89,7 +98,7 @@ export const SlideButton = ({
       text.style.opacity = slidePercent.toString();
 
       if (relativeMouse <= 0) {
-        slider.style.left = '-1px';
+        slider.style.left = "-1px";
         return;
       }
       if (relativeMouse >= slideMovementTotal + 1) {
@@ -100,6 +109,15 @@ export const SlideButton = ({
     }
   };
 
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        resetSlide: () => setSlideMovementTotal(0),
+      };
+    },
+    []
+  );
   useEffect(() => {
     const handleMouseMoveWrapper = (event: MouseEvent) =>
       handleMouseMove(event);
@@ -108,37 +126,46 @@ export const SlideButton = ({
       handleMouseMove(event);
     const handleTouchEndWrapper = (event: TouchEvent) => handleMouseUp(event);
 
-    document.addEventListener('mousemove', handleMouseMoveWrapper);
-    document.addEventListener('mouseup', handleMouseUpWrapper);
-    document.addEventListener('touchmove', handleTouchMoveWrapper);
-    document.addEventListener('touchend', handleTouchEndWrapper);
+    document.addEventListener("mousemove", handleMouseMoveWrapper);
+    document.addEventListener("mouseup", handleMouseUpWrapper);
+    document.addEventListener("touchmove", handleTouchMoveWrapper);
+    document.addEventListener("touchend", handleTouchEndWrapper);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMoveWrapper);
-      document.removeEventListener('mouseup', handleMouseUpWrapper);
-      document.removeEventListener('touchmove', handleTouchMoveWrapper);
-      document.removeEventListener('touchend', handleTouchEndWrapper);
+      document.removeEventListener("mousemove", handleMouseMoveWrapper);
+      document.removeEventListener("mouseup", handleMouseUpWrapper);
+      document.removeEventListener("touchmove", handleTouchMoveWrapper);
+      document.removeEventListener("touchend", handleTouchEndWrapper);
     };
   }, [mouseIsDown, initialMouse, slideMovementTotal]);
 
   return (
     <div
       id="button-slider-container"
-      className={`button-slider-container ${disabled ? 'disabled' : ''}`}
+      className={`button-slider-container ${disabled ? "disabled" : ""}`}
       ref={backgroundRef}
     >
-      <Text className="button-slide-text" ref={textRef} size="2">
-        Swipe to confirm
+      <Text
+        className="button-slide-text"
+        ref={textRef}
+        size="2"
+        weight="medium"
+      >
+        {label}
       </Text>
       <div
         id="button-slider"
-        className={`button-slider ${disabled ? 'disabled' : ''}`}
+        className={`button-slider ${disabled ? "disabled" : ""}`}
         ref={sliderRef}
         onMouseDown={handleMouseDown}
         onTouchStart={handleMouseDown}
       >
-        <Icon icon="arrowRight" width={36} height={36} />
+        {loading ? (
+          <Spinner size="3" />
+        ) : (
+          <Icon icon="arrowRight" width={36} height={36} />
+        )}
       </div>
     </div>
   );
-};
+});
