@@ -12,6 +12,8 @@ import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   getAssociatedTokenAddress,
+  createAssociatedTokenAccountInstruction,
+  getAccount,
 } from '@solana/spl-token';
 
 const tokenMint = {
@@ -32,11 +34,8 @@ export const sendTokensTransaction = async (
       process.env.SOLANA_RPC_PROVIDER,
       'confirmed'
     );
+    const tx = new Transaction();
 
-    // const fromAddress = await getUserWallet(oidcToken);
-    // if (!fromAddress) {
-    //   throw Error('Wallet not found');
-    // }
     const fromPubkey = new PublicKey(fromAddress);
     const toPubkey = new PublicKey(toAddress);
 
@@ -46,22 +45,37 @@ export const sendTokensTransaction = async (
 
     // Get the associated token accounts for the sender and receiver
     const fromTokenAccount = await getAssociatedTokenAddress(
-      mintPubkey,
-      fromPubkey,
-      false,
+      mintPubkey, // mint
+      fromPubkey, // from owner
+      true, // allow owner off curve
       TOKEN_PROGRAM_ID,
       ASSOCIATED_TOKEN_PROGRAM_ID
     );
 
     const toTokenAccount = await getAssociatedTokenAddress(
-      mintPubkey,
-      toPubkey,
-      false,
+      mintPubkey, // mint
+      toPubkey, // to owner
+      true, // allow owner off curve
       TOKEN_PROGRAM_ID,
       ASSOCIATED_TOKEN_PROGRAM_ID
     );
 
-    const tx = new Transaction().add(
+    const tokenAccount = await getAccount(connection, toTokenAccount);
+
+    if (!tokenAccount) {
+      tx.add(
+        createAssociatedTokenAccountInstruction(
+          fromPubkey,
+          toTokenAccount,
+          toPubkey,
+          mintPubkey,
+          TOKEN_PROGRAM_ID,
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        )
+      );
+    }
+
+    tx.add(
       createTransferCheckedInstruction(
         fromTokenAccount, // from
         mintPubkey, // mint
@@ -77,6 +91,7 @@ export const sendTokensTransaction = async (
     const base64 = tx.serializeMessage().toString('base64');
 
     // sign using the well-typed solana end point (which requires a base64 serialized Message)
+    // @ts-ignore
     const resp = await client.apiClient.signSolana(fromAddress, {
       message_base64: base64,
     });
@@ -91,18 +106,7 @@ export const sendTokensTransaction = async (
     // @ts-ignore
     const txHash = await connection.sendRawTransaction(tx.serialize());
     console.log(`txHash: ${txHash}`);
-
-    // get balance
-    // console.log(
-    //   `${fromPubkey} has ${
-    //     (await connection.getBalance(fromPubkey)) / LAMPORTS_PER_SOL
-    //   } SOL`
-    // );
-    // console.log(
-    //   `${toPubkey} has ${
-    //     (await connection.getBalance(toPubkey)) / LAMPORTS_PER_SOL
-    //   } SOL`
-    // );
+    return txHash;
   } catch (err) {
     throw Error('Error sending transaction:' + err);
   }

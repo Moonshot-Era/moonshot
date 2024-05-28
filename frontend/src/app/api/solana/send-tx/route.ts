@@ -22,7 +22,6 @@ export async function POST(request: Request) {
     response.amount
   );
 
-  console.log('debug > txWrap===', txWrap);
 
   return NextResponse.json({ tx });
 }

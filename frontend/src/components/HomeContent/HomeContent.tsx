@@ -29,7 +29,7 @@ export const HomeContent = ({ portfolio, walletBalance }: HomeContentProps) => {
     await axios
       .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`, {
         fromAddress: 'HTnKf3f3vtLaGVVtYkZ8oCTyWEA64n5a1P4Dkkk5vjmH',
-        toAddress: 'CNPdPrt1smECmRqFFhN9iZzDRV6BiqDVxQThgydsDT64',
+        toAddress: 'B8xaui7xwQSZmuPwjem7Ka5Qobag7khJHNCPWzDpmXrD',
         amount: 0.001,
       })
       .finally(async () => {
