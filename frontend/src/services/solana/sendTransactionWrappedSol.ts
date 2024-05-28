@@ -7,8 +7,13 @@ import {
 } from '@solana/web3.js';
 
 import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
+import {
+  NATIVE_MINT,
+  createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddress,
+} from '@solana/spl-token';
 
-export const sendTransaction = async (
+export const sendTransactionWrappedSol = async (
   oidcToken: string,
   fromAddress: string,
   toAddress: string,
@@ -22,23 +27,33 @@ export const sendTransaction = async (
       'confirmed'
     );
 
-    // const fromAddress = await getUserWallet(oidcToken);
-    // if (!fromAddress) {
-    //   throw Error('Wallet not found');
-    // }
     const fromPubkey = new PublicKey(fromAddress);
     const toPubkey = new PublicKey(toAddress);
 
-    console.log(
-      `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}...`
+    const associatedTokenAccount = await getAssociatedTokenAddress(
+      NATIVE_MINT,
+      fromPubkey
     );
 
+    console.log(
+      `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}... associatedTokenAccount: ${associatedTokenAccount}`
+    );
+
+    // const tx = new Transaction().add(
+    //   SystemProgram.transfer({
+    //     nativeTokenPubkey,
+    //     toPubkey,
+    //     lamports: amount * LAMPORTS_PER_SOL,
+    //   })
+    // );
+
     const tx = new Transaction().add(
-      SystemProgram.transfer({
+      createAssociatedTokenAccountInstruction(
         fromPubkey,
+        associatedTokenAccount,
         toPubkey,
-        lamports: amount * LAMPORTS_PER_SOL,
-      })
+        NATIVE_MINT
+      )
     );
 
     tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
@@ -71,6 +86,7 @@ export const sendTransaction = async (
     tx.addSignature(fromPubkey, sigBytes);
 
     // send transaction
+    connection.sendTransaction;
     const txHash = await connection.sendRawTransaction(tx.serialize());
     console.log(`txHash: ${txHash}`);
 
@@ -86,6 +102,6 @@ export const sendTransaction = async (
     //   } SOL`
     // );
   } catch (err) {
-    throw Error('Error sending transaction:' + err);
+    throw Error(`${err}`);
   }
 };

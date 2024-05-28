@@ -27,7 +27,11 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
   return (
     <>
       <ConvertDrawer isOpen={isConvertOpen} toggleOpen={toggleConvertDrawer} />
-      <DepositDrawer isOpen={isDepositOpen} toggleOpen={toggleDepositDrawer} />
+      <DepositDrawer
+        isOpen={isDepositOpen}
+        toggleOpen={toggleDepositDrawer}
+        walletAddress={portfolio?.wallet}
+      />
       <WithdrawDrawer
         isOpen={isWithdrawOpen}
         toggleOpen={toggleWithdrawDrawer}

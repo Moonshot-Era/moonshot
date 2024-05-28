@@ -4,28 +4,19 @@ import { FC } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
-import { AssetCard, Icon, Input, TokenCard } from '@/legos';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { Icon } from '@/legos';
 
 interface Props {
-  toggleTransfer: (token: WalletPortfolioAssetType) => void;
+  toggleTransfer: () => void;
   handleClose(): void;
+  walletAddress: string;
 }
 
-const mockAsset: WalletPortfolioAssetType = {
-  address: 'HTnKf3f3vtLaGVVtYkZ8oCTyWEA64n5a1P4Dkkk5vjmH',
-  name: 'SOL',
-  symbol: 'SOL',
-  decimals: 2,
-  priceUsd: 222,
-  imageUrl: '',
-  percentage_change_h24: 0.9,
-  balance: 5,
-  uiAmount: 250,
-  valueUsd: 23,
-};
-
-export const DepositList: FC<Props> = ({ toggleTransfer, handleClose }) => {
+export const DepositList: FC<Props> = ({
+  toggleTransfer,
+  handleClose,
+  walletAddress,
+}) => {
   const formConfiguration = {
     apiKey: 'pk_fad9eca9a5a5dba43bf2294041f58526',
   };
@@ -62,19 +53,27 @@ export const DepositList: FC<Props> = ({ toggleTransfer, handleClose }) => {
           <Text>Card or bank transfer</Text>
         </Flex>
       </Flex>
-      <Box width="100%" className="deposit-transfer-card-bank-border" />
-      <Input placeholder="Search assets" icon="search" />
-      <Flex width="100%" direction="column" gap="4">
-        <AssetCard
-          key={mockAsset.address}
-          asset={mockAsset}
-          handler={() => toggleTransfer(mockAsset)}
-        />
-        {Array(3)
-          .fill(3)
-          .map((item, index) => (
-            <TokenCard key={index} handler={() => {}} />
-          ))}
+      <Flex
+        width="100%"
+        direction="row"
+        py="4"
+        px="3"
+        gap="4"
+        className="deposit-transfer-card-bank"
+      >
+        <Icon icon="wallet" size={48} />
+        <Flex direction="column" justify="between" onClick={toggleTransfer}>
+          <Text size="3" weight="medium">
+            Your wallet
+          </Text>
+          <Text>
+            {walletAddress.slice(0, 8)}...
+            {walletAddress.slice(
+              walletAddress.length - 8 > 0 ? walletAddress.length - 8 : 0,
+              walletAddress.length
+            )}
+          </Text>
+        </Flex>
       </Flex>
     </Flex>
   );
