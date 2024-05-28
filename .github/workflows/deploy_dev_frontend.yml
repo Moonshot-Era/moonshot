@@ -1,0 +1,106 @@
+name: Deploy MOONSHOT to VPS (DEV)
+
+on: workflow_dispatch
+
+env:
+  BRANCH: dev
+
+jobs:
+  Update-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull changes in dev server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USERNAME }}
+          password: ${{ secrets.DEV_SSH_PASSWORD }}
+          port: ${{ secrets.DEV_SSH_PORT }}
+          script: |
+            cd ${{ vars.DEV_PATH_TO_DEPLOY }}
+            branch=$(git rev-parse --abbrev-ref HEAD)   # chech current branch
+            echo "Current branch is $branch"
+            if [[ "$branch" != "${{ env.BRANCH }}" ]]; then           
+              git checkout ${{ env.BRANCH }}
+            fi
+            git fetch --all
+            git reset --hard origin/${{ env.BRANCH }}
+            git pull
+
+      - name: Install Moonshot deps in dev server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USERNAME }}
+          password: ${{ secrets.DEV_SSH_PASSWORD }}
+          port: ${{ secrets.DEV_SSH_PORT }}
+          script: |
+            cd ${{ vars.DEV_PATH_TO_DEPLOY }}/frontend
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            npm install --legacy-peer-deps
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install npm dependencies
+        run: |
+          cd frontend
+          npm install --legacy-peer-deps
+
+      - name: Run build task
+        run: |
+          cd frontend
+          npm run build --if-present
+
+      - name: Delete previos build in server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USERNAME }}
+          password: ${{ secrets.DEV_SSH_PASSWORD }}
+          port: ${{ secrets.DEV_SSH_PORT }}
+          script: |
+            # cd ${{ vars.DEV_PATH_TO_DEPLOY }}/frontend
+            if [ -d '${{ vars.DEV_PATH_TO_DEPLOY }}/frontend/build' ]; then
+              echo "Build finded! EXTERMINATE!!!!"
+              rm -rf ${{ vars.DEV_PATH_TO_DEPLOY }}/frontend/build
+            else
+              echo "Build not exist. Continue working"
+            fi
+
+      - name: Deploy Build to Server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USERNAME }}
+          password: ${{ secrets.DEV_SSH_PASSWORD }}
+          port: ${{ secrets.DEV_SSH_PORT }}
+          source: 'frontend/.next,frontend/public'
+          target: ${{ vars.DEV_PATH_TO_DEPLOY }}
+
+  Restart-PM2-service:
+    runs-on: ubuntu-latest
+    needs: [build-frontend, Update-server]
+    steps:
+      - name: Restart PM2 service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_SSH_HOST }}
+          username: ${{ secrets.DEV_SSH_USERNAME }}
+          password: ${{ secrets.DEV_SSH_PASSWORD }}
+          port: ${{ secrets.DEV_SSH_PORT }}
+          script: |
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            cd ${{ vars.DEV_PATH_TO_DEPLOY }}
+            echo "Restart service"
+            pm2 restart ecosystem.config.js --only dev.frontend.moonshot.tech
