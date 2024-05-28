@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import { formatNumberToUsd } from '@/helpers/helpers';
@@ -11,11 +12,11 @@ import {
   WalletPortfolioNormilizedType,
 } from '@/services/birdeye/getWalletPortfolio';
 import axios from 'axios';
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 interface HomeContentProps {
   walletAddress: string;
+  userId?: string;
 }
 
 const fetchPortfolio = (
@@ -36,13 +37,29 @@ const usePortfolio = (walletAddress: string) => {
   return { portfolio: data, ...rest };
 };
 
-export const HomeContent = ({ walletAddress }: HomeContentProps) => {
+export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
   const { portfolio, isFetching } = usePortfolio(walletAddress);
-  const [balance, setBalance] = useState(portfolio?.totalUsd);
 
   const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
   }, 0);
+
+  useEffect(() => {
+    window.addEventListener('load', function () {
+      // @ts-ignore
+      progressier.add({
+        id: userId,
+      });
+    });
+    return () => {
+      window.removeEventListener('load', function () {
+        // @ts-ignore
+        progressier.add({
+          id: userId,
+        });
+      });
+    };
+  }, []);
 
   const positiveBalance = portfolio?.totalUsd && portfolio.totalUsd > 0;
 
