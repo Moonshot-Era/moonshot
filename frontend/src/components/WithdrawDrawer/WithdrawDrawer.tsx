@@ -40,15 +40,15 @@ export const WithdrawDrawer: FC<Props> = ({
     toAddress: string,
     amount: number | string
   ) => {
-    const { data: txData } = await axios.post(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`,
-      {
-        fromAddress: fromAsset,
-        toAddress,
-        amount,
-      }
-    );
-    handleClose();
+    await axios
+      .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`, {
+        fromAddress: portfolio?.wallet,
+        toAddress: toAddress,
+        amount: amount,
+        tokenAddress: fromAsset?.address,
+        tokenDecimals: fromAsset?.decimals,
+      })
+      .finally(handleClose);
   };
 
   return (

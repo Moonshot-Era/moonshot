@@ -15,33 +15,14 @@ import { useState } from 'react';
 
 interface HomeContentProps {
   portfolio: WalletPortfolioNormilizedType;
-  walletBalance?: string;
 }
 
-export const HomeContent = ({ portfolio, walletBalance }: HomeContentProps) => {
-  const [balance, setBalance] = useState(walletBalance);
+export const HomeContent = ({ portfolio }: HomeContentProps) => {
+  const [balance, setBalance] = useState(portfolio?.totalUsd);
   const { walletAssets, totalUsd } = portfolio;
   const totalH24 = walletAssets?.reduce((acc, cur) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
   }, 0);
-
-  const handleTransaction = async () => {
-    await axios
-      .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`, {
-        fromAddress: portfolio?.wallet,
-        toAddress: '7MCZ8ggLrxPyAHm27EwLWBkqYTikyJnCdTKp1F3f7jQL',
-        amount: 0.1,
-      })
-      .finally(async () => {
-        const { data: newWalletBalance } = await axios.post(
-          `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/get-balance`,
-          {
-            wallet: portfolio.wallet,
-          }
-        );
-        setBalance(newWalletBalance?.balance);
-      });
-  };
 
   return (
     <>
@@ -52,12 +33,6 @@ export const HomeContent = ({ portfolio, walletBalance }: HomeContentProps) => {
         width="100%"
         className="main-wrapper home-wrapper"
       >
-        <button onClick={() => handleTransaction()}>Transfer 0.1 SOL</button>
-        <Flex direction="row">
-          <Text size="2" weight="bold">
-            SOL balance (devnet): {balance || 0}
-          </Text>
-        </Flex>
         <Flex direction="row">
           <Text size="8" weight="bold">
             {totalUsd > 0
