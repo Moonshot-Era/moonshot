@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { Box, Flex, Spinner, Text } from "@radix-ui/themes";
@@ -17,11 +17,13 @@ import "./style.scss";
 type ConvertForm = {
   changeSelected?: (reselect: string) => void;
   selectedTokens: SelectedTokens;
+  closeDrawer: () => void;
 };
 
 export const ConvertForm = memo(
-  ({ selectedTokens, changeSelected }: ConvertForm) => {
+  ({ selectedTokens, changeSelected, closeDrawer }: ConvertForm) => {
     const [amount, setAmount] = useState<number>(0.001);
+    const btnRef = useRef();
 
     const { swapRoutes, isLoading: isSwapRoutesLoading } = useSwapRoutes(
       selectedTokens,
@@ -30,6 +32,18 @@ export const ConvertForm = memo(
     );
 
     const mutation = useSwapMutation();
+
+    useEffect(() => {
+      if (mutation.isSuccess || mutation.isError) {
+        closeDrawer();
+      }
+    }, [mutation.isSuccess]);
+
+    useEffect(() => {
+      if (mutation.isError) {
+        btnRef.current?.resetSlide();
+      }
+    }, [mutation.isError]);
 
     return (
       <Flex
@@ -107,8 +121,13 @@ export const ConvertForm = memo(
           />
         </Flex>
         <SlideButton
+          ref={btnRef}
           disabled={!swapRoutes || isSwapRoutesLoading || mutation.isPending}
           handleSubmit={() => mutation.mutate({ swapRoutes })}
+          loading={mutation.isPending}
+          label={
+            mutation.isPending ? "Waiting for a transaction end" : undefined
+          }
         />
       </Flex>
     );

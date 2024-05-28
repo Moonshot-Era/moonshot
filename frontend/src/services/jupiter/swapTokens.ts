@@ -1,10 +1,7 @@
 import {
   Connection,
-  Message,
-  MessageV0,
   PublicKey,
   Transaction,
-  VersionedTransaction,
 } from '@solana/web3.js';
 import axios from 'axios';
 import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
@@ -50,7 +47,7 @@ export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
     console.log("Sending raw transaction...", rawTransaction);
     const txid = await connection.sendRawTransaction(rawTransaction, {
       skipPreflight: false,
-      maxRetries: 10,
+      maxRetries: 50,
     });
 
     console.log(`Transaction sent. Txid: ${txid}`);
@@ -66,6 +63,8 @@ export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
 
     console.log(`Transaction confirmed: ${confirmation}`);
     console.log(`https://solscan.io/tx/${txid}`);
+
+    return txid;
   } catch (err) {
     console.error('Error during token swap:', err);
     throw new Error('Error during token swap: ' + err);

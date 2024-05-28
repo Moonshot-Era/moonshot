@@ -1,13 +1,12 @@
-import Image from 'next/image';
-import React, { FC } from 'react';
-import { Flex, Text } from '@radix-ui/themes';
+import Image from "next/image";
+import React, { FC } from "react";
+import { Flex, Text } from "@radix-ui/themes";
 
-import './style.scss';
-import { Icon } from '../Icon';
-import { currencyFormatter } from '@/helpers/currencyFormatter';
-import { formatNumberToUsd } from '@/helpers/helpers';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
-
+import "./style.scss";
+import { Icon } from "../Icon";
+import { currencyFormatter } from "@/helpers/currencyFormatter";
+import { formatNumberToUsd } from "@/helpers/helpers";
+import { WalletPortfolioAssetType } from "@/services/birdeye/getWalletPortfolio";
 
 interface Props {
   token?: WalletPortfolioAssetType;
@@ -19,7 +18,7 @@ interface Props {
   isLabel?: boolean;
   currencyType: string;
   onClick?: () => void;
-  type?: 'default' | 'convert';
+  type?: "default" | "convert";
 }
 
 export const TokenCard: FC<Props> = ({
@@ -29,11 +28,11 @@ export const TokenCard: FC<Props> = ({
   description,
   isLabel,
   logoSrc,
-  type = 'default',
+  type = "default",
   onClick,
   token,
 }) => {
-  const percentChange = percent ? (+percent).toFixed(2) : null
+  const percentChange = percent ? (+percent).toFixed(2) : null;
 
   return (
     <Flex
@@ -46,16 +45,16 @@ export const TokenCard: FC<Props> = ({
     >
       {token?.percentage_change_h24 && +token.percentage_change_h24 > 100 ? (
         <Flex className="token-card-label bg-warning">
-          {(+token.percentage_change_h24 > 100 && '🔥') ||
-            (+token.percentage_change_h24 > 1000 && '🔥🔥') ||
-            (+token.percentage_change_h24 > 1000 && '🔥🔥🔥')}
+          {(+token.percentage_change_h24 > 100 && "🔥") ||
+            (+token.percentage_change_h24 > 1000 && "🔥🔥") ||
+            (+token.percentage_change_h24 > 1000 && "🔥🔥🔥")}
           <div className="token-card-label-shadow bg-dark"></div>
         </Flex>
       ) : null}
       <Flex direction="row">
         {(token?.imageUrl || token?.logoURI) && (
           <Flex position="relative">
-            <img alt="img" width={50} height={50} src={token?.imageUrl || token?.logoURI} className="token-card-img" />
+            <img alt="img" width={50} height={50} className="token-card-img" />
           </Flex>
         )}
         <Flex direction="column" justify="between" ml="2" my="1">
@@ -78,15 +77,15 @@ export const TokenCard: FC<Props> = ({
                 <div
                   className={
                     +token?.percentage_change_h24 > 0
-                      ? 'icon-success-color'
-                      : 'icon-error-color'
+                      ? "icon-success-color"
+                      : "icon-error-color"
                   }
                 >
                   <Icon
                     icon={
                       +token?.percentage_change_h24 > 0
-                        ? 'trendingUp'
-                        : 'trendingDown'
+                        ? "trendingUp"
+                        : "trendingDown"
                     }
                     width={16}
                     height={16}
@@ -95,8 +94,8 @@ export const TokenCard: FC<Props> = ({
                 <Text
                   className={
                     +token?.percentage_change_h24 > 0
-                      ? 'text-color-success'
-                      : 'text-color-error'
+                      ? "text-color-success"
+                      : "text-color-error"
                   }
                   size="1"
                   weight="medium"

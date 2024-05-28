@@ -6,13 +6,14 @@
 // + Add input of tokens to convert
 // + Add max btn for tokens to convert
 // + Find routes for convert in jupiter
-// - Convert
+// + Convert
 // + Infinite scroll for tokens
 // + Selects as a btn
+// + Show progress
+// - show empty state
 // - validate number in input
 // - Search an asset
 // - Price of tokens in tokensList
-// - do not allow non-tradable tokens
 // - better types
 // - Snap on scroll
 
@@ -194,6 +195,7 @@ export const ConvertDrawer: FC<Props> = memo(
           <ConvertForm
             selectedTokens={selectedTokens}
             changeSelected={(reselect) => setState(reselect)}
+            closeDrawer={handleClose}
           />
         </SheetDrawer>
       </>

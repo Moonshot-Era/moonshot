@@ -15,7 +15,9 @@ export async function POST(request: Request) {
     });
   }
 
-  swapTokens(oidc!, data.swapRoutes);
+  const txid = await swapTokens(oidc!, data.swapRoutes);
 
-  return NextResponse.json({});
+  return NextResponse.json({
+    txid,
+  });
 }
