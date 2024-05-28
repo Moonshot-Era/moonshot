@@ -26,7 +26,7 @@ export const ConvertForm = memo(
     const { swapRoutes, isLoading: isSwapRoutesLoading } = useSwapRoutes(
       selectedTokens,
       convertToInteger(amount, selectedTokens.from.decimals as number),
-      1
+      50
     );
 
     const mutation = useSwapMutation();
