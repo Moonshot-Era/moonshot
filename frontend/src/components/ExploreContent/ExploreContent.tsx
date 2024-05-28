@@ -38,7 +38,11 @@ export const ExploreContent = ({
           <Input placeholder="Search assets" icon="search" />
           {trendingPools?.map((pool, index) =>
             pool ? (
-              <TokenCard key={index} token={pool} handler={handleGoToDetails} />
+              <TokenCard
+                key={index}
+                token={pool}
+                onClick={() => handleGoToDetails(pool)}
+              />
             ) : null
           )}
         </Flex>
