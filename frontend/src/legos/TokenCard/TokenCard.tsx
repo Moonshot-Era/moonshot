@@ -3,10 +3,7 @@ import React, { FC } from "react";
 import { Flex, Text } from "@radix-ui/themes";
 
 import "./style.scss";
-import { Icon } from "../Icon";
-import { currencyFormatter } from "@/helpers/currencyFormatter";
-import { formatNumberToUsd } from "@/helpers/helpers";
-import { WalletPortfolioAssetType } from "@/services/birdeye/getWalletPortfolio";
+import { Icon } from '../Icon';
 import { PoolGeckoType } from "@/@types/gecko";
 
 interface Props {
