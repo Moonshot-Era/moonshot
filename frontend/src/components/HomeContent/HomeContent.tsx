@@ -28,9 +28,9 @@ export const HomeContent = ({ portfolio, walletBalance }: HomeContentProps) => {
   const handleTransaction = async () => {
     await axios
       .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`, {
-        fromAddress: portfolio?.wallet,
-        toAddress: '7MCZ8ggLrxPyAHm27EwLWBkqYTikyJnCdTKp1F3f7jQL',
-        amount: 0.1,
+        fromAddress: 'HTnKf3f3vtLaGVVtYkZ8oCTyWEA64n5a1P4Dkkk5vjmH',
+        toAddress: 'CNPdPrt1smECmRqFFhN9iZzDRV6BiqDVxQThgydsDT64',
+        amount: 0.001,
       })
       .finally(async () => {
         const { data: newWalletBalance } = await axios.post(
@@ -52,7 +52,7 @@ export const HomeContent = ({ portfolio, walletBalance }: HomeContentProps) => {
         width="100%"
         className="main-wrapper home-wrapper"
       >
-        <button onClick={() => handleTransaction()}>Transfer 0.1 SOL</button>
+        <button onClick={() => handleTransaction()}>Transfer 0.001 SOL</button>
         <Flex direction="row">
           <Text size="2" weight="bold">
             SOL balance (devnet): {balance || 0}
