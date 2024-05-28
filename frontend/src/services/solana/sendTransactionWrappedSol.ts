@@ -32,7 +32,8 @@ export const sendTransactionWrappedSol = async (
 
     const associatedTokenAccount = await getAssociatedTokenAddress(
       NATIVE_MINT,
-      fromPubkey
+      fromPubkey,
+      true
     );
 
     console.log(
@@ -51,7 +52,7 @@ export const sendTransactionWrappedSol = async (
       createAssociatedTokenAccountInstruction(
         fromPubkey,
         associatedTokenAccount,
-        toPubkey,
+        fromPubkey,
         NATIVE_MINT
       )
     );
@@ -67,20 +68,6 @@ export const sendTransactionWrappedSol = async (
     const sig = resp.data().signature;
     // conver the signature 0x... to bytes
     const sigBytes = Buffer.from(sig.slice(2), 'hex');
-
-    // Sign using the blob-signing end point. This requires the key to have
-    // '"AllowRawBlobSigning"' policy (and thus the signing attempt could fail).
-    const fromKeyId = `Key#Solana_${fromPubkey.toBase58()}`;
-    const blobSig = (
-      await client.apiClient.signBlob(fromKeyId, { message_base64: base64 })
-    ).data().signature;
-
-    // The signature should be the same
-    if (blobSig !== sig) {
-      throw Error(
-        'Blob signature does not match the signature from solana-signing. Failed to sign'
-      );
-    }
 
     // add signature to transaction
     tx.addSignature(fromPubkey, sigBytes);

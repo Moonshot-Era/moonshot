@@ -30,7 +30,6 @@ export interface WalletPortfolioNormilizedType {
 
 export const getWalletPortfolio = async (walletAddress: string) => {
   try {
-
     if (!walletAddress) {
       throw Error(`User don't have a wallet`);
     }

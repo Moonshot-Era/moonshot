@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Flex, Text } from '@radix-ui/themes';
+import { Flex, Text } from "@radix-ui/themes";
 
-import { IconButton } from '@/legos';
-import { useState } from 'react';
+import { IconButton } from "@/legos";
+import { MutableRefObject, useRef, useState } from 'react';
 import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
 import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
@@ -16,17 +16,16 @@ interface ToolbarProps {
 }
 
 export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
-  const [isConvertOpen, setIsConvertOpen] = useState(false);
+  const convertDrawerRef: MutableRefObject<null> = useRef(null);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
 
-  const toggleConvertDrawer = () => setIsConvertOpen(!isConvertOpen);
   const toggleDepositDrawer = () => setIsDepositOpen(!isDepositOpen);
   const toggleWithdrawDrawer = () => setIsWithdrawOpen(!isWithdrawOpen);
 
   return (
     <>
-      <ConvertDrawer isOpen={isConvertOpen} toggleOpen={toggleConvertDrawer} />
+      <ConvertDrawer ref={convertDrawerRef} portfolio={portfolio} />
       <DepositDrawer
         isOpen={isDepositOpen}
         toggleOpen={toggleDepositDrawer}
@@ -51,7 +50,7 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
             <IconButton
               icon="transfer"
               className="bg-yellow"
-              onClick={toggleConvertDrawer}
+              onClick={() => convertDrawerRef.current?.open()}
             />
             <Text size="2">Convert</Text>
           </Flex>

@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -16,6 +16,7 @@ export type Database = {
           culture_ref: string | null
           email: string
           full_name: string | null
+          get_notifications: boolean | null
           id: number
           onboarding_completed: boolean | null
           roles: Database["public"]["Enums"]["role"][]
@@ -27,6 +28,7 @@ export type Database = {
           culture_ref?: string | null
           email: string
           full_name?: string | null
+          get_notifications?: boolean | null
           id?: number
           onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
@@ -38,6 +40,7 @@ export type Database = {
           culture_ref?: string | null
           email?: string
           full_name?: string | null
+          get_notifications?: boolean | null
           id?: number
           onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
@@ -65,6 +68,39 @@ export type Database = {
         Update: {
           created_at?: string
           culture_ref?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          created_at: string
+          date_purchased: string | null
+          date_sold: string | null
+          id: number
+          token_amount: number | null
+          token_name: string | null
+          token_price: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          date_purchased?: string | null
+          date_sold?: string | null
+          id?: number
+          token_amount?: number | null
+          token_name?: string | null
+          token_price?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          date_purchased?: string | null
+          date_sold?: string | null
+          id?: number
+          token_amount?: number | null
+          token_name?: string | null
+          token_price?: number | null
+          user_id?: string | null
         }
         Relationships: []
       }

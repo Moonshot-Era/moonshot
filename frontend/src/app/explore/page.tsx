@@ -8,6 +8,7 @@ export default async function Explore({ searchParams }: ServerPageProps) {
   const { data: trendingPoolsData } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/gecko/get-trending-pools`
   );
+
   return (
     <ExploreContent trendingPools={trendingPoolsData?.trendingPools?.data} />
   );

@@ -1,17 +1,17 @@
-import Image from 'next/image';
-import React, { FC } from 'react';
-import { Flex, Text } from '@radix-ui/themes';
+import Image from "next/image";
+import React, { FC } from "react";
+import { Flex, Text } from "@radix-ui/themes";
 
-import { Icon } from '../Icon';
-import { formatNumberToUsd } from '@/helpers/helpers';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { Icon } from "../Icon";
+import { formatNumberToUsd } from "@/helpers/helpers";
+import { WalletPortfolioAssetType } from "@/services/birdeye/getWalletPortfolio";
 
 interface Props {
   asset?: WalletPortfolioAssetType;
-  handler?: () => void;
+  onClick?: () => void;
 }
 
-export const AssetCard: FC<Props> = ({ asset, handler }) => {
+export const AssetCard: FC<Props> = ({ asset, onClick }) => {
   return (
     <Flex
       direction="row"
@@ -19,7 +19,7 @@ export const AssetCard: FC<Props> = ({ asset, handler }) => {
       align="center"
       p="3"
       className="token-card  bg-white"
-      onClick={handler}
+      onClick={onClick}
     >
       {asset?.percentage_change_h24 && +asset.percentage_change_h24 > 100 ? (
         <Flex className="token-card-label bg-warning">

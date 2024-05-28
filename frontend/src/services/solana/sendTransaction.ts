@@ -29,9 +29,7 @@ export const sendTransaction = async (
     const fromPubkey = new PublicKey(fromAddress);
     const toPubkey = new PublicKey(toAddress);
 
-    console.log(
-      `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}...`
-    );
+    console.log(`Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}`);
 
     const tx = new Transaction().add(
       SystemProgram.transfer({
@@ -53,39 +51,13 @@ export const sendTransaction = async (
     // conver the signature 0x... to bytes
     const sigBytes = Buffer.from(sig.slice(2), 'hex');
 
-    // Sign using the blob-signing end point. This requires the key to have
-    // '"AllowRawBlobSigning"' policy (and thus the signing attempt could fail).
-    const fromKeyId = `Key#Solana_${fromPubkey.toBase58()}`;
-    const blobSig = (
-      await client.apiClient.signBlob(fromKeyId, { message_base64: base64 })
-    ).data().signature;
-
-    // The signature should be the same
-    if (blobSig !== sig) {
-      throw Error(
-        'Blob signature does not match the signature from solana-signing. Failed to sign'
-      );
-    }
-
     // add signature to transaction
     tx.addSignature(fromPubkey, sigBytes);
 
     // send transaction
     const txHash = await connection.sendRawTransaction(tx.serialize());
     console.log(`txHash: ${txHash}`);
-
-    // get balance
-    // console.log(
-    //   `${fromPubkey} has ${
-    //     (await connection.getBalance(fromPubkey)) / LAMPORTS_PER_SOL
-    //   } SOL`
-    // );
-    // console.log(
-    //   `${toPubkey} has ${
-    //     (await connection.getBalance(toPubkey)) / LAMPORTS_PER_SOL
-    //   } SOL`
-    // );
   } catch (err) {
-    throw Error('Error sending transaction:' + err);
+    throw Error('Error sending transaction: ' + err);
   }
 };
