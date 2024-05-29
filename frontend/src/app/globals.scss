@@ -145,3 +145,12 @@ a {
 .progressier-widget-icon {
   top: 10px !important;
 }
+
+.text-link {
+  &:hover {
+    text-decoration: underline;
+  }
+  &:active {
+    text-decoration: underline;
+  }
+}

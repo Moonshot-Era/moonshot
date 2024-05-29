@@ -1,10 +1,8 @@
-import Image from "next/image";
-import React, { FC } from "react";
-import { Flex, Text } from "@radix-ui/themes";
+import React from 'react';
+import { Flex, Text } from '@radix-ui/themes';
 
-import "./style.scss";
+import './style.scss';
 import { Icon } from '../Icon';
-import { PoolGeckoType } from "@/@types/gecko";
 import { TokenItemBirdEyeType } from '@/@types/birdeye';
 import { formatNumberToUsd } from '@/helpers/helpers';
 
@@ -47,7 +45,8 @@ export const TokenCard = ({ onClick, token }: Props) => {
         )} */}
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
-            {token?.name}
+            {/* @ts-ignore */}
+            {token?.name || token?.attributes?.name}
           </Text>
           {/* <Text size="1" weight="regular">
             {token?.uiAmount} {token?.symbol}

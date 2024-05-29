@@ -4,19 +4,36 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import { Icon } from '@/legos';
+import { Icon, IconButton } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 import { TokenOverviewBirdEyeType } from '@/@types/birdeye';
-import { formatCashNumber, formatNumberToUsFormat } from '@/helpers/helpers';
+import {
+  formatCashNumber,
+  formatNumberToUsFormat,
+  isSolanaAddress,
+} from '@/helpers/helpers';
 
 import './style.scss';
+import { useRouter } from 'next/navigation';
+import { usePortfolio } from '@/hooks/usePortfolio';
 
 export const CultureItem = ({
   tokenItem,
+  isPublic,
+  walletAddress,
 }: {
   tokenItem: TokenOverviewBirdEyeType;
+  isPublic?: boolean;
+  walletAddress?: string;
 }) => {
-  console.log('debug > tokenItem===', tokenItem);
+  const router = useRouter();
+  const { portfolio } = usePortfolio(walletAddress);
+  const asset = portfolio?.walletAssets?.find((item) =>
+    isSolanaAddress(item?.address)
+      ? isSolanaAddress(item?.address) === tokenItem?.address
+      : item?.address === tokenItem?.address
+  );
+
   return tokenItem ? (
     <>
       <Flex
@@ -36,38 +53,7 @@ export const CultureItem = ({
             mb="8"
             gap="3"
           >
-            <Image
-              className="border-radius-full"
-              width={24}
-              height={24}
-              alt="Token logo"
-              src={tokenItem?.logoURI}
-            />
-            <Text size="4" weight="bold">
-              {tokenItem.name}
-            </Text>
-            <Box position="absolute" left="0" className="explore-icon-arrow">
-              <Icon icon="arrowRight" />
-            </Box>
-          </Flex>
-          {/* TODO Check user asset and add data */}
-          {/* <Toolbar withShare /> */}
-
-          <Flex
-            direction="row"
-            p="4"
-            justify="between"
-            className="explore-card"
-          >
-            <Flex width="100%" direction="column" justify="between">
-              <Text size="3" weight="medium">
-                Your balance
-              </Text>
-              {/* <Text size="2" weight="medium">
-                  {`$${mockUserData.balance.numbersArray[0]}`}
-                </Text> */}
-            </Flex>
-            <Flex width="100%" direction="column" justify="between" align="end">
+            <Flex position="relative" width="24px" height="24px">
               <Image
                 className="border-radius-full"
                 width={24}
@@ -75,6 +61,52 @@ export const CultureItem = ({
                 alt="Token logo"
                 src={tokenItem?.logoURI}
               />
+            </Flex>
+            <Text size="4" weight="bold">
+              {tokenItem.name}
+            </Text>
+            {!isPublic && (
+              <Box
+                position="absolute"
+                left="0"
+                className="explore-icon-arrow"
+                onClick={() => router.back()}
+              >
+                <Icon icon="arrowRight" />
+              </Box>
+            )}
+          </Flex>
+          {/* TODO Check user asset and add data */}
+          {!isPublic && portfolio && (
+            <Toolbar portfolio={portfolio} withShare />
+          )}
+
+          <Flex
+            direction="row"
+            p="4"
+            justify="between"
+            className="explore-card"
+          >
+            {!isPublic && (
+              <Flex width="100%" direction="column" justify="between">
+                <Text size="3" weight="medium">
+                  Your balance
+                </Text>
+                {/* <Text size="2" weight="medium">
+                  {`$${mockUserData.balance.numbersArray[0]}`}
+                </Text> */}
+              </Flex>
+            )}
+            <Flex width="100%" direction="column" justify="between" align="end">
+              <Flex position="relative" width="24px" height="24px">
+                <Image
+                  className="border-radius-full"
+                  width={24}
+                  height={24}
+                  alt="Token logo"
+                  src={tokenItem?.logoURI}
+                />
+              </Flex>
               <Text size="1" mt="1">
                 12,344 {tokenItem.name}
               </Text>
