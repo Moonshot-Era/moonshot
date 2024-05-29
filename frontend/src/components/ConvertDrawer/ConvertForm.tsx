@@ -13,19 +13,19 @@ import { useSwapMutation, useSwapRoutes } from "./hooks";
 import "./style.scss";
 
 type ConvertForm = {
-  changeSelected?: (reselect: string) => void;
+  changeSelected: (reselect: string) => void;
   selectedTokens: SelectedTokens;
   closeDrawer: () => void;
 };
 
 export const ConvertForm = memo(
   ({ selectedTokens, changeSelected, closeDrawer }: ConvertForm) => {
-    const [amount, setAmount] = useState<number>(0.001);
+    const [amount, setAmount] = useState<number | string>(0.001);
     const btnRef = useRef();
 
     const { swapRoutes, isLoading: isSwapRoutesLoading } = useSwapRoutes(
       selectedTokens,
-      convertToInteger(amount, selectedTokens.from.decimals as number),
+      convertToInteger(+amount, selectedTokens?.from?.decimals as number),
       50
     );
 
@@ -39,6 +39,7 @@ export const ConvertForm = memo(
 
     useEffect(() => {
       if (mutation.isError) {
+        //@ts-ignore
         btnRef.current?.resetSlide();
       }
     }, [mutation.isError]);
@@ -53,7 +54,7 @@ export const ConvertForm = memo(
         gap="5"
       >
         <Text size="4" weight="bold">
-          Convert {selectedTokens.from.name} to {selectedTokens.to.name}
+          Convert {selectedTokens?.from?.name} to {selectedTokens.to?.name}
         </Text>
         <Flex
           width="100%"
@@ -64,24 +65,24 @@ export const ConvertForm = memo(
         >
           <Flex direction="column" justify="between" gap="1">
             <TokenNumberInput
-              decimalLimit={selectedTokens.from.decimals as number}
-              value={"" + amount}
+              decimalLimit={selectedTokens?.from?.decimals as number}
+              value={'' + amount}
               onChange={setAmount}
             />
 
-            <Text size="1">{`Available: ${selectedTokens.from.valueUsd}`}</Text>
+            <Text size="1">{`Available: ${selectedTokens?.from?.valueUsd}`}</Text>
           </Flex>
           <Flex direction="column" justify="between" align="end" gap="1">
             <Select
               mode="btn"
-              onClick={() => changeSelected("from")}
-              value={selectedTokens.from.name}
+              onClick={() => changeSelected('from')}
+              value={selectedTokens?.from?.name}
             />
 
             <Text
               size="1"
               className="transfer-card-max"
-              onClick={() => setAmount(selectedTokens.from.valueUsd)}
+              onClick={() => setAmount(selectedTokens?.from?.valueUsd || 0)}
             >
               Max
             </Text>
@@ -104,8 +105,9 @@ export const ConvertForm = memo(
             <Text size="5" weight="bold">
               {swapRoutes
                 ? convertToReadable(
+                    // @ts-ignore
                     swapRoutes.outAmount,
-                    selectedTokens.to.decimals
+                    selectedTokens?.to?.decimals || 0
                   )
                 : swapRoutes}
             </Text>
@@ -113,18 +115,19 @@ export const ConvertForm = memo(
 
           <Select
             mode="btn"
-            onClick={() => changeSelected("to")}
+            onClick={() => changeSelected('to')}
             defaultValue={2}
-            value={selectedTokens.to.name}
+            value={selectedTokens?.to?.name}
           />
         </Flex>
         <SlideButton
           ref={btnRef}
           disabled={!swapRoutes || isSwapRoutesLoading || mutation.isPending}
+          //@ts-ignore
           handleSubmit={() => mutation.mutate({ swapRoutes })}
           loading={mutation.isPending}
           label={
-            mutation.isPending ? "Waiting for a transaction end" : undefined
+            mutation.isPending ? 'Waiting for a transaction end' : undefined
           }
         />
       </Flex>

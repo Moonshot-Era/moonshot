@@ -9,21 +9,22 @@ interface Props extends SelectHTMLAttributes<HTMLSelectElement> {
   onClick?: () => void;
 }
 
-export const Select: FC<Props> = ({ values, onClick, mode = 'default', ...props }) => mode === 'btn' ? (
-  <button className="convert-select" onClick={onClick}>
-    {props.value}
-  </button>
-) : (
-  <select 
-    id="standard-select" 
-    className="convert-select" 
-    onClick={onClick}
-    {...props}
-  >
-    {values.map(({ value, id }) => (
-      <option key={id} value={id}>
-        {value}
-      </option>
-    ))}
-  </select>
-);
+export const Select: FC<Props> = ({ values, onClick, mode = 'default', ...props }) =>
+  mode === 'btn' ? (
+    <button className="convert-select" onClick={onClick}>
+      {props.value}
+    </button>
+  ) : (
+    <select
+      id="standard-select"
+      className="convert-select"
+      onClick={onClick}
+      {...props}
+    >
+      {values?.map(({ value, id }) => (
+        <option key={id} value={id}>
+          {value}
+        </option>
+      ))}
+    </select>
+  );

@@ -31,10 +31,15 @@ export const useSwapRoutes = (
 ) => {
   const { data, ...rest } = useQuery({
     queryKey: [
-      `getSwapRoutes_${from.address}_${to.address}_${amount}_${slippageBps}`,
+      `getSwapRoutes_${from?.address}_${to?.address}_${amount}_${slippageBps}`,
     ],
     queryFn: () =>
-      fetchSwapRoutes(from.address, to.address, amount, slippageBps),
+      fetchSwapRoutes(
+        from?.address || '',
+        to?.address || '',
+        amount,
+        slippageBps
+      ),
     enabled: !!(amount && from && to && slippageBps),
   });
 
@@ -43,10 +48,11 @@ export const useSwapRoutes = (
 
 export const useSwapMutation = () => {
   const mutation = useMutation({
+    // @ts-ignore
     mutationFn: ({ swapRoutes }) => {
-      return swapTokens(swapRoutes)
+      return swapTokens(swapRoutes);
     },
-  })
+  });
 
   return mutation;
 }

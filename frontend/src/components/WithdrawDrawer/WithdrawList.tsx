@@ -24,7 +24,7 @@ export const WithdrawList: FC<Props> = ({ toggleTransfer, walletAssets }) => (
         <AssetCard
           key={asset.address}
           asset={asset}
-          handler={() => toggleTransfer(asset)}
+          onClick={() => toggleTransfer(asset)}
         />
       ))}
     </Flex>
