@@ -78,6 +78,7 @@ export const ExploreContent = ({
             ? searchPools?.map((pool) => (
                 <TokenCard
                   key={pool?.id}
+                  // @ts-ignore
                   token={pool}
                   onClick={() => handleGoToDetails(pool)}
                 />
@@ -85,6 +86,7 @@ export const ExploreContent = ({
             : trendingPools?.map((pool) => (
                 <TokenCard
                   key={pool?.id}
+                  // @ts-ignore
                   token={pool}
                   onClick={() => handleGoToDetails(pool)}
                 />
