@@ -118,6 +118,10 @@ a {
   @include border-dark;
 }
 
+.border-radius-full {
+  border-radius: 50%;
+}
+
 .font-size-xs {
   font-size: 10px;
 }

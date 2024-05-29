@@ -29,9 +29,13 @@ export const ExploreContent = ({
   const handleGoToDetails = (pool: PoolGeckoType) => {
     if (pool?.attributes?.name) {
       router.push(
-        `/culture/${pool?.attributes?.name.replace(/\W/g, '')}?tokenAddress=${
-          pool?.attributes?.address
-        }`
+        `/culture/${pool?.attributes?.name.replace(
+          /\W/g,
+          ''
+        )}?tokenAddress=${pool?.relationships?.base_token?.data?.id.replace(
+          'solana_',
+          ''
+        )}`
       );
     }
   };
@@ -47,7 +51,7 @@ export const ExploreContent = ({
       >
         <Flex width="100%" direction="column" gap="4">
           <Input placeholder="Search assets" icon="search" />
-          {/* {trendingPools?.map((pool, index) =>
+          {trendingPools?.map((pool, index) =>
             pool ? (
               <TokenCard
                 key={index}
@@ -55,7 +59,7 @@ export const ExploreContent = ({
                 onClick={() => handleGoToDetails(pool)}
               />
             ) : null
-          )} */}
+          )}
         </Flex>
       </Flex>
     </>

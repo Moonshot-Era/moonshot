@@ -32,6 +32,8 @@ import {
   Key,
   Logout,
   AlertTriangle,
+  Telegram,
+  Monitor,
 } from './Icons';
 
 export const IconsMap: IconsNamesMapType = {
@@ -67,4 +69,6 @@ export const IconsMap: IconsNamesMapType = {
   key: Key,
   logout: Logout,
   alertTriangle: AlertTriangle,
+  monitor: Monitor,
+  telegram: Telegram,
 };
