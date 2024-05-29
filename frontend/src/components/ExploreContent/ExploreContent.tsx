@@ -1,11 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { Flex } from '@radix-ui/themes';
 
 import './style.scss';
 
-import { Icon, Input, TokenCard } from '@/legos';
+import { Input, TokenCard } from '@/legos';
 import { PoolGeckoType } from '@/@types/gecko';
 import { useRouter } from 'next/navigation';
 
