@@ -92,9 +92,45 @@ interface PoolRelationships {
   };
 }
 
+export interface GeckoTokenIncluded {
+  attributes: {
+    address: string;
+    coingecko_coin_id: string;
+    image_url: string;
+    name: string;
+    symbol: string;    
+  };
+  id: string;
+  type: string;
+}
+
+export interface GeckoTokenOverview {
+  id: string;
+  attributes: {
+    address: string;
+    coingecko_coin_id: string;
+    decimals: number;
+    fdv_usd: string;
+    image_url: string;
+    market_cap_usd: void;
+    name: string;
+    price_usd: string
+    symbol: string;
+    total_reserve_in_usd: string;
+    total_supply: string;
+    volume_usd: {
+      h24: string;
+    };
+    h24: string;
+  }
+}
+
+
 export interface PoolGeckoType {
   id: string;
   type: string;
   attributes: PoolAttributes;
   relationships: PoolRelationships;
+  included?: GeckoTokenIncluded;
+  tokenOverview?: GeckoTokenOverview;
 }

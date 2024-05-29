@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { Box, Flex, Spinner, Text } from "@radix-ui/themes";
+import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import {
   convertToInteger,
-  convertToReadable,
-} from "@/helpers/convertAmountToInt";
-import { Icon, Select, SlideButton, TokenNumberInput } from "@/legos";
+  convertToReadable
+} from '@/helpers/convertAmountToInt';
+import { Icon, Select, SlideButton, TokenNumberInput } from '@/legos';
 
-import { SelectedTokens } from "./types";
-import { useSwapMutation, useSwapRoutes } from "./hooks";
-import "./style.scss";
+import { SelectedTokens } from './types';
+import { useSwapMutation, useSwapRoutes } from './hooks';
+import './style.scss';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
@@ -107,7 +107,7 @@ export const ConvertForm = memo(
                 ? convertToReadable(
                     // @ts-ignore
                     swapRoutes.outAmount,
-                    selectedTokens?.to?.decimals || 0
+                    selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
                   )
                 : swapRoutes}
             </Text>
@@ -117,7 +117,7 @@ export const ConvertForm = memo(
             mode="btn"
             onClick={() => changeSelected('to')}
             defaultValue={2}
-            value={selectedTokens?.to?.name}
+            value={selectedTokens?.to?.included?.attributes.symbol}
           />
         </Flex>
         <SlideButton

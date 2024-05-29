@@ -31,12 +31,12 @@ export const useSwapRoutes = (
 ) => {
   const { data, ...rest } = useQuery({
     queryKey: [
-      `getSwapRoutes_${from?.address}_${to?.address}_${amount}_${slippageBps}`,
+      `getSwapRoutes_${from?.address}_${to?.included?.attributes.address}_${amount}_${slippageBps}`,
     ],
     queryFn: () =>
       fetchSwapRoutes(
         from?.address || '',
-        to?.address || '',
+        to?.included?.attributes.address || '',
         amount,
         slippageBps
       ),

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 // TODO:
 // + Show available assets to convert
@@ -23,121 +23,48 @@ import {
   useState,
   forwardRef,
   useImperativeHandle,
-  useCallback,
-} from "react";
-import "./style.scss";
-import { SheetDrawer } from "@/legos";
-import { TokensSelect } from "./TokensSelect";
-import { ConvertForm } from "./ConvertForm";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { Flex, Spinner } from "@radix-ui/themes";
-import debounce from "lodash.debounce";
+  useCallback
+} from 'react';
+import './style.scss';
+import { SheetDrawer } from '@/legos';
+import { TokensSelect } from './TokensSelect';
+import { ConvertForm } from './ConvertForm';
+import { Flex, Spinner } from '@radix-ui/themes';
+import debounce from 'lodash.debounce';
 import {
   WalletPortfolioAssetType,
-  WalletPortfolioNormilizedType,
+  WalletPortfolioNormilizedType
 } from '@/services/birdeye/getWalletPortfolio';
 import { PoolGeckoType } from '@/@types/gecko';
-import { TokenItemBirdEyeType } from '@/@types/birdeye';
 import { SelectedTokens } from './types';
+import { usePoolsList } from '@/hooks/useTrendingPoolsList';
 
-type Portfolio = {
-  tokens: TokenItemBirdEyeType[];
-  total: number;
-  updateTime: string;
-  updateUnixTime: number;
-};
 interface Props {
   portfolio: WalletPortfolioNormilizedType;
   isOpen: boolean;
   toggleOpen: () => void;
 }
 
-// const fetchPoolsList = ({ pageParam = 1 }): Promise<PoolGeckoType[]> =>
-//   axios
-//     .post(
-//       `${process.env.NEXT_PUBLIC_SITE_URL}/api/gecko/get-trending-pools?page=${pageParam}`
-//     )
-//     .then((response) => {
-//       return response?.data?.trendingPools?.data;
-//     });
-
-// const usePoolsList = () => {
-//   const [page, setPage] = useState(1);
-//   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, ...rest } =
-//     useInfiniteQuery({
-//       queryKey: ['trendingPoolsList'],
-//       queryFn: async () => await fetchPoolsList(page),
-//       getNextPageParam: () => {
-//         if (page < 10) {
-//           setPage(page + 1);
-//         }
-//         return page < 10 ? page + 1 : undefined;
-//       },
-//     });
-
-//   return {
-//     poolsList: data?.pages?.[0],
-//     fetchNextPage,
-//     hasNextPage,
-//     isFetchingNextPage,
-//     ...rest,
-//   };
-// };
-
-const fetchTokensList = ({ pageParam = 0 }): Promise<Portfolio> =>
-  axios
-    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/token-list`, {
-      offset: pageParam,
-      limit: 50,
-    })
-    .then((response) => response.data.tokenList.data);
-
-const useTokensList = () => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, ...rest } =
-    useInfiniteQuery({
-      initialPageParam: 1,
-      queryKey: ['tokensList'],
-      queryFn: fetchTokensList,
-      getNextPageParam: (lastPage, pages) => {
-        if (!lastPage || !pages) {
-          return;
-        }
-        console.log('debug > lastPage===', lastPage);
-        const totalTokens = lastPage?.total;
-        const nextPage = pages?.length * 50;
-        return nextPage < totalTokens ? nextPage : undefined;
-      },
-    });
-
-  return {
-    tokensList: data?.pages?.flatMap((page) => page?.tokens),
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    ...rest,
-  };
-};
-
 const DEFAULT_TOKENS = {
   from: null,
-  to: null,
+  to: null
 };
 
 export const ConvertDrawer: FC<Props> = memo(
   forwardRef(function ConvertDrawer({ portfolio }, ref) {
     const [state, setState] = useState<string | null>(null);
-    const { tokensList, fetchNextPage, hasNextPage, isFetchingNextPage } =
-      useTokensList();
+    const { poolsList, fetchNextPage, hasNextPage, isFetchingNextPage } =
+      usePoolsList();
     const [selectedTokens, setSelectedTokens] = useState<
       SelectedTokens | { from: null; to: null }
     >(DEFAULT_TOKENS);
+
     const handleTokenSelect = (
-      token: TokenItemBirdEyeType | WalletPortfolioAssetType
+      token: WalletPortfolioAssetType | PoolGeckoType
     ) => {
       setSelectedTokens({
         ...selectedTokens,
-        [`${state}`]: token,
+        [`${state}`]: token
       });
 
       if (state === 'from' && !selectedTokens.to) {
@@ -157,7 +84,7 @@ export const ConvertDrawer: FC<Props> = memo(
       () => {
         return {
           open: () => setState('from'),
-          close: () => setState(null),
+          close: () => setState(null)
         };
       },
       []
@@ -165,11 +92,9 @@ export const ConvertDrawer: FC<Props> = memo(
 
     const debouncedFetchNextPage = useCallback(
       debounce(async () => {
-        if (hasNextPage) {
-          await fetchNextPage();
-        }
-      }, 300),
-      [fetchNextPage, hasNextPage]
+        await fetchNextPage();
+      }, 1000),
+      [fetchNextPage]
     );
 
     const handleTokensListScroll = async (
@@ -185,9 +110,7 @@ export const ConvertDrawer: FC<Props> = memo(
       }
     };
 
-    console.log('debug > poolsList===', tokensList);
-
-    if (!portfolio?.walletAssets || !tokensList) {
+    if (!portfolio?.walletAssets || !poolsList) {
       return null;
     }
 
@@ -215,7 +138,7 @@ export const ConvertDrawer: FC<Props> = memo(
           <TokensSelect
             handleTokenSelect={handleTokenSelect}
             selectMode="to"
-            tokensList={tokensList as TokenItemBirdEyeType[]}
+            tokensList={poolsList as PoolGeckoType[]}
           />
           {isFetchingNextPage && (
             <Flex align="center" justify="center" pb="5">
