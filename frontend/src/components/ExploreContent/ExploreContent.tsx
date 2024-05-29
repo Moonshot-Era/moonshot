@@ -2,7 +2,7 @@
 
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Flex } from '@radix-ui/themes';
+import { Flex, Text } from '@radix-ui/themes';
 import debounce from 'lodash.debounce';
 
 import { Input, TokenCard } from '@/legos';
@@ -28,8 +28,7 @@ export const ExploreContent = ({
   const router = useRouter();
   const [search, setSearch] = useState('');
 
-  const { searchPools, refetch } = useSearchPools(search);
-  console.log('debug > searchPools===', searchPools);
+  const { searchPools, refetch, isFetching } = useSearchPools(search);
   const handleGoToDetails = (pool: PoolGeckoType) => {
     if (pool?.attributes?.name) {
       router.push(
@@ -75,25 +74,21 @@ export const ExploreContent = ({
             value={search}
             onChange={handleSearchChange}
           />
-          {searchPools?.length
-            ? searchPools?.map((pool, index) =>
-                pool ? (
-                  <TokenCard
-                    key={index}
-                    token={pool}
-                    onClick={() => handleGoToDetails(pool)}
-                  />
-                ) : null
-              )
-            : trendingPools?.map((pool, index) =>
-                pool ? (
-                  <TokenCard
-                    key={index}
-                    token={pool}
-                    onClick={() => handleGoToDetails(pool)}
-                  />
-                ) : null
-              )}
+          {search && searchPools?.length
+            ? searchPools?.map((pool) => (
+                <TokenCard
+                  key={pool?.id}
+                  token={pool}
+                  onClick={() => handleGoToDetails(pool)}
+                />
+              ))
+            : trendingPools?.map((pool) => (
+                <TokenCard
+                  key={pool?.id}
+                  token={pool}
+                  onClick={() => handleGoToDetails(pool)}
+                />
+              ))}
         </Flex>
       </Flex>
     </>
