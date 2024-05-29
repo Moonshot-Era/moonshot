@@ -6,6 +6,7 @@ import handler from "./handler.tsx";
 // Setup type definitions for built-in Supabase Runtime APIs
 /// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
 
+// @ts-ignore
 Deno.serve(handler);
 
 /* To invoke locally:

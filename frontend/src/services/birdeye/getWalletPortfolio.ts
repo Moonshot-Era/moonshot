@@ -35,7 +35,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
     }
 
     const { data } = await axios.get(
-      `${process.env.BIRDEYE_URL_API}/v1/wallet/token_list?wallet=${walletAddress}`,
+      `${process.env.BIRDEYE_URL_API}v1/wallet/token_list?wallet=${walletAddress}`,
       {
         headers: {
           'x-chain': 'solana',
@@ -84,7 +84,6 @@ export const getWalletPortfolio = async (walletAddress: string) => {
         }
       );
     }
-
     return data?.success
       ? {
           walletAssets: walletPortfolioNormalized,

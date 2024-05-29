@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Connection, PublicKey } from '@solana/web3.js';
 import { CubeSignerInstance } from '../cubist';
 
@@ -7,7 +9,7 @@ export const Solana = async () => {
 
   const connection = new Connection(
     process.env.SOLANA_RPC_PROVIDER,
-    'confirmed',
+    'confirmed'
   );
   const fromPubkey = new PublicKey(FROM_ADDRESS);
   const toPubkey = new PublicKey(TO_ADDRESS);
@@ -16,7 +18,7 @@ export const Solana = async () => {
   try {
     const airdropSignature = await connection.requestAirdrop(
       fromPubkey,
-      LAMPORTS_PER_SOL,
+      LAMPORTS_PER_SOL
     );
     await connection.confirmTransaction({});
     console.log('Got an airdrop!');
@@ -28,16 +30,16 @@ export const Solana = async () => {
   console.log(
     `${fromPubkey} has ${
       (await connection.getBalance(fromPubkey)) / LAMPORTS_PER_SOL
-    } SOL`,
+    } SOL`
   );
   console.log(
     `${toPubkey} has ${
       (await connection.getBalance(toPubkey)) / LAMPORTS_PER_SOL
-    } SOL`,
+    } SOL`
   );
 
   console.log(
-    `Transferring ${AMOUNT} SOL from ${fromPubkey} to ${toPubkey}...`,
+    `Transferring ${AMOUNT} SOL from ${fromPubkey} to ${toPubkey}...`
   );
 
   const tx = new Transaction().add(
@@ -45,7 +47,7 @@ export const Solana = async () => {
       fromPubkey,
       toPubkey,
       lamports: AMOUNT * LAMPORTS_PER_SOL,
-    }),
+    })
   );
   tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
   tx.feePayer = fromPubkey;
@@ -70,7 +72,7 @@ export const Solana = async () => {
     // The signature should be the same
     assert(
       blobSig === sig,
-      'Blob signature does not match the signature from solana-signing',
+      'Blob signature does not match the signature from solana-signing'
     );
   } catch (e) {
     console.log(`Failed to sign blob: ${e}. Ignoring.`);
@@ -87,11 +89,11 @@ export const Solana = async () => {
   console.log(
     `${fromPubkey} has ${
       (await connection.getBalance(fromPubkey)) / LAMPORTS_PER_SOL
-    } SOL`,
+    } SOL`
   );
   console.log(
     `${toPubkey} has ${
       (await connection.getBalance(toPubkey)) / LAMPORTS_PER_SOL
-    } SOL`,
+    } SOL`
   );
 };

@@ -3,7 +3,7 @@ import axios from 'axios';
 export const getTokenList = async (offset: number, limit: number) => {
   try {
     const { data: tokenList } = await axios.get(
-      `${process.env.BIRDEYE_URL_API}/defi/tokenlist?sort_by=v24hUSD&sort_type=desc`,
+      `${process.env.BIRDEYE_URL_API}defi/tokenlist?sort_by=v24hUSD&sort_type=desc`,
       {
         params: {
           offset,

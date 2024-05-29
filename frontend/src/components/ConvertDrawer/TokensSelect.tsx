@@ -7,10 +7,13 @@ import { AssetCard, Input, TokenCard } from '@/legos';
 import './style.scss';
 import { PoolGeckoType } from '@/@types/gecko';
 import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { TokenItemBirdEyeType } from '@/@types/birdeye';
 
 interface Props {
-  tokensList: WalletPortfolioAssetType[] | PoolGeckoType[];
-  handleTokenSelect: (token: WalletPortfolioAssetType | PoolGeckoType) => void;
+  tokensList: WalletPortfolioAssetType[] | TokenItemBirdEyeType[];
+  handleTokenSelect: (
+    token: WalletPortfolioAssetType | TokenItemBirdEyeType
+  ) => void;
   selectMode: 'to' | 'from';
 }
 
@@ -35,24 +38,28 @@ export const TokensSelect: FC<Props> = ({
     </Flex>
     <Flex width="100%" direction="column" gap="4" px="4">
       {selectMode === 'from'
-        ? tokensList?.map((token: WalletPortfolioAssetType) => {
-            return (
-              <AssetCard
-                key={token?.address}
-                asset={token}
-                onClick={() => handleTokenSelect(token)}
-              />
-            );
-          })
-        : tokensList?.map((token: PoolGeckoType) => {
-            return (
-              <TokenCard
-                key={token?.attributes?.address}
-                token={token}
-                onClick={() => handleTokenSelect(token)}
-              />
-            );
-          })}
+        ? (tokensList as WalletPortfolioAssetType[])?.map(
+            (token: WalletPortfolioAssetType) => {
+              return (
+                <AssetCard
+                  key={token?.address}
+                  asset={token}
+                  onClick={() => handleTokenSelect(token)}
+                />
+              );
+            }
+          )
+        : (tokensList as TokenItemBirdEyeType[])?.map(
+            (token: TokenItemBirdEyeType) => {
+              return (
+                <TokenCard
+                  key={token?.address}
+                  token={token}
+                  onClick={() => handleTokenSelect(token)}
+                />
+              );
+            }
+          )}
     </Flex>
   </Flex>
 );

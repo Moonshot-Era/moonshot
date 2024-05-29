@@ -25,6 +25,7 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
 
   return (
     <>
+      {/* @ts-ignore */}
       <ConvertDrawer ref={convertDrawerRef} portfolio={portfolio} />
       <DepositDrawer
         isOpen={isDepositOpen}
@@ -50,6 +51,7 @@ export const Toolbar = ({ withShare, portfolio }: ToolbarProps) => {
             <IconButton
               icon="transfer"
               className="bg-yellow"
+              // @ts-ignore
               onClick={() => convertDrawerRef.current?.open()}
             />
             <Text size="2">Convert</Text>

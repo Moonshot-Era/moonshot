@@ -9,6 +9,17 @@ import { Icon, Input, TokenCard } from '@/legos';
 import { PoolGeckoType } from '@/@types/gecko';
 import { useRouter } from 'next/navigation';
 
+// TODO list
+// add link for token card
+// add search from gecko
+// add hook global for assets
+// get token info on culture page
+// check if user has balance
+// connect share
+// create public route for culture
+// add images from included
+
+
 export const ExploreContent = ({
   trendingPools,
 }: {
@@ -36,7 +47,7 @@ export const ExploreContent = ({
       >
         <Flex width="100%" direction="column" gap="4">
           <Input placeholder="Search assets" icon="search" />
-          {trendingPools?.map((pool, index) =>
+          {/* {trendingPools?.map((pool, index) =>
             pool ? (
               <TokenCard
                 key={index}
@@ -44,7 +55,7 @@ export const ExploreContent = ({
                 onClick={() => handleGoToDetails(pool)}
               />
             ) : null
-          )}
+          )} */}
         </Flex>
       </Flex>
     </>

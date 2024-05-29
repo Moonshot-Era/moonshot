@@ -5,14 +5,17 @@ import { Flex, Text } from "@radix-ui/themes";
 import "./style.scss";
 import { Icon } from '../Icon';
 import { PoolGeckoType } from "@/@types/gecko";
+import { TokenItemBirdEyeType } from '@/@types/birdeye';
+import { formatNumberToUsd } from '@/helpers/helpers';
 
 interface Props {
-  token: PoolGeckoType;
+  token: TokenItemBirdEyeType;
   onClick: () => void;
 }
 
-export const TokenCard: FC<Props> = ({ onClick, token }) => {
-  const percentageChange = +token?.attributes?.price_change_percentage?.h24
+export const TokenCard = ({ onClick, token }: Props) => {
+  // const percentageChange = +token?.attributes?.price_change_percentage?.h24
+
   return (
     <Flex
       direction="row"
@@ -22,14 +25,14 @@ export const TokenCard: FC<Props> = ({ onClick, token }) => {
       className="token-card  bg-white"
       onClick={onClick}
     >
-      {percentageChange && percentageChange > 100 ? (
+      {/* {percentageChange && percentageChange > 100 ? (
         <Flex className="token-card-label bg-warning">
           {(percentageChange > 100 && "🔥") ||
             (percentageChange > 1000 && "🔥🔥") ||
             (percentageChange > 1000 && "🔥🔥🔥")}
           <div className="token-card-label-shadow bg-dark"></div>
         </Flex>
-      ) : null}
+      ) : null} */}
       <Flex direction="row">
         {/* {(token?.imageUrl || token?.logoURI) && (
           <Flex position="relative">
@@ -44,7 +47,7 @@ export const TokenCard: FC<Props> = ({ onClick, token }) => {
         )} */}
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
-            {token?.attributes?.name}
+            {token?.name}
           </Text>
           {/* <Text size="1" weight="regular">
             {token?.uiAmount} {token?.symbol}
@@ -52,12 +55,12 @@ export const TokenCard: FC<Props> = ({ onClick, token }) => {
         </Flex>
       </Flex>
       <Flex direction="row" align="center" my="1">
-        {!!token?.attributes?.base_token_price_usd && (
+        {!!token?.valueUsd && (
           <Flex direction="column" justify="between" align="end" height="40px">
             <Text size="3" weight="medium">
-              {/* {formatNumberToUsd(token?.decimals).format(token?.valueUsd)} */}
+              {formatNumberToUsd(token?.decimals).format(token?.valueUsd)}
             </Text>
-            {percentageChange && (
+            {/* {percentageChange && (
               <Flex direction="row" align="center" gap="1">
                 <div
                   className={
@@ -86,7 +89,7 @@ export const TokenCard: FC<Props> = ({ onClick, token }) => {
                   weight="medium"
                 >{`${percentageChange}%`}</Text>
               </Flex>
-            )}
+            )} */}
           </Flex>
         )}
         <Icon icon="chevronRight" />
