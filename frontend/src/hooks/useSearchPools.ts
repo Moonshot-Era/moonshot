@@ -11,8 +11,7 @@ export const useSearchPools = (query?: string) => {
       } else {
         return fetchSearchPools(query);
       }
-    },
+    }
   });
-  console.log('debug > data===', data);
   return { searchPools: data, ...rest };
 };
