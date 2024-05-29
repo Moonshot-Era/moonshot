@@ -19,22 +19,23 @@ export const DepositList: FC<Props> = ({
 }) => {
   const formConfiguration = {
     apiKey: process.env.SHIFT4_API_KEY!,
-    walletAddress,
+    walletAddress
   };
-  const handleShowShift4Form =
-    // @ts-ignore
-    Shift4CryptoSDK.createForm(formConfiguration).append();
+  // const handleShowShift4Form =
+  //   // @ts-ignore
+  //   Shift4CryptoSDK.createForm(formConfiguration).append();
 
-  const handleDepositWithShift4 = () => {
-    handleClose();
-    handleShowShift4Form.show();
-  };
+  // const handleDepositWithShift4 = () => {
+  //   handleClose();
+  //   handleShowShift4Form.show();
+  // };
+
   return (
     <Flex width="100%" direction="column" align="center" gap="4" px="4" pb="6">
       <Text size="4" weight="bold">
         Deposit
       </Text>
-      <Flex
+      {/* <Flex
         width="100%"
         direction="row"
         py="4"
@@ -53,7 +54,7 @@ export const DepositList: FC<Props> = ({
           </Text>
           <Text>Card or bank transfer</Text>
         </Flex>
-      </Flex>
+      </Flex> */}
       <Flex
         width="100%"
         direction="row"
