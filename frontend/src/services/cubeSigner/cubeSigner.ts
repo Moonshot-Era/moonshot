@@ -16,6 +16,7 @@ class CubeSigner {
 
   async getUserSessionClient(oidcToken: string): Promise<CubeSignerClient> {
     const managerSessionClient = await this.getManagementSessionClient();
+    console.log('debug > managerSessionClient ==== ', managerSessionClient);
 
     const resp = await CubeSignerClient.createOidcSession(
       managerSessionClient.env,
@@ -52,6 +53,7 @@ const getCubistUsers = async () => {
 
 const findUser = async (email: string) => {
   const users = await getCubistUsers();
+  console.log('debug > users ==== ', users);
   return users.find(
     (user) => user.email === email && user.membership === 'Alien'
   );
@@ -69,16 +71,17 @@ export const getUserWallet = async (
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();
 
     const org = cubeClient.org();
+    console.log('debug > user ==== ', user);
 
     if (!user) {
       const userId = await org.createOidcUser({ iss, sub }, email, {
         mfaPolicy: undefined,
-        memberRole: 'Alien',
+        memberRole: 'Alien'
       });
 
       key = await org.createKey(Ed25519.Solana, userId, {
         // @ts-ignore
-        policy: ['AllowRawBlobSigning'],
+        policy: ['AllowRawBlobSigning']
       });
     } else {
       const userCubeSigner = await CubeSignerInstance.getUserSessionClient(
@@ -87,11 +90,12 @@ export const getUserWallet = async (
       const keys = await userCubeSigner.sessionKeys();
       key = keys?.[keys?.length - 1];
     }
-
+    console.log('debug > key ==== ', key.cached);
     if (!key) {
       throw Error('Wallet not created');
     }
   } catch (err: any) {
+    console.log('debug > err ==== ', JSON.stringify(err));
     if (Error(`${err}`).message.includes('Forbidden')) {
       await axios.post(`${process.env.SITE_URL}/auth/logout`);
     }
