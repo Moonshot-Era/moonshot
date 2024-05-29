@@ -3,22 +3,19 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '../Icon';
-import { TokenItemBirdEyeType } from '@/@types/birdeye';
 import { formatNumberToUsd, tokenAddressWithDots } from '@/helpers/helpers';
-import { PoolAttributes } from '@/@types/gecko';
+import { PoolGeckoType } from '@/@types/gecko';
 
 interface Props {
-  token: TokenItemBirdEyeType;
+  token: PoolGeckoType;
   onClick: () => void;
 }
 
 export const TokenCard = ({ onClick, token }: Props) => {
-  // @ts-ignore
-  const tokenItem = token?.attributes
-    ? // @ts-ignore
-      (token?.attributes as PoolAttributes)
-    : undefined;
+  const tokenItem = token?.attributes;
   const percentageChange = +(tokenItem?.price_change_percentage?.h24 || 0);
+
+  const name = token.included?.attributes.name;
 
   return (
     <Flex
@@ -30,35 +27,30 @@ export const TokenCard = ({ onClick, token }: Props) => {
       onClick={onClick}
     >
       <Flex direction="row">
-        {/* {(token?.imageUrl || token?.logoURI) && (
+        {token?.included?.attributes.image_url && (
           <Flex position="relative">
             <img
               alt="img"
               width={50}
               height={50}
-              src={token?.imageUrl || token?.logoURI}
+              src={token?.included?.attributes.image_url}
               className="token-card-img"
             />
           </Flex>
-        )} */}
+        )}
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
-            {/* @ts-ignore */}
-            {tokenItem ? tokenItem?.name : token?.name}
+            {name}
           </Text>
           <Text size="1" weight="regular">
-            {tokenItem ? tokenAddressWithDots(tokenItem?.address) : token?.name}
+            {tokenItem ? tokenAddressWithDots(tokenItem?.address) : name}
           </Text>
         </Flex>
       </Flex>
       <Flex direction="row" align="center" my="1">
         <Flex direction="column" justify="between" align="end" height="40px">
           <Text size="3" weight="medium">
-            {tokenItem
-              ? formatNumberToUsd(4).format(
-                  +tokenItem?.base_token_price_usd || 0
-                )
-              : formatNumberToUsd(token?.decimals).format(token?.valueUsd || 0)}
+            {formatNumberToUsd(4).format(+tokenItem?.base_token_price_usd || 0)}
           </Text>
           {percentageChange && (
             <Flex direction="row" align="center" gap="1">

@@ -1,9 +1,10 @@
 import { TokenItemBirdEyeType } from '@/@types/birdeye';
+import { PoolGeckoType } from '@/@types/gecko';
 import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 export type SelectedTokens =
   | {
       from: WalletPortfolioAssetType;
-      to: TokenItemBirdEyeType;
+      to: PoolGeckoType;
     }
   | { from: null; to: null };
