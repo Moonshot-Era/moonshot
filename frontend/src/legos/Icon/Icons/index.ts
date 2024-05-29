@@ -30,3 +30,5 @@ export { Notes } from "./Notes";
 export { Key } from "./Key";
 export { Logout } from "./Logout";
 export { AlertTriangle } from "./AlertTriangle";
+export { Monitor } from './Monitor';
+export { Telegram } from './Telegram';

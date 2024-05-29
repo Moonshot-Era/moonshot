@@ -6,10 +6,14 @@ export default async function CultureItemPage({
   searchParams,
 }: ServerPageProps) {
   await checkProtectedRoute(searchParams);
+  const tokenAddress = searchParams?.tokenAddress;
 
-  const { data: trendingPoolsData } = await axios.post(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/gecko/get-trending-pools`
+  const { data: tokenData } = await axios.post(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/get-token-overview`,
+    {
+      tokenAddress,
+    }
   );
 
-  return <CultureItem trendingPoolItem={trendingPoolsData} />;
+  return <CultureItem tokenItem={tokenData?.token} />;
 }
