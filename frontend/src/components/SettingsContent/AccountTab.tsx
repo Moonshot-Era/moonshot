@@ -2,12 +2,11 @@
 
 import { FC } from 'react';
 import Image from 'next/image';
-import { Box, Flex, Switch, Text } from '@radix-ui/themes';
-
-import './style.scss';
+import { Box, Flex, Text } from '@radix-ui/themes';
+import { Button, Icon } from '@/legos';
 import userIcon from '../../assets/images/user-icon.png';
 
-import { Button, Icon } from '@/legos';
+import './style.scss';
 
 interface Props {
   handleActiveTab: (
@@ -15,54 +14,54 @@ interface Props {
   ) => void;
 }
 
-export const AccountTab: FC<Props> = ({ handleActiveTab }) => (
-  <Flex width="100%" direction="column" align="center">
-    <Flex
-      position="relative"
-      width="100%"
-      justify="center"
-      align="center"
-      direction="row"
-      mb="6"
-    >
-      <Text size="4" weight="bold">
-        Account
-      </Text>
-      <Box
-        position="absolute"
-        left="0"
-        className="settings-icon-arrow"
-        onClick={() => handleActiveTab(null)}
+export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
+  return (
+    <Flex width="100%" direction="column" align="center">
+      <Flex
+        position="relative"
+        width="100%"
+        justify="center"
+        align="center"
+        direction="row"
+        mb="6"
       >
-        <Icon icon="arrowRight" />
+        <Text size="4" weight="bold">
+          Account
+        </Text>
+        <Box
+          position="absolute"
+          left="0"
+          className="settings-icon-arrow"
+          onClick={() => handleActiveTab(null)}
+        >
+          <Icon icon="arrowRight" />
+        </Box>
+      </Flex>
+      <Box mb="2">
+        <Image alt="user-photo" src={userIcon} width={80} height={80} />
       </Box>
+      <Button className="settings-account-button">
+        <Text size="2" weight="medium">
+          Edit photo
+        </Text>
+      </Button>
+      <Flex
+        width="100%"
+        direction="row"
+        align="center"
+        justify="center"
+        py="3"
+        px="3"
+        className="settings-account-notifications"
+      >
+        <button
+          className="progressier-subscribe-button"
+          data-icons="true"
+          data-eligible="Get notifications"
+          data-subscribed="Notifications enabled"
+          data-blocked="Notifications blocked"
+        ></button>
+      </Flex>
     </Flex>
-    <Box mb="2">
-      <Image alt="user-photo" src={userIcon} width={80} height={80} />
-    </Box>
-    <Button className="settings-account-button">
-      <Text size="2" weight="medium">
-        Edit photo
-      </Text>
-    </Button>
-    <Flex
-      width="100%"
-      direction="row"
-      align="center"
-      justify="between"
-      py="3"
-      px="3"
-      className="settings-account-notifications"
-    >
-      <Text size="3" weight="medium">
-        Notifications
-      </Text>
-      <Switch
-        size="3"
-        defaultChecked
-        color="green"
-        className="settings-account-switch"
-      />
-    </Flex>
-  </Flex>
-);
+  );
+};

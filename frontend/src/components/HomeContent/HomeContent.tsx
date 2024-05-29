@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import { formatNumberToUsd } from '@/helpers/helpers';
@@ -11,20 +12,58 @@ import {
   WalletPortfolioNormilizedType,
 } from '@/services/birdeye/getWalletPortfolio';
 import axios from 'axios';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 interface HomeContentProps {
-  portfolio: WalletPortfolioNormilizedType;
+  walletAddress: string;
+  userId?: string;
 }
 
-export const HomeContent = ({ portfolio }: HomeContentProps) => {
-  const [balance, setBalance] = useState(portfolio?.totalUsd);
-  const { walletAssets, totalUsd } = portfolio;
-  const totalH24 = walletAssets?.reduce((acc, cur) => {
+const fetchPortfolio = (
+  walletAddress: string
+): Promise<WalletPortfolioNormilizedType> =>
+  axios
+    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`, {
+      walletAddress,
+    })
+    .then((response) => response.data.walletPortfolio);
+
+const usePortfolio = (walletAddress: string) => {
+  const { data, ...rest } = useQuery({
+    queryKey: ['portfolio'],
+    queryFn: () => fetchPortfolio(walletAddress),
+  });
+
+  return { portfolio: data, ...rest };
+};
+
+export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
+  const { portfolio, isFetching } = usePortfolio(walletAddress);
+
+  const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
   }, 0);
 
-  return (
+  useEffect(() => {
+    window.addEventListener('load', function () {
+      // @ts-ignore
+      progressier.add({
+        id: userId,
+      });
+    });
+    return () => {
+      window.removeEventListener('load', function () {
+        // @ts-ignore
+        progressier.add({
+          id: userId,
+        });
+      });
+    };
+  }, []);
+
+  const positiveBalance = portfolio?.totalUsd && portfolio.totalUsd > 0;
+
+  return isFetching ? null : (
     <>
       <Flex
         direction="column"
@@ -34,41 +73,45 @@ export const HomeContent = ({ portfolio }: HomeContentProps) => {
         className="main-wrapper home-wrapper"
       >
         <Flex direction="row">
-          <Text size="8" weight="bold">
-            {totalUsd > 0
-              ? formatNumberToUsd().format(totalUsd).split('.')[0]
-              : '-'}
-          </Text>
-          {totalUsd > 0 ? (
-            <Text size="5" weight="medium" mt="2" ml="2px">
-              {((totalUsd % 1) * 100).toFixed(0)}
+          {positiveBalance ? (
+            <>
+              <Text size="8" weight="bold">
+                {formatNumberToUsd().format(portfolio.totalUsd).split('.')[0]}
+              </Text>
+              <Text size="5" weight="medium" mt="2" ml="2px">
+                {((portfolio?.totalUsd % 1) * 100).toFixed(0)}
+              </Text>
+            </>
+          ) : (
+            <Text size="8" weight="bold">
+              -
             </Text>
-          ) : null}
+          )}
         </Flex>
         <Box mb="8">
-          {totalUsd > 0 ? (
+          {positiveBalance && totalH24 ? (
             <BadgeSecond
-              percent={totalUsd / totalH24}
-              total={totalUsd - totalH24}
+              percent={portfolio.totalUsd / totalH24}
+              total={portfolio.totalUsd - totalH24}
             />
           ) : (
             '-'
           )}
         </Box>
 
-        <Toolbar portfolio={portfolio} />
+        {!!portfolio && <Toolbar portfolio={portfolio} />}
 
         <Flex
           width="100%"
           direction="column"
           gap="4"
-          mb={totalUsd > 0 ? '100px' : '1'}
+          mb={positiveBalance ? '100px' : '1'}
         >
           <Text size="3" weight="medium" mb="2">
             My portfolio
           </Text>
-          {walletAssets?.length ? (
-            walletAssets.map((asset: WalletPortfolioAssetType) => (
+          {portfolio?.walletAssets?.length ? (
+            portfolio.walletAssets.map((asset: WalletPortfolioAssetType) => (
               <AssetCard key={asset.address} asset={asset} />
             ))
           ) : (

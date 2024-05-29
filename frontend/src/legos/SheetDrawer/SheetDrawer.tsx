@@ -13,7 +13,7 @@ interface Props {
   detent?: 'content-height' | 'full-height';
   disableDrag?: boolean;
   onSnap?: (snapPoint: number) => void;
-  onScroll: () => void;
+  onScroll?: (event: any) => Promise<void>;
 }
 
 export const SheetDrawer: FC<Props> = ({
