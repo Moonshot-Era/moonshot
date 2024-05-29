@@ -3,10 +3,8 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '../Icon';
-import { TokenItemBirdEyeType } from '@/@types/birdeye';
 import { formatNumberToUsd, tokenAddressWithDots } from '@/helpers/helpers';
-import { PoolAttributes, PoolGeckoType } from '@/@types/gecko';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { PoolGeckoType } from '@/@types/gecko';
 
 interface Props {
   token: PoolGeckoType;
@@ -42,7 +40,6 @@ export const TokenCard = ({ onClick, token }: Props) => {
         )}
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
-            {/* @ts-ignore */}
             {name}
           </Text>
           <Text size="1" weight="regular">

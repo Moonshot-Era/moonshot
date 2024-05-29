@@ -9,6 +9,7 @@ import {
   WalletPortfolioNormilizedType,
 } from '@/services/birdeye/getWalletPortfolio';
 import { TokenItemBirdEyeType } from '@/@types/birdeye';
+import { PoolGeckoType } from '@/@types/gecko';
 
 const fetchPortfolip = (): Promise<WalletPortfolioNormilizedType> =>
   axios
@@ -60,12 +61,10 @@ export const TokensPick = ({
   const { data: portfolio } = usePortfolio();
   const [showSelect, setShowSelect] = useState<string | boolean>(false);
 
-  const handleTokenPick = (
-    token: WalletPortfolioAssetType | TokenItemBirdEyeType
-  ) => {
+  const handleTokenPick = (token: WalletPortfolioAssetType | PoolGeckoType) => {
     setSelectedTokens({
       ...selectedTokens,
-      [`${showSelect}`]: token,
+      [`${showSelect}`]: token
     });
     setShowSelect(false);
   };
@@ -107,7 +106,10 @@ export const TokensPick = ({
           <Flex width="100%">
             <Text>65,000</Text>
             <Button onClick={() => setShowSelect('to')}>
-              TO {selectedTokens.to ? `(${selectedTokens.to.symbol})` : ''}
+              TO{' '}
+              {selectedTokens.to
+                ? `(${selectedTokens.to.tokenOverview?.attributes?.symbol})`
+                : ''}
             </Button>
           </Flex>
         </Flex>
