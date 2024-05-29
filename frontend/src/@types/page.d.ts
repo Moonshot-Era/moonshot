@@ -1,4 +1,4 @@
 type ServerPageProps<T extends {} = {}> = {
-  params: T | {};
+  params: T;
   searchParams: { [key: string]: string | string[] | undefined };
 };

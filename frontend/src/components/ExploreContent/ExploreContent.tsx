@@ -9,7 +9,6 @@ import { PoolGeckoType } from '@/@types/gecko';
 import { useRouter } from 'next/navigation';
 
 // TODO list
-// add link for token card
 // add search from gecko
 // add hook global for assets
 // get token info on culture page
@@ -25,21 +24,17 @@ export const ExploreContent = ({
   trendingPools: PoolGeckoType[];
 }) => {
   const router = useRouter();
+
   const handleGoToDetails = (pool: PoolGeckoType) => {
     if (pool?.attributes?.name) {
       router.push(
-        `/culture/${pool?.attributes?.name.replace(
-          /\W/g,
-          ''
-        )}?tokenAddress=${pool?.relationships?.base_token?.data?.id.replace(
+        `/culture/${pool?.relationships?.base_token?.data?.id.replace(
           'solana_',
           ''
         )}`
       );
     }
   };
-
-  console.log('debug > trendingPools===', trendingPools);
 
   return (
     <>

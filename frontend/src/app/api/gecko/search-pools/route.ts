@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
-import { WalletPortfolioType } from '@/@types/birdeye';
 import { searchPools } from '@/services/gecko/searchPools';
+import { PoolGeckoType } from '@/@types/gecko';
 
 export async function POST(request: Request) {
   const response = await request.json();
-  const searchPoolsData: WalletPortfolioType | {} = await searchPools();
+  const searchPoolsData: PoolGeckoType[] | [] = await searchPools(
+    response?.query
+  );
 
   return NextResponse.json({ searchPoolsData });
 }
