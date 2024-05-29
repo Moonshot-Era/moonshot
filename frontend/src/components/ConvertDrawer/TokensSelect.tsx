@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { FC } from "react";
+import { FC } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 import { AssetCard, Input, TokenCard } from '@/legos';
 
@@ -10,17 +10,15 @@ import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio'
 import { TokenItemBirdEyeType } from '@/@types/birdeye';
 
 interface Props {
-  tokensList: WalletPortfolioAssetType[] | TokenItemBirdEyeType[];
-  handleTokenSelect: (
-    token: WalletPortfolioAssetType | TokenItemBirdEyeType
-  ) => void;
+  tokensList: WalletPortfolioAssetType[] | PoolGeckoType[];
+  handleTokenSelect: (token: WalletPortfolioAssetType | PoolGeckoType) => void;
   selectMode: 'to' | 'from';
 }
 
 export const TokensSelect: FC<Props> = ({
   tokensList,
   handleTokenSelect,
-  selectMode,
+  selectMode
 }) => (
   <Flex
     width="100%"
@@ -49,17 +47,15 @@ export const TokensSelect: FC<Props> = ({
               );
             }
           )
-        : (tokensList as TokenItemBirdEyeType[])?.map(
-            (token: TokenItemBirdEyeType) => {
-              return (
-                <TokenCard
-                  key={token?.address}
-                  token={token}
-                  onClick={() => handleTokenSelect(token)}
-                />
-              );
-            }
-          )}
+        : (tokensList as PoolGeckoType[])?.map((token: PoolGeckoType) => {
+            return (
+              <TokenCard
+                key={token?.id}
+                token={token}
+                onClick={() => handleTokenSelect(token)}
+              />
+            );
+          })}
     </Flex>
   </Flex>
 );
