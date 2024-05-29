@@ -1,12 +1,15 @@
 'use client';
 
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Flex } from '@radix-ui/themes';
-
-import './style.scss';
+import debounce from 'lodash.debounce';
 
 import { Input, TokenCard } from '@/legos';
 import { PoolGeckoType } from '@/@types/gecko';
-import { useRouter } from 'next/navigation';
+import { useSearchPools } from '@/hooks/useSearchPools';
+
+import './style.scss';
 
 // TODO list
 // add search from gecko
@@ -17,14 +20,16 @@ import { useRouter } from 'next/navigation';
 // create public route for culture
 // add images from included
 
-
 export const ExploreContent = ({
   trendingPools,
 }: {
   trendingPools: PoolGeckoType[];
 }) => {
   const router = useRouter();
+  const [search, setSearch] = useState('');
 
+  const { searchPools, refetch } = useSearchPools(search);
+  console.log('debug > searchPools===', searchPools);
   const handleGoToDetails = (pool: PoolGeckoType) => {
     if (pool?.attributes?.name) {
       router.push(
@@ -34,6 +39,23 @@ export const ExploreContent = ({
         )}`
       );
     }
+  };
+
+  const debouncedSearchPools = useCallback(
+    debounce(async (searchQuery) => {
+      await refetch(searchQuery);
+    }, 300),
+    []
+  );
+
+  useEffect(() => {
+    if (search) {
+      debouncedSearchPools(search);
+    }
+  }, [search]);
+
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
   };
 
   return (
@@ -46,16 +68,30 @@ export const ExploreContent = ({
         className="main-wrapper explore-wrapper"
       >
         <Flex width="100%" direction="column" gap="4">
-          <Input placeholder="Search assets" icon="search" />
-          {trendingPools?.map((pool, index) =>
-            pool ? (
-              <TokenCard
-                key={index}
-                token={pool}
-                onClick={() => handleGoToDetails(pool)}
-              />
-            ) : null
-          )}
+          <Input
+            placeholder="Search assets"
+            icon="search"
+            onChange={handleSearchChange}
+          />
+          {searchPools?.length
+            ? searchPools?.map((pool, index) =>
+                pool ? (
+                  <TokenCard
+                    key={index}
+                    token={pool}
+                    onClick={() => handleGoToDetails(pool)}
+                  />
+                ) : null
+              )
+            : trendingPools?.map((pool, index) =>
+                pool ? (
+                  <TokenCard
+                    key={index}
+                    token={pool}
+                    onClick={() => handleGoToDetails(pool)}
+                  />
+                ) : null
+              )}
         </Flex>
       </Flex>
     </>
