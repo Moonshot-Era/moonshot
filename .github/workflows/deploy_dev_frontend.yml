@@ -30,8 +30,8 @@ jobs:
             fi
             git fetch --all
             git reset --hard origin/${{ env.BRANCH }}
-            git pull
-
+            git pull https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASSWORD }}@github.com/Moonshot-Era/moonshot ${{ env.BRANCH }}
+            
       - name: Install Moonshot deps in dev server
         uses: appleboy/ssh-action@v0.1.10
         with:
