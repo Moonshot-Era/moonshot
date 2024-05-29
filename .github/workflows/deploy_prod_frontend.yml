@@ -9,6 +9,28 @@ env:
   NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
   NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID }}
   NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL_PROD }}
+  SITE_URL: ${{ vars.SITE_URL_PROD }}
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+
+  GOOGLE_AUTH_CLIENT_ID: ${{ secrets.GOOGLE_AUTH_CLIENT_ID }}
+  GOOGLE_AUTH_SECRET: ${{ secrets.GOOGLE_AUTH_SECRET }}
+  GOOGLE_AUTH_REDIRECT_URL: ${{ secrets.GOOGLE_AUTH_REDIRECT_URL }}
+
+  BIRDEYE_URL_API: ${{ secrets.BIRDEYE_URL_API }}
+  BIRDEYE_X_API_KEY: ${{ secrets.BIRDEYE_X_API_KEY }}
+
+  GECKO_URL_API: ${{ secrets.GECKO_URL_API }}
+  GECKO_API_KEY: ${{ secrets.GECKO_API_KEY }}
+
+  SHIFT4_URL: ${{ secrets.SHIFT4_URL }}
+  SHIFT4_API_KEY: ${{ secrets.SHIFT4_API_KEY }}
+  
+  SOLANA_RPC_PROVIDER: ${{ secrets.SOLANA_RPC_PROVIDER }}
+  WALLET_MAINNET: ${{ secrets.WALLET_MAINNET }}
+  
+  TWITTER_AUTH_REDIRECT_URL: ${{ secrets.TWITTER_AUTH_REDIRECT_URL }}
+
+
   
 jobs:
   Update-server:
@@ -30,7 +52,7 @@ jobs:
             fi
             git fetch --all
             git reset --hard origin/${{ env.BRANCH }}
-            git pull
+            git pull https://${{ secrets.GIT_USER }}:${{ secrets.GIT_PASSWORD }}@github.com/Moonshot-Era/moonshot ${{ env.BRANCH }}
 
       - name: Install frontend deps in prod server
         uses: appleboy/ssh-action@v0.1.10
