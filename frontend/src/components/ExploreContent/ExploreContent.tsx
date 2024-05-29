@@ -70,7 +70,9 @@ export const ExploreContent = ({
         <Flex width="100%" direction="column" gap="4">
           <Input
             placeholder="Search assets"
+            type="search"
             icon="search"
+            value={search}
             onChange={handleSearchChange}
           />
           {searchPools?.length

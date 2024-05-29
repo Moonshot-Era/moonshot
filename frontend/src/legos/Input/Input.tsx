@@ -31,7 +31,8 @@ export const Input: FC<Props> = ({
         className={`default-input ${className ?? ''} ${error ? 'error' : ''}`}
         {...props}
       />
-      {icon ? (
+      {(props?.type === 'search' && icon && !props?.value) ||
+      (props?.type !== 'search' && icon) ? (
         <div className="default-input-icon">
           <Icon icon={icon} />
         </div>
