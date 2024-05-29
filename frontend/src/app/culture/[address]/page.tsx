@@ -1,15 +1,17 @@
 import axios from 'axios';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 
 import { CultureItem } from '@/components/CultureItem/CultureItem';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
 
 export default async function CultureItemPage({
+  params,
   searchParams,
-}: ServerPageProps) {
-  await checkProtectedRoute(searchParams);
-  const tokenAddress = searchParams?.tokenAddress;
+}: ServerPageProps<{ address: string }>) {
+  const user = await checkProtectedRoute(searchParams, false);
   const oidc = cookies()?.get('pt')?.value;
+
+  const tokenAddress = params?.address;
 
   const { data: tokenData } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/get-token-overview`,
@@ -27,6 +29,7 @@ export default async function CultureItemPage({
 
   return (
     <CultureItem
+      isPublic={!user?.id}
       tokenItem={tokenData?.token}
       walletAddress={walletData?.wallet}
     />
