@@ -57,7 +57,7 @@ interface VolumeUSD {
   h24: string;
 }
 
-interface PoolAttributes {
+export interface PoolAttributes {
   base_token_price_usd: string;
   base_token_price_native_currency: string;
   quote_token_price_usd: string;

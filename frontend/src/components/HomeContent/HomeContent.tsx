@@ -7,35 +7,13 @@ import { formatNumberToUsd } from '@/helpers/helpers';
 import { BadgeSecond, AssetCard } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 import './style.scss';
-import {
-  WalletPortfolioAssetType,
-  WalletPortfolioNormilizedType,
-} from '@/services/birdeye/getWalletPortfolio';
-import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { usePortfolio } from '@/hooks/usePortfolio';
 
 interface HomeContentProps {
   walletAddress: string;
   userId?: string;
 }
-
-const fetchPortfolio = (
-  walletAddress: string
-): Promise<WalletPortfolioNormilizedType> =>
-  axios
-    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`, {
-      walletAddress,
-    })
-    .then((response) => response.data.walletPortfolio);
-
-const usePortfolio = (walletAddress: string) => {
-  const { data, ...rest } = useQuery({
-    queryKey: ['portfolio'],
-    queryFn: () => fetchPortfolio(walletAddress),
-  });
-
-  return { portfolio: data, ...rest };
-};
 
 export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
   const { portfolio, isFetching } = usePortfolio(walletAddress);

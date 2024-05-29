@@ -3,15 +3,11 @@ import React, { ReactNode, ButtonHTMLAttributes, FC } from 'react';
 import './style.scss';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
-export const NavButton: FC<ButtonProps> = ({
-  children,
-  className,
-  ...props
-}) => (
+export const NavButton: FC<ButtonProps> = ({ children, className, ...props }) => (
   <button className={`nav-button ${className}`} {...props}>
-    {children}
+    {children || null}
   </button>
 );
