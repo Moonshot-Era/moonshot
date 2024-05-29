@@ -118,6 +118,10 @@ a {
   @include border-dark;
 }
 
+.border-radius-full {
+  border-radius: 50%;
+}
+
 .font-size-xs {
   font-size: 10px;
 }
@@ -140,4 +144,13 @@ a {
 
 .progressier-widget-icon {
   top: 10px !important;
+}
+
+.text-link {
+  &:hover {
+    text-decoration: underline;
+  }
+  &:active {
+    text-decoration: underline;
+  }
 }

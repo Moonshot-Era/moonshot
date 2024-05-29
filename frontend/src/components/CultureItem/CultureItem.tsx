@@ -1,35 +1,42 @@
 'use client';
 
+import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import './style.scss';
-import userIcon from '../../assets/images/user-icon.png';
-
+import { Icon, IconButton } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
-import { Icon, Input, TokenCard } from '@/legos';
-import { PoolGeckoType } from '@/@types/gecko';
+import { TokenOverviewBirdEyeType } from '@/@types/birdeye';
+import {
+  formatCashNumber,
+  formatNumberToUsFormat,
+  isSolanaAddress,
+} from '@/helpers/helpers';
 
-const mockUserData = {
-  name: 'jeo boden',
-  balance: 21439,
-  subtitle: '43,453 BODEN',
-  marketCap: '$400.5M',
-  volume: '$10.6M',
-  allTimeHigh: '$1.0835',
-  totalSupply: '879,906,378.25',
-  holders: '4,683',
-  description:
-    'Joe Boden is da hartfelt leeder of Amuriku. His mishun is to bild bak betta, to unify da divided, n to counter da wild claims of Doland Tremp. We’re here to bring togetha all da Amuriku memes and support one anotha thru da highs and lows. Make sure to stand by Boden for real change!',
-};
+import './style.scss';
+import { useRouter } from 'next/navigation';
+import { usePortfolio } from '@/hooks/usePortfolio';
 
 export const CultureItem = ({
-  trendingPoolItem,
+  tokenItem,
+  isPublic,
+  walletAddress,
 }: {
-  trendingPoolItem: PoolGeckoType;
+  tokenItem: TokenOverviewBirdEyeType;
+  isPublic?: boolean;
+  walletAddress?: string;
 }) => {
-  return (
+  const router = useRouter();
+  const { portfolio } = usePortfolio(walletAddress);
+  const asset = portfolio?.walletAssets?.find((item) =>
+    isSolanaAddress(item?.address)
+      ? isSolanaAddress(item?.address) === tokenItem?.address
+      : item?.address === tokenItem?.address
+  );
+
+  console.log('debug > asset===', asset);
+
+  return tokenItem ? (
     <>
       <Flex
         direction="column"
@@ -46,37 +53,73 @@ export const CultureItem = ({
             align="center"
             direction="row"
             mb="8"
+            gap="3"
           >
+            <Flex position="relative" width="24px" height="24px">
+              <Image
+                className="border-radius-full"
+                width={24}
+                height={24}
+                alt="Token logo"
+                src={tokenItem?.logoURI}
+              />
+            </Flex>
             <Text size="4" weight="bold">
-              {mockUserData.name}
+              {tokenItem.name}
             </Text>
-            <Box position="absolute" left="0" className="explore-icon-arrow">
-              <Icon icon="arrowRight" />
-            </Box>
+            {!isPublic && (
+              <Box
+                position="absolute"
+                left="0"
+                className="explore-icon-arrow"
+                onClick={() => router.back()}
+              >
+                <Icon icon="arrowRight" />
+              </Box>
+            )}
           </Flex>
-          {/* <Toolbar withShare /> */}
+          {/* TODO Check user asset and add data */}
+          {!isPublic && asset && portfolio && (
+            <Toolbar portfolio={portfolio} withShare />
+          )}
 
-          <Flex
-            direction="row"
-            p="4"
-            justify="between"
-            className="explore-card"
-          >
-            <Flex width="100%" direction="column" justify="between">
-              <Text size="3" weight="medium">
-                Your balance
-              </Text>
-              {/* <Text size="2" weight="medium">
+          {asset && (
+            <Flex
+              direction="row"
+              p="4"
+              justify="between"
+              className="explore-card"
+            >
+              <Flex width="100%" direction="column" justify="between">
+                <Text size="3" weight="medium">
+                  Your balance
+                </Text>
+                {/* <Text size="2" weight="medium">
                   {`$${mockUserData.balance.numbersArray[0]}`}
                 </Text> */}
+              </Flex>
+              <Flex
+                width="100%"
+                direction="column"
+                justify="between"
+                align="end"
+              >
+                <Flex position="relative" width="24px" height="24px">
+                  <Image
+                    className="border-radius-full"
+                    width={24}
+                    height={24}
+                    alt="Token logo"
+                    src={tokenItem?.logoURI}
+                  />
+                </Flex>
+                <Text size="1" mt="1">
+                  12,344 {tokenItem.name}
+                </Text>
+              </Flex>
             </Flex>
-            <Flex width="100%" direction="column" justify="between" align="end">
-              <Image width={24} height={24} alt="user-icon" src={userIcon} />
-              <Text size="1" mt="1">
-                {mockUserData.subtitle}
-              </Text>
-            </Flex>
-          </Flex>
+          )}
+
           <Flex
             direction="column"
             p="4"
@@ -87,8 +130,8 @@ export const CultureItem = ({
               size="3"
               weight="medium"
               mb="2"
-            >{`About ${mockUserData.name}`}</Text>
-            <Text size="1">{mockUserData.description}</Text>
+            >{`About ${tokenItem.name}`}</Text>
+            <Text size="1">{tokenItem.extensions?.description}</Text>
           </Flex>
           <Flex
             direction="column"
@@ -97,9 +140,32 @@ export const CultureItem = ({
             justify="between"
             className="explore-card"
           >
-            <Text size="3" weight="medium" mb="2">
-              Stats
-            </Text>
+            <Flex direction="row" justify="between" align="center">
+              <Text size="3" weight="medium" mb="2">
+                Stats
+              </Text>
+              <Flex direction="row" gap="1">
+                <Link
+                  href={`${tokenItem?.extensions?.telegram}`}
+                  target="_blank"
+                >
+                  <Icon icon="telegram" width={16} height={16} />
+                </Link>
+                <Link
+                  href={`${tokenItem?.extensions?.twitter}`}
+                  target="_blank"
+                >
+                  <Icon icon="twitter" width={16} height={16} />
+                </Link>
+                <Link
+                  href={`${tokenItem?.extensions?.website}`}
+                  target="_blank"
+                >
+                  <Icon icon="monitor" width={16} height={16} />
+                </Link>
+              </Flex>
+            </Flex>
+
             <Flex direction="row" justify="between" align="center">
               <Flex direction="row" gap="1">
                 <Icon icon="chartPie" width={14} height={14} />
@@ -107,7 +173,7 @@ export const CultureItem = ({
                   Market cap
                 </Text>
               </Flex>
-              <Text size="1">{mockUserData.marketCap}</Text>
+              <Text size="1">{formatCashNumber().format(tokenItem?.mc)}</Text>
             </Flex>
             <Flex direction="row" justify="between" align="center">
               <Flex direction="row" gap="1">
@@ -116,16 +182,20 @@ export const CultureItem = ({
                   24H volume
                 </Text>
               </Flex>
-              <Text size="1">{mockUserData.volume}</Text>
+              <Text size="1">
+                {formatCashNumber().format(tokenItem?.v24hUSD)}
+              </Text>
             </Flex>
             <Flex direction="row" justify="between" align="center">
               <Flex direction="row" gap="1">
                 <Icon icon="chartLine" width={14} height={14} />
                 <Text size="1" weight="medium">
-                  All-time high
+                  Liquidity
                 </Text>
               </Flex>
-              <Text size="1">{mockUserData.allTimeHigh}</Text>
+              <Text size="1">
+                {formatCashNumber().format(tokenItem?.liquidity)}
+              </Text>
             </Flex>
             <Flex direction="row" justify="between" align="center">
               <Flex direction="row" gap="1">
@@ -134,7 +204,9 @@ export const CultureItem = ({
                   Total supply
                 </Text>
               </Flex>
-              <Text size="1">{mockUserData.totalSupply}</Text>
+              <Text size="1">
+                {formatNumberToUsFormat().format(tokenItem?.supply)}
+              </Text>
             </Flex>
             <Flex direction="row" justify="between" align="center">
               <Flex direction="row" gap="1">
@@ -143,11 +215,13 @@ export const CultureItem = ({
                   Holders
                 </Text>
               </Flex>
-              <Text size="1">{mockUserData.holders}</Text>
+              <Text size="1">
+                {formatNumberToUsFormat().format(tokenItem?.holder)}
+              </Text>
             </Flex>
           </Flex>
         </Flex>
       </Flex>
     </>
-  );
+  ) : null;
 };

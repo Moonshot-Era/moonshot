@@ -18,7 +18,8 @@ export const DepositList: FC<Props> = ({
   walletAddress,
 }) => {
   const formConfiguration = {
-    apiKey: 'pk_fad9eca9a5a5dba43bf2294041f58526',
+    apiKey: process.env.SHIFT4_API_KEY!,
+    walletAddress,
   };
   const handleShowShift4Form =
     // @ts-ignore

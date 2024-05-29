@@ -1,4 +1,3 @@
-import { createBrowserClient } from '@/supabase/client';
 import axios from 'axios';
 
 export const logout = async () => {

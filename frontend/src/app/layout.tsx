@@ -77,7 +77,9 @@ export default function RootLayout({
         <Script
           src={`https://progressier.app/${process.env.NEXT_PUBLIC_PROGRESSIER_ID}/script.js`}
         />
-        <Script src="https://sandbox.crypto.shift4.com/sdk/v1/shift4crypto-sdk-latest.js" />
+        <Script
+          src={`${process.env.SHIFT4_URL}sdk/v1/shift4crypto-sdk-latest.js`}
+        />
         <ServiceWorkerRegister />
         <SplashScreen />
         <Header />
