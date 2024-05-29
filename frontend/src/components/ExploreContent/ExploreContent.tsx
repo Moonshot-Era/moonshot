@@ -8,27 +8,18 @@ import debounce from 'lodash.debounce';
 import { Input, TokenCard } from '@/legos';
 import { PoolGeckoType } from '@/@types/gecko';
 import { useSearchPools } from '@/hooks/useSearchPools';
+import { usePoolsList } from '@/hooks/useTrendingPoolsList';
 
 import './style.scss';
 
-// TODO list
-// add search from gecko
-// add hook global for assets
-// get token info on culture page
-// check if user has balance
-// connect share
-// create public route for culture
-// add images from included
-
-export const ExploreContent = ({
-  trendingPools,
-}: {
-  trendingPools: PoolGeckoType[];
-}) => {
+export const ExploreContent = () => {
   const router = useRouter();
   const [search, setSearch] = useState('');
 
   const { searchPools, refetch, isFetching } = useSearchPools(search);
+  const { poolsList, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    usePoolsList();
+
   const handleGoToDetails = (pool: PoolGeckoType) => {
     if (pool?.attributes?.name) {
       router.push(
@@ -78,15 +69,13 @@ export const ExploreContent = ({
             ? searchPools?.map((pool) => (
                 <TokenCard
                   key={pool?.id}
-                  // @ts-ignore
                   token={pool}
                   onClick={() => handleGoToDetails(pool)}
                 />
               ))
-            : trendingPools?.map((pool) => (
+            : poolsList?.map((pool) => (
                 <TokenCard
                   key={pool?.id}
-                  // @ts-ignore
                   token={pool}
                   onClick={() => handleGoToDetails(pool)}
                 />

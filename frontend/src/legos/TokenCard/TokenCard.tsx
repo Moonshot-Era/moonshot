@@ -14,7 +14,6 @@ interface Props {
 export const TokenCard = ({ onClick, token }: Props) => {
   const tokenItem = token?.attributes;
   const percentageChange = +(tokenItem?.price_change_percentage?.h24 || 0);
-
   const name = token.included?.attributes.name;
 
   return (
@@ -27,8 +26,8 @@ export const TokenCard = ({ onClick, token }: Props) => {
       onClick={onClick}
     >
       <Flex direction="row">
-        {token?.included?.attributes.image_url && (
-          <Flex position="relative">
+        {token?.included?.attributes.image_url?.includes('http') && (
+          <Flex position="relative" width="50px" height="50px">
             <img
               alt="img"
               width={50}
@@ -38,12 +37,24 @@ export const TokenCard = ({ onClick, token }: Props) => {
             />
           </Flex>
         )}
-        <Flex direction="column" justify="between" ml="2" my="1">
-          <Text size="3" weight="medium">
-            {name}
-          </Text>
-          <Text size="1" weight="regular">
-            {tokenItem ? tokenAddressWithDots(tokenItem?.address) : name}
+        <Flex
+          direction="column"
+          justify="between"
+          ml="2"
+          my="1"
+          maxWidth="80%"
+          overflow="hidden"
+        >
+          {name && (
+            <Text size="3" weight="medium" wrap="nowrap">
+              {name?.slice(0, 40)}
+              {name?.length > 40 ? '...' : ''}
+            </Text>
+          )}
+          <Text size="1" weight="regular" wrap="nowrap">
+            {tokenAddressWithDots(
+              token?.relationships?.base_token?.data?.id.replace('solana_', '')
+            )}
           </Text>
         </Flex>
       </Flex>
