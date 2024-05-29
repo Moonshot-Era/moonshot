@@ -1,23 +1,20 @@
-"use client";
+import Image from 'next/image';
+import { Flex, Text } from '@radix-ui/themes';
 
-import Image from "next/image";
-import { Flex, Text } from "@radix-ui/themes";
-
-import "./style.scss";
-import { Button, Icon } from "@/legos";
-import cubistLogo from "../../assets/images/cubist_logo.svg";
-import { SplashScreen } from "@/components/SplashScreen/SplashScreen";
-import { useRouter } from "next/navigation";
-import { QUERY_PARAM_CULTURE_REF } from "@/utils";
+import './style.scss';
+import { Button, Icon } from '@/legos';
+import cubistLogo from '../../assets/images/cubist_logo.svg';
+import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
+import { redirect } from 'next/navigation';
+import { QUERY_PARAM_CULTURE_REF } from '@/utils';
 
 export default function Login({ searchParams }: ServerPageProps) {
-  const router = useRouter();
   const cultureRef = searchParams[QUERY_PARAM_CULTURE_REF];
 
   const handleGoogleLogin = () => {
-    router.push(
+    redirect(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/google?${
-        cultureRef ? `${QUERY_PARAM_CULTURE_REF}=${cultureRef}` : ""
+        cultureRef ? `${QUERY_PARAM_CULTURE_REF}=${cultureRef}` : ''
       }`
     );
   };
