@@ -15,11 +15,5 @@ export async function POST(request: Request) {
     console.log('Err', err);
   });
 
-  // const exportUserInfoResponse = await exportUserInfo(response.oidc).catch(
-  //   (err) => {
-  //     console.log('Err', err);
-  //   }
-  // );
-
   return NextResponse.json({ wallet });
 }

@@ -1,5 +1,6 @@
 import { CubeSignerClient, Ed25519 } from '@cubist-labs/cubesigner-sdk';
 import { defaultManagementSessionManager } from '@cubist-labs/cubesigner-sdk-fs-storage';
+import axios from 'axios';
 
 class CubeSigner {
   private managementSessionClient?: CubeSignerClient;
@@ -90,7 +91,10 @@ export const getUserWallet = async (
     if (!key) {
       throw Error('Wallet not created');
     }
-  } catch (err) {
+  } catch (err: any) {
+    if (Error(`${err}`).message.includes('Forbidden')) {
+      await axios.post(`${process.env.SITE_URL}/auth/logout`);
+    }
     throw err;
   }
   return key.materialId;

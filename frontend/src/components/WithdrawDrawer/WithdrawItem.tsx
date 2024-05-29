@@ -91,7 +91,6 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
           wallet: toAddress,
         }
       );
-      console.log('debug > isSolanaWallet===', isSolanaWallet);
       if (!isSolanaWallet) {
         setToAddressError(TO_ADDRESS_ERROR);
       }
