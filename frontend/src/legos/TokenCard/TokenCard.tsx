@@ -4,7 +4,8 @@ import { Flex, Text } from '@radix-ui/themes';
 import './style.scss';
 import { Icon } from '../Icon';
 import { TokenItemBirdEyeType } from '@/@types/birdeye';
-import { formatNumberToUsd } from '@/helpers/helpers';
+import { formatNumberToUsd, tokenAddressWithDots } from '@/helpers/helpers';
+import { PoolAttributes } from '@/@types/gecko';
 
 interface Props {
   token: TokenItemBirdEyeType;
@@ -12,7 +13,12 @@ interface Props {
 }
 
 export const TokenCard = ({ onClick, token }: Props) => {
-  // const percentageChange = +token?.attributes?.price_change_percentage?.h24
+  // @ts-ignore
+  const tokenItem = token?.attributes
+    ? // @ts-ignore
+      (token?.attributes as PoolAttributes)
+    : undefined;
+  const percentageChange = +(tokenItem?.price_change_percentage?.h24 || 0);
 
   return (
     <Flex
@@ -23,14 +29,6 @@ export const TokenCard = ({ onClick, token }: Props) => {
       className="token-card  bg-white"
       onClick={onClick}
     >
-      {/* {percentageChange && percentageChange > 100 ? (
-        <Flex className="token-card-label bg-warning">
-          {(percentageChange > 100 && "🔥") ||
-            (percentageChange > 1000 && "🔥🔥") ||
-            (percentageChange > 1000 && "🔥🔥🔥")}
-          <div className="token-card-label-shadow bg-dark"></div>
-        </Flex>
-      ) : null} */}
       <Flex direction="row">
         {/* {(token?.imageUrl || token?.logoURI) && (
           <Flex position="relative">
@@ -46,51 +44,49 @@ export const TokenCard = ({ onClick, token }: Props) => {
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
             {/* @ts-ignore */}
-            {token?.name || token?.attributes?.name}
+            {tokenItem ? tokenItem?.name : token?.name}
           </Text>
-          {/* <Text size="1" weight="regular">
-            {token?.uiAmount} {token?.symbol}
-          </Text> */}
+          <Text size="1" weight="regular">
+            {tokenItem ? tokenAddressWithDots(tokenItem?.address) : token?.name}
+          </Text>
         </Flex>
       </Flex>
       <Flex direction="row" align="center" my="1">
-        {!!token?.valueUsd && (
-          <Flex direction="column" justify="between" align="end" height="40px">
-            <Text size="3" weight="medium">
-              {formatNumberToUsd(token?.decimals).format(token?.valueUsd)}
-            </Text>
-            {/* {percentageChange && (
-              <Flex direction="row" align="center" gap="1">
-                <div
-                  className={
-                    percentageChange > 0
-                      ? "icon-success-color"
-                      : "icon-error-color"
-                  }
-                >
-                  <Icon
-                    icon={
-                      percentageChange > 0
-                        ? "trendingUp"
-                        : "trendingDown"
-                    }
-                    width={16}
-                    height={16}
-                  />
-                </div>
-                <Text
-                  className={
-                    percentageChange > 0
-                      ? "text-color-success"
-                      : "text-color-error"
-                  }
-                  size="1"
-                  weight="medium"
-                >{`${percentageChange}%`}</Text>
-              </Flex>
-            )} */}
-          </Flex>
-        )}
+        <Flex direction="column" justify="between" align="end" height="40px">
+          <Text size="3" weight="medium">
+            {tokenItem
+              ? formatNumberToUsd(4).format(
+                  +tokenItem?.base_token_price_usd || 0
+                )
+              : formatNumberToUsd(token?.decimals).format(token?.valueUsd || 0)}
+          </Text>
+          {percentageChange && (
+            <Flex direction="row" align="center" gap="1">
+              <div
+                className={
+                  percentageChange > 0
+                    ? 'icon-success-color'
+                    : 'icon-error-color'
+                }
+              >
+                <Icon
+                  icon={percentageChange > 0 ? 'trendingUp' : 'trendingDown'}
+                  width={16}
+                  height={16}
+                />
+              </div>
+              <Text
+                className={
+                  percentageChange > 0
+                    ? 'text-color-success'
+                    : 'text-color-error'
+                }
+                size="1"
+                weight="medium"
+              >{`${percentageChange}%`}</Text>
+            </Flex>
+          )}
+        </Flex>
         <Icon icon="chevronRight" />
       </Flex>
     </Flex>

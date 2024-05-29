@@ -34,6 +34,8 @@ export const CultureItem = ({
       : item?.address === tokenItem?.address
   );
 
+  console.log('debug > asset===', asset);
+
   return tokenItem ? (
     <>
       <Flex
@@ -77,17 +79,17 @@ export const CultureItem = ({
             )}
           </Flex>
           {/* TODO Check user asset and add data */}
-          {!isPublic && portfolio && (
+          {!isPublic && asset && portfolio && (
             <Toolbar portfolio={portfolio} withShare />
           )}
 
-          <Flex
-            direction="row"
-            p="4"
-            justify="between"
-            className="explore-card"
-          >
-            {!isPublic && (
+          {asset && (
+            <Flex
+              direction="row"
+              p="4"
+              justify="between"
+              className="explore-card"
+            >
               <Flex width="100%" direction="column" justify="between">
                 <Text size="3" weight="medium">
                   Your balance
@@ -96,22 +98,28 @@ export const CultureItem = ({
                   {`$${mockUserData.balance.numbersArray[0]}`}
                 </Text> */}
               </Flex>
-            )}
-            <Flex width="100%" direction="column" justify="between" align="end">
-              <Flex position="relative" width="24px" height="24px">
-                <Image
-                  className="border-radius-full"
-                  width={24}
-                  height={24}
-                  alt="Token logo"
-                  src={tokenItem?.logoURI}
-                />
+              <Flex
+                width="100%"
+                direction="column"
+                justify="between"
+                align="end"
+              >
+                <Flex position="relative" width="24px" height="24px">
+                  <Image
+                    className="border-radius-full"
+                    width={24}
+                    height={24}
+                    alt="Token logo"
+                    src={tokenItem?.logoURI}
+                  />
+                </Flex>
+                <Text size="1" mt="1">
+                  12,344 {tokenItem.name}
+                </Text>
               </Flex>
-              <Text size="1" mt="1">
-                12,344 {tokenItem.name}
-              </Text>
             </Flex>
-          </Flex>
+          )}
+
           <Flex
             direction="column"
             p="4"

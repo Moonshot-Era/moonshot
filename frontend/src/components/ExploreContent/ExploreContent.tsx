@@ -40,6 +40,8 @@ export const ExploreContent = ({
     }
   };
 
+  console.log('debug > trendingPools===', trendingPools);
+
   return (
     <>
       <Flex

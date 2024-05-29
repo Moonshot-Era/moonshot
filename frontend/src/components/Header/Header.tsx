@@ -14,7 +14,7 @@ export const Header = () => {
     pathname === '/' ||
     pathname === '/explore' ||
     pathname === '/settings' ||
-    pathname === '/culture' ||
+    pathname.includes('/culture') ||
     pathname.includes('public');
 
   return (
