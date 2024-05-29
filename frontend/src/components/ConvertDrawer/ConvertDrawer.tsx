@@ -13,8 +13,8 @@
 // - show empty state
 // - validate number in input
 // - Search an asset
-// - Price of tokens in tokensList
-// - better types
+// + Price of tokens in tokensList
+// + better types
 // - Snap on scroll
 
 import {

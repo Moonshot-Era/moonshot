@@ -14,14 +14,10 @@ interface Props {
 }
 
 export const TokenCard = ({ onClick, token }: Props) => {
-  // @ts-ignore
-  const tokenItem = token?.attributes
-    ? // @ts-ignore
-      (token?.attributes as PoolAttributes)
-    : undefined;
+  const tokenItem = token?.attributes;
   const percentageChange = +(tokenItem?.price_change_percentage?.h24 || 0);
 
-  const name = token.included?.attributes.name || token.name;
+  const name = token.included?.attributes.name;
 
   return (
     <Flex
@@ -57,11 +53,7 @@ export const TokenCard = ({ onClick, token }: Props) => {
       <Flex direction="row" align="center" my="1">
         <Flex direction="column" justify="between" align="end" height="40px">
           <Text size="3" weight="medium">
-            {tokenItem
-              ? formatNumberToUsd(4).format(
-                  +tokenItem?.base_token_price_usd || 0
-                )
-              : formatNumberToUsd(token?.decimals).format(token?.valueUsd || 0)}
+            {formatNumberToUsd(4).format(+tokenItem?.base_token_price_usd || 0)}
           </Text>
           {percentageChange && (
             <Flex direction="row" align="center" gap="1">

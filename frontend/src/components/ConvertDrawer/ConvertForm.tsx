@@ -54,7 +54,8 @@ export const ConvertForm = memo(
         gap="5"
       >
         <Text size="4" weight="bold">
-          Convert {selectedTokens?.from?.name} to {selectedTokens.to?.name}
+          Convert {selectedTokens?.from?.name} to{' '}
+          {selectedTokens.to?.included?.attributes.name}
         </Text>
         <Flex
           width="100%"
