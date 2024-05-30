@@ -85,7 +85,7 @@ export const TokensSelect: FC<Props> = ({
       </Flex>
       <Flex width="100%" direction="column" gap="4" px="4">
         {selectMode === 'from'
-          ? search && searchPools?.length
+          ? search && filteredPools?.length
             ? filteredPools?.map((token) => {
                 return (
                   <AssetCard
