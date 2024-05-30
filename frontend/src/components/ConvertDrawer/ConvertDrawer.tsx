@@ -12,7 +12,7 @@
 // + Show progress
 // - show empty state
 // - validate number in input
-// - Search an asset
+// + Search an asset
 // + Price of tokens in tokensList
 // + better types
 // - Snap on scroll
@@ -93,7 +93,7 @@ export const ConvertDrawer: FC<Props> = memo(
     const debouncedFetchNextPage = useCallback(
       debounce(async () => {
         await fetchNextPage();
-      }, 1000),
+      }, 300),
       [fetchNextPage]
     );
 
@@ -141,7 +141,12 @@ export const ConvertDrawer: FC<Props> = memo(
             tokensList={poolsList as PoolGeckoType[]}
           />
           {isFetchingNextPage && (
-            <Flex align="center" justify="center" pb="5">
+            <Flex
+              align="center"
+              justify="center"
+              pb="5"
+              className="sticky-spinner"
+            >
               <Spinner size="3" />
             </Flex>
           )}
