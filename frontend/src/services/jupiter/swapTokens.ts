@@ -20,17 +20,19 @@ export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
 
     console.log("Fetching latest blockhash...");
     const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-    
-    console.log("Requesting swap transaction...");
-    const { data: { swapTransaction } } = await axios.post(`${process.env.JUPITER_URL}/v6/swap`, {
+
+    console.log('Requesting swap transaction...');
+    const {
+      data: { swapTransaction }
+    } = await axios.post(`${process.env.JUPITER_URL}v6/swap`, {
       quoteResponse: swapRoutes,
       userPublicKey: publicKey,
       wrapAndUnwrapSol: true,
-      asLegacyTransaction: true,
+      asLegacyTransaction: true
     });
 
     console.log('swapTransaction', swapTransaction);
-    
+
     const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
     const transaction = Transaction.from(swapTransactionBuf);
 

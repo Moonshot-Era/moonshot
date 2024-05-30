@@ -4,13 +4,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import { Icon, IconButton } from '@/legos';
+import { Icon } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 import { TokenOverviewBirdEyeType } from '@/@types/birdeye';
 import {
   formatCashNumber,
   formatNumberToUsFormat,
-  isSolanaAddress,
+  formatNumberToUsd,
+  isSolanaAddress
 } from '@/helpers/helpers';
 
 import './style.scss';
@@ -20,7 +21,7 @@ import { usePortfolio } from '@/hooks/usePortfolio';
 export const CultureItem = ({
   tokenItem,
   isPublic,
-  walletAddress,
+  walletAddress
 }: {
   tokenItem: TokenOverviewBirdEyeType;
   isPublic?: boolean;
@@ -33,8 +34,6 @@ export const CultureItem = ({
       ? isSolanaAddress(item?.address) === tokenItem?.address
       : item?.address === tokenItem?.address
   );
-
-  console.log('debug > asset===', asset);
 
   return tokenItem ? (
     <>
@@ -78,7 +77,6 @@ export const CultureItem = ({
               </Box>
             )}
           </Flex>
-          {/* TODO Check user asset and add data */}
           {!isPublic && asset && portfolio && (
             <Toolbar portfolio={portfolio} withShare />
           )}
@@ -94,9 +92,9 @@ export const CultureItem = ({
                 <Text size="3" weight="medium">
                   Your balance
                 </Text>
-                {/* <Text size="2" weight="medium">
-                  {`$${mockUserData.balance.numbersArray[0]}`}
-                </Text> */}
+                <Text size="2" weight="medium">
+                  {formatNumberToUsd().format(asset?.valueUsd)}
+                </Text>
               </Flex>
               <Flex
                 width="100%"
@@ -114,7 +112,7 @@ export const CultureItem = ({
                   />
                 </Flex>
                 <Text size="1" mt="1">
-                  12,344 {tokenItem.name}
+                  {asset?.uiAmount} {asset?.symbol}
                 </Text>
               </Flex>
             </Flex>

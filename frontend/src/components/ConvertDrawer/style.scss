@@ -24,3 +24,12 @@
   z-index: 1000;
   background-color: $yellow-1;
 }
+
+.sticky-spinner {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 16px;
+}
