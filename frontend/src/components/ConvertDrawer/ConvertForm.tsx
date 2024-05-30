@@ -44,6 +44,8 @@ export const ConvertForm = memo(
       }
     }, [mutation.isError]);
 
+    console.log(selectedTokens.from);
+
     return (
       <Flex
         width="100%"
@@ -71,7 +73,7 @@ export const ConvertForm = memo(
               onChange={setAmount}
             />
 
-            <Text size="1">{`Available: ${selectedTokens?.from?.valueUsd}`}</Text>
+            <Text size="1">{`Available: ${selectedTokens?.from?.uiAmount}`}</Text>
           </Flex>
           <Flex direction="column" justify="between" align="end" gap="1">
             <Select
@@ -83,7 +85,7 @@ export const ConvertForm = memo(
             <Text
               size="1"
               className="transfer-card-max"
-              onClick={() => setAmount(selectedTokens?.from?.valueUsd || 0)}
+              onClick={() => setAmount(selectedTokens?.from?.uiAmount || 0)}
             >
               Max
             </Text>
