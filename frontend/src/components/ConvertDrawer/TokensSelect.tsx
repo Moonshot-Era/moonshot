@@ -79,6 +79,7 @@ export const TokensSelect: FC<Props> = ({
         <Input
           placeholder="Search assets"
           icon="search"
+          type="search"
           onChange={handleSearchChange}
           value={search}
         />
