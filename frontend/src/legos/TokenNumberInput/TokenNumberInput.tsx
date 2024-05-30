@@ -5,9 +5,15 @@ interface TokenNumberInputProps {
   decimalLimit: number;
   value: string;
   onChange: (value: string) => void;
+  hasError?: boolean;
 }
 
-export const TokenNumberInput: React.FC<TokenNumberInputProps> = ({ decimalLimit, value, onChange }) => {
+export const TokenNumberInput: React.FC<TokenNumberInputProps> = ({
+  decimalLimit,
+  value,
+  onChange,
+  hasError
+}) => {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     const regex = new RegExp(`^\\d*(\\.\\d{0,${decimalLimit}})?$`);
@@ -17,11 +23,11 @@ export const TokenNumberInput: React.FC<TokenNumberInputProps> = ({ decimalLimit
   };
 
   return (
-    <input 
-      className="token-input" 
-      type="text" 
-      value={value} 
-      onChange={handleInputChange} 
+    <input
+      className={`token-input ${hasError ? 'token-input--error' : ''}`}
+      type="text"
+      value={value}
+      onChange={handleInputChange}
       placeholder="Enter amount"
     />
   );
