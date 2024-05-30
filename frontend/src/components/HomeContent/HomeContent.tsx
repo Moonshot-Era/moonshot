@@ -1,14 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import { formatNumberToUsd } from '@/helpers/helpers';
-import { BadgeSecond, AssetCard } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
-import './style.scss';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { BadgeSecond, AssetCard } from '@/legos';
 import { usePortfolio } from '@/hooks/usePortfolio';
+import { formatNumberToUsd, isSolanaAddress } from '@/helpers/helpers';
+import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+
+import './style.scss';
 
 interface HomeContentProps {
   walletAddress: string;
@@ -17,6 +19,7 @@ interface HomeContentProps {
 
 export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
   const { portfolio, isFetching } = usePortfolio(walletAddress);
+  const router = useRouter();
 
   const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
@@ -26,14 +29,14 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
     window.addEventListener('load', function () {
       // @ts-ignore
       progressier.add({
-        id: userId,
+        id: userId
       });
     });
     return () => {
       window.removeEventListener('load', function () {
         // @ts-ignore
         progressier.add({
-          id: userId,
+          id: userId
         });
       });
     };
@@ -90,7 +93,19 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
           </Text>
           {portfolio?.walletAssets?.length ? (
             portfolio.walletAssets.map((asset: WalletPortfolioAssetType) => (
-              <AssetCard key={asset.address} asset={asset} />
+              <AssetCard
+                key={asset.address}
+                asset={asset}
+                onClick={() =>
+                  router.push(
+                    `/culture/${
+                      isSolanaAddress(asset.address)
+                        ? isSolanaAddress(asset.address)
+                        : asset.address
+                    }`
+                  )
+                }
+              />
             ))
           ) : (
             <Box
