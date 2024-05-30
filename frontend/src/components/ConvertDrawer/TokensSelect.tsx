@@ -63,8 +63,6 @@ export const TokensSelect: FC<Props> = ({
     setSearch(event.target.value);
   };
 
-  console.log('debug > search===', filteredPools);
-
   return (
     <Flex
       width="100%"
