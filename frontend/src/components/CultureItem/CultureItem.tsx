@@ -4,23 +4,25 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import { Icon, IconButton } from '@/legos';
+import { Icon } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 import { TokenOverviewBirdEyeType } from '@/@types/birdeye';
 import {
   formatCashNumber,
   formatNumberToUsFormat,
-  isSolanaAddress,
+  isSolanaAddress
 } from '@/helpers/helpers';
 
 import './style.scss';
 import { useRouter } from 'next/navigation';
 import { usePortfolio } from '@/hooks/usePortfolio';
+import { CultureChart } from '../CultureChart/CultureChart';
+import { useState } from 'react';
 
 export const CultureItem = ({
   tokenItem,
   isPublic,
-  walletAddress,
+  walletAddress
 }: {
   tokenItem: TokenOverviewBirdEyeType;
   isPublic?: boolean;
@@ -28,6 +30,9 @@ export const CultureItem = ({
 }) => {
   const router = useRouter();
   const { portfolio } = usePortfolio(walletAddress);
+  const [data, setData] = useState([20, 40, 30, 81, 10, 100, 80, 90]);
+  const [labels, setLabels] = useState(['1', '2', '3', '4', '5', '6', '7']);
+
   const asset = portfolio?.walletAssets?.find((item) =>
     isSolanaAddress(item?.address)
       ? isSolanaAddress(item?.address) === tokenItem?.address
@@ -78,6 +83,7 @@ export const CultureItem = ({
               </Box>
             )}
           </Flex>
+          <CultureChart data={data} labels={labels} />
           {/* TODO Check user asset and add data */}
           {!isPublic && asset && portfolio && (
             <Toolbar portfolio={portfolio} withShare />
