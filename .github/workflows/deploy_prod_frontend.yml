@@ -26,9 +26,10 @@ env:
   SHIFT4_API_KEY: ${{ secrets.SHIFT4_API_KEY }}
   
   SOLANA_RPC_PROVIDER: ${{ secrets.SOLANA_RPC_PROVIDER }}
-  WALLET_MAINNET: ${{ secrets.WALLET_MAINNET }}
   
   TWITTER_AUTH_REDIRECT_URL: ${{ secrets.TWITTER_AUTH_REDIRECT_URL }}
+  
+  JUPITER_URL: ${{ secrets.JUPITER_URL }}
 
 
   
