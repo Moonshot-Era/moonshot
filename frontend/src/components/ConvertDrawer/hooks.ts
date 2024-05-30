@@ -27,7 +27,8 @@ const swapTokens = (swapRoutes: void) => axios
 export const useSwapRoutes = (
   { from, to }: SelectedTokens,
   amount: number,
-  slippageBps: number
+  slippageBps: number,
+  isValidAmount: boolean
 ) => {
   const { data, ...rest } = useQuery({
     queryKey: [
@@ -40,7 +41,7 @@ export const useSwapRoutes = (
         amount,
         slippageBps
       ),
-    enabled: !!(amount && from && to && slippageBps),
+    enabled: !!(isValidAmount && amount && from && to && slippageBps),
   });
 
   return { swapRoutes: data, ...rest };
