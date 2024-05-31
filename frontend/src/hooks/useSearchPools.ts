@@ -1,17 +1,46 @@
-import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-import { fetchSearchPools } from '@/utils/searchPools';
+import { GeckoTokenIncluded, PoolGeckoType } from '@/@types/gecko';
 
-export const useSearchPools = (query?: string) => {
-  const { data, ...rest } = useQuery({
-    queryKey: ['search-pools'],
-    queryFn: () => {
-      if (!query) {
-        return [];
-      } else {
-        return fetchSearchPools(query);
+const fetchSearchPools = (
+  query: string,
+  page: number = 1
+): Promise<PoolGeckoType[]> =>
+  axios
+    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/gecko/search-pools`, {
+      query,
+      page
+    })
+    .then((response) =>
+      response.data?.searchPoolsData?.data?.map((tokenData: PoolGeckoType) => ({
+        ...tokenData,
+        included: response?.data?.searchPoolsData?.included.find(
+          ({ id }: GeckoTokenIncluded) => {
+            return id === tokenData.relationships.base_token.data.id;
+          }
+        )
+      }))
+    );
+
+export const useSearchPools = (query: string) => {
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, ...rest } =
+    useInfiniteQuery({
+      initialPageParam: 1,
+      queryKey: ['searchPoolsList'],
+      enabled: !!query,
+      queryFn: async ({ pageParam = 1 }) =>
+        await fetchSearchPools(query, pageParam),
+      getNextPageParam: (lastPage, allPages) => {
+        const nextPage = allPages.length + 1;
+        return nextPage <= 10 ? nextPage : undefined;
       }
-    }
-  });
-  return { searchPools: data, ...rest };
+    });
+  return {
+    searchPools: data?.pages.flat(),
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    ...rest
+  };
 };
