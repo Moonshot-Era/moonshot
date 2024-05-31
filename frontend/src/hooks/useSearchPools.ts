@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { useDebounce } from '@uidotdev/usehooks';
 
 import { GeckoTokenIncluded, PoolGeckoType } from '@/@types/gecko';
 
@@ -24,18 +25,21 @@ const fetchSearchPools = (
     );
 
 export const useSearchPools = (query: string) => {
+  const debouncedQuery = useDebounce(query, 500);
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, ...rest } =
     useInfiniteQuery({
       initialPageParam: 1,
-      queryKey: [`searchPoolsList-${query}`],
-      enabled: !!query,
+      queryKey: [`searchPoolsList-${debouncedQuery}`],
+      enabled: !!debouncedQuery,
       queryFn: async ({ pageParam = 1 }) =>
-        await fetchSearchPools(query, pageParam),
+        await fetchSearchPools(debouncedQuery, pageParam),
       getNextPageParam: (lastPage, allPages) => {
         const nextPage = allPages.length + 1;
         return nextPage <= 10 ? nextPage : undefined;
       }
     });
+
   return {
     searchPools: data?.pages.flat(),
     fetchNextPage,
