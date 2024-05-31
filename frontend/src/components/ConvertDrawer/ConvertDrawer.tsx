@@ -23,7 +23,8 @@ import {
   useState,
   forwardRef,
   useImperativeHandle,
-  useCallback
+  useCallback,
+  useEffect
 } from 'react';
 import './style.scss';
 import { SheetDrawer } from '@/legos';
@@ -38,6 +39,7 @@ import {
 import { PoolGeckoType } from '@/@types/gecko';
 import { SelectedTokens } from './types';
 import { usePoolsList } from '@/hooks/useTrendingPoolsList';
+import { useSearchPools } from '@/hooks/useSearchPools';
 
 interface Props {
   portfolio: WalletPortfolioNormilizedType;
@@ -53,11 +55,20 @@ const DEFAULT_TOKENS = {
 export const ConvertDrawer: FC<Props> = memo(
   forwardRef(function ConvertDrawer({ portfolio }, ref) {
     const [state, setState] = useState<string | null>(null);
-    const { poolsList, fetchNextPage, hasNextPage, isFetchingNextPage } =
-      usePoolsList();
+    const [searchTo, setSearchTo] = useState('');
+    const [scrollToTop, setScrollToTop] = useState(false);
     const [selectedTokens, setSelectedTokens] = useState<
       SelectedTokens | { from: null; to: null }
     >(DEFAULT_TOKENS);
+    const { poolsList, fetchNextPage, hasNextPage, isFetchingNextPage } =
+      usePoolsList();
+    const {
+      searchPools,
+      fetchNextPage: searchFetchNextPage,
+      hasNextPage: searchHasNextPage,
+      isFetching: isFetchingSearchPools,
+      refetch: searchRefetch
+    } = useSearchPools(searchTo);
 
     const handleTokenSelect = (
       token: WalletPortfolioAssetType | PoolGeckoType
@@ -97,18 +108,48 @@ export const ConvertDrawer: FC<Props> = memo(
       [fetchNextPage]
     );
 
-    const handleTokensListScroll = async (
-      event: React.UIEvent<HTMLElement>
-    ) => {
-      const target = event.target as HTMLElement;
-      const { scrollTop, scrollHeight, clientHeight } = target;
-
-      if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-        if (hasNextPage) {
-          await debouncedFetchNextPage();
+    const debouncedSearchPools = useCallback(
+      debounce(async (searchQuery, refetchQuery = false) => {
+        if (refetchQuery) {
+          await searchRefetch(searchQuery);
+        } else {
+          await searchFetchNextPage(searchQuery);
         }
+      }, 300),
+      [searchFetchNextPage]
+    );
+
+    const handleTokensListScroll = useCallback(
+      async (event: React.UIEvent<HTMLElement>) => {
+        const target = event.target as HTMLElement;
+        const { scrollTop, scrollHeight, clientHeight } = target;
+
+        if (scrollHeight - scrollTop <= clientHeight * 1.5) {
+          if (
+            (searchTo && searchPools?.length && searchHasNextPage) ||
+            searchTo
+          ) {
+            debouncedSearchPools(searchTo);
+          } else if (hasNextPage) {
+            debouncedFetchNextPage();
+          }
+        }
+      },
+      [
+        debouncedFetchNextPage,
+        debouncedSearchPools,
+        hasNextPage,
+        searchHasNextPage,
+        searchPools?.length,
+        searchTo
+      ]
+    );
+
+    useEffect(() => {
+      if (searchTo) {
+        debouncedSearchPools(searchTo, true);
       }
-    };
+    }, [debouncedSearchPools, searchTo]);
 
     if (!portfolio?.walletAssets || !poolsList) {
       return null;
@@ -134,18 +175,35 @@ export const ConvertDrawer: FC<Props> = memo(
           snapPoints={[800, 450]}
           initialSnap={1}
           onScroll={handleTokensListScroll}
+          scrollToTop={scrollToTop}
+          toggleScrollToTop={() => setScrollToTop(false)}
         >
           <TokensSelect
             handleTokenSelect={handleTokenSelect}
             selectMode="to"
-            tokensList={poolsList as PoolGeckoType[]}
+            tokensList={
+              searchTo && searchPools?.length
+                ? (searchPools as PoolGeckoType[])
+                : (poolsList as PoolGeckoType[])
+            }
+            searchTo={searchTo}
+            handleChangeSearchTo={(query) => {
+              if (!query && searchTo) {
+                setScrollToTop(true);
+              }
+              if (query && !searchTo) {
+                setScrollToTop(true);
+              }
+              setSearchTo(query);
+            }}
+            isLoading={isFetchingSearchPools}
           />
           {isFetchingNextPage && (
             <Flex
+              className="sticky-spinner"
               align="center"
               justify="center"
               pb="5"
-              className="sticky-spinner"
             >
               <Spinner size="3" />
             </Flex>

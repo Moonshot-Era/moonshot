@@ -9,15 +9,17 @@ import { PoolGeckoType } from '@/@types/gecko';
 interface Props {
   token: PoolGeckoType;
   onClick: () => void;
+  searchTo?: string;
 }
 
-export const TokenCard = ({ onClick, token }: Props) => {
+export const TokenCard = ({ onClick, token, searchTo }: Props) => {
   const tokenItem = token?.attributes;
   const percentageChange = +(tokenItem?.price_change_percentage?.h24 || 0);
   const name = token.included?.attributes.name;
 
   return (
     <Flex
+      id={`${token?.id}${searchTo ? `-search` : ''}`}
       direction="row"
       justify="between"
       align="center"
