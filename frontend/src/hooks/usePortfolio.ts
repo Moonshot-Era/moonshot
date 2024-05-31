@@ -12,6 +12,9 @@ export const usePortfolio = (walletAddress?: string) => {
         return fetchPortfolio(walletAddress);
       }
     },
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
   return { portfolio: data, ...rest };

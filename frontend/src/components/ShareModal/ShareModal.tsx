@@ -12,12 +12,16 @@ import {
 import './style.scss';
 import { createBrowserClient } from '@/supabase/client';
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export const ShareModal = () => {
+  const pathname = usePathname()
   const imageUrl = new URL(
     '/api/functions/v1/og-image',
     process.env.NEXT_PUBLIC_SITE_URL
   );
+
+  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL}${pathname}`
 
   useEffect(() => {
     generateImageSearchParams();
@@ -89,7 +93,7 @@ export const ShareModal = () => {
   };
 
   const isMobileDevice = () => {
-    return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    return /Mobi|Android|iPhone|iPad|iPod/i.test(global.navigator?.userAgent);
   };
 
   const downloadImage = async () => {
@@ -134,18 +138,18 @@ export const ShareModal = () => {
             />
           </div>
           <Flex width="100%" direction="row" justify="between">
-            <TwitterShareButton url={process.env.NEXT_PUBLIC_SITE_URL}>
+            <TwitterShareButton url={shareUrl}>
               <button className="icon-button small">
                 <XIcon round size={32} />
               </button>
             </TwitterShareButton>
-            <TelegramShareButton url={process.env.NEXT_PUBLIC_SITE_URL}>
+            <TelegramShareButton url={shareUrl}>
               <button className="icon-button small">
                 <TelegramIcon round size={32} />
               </button>
             </TelegramShareButton>
             {isMobileDevice() ? (
-              <a href="sms:?body=Check out my Moonshot at https://moonshot.tech/culture/WIF">
+              <a href={`sms:?body=Check out my Moonshot at ${shareUrl}`}>
                 <IconButton icon="message" size="small" className="bg-violet" />
               </a>
             ) : (

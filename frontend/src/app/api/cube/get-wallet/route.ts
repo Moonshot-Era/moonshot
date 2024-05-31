@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { exportUserInfo, getUserWallet } from '@/services';
+import { getUserWallet } from '@/services';
 
 export async function POST(request: Request) {
   const response = await request.json();

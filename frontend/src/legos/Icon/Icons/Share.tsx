@@ -16,16 +16,16 @@ export const Share = (style: IconCommonProps) => (
     <path
       d="M20.2325 18.3199L28.7225 15.4899C32.5325 14.2199 34.6025 16.2999 33.3425 20.1099L30.5125 28.5999C28.6125 34.3099 25.4925 34.3099 23.5925 28.5999L22.7525 26.0799L20.2325 25.2399C14.5225 23.3399 14.5225 20.2299 20.2325 18.3199Z"
       stroke="black"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M22.9424 25.6501L26.5224 22.0601"
       stroke="black"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <defs>
       <filter

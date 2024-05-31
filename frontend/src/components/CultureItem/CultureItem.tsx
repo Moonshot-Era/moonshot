@@ -10,6 +10,7 @@ import { OhlcvBirdEyeType, TokenOverviewBirdEyeType } from '@/@types/birdeye';
 import {
   formatCashNumber,
   formatNumberToUsFormat,
+  formatNumberToUsd,
   isSolanaAddress
 } from '@/helpers/helpers';
 
@@ -44,8 +45,6 @@ export const CultureItem = ({
       ? isSolanaAddress(item?.address) === tokenItem?.address
       : item?.address === tokenItem?.address
   );
-
-  console.log('debug > asset===', asset);
 
   return tokenItem ? (
     <>
@@ -106,9 +105,9 @@ export const CultureItem = ({
                 <Text size="3" weight="medium">
                   Your balance
                 </Text>
-                {/* <Text size="2" weight="medium">
-                  {`$${mockUserData.balance.numbersArray[0]}`}
-                </Text> */}
+                <Text size="2" weight="medium">
+                  {formatNumberToUsd().format(asset?.valueUsd)}
+                </Text>
               </Flex>
               <Flex
                 width="100%"
@@ -126,7 +125,7 @@ export const CultureItem = ({
                   />
                 </Flex>
                 <Text size="1" mt="1">
-                  12,344 {tokenItem.name}
+                  {asset?.uiAmount} {asset?.symbol}
                 </Text>
               </Flex>
             </Flex>

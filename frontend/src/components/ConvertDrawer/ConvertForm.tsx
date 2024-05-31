@@ -22,11 +22,20 @@ export const ConvertForm = memo(
   ({ selectedTokens, changeSelected, closeDrawer }: ConvertForm) => {
     const [amount, setAmount] = useState<number | string>(0.001);
     const btnRef = useRef();
+    const [isValidAmount, setIsValidAmount] = useState(true);
+
+    useEffect(() => {
+      const numericAmount = +amount;
+      const isValid =
+        numericAmount > 0 && numericAmount <= selectedTokens?.from?.uiAmount!;
+      setIsValidAmount(isValid);
+    }, [amount, selectedTokens?.from?.uiAmount]);
 
     const { swapRoutes, isLoading: isSwapRoutesLoading } = useSwapRoutes(
       selectedTokens,
       convertToInteger(+amount, selectedTokens?.from?.decimals as number),
-      50
+      50,
+      isValidAmount
     );
 
     const mutation = useSwapMutation();
@@ -69,9 +78,15 @@ export const ConvertForm = memo(
               decimalLimit={selectedTokens?.from?.decimals as number}
               value={'' + amount}
               onChange={setAmount}
+              hasError={!isValidAmount}
             />
-
-            <Text size="1">{`Available: ${selectedTokens?.from?.valueUsd}`}</Text>
+            {!isValidAmount && (
+              <Text size="1" className="text-color-error">
+                Amount must be greater than 0 and less than or equal to
+                available amount
+              </Text>
+            )}
+            <Text size="1">{`Available: ${selectedTokens?.from?.uiAmount}`}</Text>
           </Flex>
           <Flex direction="column" justify="between" align="end" gap="1">
             <Select
@@ -83,7 +98,7 @@ export const ConvertForm = memo(
             <Text
               size="1"
               className="transfer-card-max"
-              onClick={() => setAmount(selectedTokens?.from?.valueUsd || 0)}
+              onClick={() => setAmount(selectedTokens?.from?.uiAmount || 0)}
             >
               Max
             </Text>
@@ -123,7 +138,12 @@ export const ConvertForm = memo(
         </Flex>
         <SlideButton
           ref={btnRef}
-          disabled={!swapRoutes || isSwapRoutesLoading || mutation.isPending}
+          disabled={
+            !swapRoutes ||
+            isSwapRoutesLoading ||
+            mutation.isPending ||
+            !isValidAmount
+          }
           //@ts-ignore
           handleSubmit={() => mutation.mutate({ swapRoutes })}
           loading={mutation.isPending}
