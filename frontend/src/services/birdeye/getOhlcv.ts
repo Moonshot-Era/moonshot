@@ -12,7 +12,7 @@ export const getOhlcvData = async (tokenAddress: string) => {
         params: {
           address: tokenAddress,
           type: '15m',
-          // TODO: add proper time from
+          // TODO: add proper time from 
           time_from: 1717181740583,
           // time_from: new Date(2024, 0, 1).getTime().toString(),
           time_to: new Date().getTime()
