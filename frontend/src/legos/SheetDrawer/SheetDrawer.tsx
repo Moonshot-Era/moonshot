@@ -14,6 +14,8 @@ interface Props {
   disableDrag?: boolean;
   onSnap?: (snapPoint: number) => void;
   onScroll?: (event: any) => Promise<void>;
+  scrollToTop?: boolean;
+  toggleScrollToTop?(): void;
 }
 
 export const SheetDrawer: FC<Props> = ({
@@ -25,7 +27,9 @@ export const SheetDrawer: FC<Props> = ({
   snapPoints,
   disableDrag,
   onSnap,
-  onScroll
+  onScroll,
+  scrollToTop,
+  toggleScrollToTop
 }) => {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +39,10 @@ export const SheetDrawer: FC<Props> = ({
     const handleScroll = (event: Event) => {
       if (onScroll) {
         onScroll(event);
+      }
+      if (scrollToTop && toggleScrollToTop) {
+        scrollerRef?.current?.scroll({ top: 0, behavior: 'smooth' });
+        toggleScrollToTop();
       }
     };
 
@@ -49,7 +57,7 @@ export const SheetDrawer: FC<Props> = ({
         scroller.removeEventListener('touchmove', handleScroll);
       }
     };
-  }, [onScroll]);
+  }, [onScroll, scrollToTop, toggleScrollToTop]);
 
   return (
     <Sheet

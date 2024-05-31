@@ -23,13 +23,14 @@ export const ExploreContent = () => {
   const router = useRouter();
   const [search, setSearch] = useState('');
 
-  const { poolsList, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { poolsList, fetchNextPage, hasNextPage, isFetchingNextPage } =
     usePoolsList();
   const {
     searchPools,
     fetchNextPage: searchFetchNextPage,
     hasNextPage: searchHasNextPage,
-    isFetching
+    isFetching,
+    refetch: searchRefetch
   } = useSearchPools(search);
 
   const scrollerRef: MutableRefObject<HTMLDivElement | null> =
@@ -54,7 +55,7 @@ export const ExploreContent = () => {
     debounce(async (searchQuery, refetchQuery = false) => {
       if (refetchQuery) {
         scrollerRef?.current?.scroll({ top: 0, behavior: 'smooth' });
-        await refetch(searchQuery);
+        await searchRefetch(searchQuery);
       } else {
         await searchFetchNextPage(searchQuery);
       }
@@ -81,7 +82,7 @@ export const ExploreContent = () => {
       const { scrollTop, scrollHeight, clientHeight } = target;
 
       if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-        if (search && searchPools?.length && searchHasNextPage) {
+        if ((search && searchPools?.length && searchHasNextPage) || search) {
           await debouncedSearchPools(search);
         } else if (hasNextPage) {
           await debouncedFetchNextPage();

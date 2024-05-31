@@ -2,65 +2,60 @@
 
 import { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
-import { AssetCard, Input, TokenCard } from '@/legos';
+import debounce from 'lodash.debounce';
 
 import './style.scss';
 import { PoolGeckoType } from '@/@types/gecko';
+import { AssetCard, Input, TokenCard } from '@/legos';
 import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
-import { TokenItemBirdEyeType } from '@/@types/birdeye';
-import { useSearchPools } from '@/hooks/useSearchPools';
-import debounce from 'lodash.debounce';
-import { set } from 'lodash';
 
 interface Props {
   tokensList: WalletPortfolioAssetType[] | PoolGeckoType[];
   handleTokenSelect: (token: WalletPortfolioAssetType | PoolGeckoType) => void;
   selectMode: 'to' | 'from';
+  searchTo?: string;
+  handleChangeSearchTo?: (query: string) => void;
 }
 
 export const TokensSelect: FC<Props> = ({
   tokensList,
   handleTokenSelect,
-  selectMode
+  selectMode,
+  searchTo,
+  handleChangeSearchTo
 }) => {
-  const [search, setSearch] = useState('');
+  const [searchFrom, setSearchFrom] = useState('');
   const [filteredPools, setFilteredPools] = useState<
     WalletPortfolioAssetType[]
   >([]);
 
-  const { searchPools, refetch, isFetching } = useSearchPools(search);
-
   const debouncedSearchPools = useCallback(
     debounce(async (searchQuery) => {
-      if (selectMode === 'to') {
-        await refetch(searchQuery);
-      } else {
-        setFilteredPools(
-          (tokensList as WalletPortfolioAssetType[])?.filter(
-            (item: WalletPortfolioAssetType) =>
-              item?.name
-                ?.trim()
-                ?.toLowerCase()
-                ?.includes(searchQuery?.trim()?.toLowerCase()) ||
-              item?.address
-                ?.trim()
-                ?.toLowerCase()
-                ?.includes(searchQuery?.trim()?.toLowerCase())
-          )
-        );
-      }
+      setFilteredPools(
+        (tokensList as WalletPortfolioAssetType[])?.filter(
+          (item: WalletPortfolioAssetType) =>
+            item?.name
+              ?.trim()
+              ?.toLowerCase()
+              ?.includes(searchQuery?.trim()?.toLowerCase()) ||
+            item?.address
+              ?.trim()
+              ?.toLowerCase()
+              ?.includes(searchQuery?.trim()?.toLowerCase())
+        )
+      );
     }, 300),
     []
   );
 
   useEffect(() => {
-    if (search) {
-      debouncedSearchPools(search);
+    if (searchFrom) {
+      debouncedSearchPools(searchFrom);
     }
-  }, [debouncedSearchPools, search]);
+  }, [debouncedSearchPools, searchFrom]);
 
-  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
+  const handleChangeSearchFrom = (event: ChangeEvent<HTMLInputElement>) => {
+    setSearchFrom(event.target.value);
   };
 
   return (
@@ -80,13 +75,19 @@ export const TokensSelect: FC<Props> = ({
           placeholder="Search assets"
           icon="search"
           type="search"
-          onChange={handleSearchChange}
-          value={search}
+          onChange={(e) => {
+            if (selectMode === 'from') {
+              handleChangeSearchFrom(e);
+            } else if (handleChangeSearchTo) {
+              handleChangeSearchTo(e.target.value);
+            }
+          }}
+          value={selectMode === 'from' ? searchFrom : searchTo}
         />
       </Flex>
       <Flex width="100%" direction="column" gap="4" px="4">
         {selectMode === 'from'
-          ? search && filteredPools?.length
+          ? searchFrom && filteredPools?.length
             ? filteredPools?.map((token) => {
                 return (
                   <AssetCard
@@ -109,25 +110,15 @@ export const TokensSelect: FC<Props> = ({
               )
           : null}
         {selectMode === 'to'
-          ? search && searchPools?.length
-            ? (searchPools as PoolGeckoType[])?.map((token: PoolGeckoType) => {
-                return (
-                  <TokenCard
-                    key={`search-${token?.id}`}
-                    token={token}
-                    onClick={() => handleTokenSelect(token)}
-                  />
-                );
-              })
-            : (tokensList as PoolGeckoType[])?.map((token: PoolGeckoType) => {
-                return (
-                  <TokenCard
-                    key={token?.id}
-                    token={token}
-                    onClick={() => handleTokenSelect(token)}
-                  />
-                );
-              })
+          ? (tokensList as PoolGeckoType[])?.map((token: PoolGeckoType) => {
+              return (
+                <TokenCard
+                  key={`${token?.attributes?.address || token?.id}`}
+                  token={token}
+                  onClick={() => handleTokenSelect(token)}
+                />
+              );
+            })
           : null}
       </Flex>
     </Flex>

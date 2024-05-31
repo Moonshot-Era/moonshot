@@ -1,27 +1,27 @@
-import { forwardRef, useEffect, useState } from "react";
-import { Box, Flex, Text } from "@radix-ui/themes";
-import axios from "axios";
-import { Button, SlideButton } from "@/legos";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import { Box, Flex, Text } from '@radix-ui/themes';
+
+import { Button, SlideButton } from '@/legos';
 import { SelectedTokens } from '../ConvertDrawer/types';
 import {
   WalletPortfolioAssetType,
-  WalletPortfolioNormilizedType,
+  WalletPortfolioNormilizedType
 } from '@/services/birdeye/getWalletPortfolio';
-import { TokenItemBirdEyeType } from '@/@types/birdeye';
 import { PoolGeckoType } from '@/@types/gecko';
 
 const fetchPortfolip = (): Promise<WalletPortfolioNormilizedType> =>
   axios
     .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/wallet-portfolio`, {
-      walletAddress: '',
+      walletAddress: ''
     })
     .then((response) => response.data.walletPortfolio);
 
 const usePortfolio = () => {
   const resp = useQuery({
     queryKey: ['portfolio'],
-    queryFn: fetchPortfolip,
+    queryFn: fetchPortfolip
   });
 
   return resp;
@@ -34,7 +34,7 @@ const useTokensList = () => {
     if (!tokensList) {
       (async () => {
         const {
-          data: { tokenList },
+          data: { tokenList }
         } = await axios.post(
           `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/token-list`,
           { offset: 0, limit: 50 }
@@ -46,13 +46,13 @@ const useTokensList = () => {
   }, []);
 
   return {
-    tokensList: tokensList || [],
+    tokensList: tokensList || []
   };
 };
 
 export const TokensPick = ({
   selectedTokens,
-  setSelectedTokens,
+  setSelectedTokens
 }: {
   selectedTokens: SelectedTokens;
   setSelectedTokens(val: SelectedTokens): void;
