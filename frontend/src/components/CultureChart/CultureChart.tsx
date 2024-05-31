@@ -10,6 +10,8 @@ import {
   ScriptableContext
 } from 'chart.js';
 import { Filler } from 'chart.js';
+import { useOhlcv } from '@/hooks/useOhlcvc';
+import { usePathname } from 'next/navigation';
 
 ChartJS.register(Filler);
 
@@ -21,6 +23,12 @@ interface CultureChartProps {
 }
 
 export const CultureChart = ({ data, labels }: CultureChartProps) => {
+  const pathname = usePathname();
+  const tokenAddress = pathname.replace('/culture/', '');
+
+  const { ohlcv } = useOhlcv(tokenAddress);
+
+  console.log('ohlcv', ohlcv);
   const chartRef = React.useRef(null);
 
   let width: number;
