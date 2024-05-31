@@ -1,102 +1,68 @@
-import React from 'react';
-import { Line } from 'react-chartjs-2';
+import React, { useEffect, useRef } from 'react';
 import {
   Chart as ChartJS,
   LineElement,
   CategoryScale,
   LinearScale,
-  PointElement,
-  ChartArea,
-  ScriptableContext
+  PointElement
 } from 'chart.js';
 import { Filler } from 'chart.js';
-import { useOhlcv } from '@/hooks/useOhlcvc';
-import { usePathname } from 'next/navigation';
+import { createChart, ColorType } from 'lightweight-charts';
 
 ChartJS.register(Filler);
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 interface CultureChartProps {
-  data: Array<number>;
-  labels: Array<string>;
+  data: Array<{ time: string; value: number }>;
 }
 
-export const CultureChart = ({ data, labels }: CultureChartProps) => {
-  const pathname = usePathname();
-  const tokenAddress = pathname.replace('/culture/', '');
+export const CultureChart = ({ data }: CultureChartProps) => {
+  const chartContainerRef = useRef<HTMLDivElement>(null);
 
-  const { ohlcv } = useOhlcv(tokenAddress);
+  useEffect(() => {
+    if (!chartContainerRef.current || !data) return;
+    const chart = createChart(chartContainerRef.current, {
+      width: chartContainerRef.current.clientWidth,
+      height: 200,
+      layout: {
+        background: {
+          type: ColorType.Solid,
 
-  console.log('ohlcv', ohlcv);
-  const chartRef = React.useRef(null);
-
-  let width: number;
-  let height: number;
-  let gradient: CanvasGradient | undefined;
-
-  function getGradient(ctx: CanvasRenderingContext2D, chartArea: ChartArea) {
-    const chartWidth = chartArea.right - chartArea.left;
-    const chartHeight = chartArea.bottom - chartArea.top;
-    if (!gradient || width !== chartWidth || height !== chartHeight) {
-      width = chartWidth;
-      height = chartHeight;
-      gradient = ctx.createLinearGradient(
-        0,
-        chartArea.bottom,
-        0,
-        chartArea.top
-      );
-      gradient.addColorStop(0, 'rgba(190,255,108,0)');
-      gradient.addColorStop(1, 'rgba(190,255,108,1)');
-    }
-
-    return gradient;
-  }
-
-  const chartData = {
-    labels: labels,
-    datasets: [
-      {
-        label: 'Dataset 1',
-        data: data,
-        fill: true,
-        tension: 0.6,
-        pointStyle: 'circle',
-        pointBackgroundColor: '#000000',
-        pointBorderColor: '#000000',
-        pointBorderWidth: 1,
-        pointRadius: 1,
-        pointHoverRadius: 4,
-        pointHoverBackgroundColor: '#000000',
-        pointHoverBorderColor: '#000000',
-        pointHoverBorderWidth: 1,
-        borderColor: '#000000',
-        borderWidth: 1,
-        backgroundColor: function (context: ScriptableContext<'line'>) {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-
-          if (!chartArea) {
-            return;
-          }
-          return getGradient(ctx, chartArea);
+          color: 'rgba(0,0,0,0)'
+        },
+        textColor: '#000000'
+      },
+      grid: {
+        vertLines: {
+          visible: false
+        },
+        horzLines: {
+          visible: false
         }
       }
-    ]
-  };
+    });
 
-  const options = {
-    scales: {
-      y: {
-        display: false,
-        beginAtZero: true
-      },
-      x: {
-        display: false
-      }
-    }
-  };
+    const lineSeries = chart.addAreaSeries({
+      lineColor: '#000000',
+      lineWidth: 1,
+      topColor: 'rgba(190,255,108,1)',
+      bottomColor: 'rgba(190,255,108,0)'
+    });
 
-  return <Line ref={chartRef} data={chartData} options={options} />;
+    chart.priceScale('right').applyOptions({
+      visible: false
+    });
+    chart.timeScale().applyOptions({
+      visible: false
+    });
+
+    lineSeries.setData(data);
+
+    return () => chart.remove();
+  }, [data]);
+
+  return (
+    <div ref={chartContainerRef} style={{ width: '100%', height: '200px' }} />
+  );
 };

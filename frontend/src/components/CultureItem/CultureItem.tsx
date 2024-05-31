@@ -6,7 +6,7 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 
 import { Icon } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
-import { TokenOverviewBirdEyeType } from '@/@types/birdeye';
+import { OhlcvBirdEyeType, TokenOverviewBirdEyeType } from '@/@types/birdeye';
 import {
   formatCashNumber,
   formatNumberToUsFormat,
@@ -14,10 +14,10 @@ import {
 } from '@/helpers/helpers';
 
 import './style.scss';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { CultureChart } from '../CultureChart/CultureChart';
-import { useState } from 'react';
 
 export const CultureItem = ({
   tokenItem,
@@ -30,8 +30,14 @@ export const CultureItem = ({
 }) => {
   const router = useRouter();
   const { portfolio } = usePortfolio(walletAddress);
-  const [data, setData] = useState([20, 40, 30, 81, 10, 100, 80, 90]);
-  const [labels, setLabels] = useState(['1', '2', '3', '4', '5', '6', '7']);
+  const pathname = usePathname();
+  const tokenAddress = pathname.replace('/culture/', '');
+  const { ohlcv } = useOhlcv(tokenAddress);
+
+  const chartData = ohlcv?.items.map((item: OhlcvBirdEyeType) => ({
+    time: item.unixTime,
+    value: item.c
+  }));
 
   const asset = portfolio?.walletAssets?.find((item) =>
     isSolanaAddress(item?.address)
@@ -83,7 +89,7 @@ export const CultureItem = ({
               </Box>
             )}
           </Flex>
-          <CultureChart data={data} labels={labels} />
+          <CultureChart data={chartData} />
           {/* TODO Check user asset and add data */}
           {!isPublic && asset && portfolio && (
             <Toolbar portfolio={portfolio} withShare />

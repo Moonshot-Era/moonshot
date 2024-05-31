@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { WalletPortfolioType } from '@/@types/birdeye';
+import { OhlcvBirdEyeType } from '@/@types/birdeye';
 import { getOhlcvData } from '@/services/birdeye/getOhlcv';
 
 export async function POST(request: Request) {
@@ -7,7 +7,7 @@ export async function POST(request: Request) {
 
   const tokenAddress = data?.tokenAddress;
 
-  const ohlcvData: WalletPortfolioType | {} = await getOhlcvData(tokenAddress);
+  const ohlcvData: OhlcvBirdEyeType | {} = await getOhlcvData(tokenAddress);
 
   return NextResponse.json({ ohlcvData });
 }

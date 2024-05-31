@@ -16,7 +16,7 @@ export const fetchOhlcv = (tokenAddress: string) =>
       }
     )
     .then((response) => {
-      return response.data.ohlcvData;
+      return response.data.ohlcvData.data;
     });
 
 export const useOhlcv = (tokenAddress?: string) => {
