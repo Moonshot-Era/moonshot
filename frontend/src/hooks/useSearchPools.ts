@@ -27,7 +27,7 @@ export const useSearchPools = (query: string) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, ...rest } =
     useInfiniteQuery({
       initialPageParam: 1,
-      queryKey: ['searchPoolsList'],
+      queryKey: [`searchPoolsList-${query}`],
       enabled: !!query,
       queryFn: async ({ pageParam = 1 }) =>
         await fetchSearchPools(query, pageParam),

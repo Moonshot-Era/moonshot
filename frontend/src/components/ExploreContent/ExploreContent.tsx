@@ -154,12 +154,12 @@ export const ExploreContent = () => {
             pr="3"
             pb="2"
           >
-            {isFetching && !searchPools?.length && (
+            {isFetching && (
               <Flex
+                className="sticky-spinner"
+                top="0"
                 align="center"
                 justify="center"
-                pb="2"
-                className="sticky-spinner"
               >
                 <Spinner size="3" />
               </Flex>
@@ -181,10 +181,10 @@ export const ExploreContent = () => {
                 ))}
             {(isFetchingNextPage || isFetching) && (
               <Flex
+                className="sticky-spinner"
                 align="center"
                 justify="center"
                 pb="5"
-                className="sticky-spinner"
               >
                 <Spinner size="3" />
               </Flex>

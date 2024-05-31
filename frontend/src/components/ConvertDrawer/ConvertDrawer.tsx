@@ -196,13 +196,14 @@ export const ConvertDrawer: FC<Props> = memo(
               }
               setSearchTo(query);
             }}
+            isLoading={isFetchingSearchPools}
           />
           {isFetchingNextPage && (
             <Flex
+              className="sticky-spinner"
               align="center"
               justify="center"
               pb="5"
-              className="sticky-spinner"
             >
               <Spinner size="3" />
             </Flex>

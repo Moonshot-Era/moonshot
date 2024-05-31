@@ -1,7 +1,7 @@
 'use client';
 
 import { ChangeEvent, FC, useCallback, useEffect, useState } from 'react';
-import { Flex, Text } from '@radix-ui/themes';
+import { Flex, Spinner, Text } from '@radix-ui/themes';
 import debounce from 'lodash.debounce';
 
 import './style.scss';
@@ -15,6 +15,7 @@ interface Props {
   selectMode: 'to' | 'from';
   searchTo?: string;
   handleChangeSearchTo?: (query: string) => void;
+  isLoading?: boolean;
 }
 
 export const TokensSelect: FC<Props> = ({
@@ -22,7 +23,8 @@ export const TokensSelect: FC<Props> = ({
   handleTokenSelect,
   selectMode,
   searchTo,
-  handleChangeSearchTo
+  handleChangeSearchTo,
+  isLoading
 }) => {
   const [searchFrom, setSearchFrom] = useState('');
   const [filteredPools, setFilteredPools] = useState<
@@ -84,6 +86,16 @@ export const TokensSelect: FC<Props> = ({
           }}
           value={selectMode === 'from' ? searchFrom : searchTo}
         />
+        {isLoading && (
+          <Flex
+            className="sticky-spinner"
+            align="center"
+            justify="center"
+            pt="4"
+          >
+            <Spinner size="3" />
+          </Flex>
+        )}
       </Flex>
       <Flex width="100%" direction="column" gap="4" px="4">
         {selectMode === 'from'
