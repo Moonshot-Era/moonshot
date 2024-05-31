@@ -1,13 +1,19 @@
 import axios from 'axios';
 
-export const searchPools = async (query?: string) => {
+export const searchPools = async (query?: string, page: number = 1) => {
   try {
     const { data: searchPoolsGecko } = await axios.get(
-      `${process.env.GECKO_URL_API}/onchain/search/pools?query=${query}&network=solana&include=base_token`,
+      `${process.env.GECKO_URL_API}/onchain/search/pools`,
       {
-        headers: {
-          'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`,
+        params: {
+          network: 'solana',
+          include: 'base_token',
+          page,
+          query
         },
+        headers: {
+          'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`
+        }
       }
     );
     return searchPoolsGecko;
