@@ -1,6 +1,6 @@
+import axios from 'axios';
 import { CubeSignerClient, Ed25519 } from '@cubist-labs/cubesigner-sdk';
 import { defaultManagementSessionManager } from '@cubist-labs/cubesigner-sdk-fs-storage';
-import axios from 'axios';
 
 class CubeSigner {
   private managementSessionClient?: CubeSignerClient;
@@ -110,7 +110,7 @@ export const exportUserInfo = async (
   let key;
 
   try {
-    const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
+    const { email } = CubeSignerInstance.parseOidcToken(oidcToken);
     const user = await findUser(email);
 
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();
@@ -124,17 +124,19 @@ export const exportUserInfo = async (
       );
       const keys = await userCubeSigner.sessionKeys();
       key = keys?.[keys?.length - 1];
-      // console.log('debug > org===', await org?.roles({ all: true }));
-      // await org.createSession('Export users keys', ['export:*']);
-      // await org.initExport(key.id);
-      // const keypairExport = await org.completeExport(key.id, key.publicKey);
-      // console.log('debug > keypairExport===', keypairExport);
 
-      // if (!keypairExport) {
-      //   throw Error('Wallet not created');
+      await org.initExport(key.id);
+
+      // keysExport = await org.completeExport(key.id, key.publicKey);
+      // console.log('debug > keypairExport===', keysExport);
+      await org.deleteExport(key.id, key.publicKey);
+
+      // if (!keysExport) {
+      //   throw Error('Export keys failed');
       // }
     }
   } catch (err) {
+    console.log('debug > ERROR' + err);
     throw err;
   }
   return key.materialId;

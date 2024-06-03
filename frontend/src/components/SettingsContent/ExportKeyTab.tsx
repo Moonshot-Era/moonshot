@@ -6,6 +6,7 @@ import { Box, Checkbox, Flex, Text } from '@radix-ui/themes';
 import './style.scss';
 
 import { Button, Icon } from '@/legos';
+import axios from 'axios';
 
 interface Props {
   handleActiveTab: (
@@ -18,6 +19,12 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
 
   const toggleChecked = () => setChecked(!checked);
 
+  const handleExportKeys = async () => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/cube/export-keys`
+    );
+    console.log('debug > res===', res);
+  };
   return (
     <Flex width="100%" direction="column" align="center">
       <Flex
@@ -87,7 +94,11 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           security.
         </Text>
       </Flex>
-      <Button disabled={!checked} className="settings-export-button">
+      <Button
+        disabled={!checked}
+        className="settings-export-button"
+        onClick={handleExportKeys}
+      >
         <Text size="2" weight="medium">
           Continue
         </Text>

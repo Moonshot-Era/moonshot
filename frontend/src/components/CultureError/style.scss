@@ -1,0 +1,9 @@
+@import '../../styles/variables.scss';
+
+.explore-error-card {
+  @include border-dark;
+  box-shadow: $shadow-2;
+  border-radius: 16px;
+  background-color: $magenta;
+  text-align: center;
+}

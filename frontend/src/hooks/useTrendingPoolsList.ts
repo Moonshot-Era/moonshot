@@ -45,7 +45,10 @@ export const usePoolsList = (withTokensOverview: boolean = true) => {
       getNextPageParam: (lastPage, allPages) => {
         const nextPage = allPages.length + 1;
         return nextPage <= 10 ? nextPage : undefined;
-      }
+      },
+      staleTime: 30000,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
     });
   
   return {

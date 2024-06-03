@@ -116,13 +116,17 @@ export const ConvertDrawer: FC<Props> = memo(
           await searchFetchNextPage(searchQuery);
         }
       }, 300),
-      [searchFetchNextPage]
+      [searchFetchNextPage, searchRefetch]
     );
 
     const handleTokensListScroll = useCallback(
       async (event: React.UIEvent<HTMLElement>) => {
         const target = event.target as HTMLElement;
         const { scrollTop, scrollHeight, clientHeight } = target;
+
+        if (scrollTop === 0) {
+          return;
+        }
 
         if (scrollHeight - scrollTop <= clientHeight * 1.5) {
           if (
