@@ -31,11 +31,7 @@ export default async function Home({ searchParams }: ServerPageProps) {
 
   return (
     <>
-      <Header />
-      <HomeContent
-        walletAddress={walletData?.wallet}
-        userId={userId}
-      />
+      <HomeContent walletAddress={walletData?.wallet} userId={userId} />
     </>
   );
 }
