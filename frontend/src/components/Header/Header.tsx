@@ -53,7 +53,9 @@ export const Header = () => {
                   <Link href="/explore">
                     <NavButton
                       className={
-                        pathname === '/explore' ? 'nav-button-active' : ''
+                        pathname === '/explore' || pathname.includes('/culture')
+                          ? 'nav-button-active'
+                          : ''
                       }
                     >
                       <Icon icon="search" width={16} />
