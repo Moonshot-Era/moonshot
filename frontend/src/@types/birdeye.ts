@@ -45,3 +45,14 @@ export interface TokenOverviewBirdEyeType {
   history30mPrice: number;
   priceChange30mPercent: number;
 }
+
+export interface OhlcvBirdEyeType {
+  address: string;
+  c: number;
+  h: number;
+  l: number;
+  o: number;
+  type: string;
+  unixTime: number;
+  v: number;
+}
