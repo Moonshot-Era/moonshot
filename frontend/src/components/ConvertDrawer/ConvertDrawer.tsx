@@ -68,7 +68,7 @@ export const ConvertDrawer: FC<Props> = memo(
       hasNextPage: searchHasNextPage,
       isFetching: isFetchingSearchPools,
       refetch: searchRefetch
-    } = useSearchPools(searchTo);
+    } = useSearchPools(searchTo, true);
 
     const handleTokenSelect = (
       token: WalletPortfolioAssetType | PoolGeckoType

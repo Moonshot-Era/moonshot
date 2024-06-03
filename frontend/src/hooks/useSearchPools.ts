@@ -2,16 +2,18 @@ import axios from 'axios';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 
-import { GeckoTokenIncluded, PoolGeckoType } from '@/@types/gecko';
+import { GeckoTokenIncluded, GeckoTokenOverview, PoolGeckoType } from '@/@types/gecko';
 
 const fetchSearchPools = (
   query: string,
+  withTokensOverview?: boolean,
   page: number = 1
 ): Promise<PoolGeckoType[]> =>
   axios
     .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/gecko/search-pools`, {
       query,
-      page
+      page,
+      withTokensOverview,
     })
     .then((response) =>
       response.data?.searchPoolsData?.data?.map((tokenData: PoolGeckoType) => ({
@@ -20,11 +22,18 @@ const fetchSearchPools = (
           ({ id }: GeckoTokenIncluded) => {
             return id === tokenData.relationships.base_token.data.id;
           }
+        ),
+        tokenOverview: response?.data?.searchPoolsData?.tokensOverview?.data.find(
+          (overview: GeckoTokenOverview) => {
+            return (
+              overview?.id === tokenData.relationships.base_token.data.id
+            );
+          }
         )
       }))
     );
 
-export const useSearchPools = (query: string) => {
+export const useSearchPools = (query: string, withTokensOverview?: boolean) => {
   const debouncedQuery = useDebounce(query, 500);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, ...rest } =
@@ -33,7 +42,7 @@ export const useSearchPools = (query: string) => {
       queryKey: [`searchPoolsList-${debouncedQuery}`],
       enabled: !!debouncedQuery,
       queryFn: async ({ pageParam = 1 }) =>
-        await fetchSearchPools(debouncedQuery, pageParam),
+        await fetchSearchPools(debouncedQuery, withTokensOverview, pageParam),
       getNextPageParam: (lastPage, allPages) => {
         const nextPage = allPages.length + 1;
         return nextPage <= 10 ? nextPage : undefined;
