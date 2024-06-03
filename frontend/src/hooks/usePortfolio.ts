@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchPortfolio } from '@/utils/frtchPortfolio';
+import { fetchPortfolio } from '@/utils/fetchPortfolio';
 
 export const usePortfolio = (walletAddress?: string) => {
   const { data, ...rest } = useQuery({
