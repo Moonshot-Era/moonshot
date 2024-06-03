@@ -6,15 +6,17 @@ export const getOhlcvData = async (tokenAddress: string) => {
       throw Error(`No token address provided`);
     }
 
+    let currentDate = new Date();
+    currentDate.setDate(currentDate.getDay() - 7);
+    const timeFrom = currentDate.getTime();
+
     const { data } = await axios.get(
       `${process.env.BIRDEYE_URL_API}defi/ohlcv`,
       {
         params: {
           address: tokenAddress,
           type: '15m',
-          // TODO: add proper time from 
-          time_from: 1717181740583,
-          // time_from: new Date(2024, 0, 1).getTime().toString(),
+          time_from: timeFrom,
           time_to: new Date().getTime()
         },
         headers: {
