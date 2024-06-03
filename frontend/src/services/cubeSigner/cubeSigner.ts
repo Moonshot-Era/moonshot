@@ -107,7 +107,7 @@ export const getUserWallet = async (
 export const exportUserInfo = async (
   oidcToken: string
 ): Promise<string | null> => {
-  let keysExport;
+  let key;
 
   try {
     const { email } = CubeSignerInstance.parseOidcToken(oidcToken);
@@ -123,17 +123,17 @@ export const exportUserInfo = async (
         oidcToken
       );
       const keys = await userCubeSigner.sessionKeys();
-      const key = keys?.[keys?.length - 1];
+      key = keys?.[keys?.length - 1];
 
       await org.initExport(key.id);
 
-      keysExport = await org.completeExport(key.id, key.publicKey);
-      console.log('debug > keypairExport===', keysExport);
+      // keysExport = await org.completeExport(key.id, key.publicKey);
+      // console.log('debug > keypairExport===', keysExport);
       await org.deleteExport(key.id, key.publicKey);
 
-      if (!keysExport) {
-        throw Error('Export keys failed');
-      }
+      // if (!keysExport) {
+      //   throw Error('Export keys failed');
+      // }
     }
   } catch (err) {
     console.log('debug > ERROR' + err);
