@@ -1,0 +1,10 @@
+@import '../../styles/variables.scss';
+
+.empty-card {
+  border-radius: 16px;
+  box-shadow: $shadow-2;
+}
+
+.empty-card-icon {
+  border-radius: 100%;
+}
