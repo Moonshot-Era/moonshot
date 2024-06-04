@@ -22,7 +22,7 @@ export default async function CultureItemPage({
   );
 
   const { data: tokenData } = await axios.post(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/helius/get-token-overview`,
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-overview`,
     {
       tokenAddress
     }

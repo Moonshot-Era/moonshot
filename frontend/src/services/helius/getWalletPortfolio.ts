@@ -33,7 +33,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
     if (!walletAddress) {
       throw Error(`User don't have a wallet`);
     }
-    const url = `${process.env.HELIUS_URL_API}/?api-key=${process.env.HELIUS_API_KEY}`;
+    const url = `${process.env.HELIUS_URL_API}?api-key=${process.env.HELIUS_API_KEY}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -54,7 +54,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       })
     });
     const { result } = await response.json();
-    console.log('Search Assets: ', result);
+    console.log('========Search Assets: ', result);
 
     // TODO: check further data
     const walletPortfolio: WalletPortfolioType = result?.data;
