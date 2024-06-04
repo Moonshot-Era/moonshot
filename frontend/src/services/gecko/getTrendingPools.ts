@@ -34,7 +34,6 @@ export const getTrendingPools = async (page: number, withTokensOverview: boolean
       )).data;
     }
 
-
     return {
       ...trendingListGecko,
       tokensOverview,

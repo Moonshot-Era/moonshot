@@ -3,10 +3,11 @@ import { searchPools } from '@/services/gecko/searchPools';
 import { PoolGeckoType } from '@/@types/gecko';
 
 export async function POST(request: Request) {
-  const response = await request.json();
+  const reqData = await request.json();
   const searchPoolsData: PoolGeckoType[] | [] = await searchPools(
-    response?.query,
-    response?.page
+    reqData?.query,
+    reqData?.page,
+    reqData?.withTokensOverview,
   );
 
   return NextResponse.json({ searchPoolsData });
