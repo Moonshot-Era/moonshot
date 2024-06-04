@@ -36,13 +36,17 @@ export const SkeletonHome = () => (
         gap="8px"
         width="100%"
         height="fit-content"
-        className={`border-1 bg-white empty-card`}
+        className={`border-1 bg-white skeleton-empty-card`}
         p="3"
         pt="2"
       >
         <Flex direction="row" gap="2">
           <Box>
-            <Skeleton width={48} height={48} className="empty-card-icon" />
+            <Skeleton
+              width={48}
+              height={48}
+              className="skeleton-empty-card-icon"
+            />
           </Box>
           <Flex direction="column">
             <Box>

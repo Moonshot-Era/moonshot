@@ -1,5 +1,12 @@
 @import '../../styles/variables.scss';
 
+.skeleton-search {
+  background-color: $white;
+  padding: 8px;
+  @include border-dark;
+  border-radius: 8px;
+}
+
 .skeleton-empty-card {
   border-radius: 16px;
   box-shadow: $shadow-2;
