@@ -6,30 +6,38 @@ import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
 
 export default async function CultureItemPage({
   params,
-  searchParams,
+  searchParams
 }: ServerPageProps<{ address: string }>) {
   const user = await checkProtectedRoute(searchParams, false);
   const oidc = cookies()?.get('pt')?.value;
 
   const tokenAddress = params?.address;
 
-  const { data: tokenData } = await axios.post(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/get-token-overview`,
+  const { data: token } = await axios.post(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/gecko/get-token-data`,
     {
-      tokenAddress,
+      tokenAddress
+    }
+  );
+
+  const { data: tokenData } = await axios.post(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/helius/get-token-overview`,
+    {
+      tokenAddress
     }
   );
 
   const { data: walletData } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/cube/get-wallet`,
     {
-      oidc,
+      oidc
     }
   );
 
   return (
     <CultureItem
       isPublic={!user?.id}
+      tokenData={token}
       tokenItem={tokenData?.token}
       walletAddress={walletData?.wallet}
     />

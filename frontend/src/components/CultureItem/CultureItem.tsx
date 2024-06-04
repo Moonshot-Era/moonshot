@@ -20,9 +20,11 @@ import { usePortfolio } from '@/hooks/usePortfolio';
 
 export const CultureItem = ({
   tokenItem,
+  tokenData,
   isPublic,
   walletAddress
 }: {
+  tokenData: any;
   tokenItem: TokenOverviewBirdEyeType;
   isPublic?: boolean;
   walletAddress?: string;
@@ -171,7 +173,7 @@ export const CultureItem = ({
                   Market cap
                 </Text>
               </Flex>
-              <Text size="1">{formatCashNumber().format(tokenItem?.mc)}</Text>
+              <Text size="1">{formatCashNumber().format(tokenData?.mc)}</Text>
             </Flex>
             <Flex direction="row" justify="between" align="center">
               <Flex direction="row" gap="1">
@@ -181,7 +183,7 @@ export const CultureItem = ({
                 </Text>
               </Flex>
               <Text size="1">
-                {formatCashNumber().format(tokenItem?.v24hUSD)}
+                {formatCashNumber().format(tokenData?.v24hUSD)}
               </Text>
             </Flex>
             <Flex direction="row" justify="between" align="center">
@@ -192,7 +194,7 @@ export const CultureItem = ({
                 </Text>
               </Flex>
               <Text size="1">
-                {formatCashNumber().format(tokenItem?.liquidity)}
+                {formatCashNumber().format(tokenData?.liquidity)}
               </Text>
             </Flex>
             <Flex direction="row" justify="between" align="center">
@@ -203,7 +205,7 @@ export const CultureItem = ({
                 </Text>
               </Flex>
               <Text size="1">
-                {formatNumberToUsFormat().format(tokenItem?.supply)}
+                {formatNumberToUsFormat().format(tokenData?.supply)}
               </Text>
             </Flex>
             <Flex direction="row" justify="between" align="center">
@@ -214,7 +216,7 @@ export const CultureItem = ({
                 </Text>
               </Flex>
               <Text size="1">
-                {formatNumberToUsFormat().format(tokenItem?.holder)}
+                {formatNumberToUsFormat().format(tokenData?.holder)}
               </Text>
             </Flex>
           </Flex>
