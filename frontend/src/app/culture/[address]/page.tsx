@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
 
+import { CultureError } from '@/components/CultureError/CultureError';
 import { CultureItem } from '@/components/CultureItem/CultureItem';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
-import { CultureError } from '@/components/CultureError/CultureError';
 
 export default async function CultureItemPage({
   params,
@@ -15,7 +15,7 @@ export default async function CultureItemPage({
   const tokenAddress = params?.address;
 
   const { data: token } = await axios.post(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/gecko/get-token-data`,
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-data`,
     {
       tokenAddress
     }
