@@ -63,7 +63,7 @@ export const SkeletonTransactions = () => (
             </Flex>
           </Flex>
         ))}
-      <Box>
+      <Box mt="3">
         <Skeleton width={95} />
       </Box>
       {Array(4)
