@@ -15,7 +15,7 @@ interface Props {
 export const TokenCard = ({ onClick, token, searchTo }: Props) => {
   const tokenItem = token?.attributes;
   const percentageChange = +(tokenItem?.price_change_percentage?.h24 || 0);
-  const name = token.included?.attributes.name;
+  const name = token.included?.attributes?.name;
 
   return (
     <Flex
