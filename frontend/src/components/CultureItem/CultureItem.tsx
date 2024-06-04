@@ -21,13 +21,13 @@ import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
 
 export const CultureItem = ({
-  tokenItem,
+  tokenInfo,
   tokenData,
   isPublic,
   walletAddress
 }: {
   tokenData: any;
-  tokenItem: TokenOverviewBirdEyeType;
+  tokenInfo: TokenOverviewBirdEyeType;
   isPublic?: boolean;
   walletAddress?: string;
 }) => {
@@ -43,11 +43,11 @@ export const CultureItem = ({
 
   const asset = portfolio?.walletAssets?.find((item) =>
     isSolanaAddress(item?.id)
-      ? isSolanaAddress(item?.id) === tokenItem?.address
-      : item?.id === tokenItem?.address
+      ? isSolanaAddress(item?.id) === tokenInfo?.address
+      : item?.id === tokenInfo?.address
   );
 
-  return tokenItem ? (
+  return tokenInfo ? (
     <>
       <Flex
         direction="column"
@@ -72,11 +72,11 @@ export const CultureItem = ({
                 width={24}
                 height={24}
                 alt="Token logo"
-                src={tokenItem?.logoURI}
+                src={tokenInfo?.logoURI}
               />
             </Flex>
             <Text size="4" weight="bold">
-              {tokenItem.name}
+              {tokenInfo.name}
             </Text>
             {!isPublic && (
               <Box
@@ -125,7 +125,7 @@ export const CultureItem = ({
                     width={24}
                     height={24}
                     alt="Token logo"
-                    src={tokenItem?.logoURI}
+                    src={tokenInfo?.logoURI}
                   />
                 </Flex>
                 <Text size="1" mt="1">
@@ -145,8 +145,8 @@ export const CultureItem = ({
               size="3"
               weight="medium"
               mb="2"
-            >{`About ${tokenItem.name}`}</Text>
-            <Text size="1">{tokenItem.extensions?.description}</Text>
+            >{`About ${tokenInfo.name}`}</Text>
+            <Text size="1">{tokenInfo.extensions?.description}</Text>
           </Flex>
           <Flex
             direction="column"
@@ -161,19 +161,19 @@ export const CultureItem = ({
               </Text>
               <Flex direction="row" gap="1">
                 <Link
-                  href={`${tokenItem?.extensions?.telegram}`}
+                  href={`https://t.me/${tokenInfo?.extensions?.telegram}`}
                   target="_blank"
                 >
                   <Icon icon="telegram" width={16} height={16} />
                 </Link>
                 <Link
-                  href={`${tokenItem?.extensions?.twitter}`}
+                  href={`https://x.com/${tokenInfo?.extensions?.twitter}`}
                   target="_blank"
                 >
                   <Icon icon="twitter" width={16} height={16} />
                 </Link>
                 <Link
-                  href={`${tokenItem?.extensions?.website}`}
+                  href={`${tokenInfo?.extensions?.website}`}
                   target="_blank"
                 >
                   <Icon icon="monitor" width={16} height={16} />

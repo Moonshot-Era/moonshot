@@ -20,9 +20,8 @@ export default async function CultureItemPage({
       tokenAddress
     }
   );
-
-  const { data: tokenData } = await axios.post(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-overview`,
+  const { data: tokenInfo } = await axios.post(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-info`,
     {
       tokenAddress
     }
@@ -37,11 +36,11 @@ export default async function CultureItemPage({
 
   return (
     <>
-      {tokenData?.token.name ? (
+      {tokenInfo?.name ? (
         <CultureItem
           isPublic={!user?.id}
           tokenData={token}
-          tokenItem={tokenData?.token}
+          tokenInfo={tokenInfo}
           walletAddress={walletData?.wallet}
         />
       ) : (

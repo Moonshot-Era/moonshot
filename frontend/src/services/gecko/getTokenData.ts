@@ -10,15 +10,17 @@ export const getTokenData = async (tokenAddress: string) => {
         headers: {
           'Content-Type': 'application/json',
           'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`
+        },
+        params: {
+          include: 'top_pools'
         }
       }
     );
 
-    // TODO: update with data
     const normalizedTokenData = {
       mc: tokenData.data.attributes.market_cap_usd,
       v24hUSD: tokenData.data.attributes.volume_usd.h24,
-      liquidity: 0,
+      liquidity: tokenData.data.attributes.total_reserve_in_usd,
       supply: tokenData.data.attributes.total_supply,
       holder: 0,
       extensions: {
