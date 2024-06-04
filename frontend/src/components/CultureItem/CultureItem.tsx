@@ -156,24 +156,30 @@ export const CultureItem = ({
                 Stats
               </Text>
               <Flex direction="row" gap="1">
-                <Link
-                  href={`${tokenItem?.extensions?.telegram}`}
-                  target="_blank"
-                >
-                  <Icon icon="telegram" width={16} height={16} />
-                </Link>
-                <Link
-                  href={`${tokenItem?.extensions?.twitter}`}
-                  target="_blank"
-                >
-                  <Icon icon="twitter" width={16} height={16} />
-                </Link>
-                <Link
-                  href={`${tokenItem?.extensions?.website}`}
-                  target="_blank"
-                >
-                  <Icon icon="monitor" width={16} height={16} />
-                </Link>
+                {tokenItem?.extensions?.telegram ? (
+                  <Link
+                    href={`${tokenItem.extensions.telegram}`}
+                    target="_blank"
+                  >
+                    <Icon icon="telegram" width={16} height={16} />
+                  </Link>
+                ) : null}
+                {tokenItem?.extensions?.twitter ? (
+                  <Link
+                    href={`${tokenItem.extensions.twitter}`}
+                    target="_blank"
+                  >
+                    <Icon icon="twitter" width={16} height={16} />
+                  </Link>
+                ) : null}
+                {tokenItem?.extensions?.website ? (
+                  <Link
+                    href={`${tokenItem?.extensions?.website}`}
+                    target="_blank"
+                  >
+                    <Icon icon="monitor" width={16} height={16} />
+                  </Link>
+                ) : null}
               </Flex>
             </Flex>
 
