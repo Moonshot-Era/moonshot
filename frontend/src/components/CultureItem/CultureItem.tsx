@@ -37,15 +37,14 @@ export const CultureItem = ({
   const { ohlcv } = useOhlcv(poolAddress);
 
   const chartData = ohlcv?.attributes.ohlcv_list.map((item: Array<number>) => ({
-    // TODO: check!!!
     time: item[0],
     value: item[5]
   }));
 
   const asset = portfolio?.walletAssets?.find((item) =>
-    isSolanaAddress(item?.address)
-      ? isSolanaAddress(item?.address) === tokenItem?.address
-      : item?.address === tokenItem?.address
+    isSolanaAddress(item?.id)
+      ? isSolanaAddress(item?.id) === tokenItem?.address
+      : item?.id === tokenItem?.address
   );
 
   return tokenItem ? (
@@ -108,7 +107,10 @@ export const CultureItem = ({
                   Your balance
                 </Text>
                 <Text size="2" weight="medium">
-                  {formatNumberToUsd().format(asset?.valueUsd)}
+                  {formatNumberToUsd().format(
+                    asset?.token_info.price_info.total_price *
+                      asset?.token_info.balance
+                  )}
                 </Text>
               </Flex>
               <Flex
@@ -127,7 +129,7 @@ export const CultureItem = ({
                   />
                 </Flex>
                 <Text size="1" mt="1">
-                  {asset?.uiAmount} {asset?.symbol}
+                  {asset?.token_info.balance} {asset?.token_info.symbol}
                 </Text>
               </Flex>
             </Flex>

@@ -1,10 +1,10 @@
-import Image from 'next/image';
-import React, { FC } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
+import Image from 'next/image';
+import { FC } from 'react';
 
-import { Icon } from '../Icon';
 import { formatNumberToUsd } from '@/helpers/helpers';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
+import { Icon } from '../Icon';
 
 interface Props {
   asset?: WalletPortfolioAssetType;
@@ -31,30 +31,32 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
       ) : null}
       <Flex direction="row">
         <Flex position="relative">
-          {(asset?.logoURI || asset?.imageUrl) && (
+          {(asset?.imageUrl || asset?.imageUrl) && (
             <Image
               alt="img"
               width={50}
               height={50}
-              src={asset?.logoURI || asset?.imageUrl}
+              src={asset?.imageUrl || asset?.imageUrl}
               style={{ borderRadius: '50%', height: 50, width: 50 }}
             />
           )}
         </Flex>
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
-            {asset?.name}
+            {asset?.content.metadata.name}
           </Text>
           <Text size="1" weight="regular">
-            {asset?.uiAmount} {asset?.symbol}
+            {asset?.token_info.supply} {asset?.token_info.symbol}
           </Text>
         </Flex>
       </Flex>
       <Flex direction="row" align="center" my="1">
-        {!!asset?.valueUsd && (
+        {!!asset?.token_info.price_info.price_per_token && (
           <Flex direction="column" justify="between" align="end" height="40px">
             <Text size="3" weight="medium">
-              {formatNumberToUsd().format(asset?.valueUsd)}
+              {formatNumberToUsd().format(
+                asset?.token_info.price_info.price_per_token
+              )}
             </Text>
             {asset?.percentage_change_h24 && (
               <Flex direction="row" align="center" gap="1">

@@ -1,13 +1,13 @@
 'use client';
 
+import { Flex, Text } from '@radix-ui/themes';
 import axios from 'axios';
 import { ChangeEvent, useState } from 'react';
-import { Flex, Text } from '@radix-ui/themes';
 
-import './style.scss';
-import { Icon, Input, SlideButton } from '@/legos';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 import { formatNumberToUsd } from '@/helpers/helpers';
+import { Icon, Input, SlideButton } from '@/legos';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
+import './style.scss';
 
 interface WithdrawItemProps {
   asset?: WalletPortfolioAssetType;
@@ -26,18 +26,26 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const [amountError, setAmountError] = useState('');
   const [amountInputInUsd, setAmountInputInUsd] = useState(true);
 
-  const decimalLength = `${asset?.uiAmount}`.split('.')?.[1]?.length || 0;
+  const decimalLength =
+    `${asset?.token_info.supply}`.split('.')?.[1]?.length || 0;
 
   const handleChangeCurrency = () => {
     setAmountInputInUsd(!amountInputInUsd);
     if (!amountInputInUsd) {
-      if (asset?.valueUsd && +(transactionAmount || 0) > +asset?.valueUsd) {
+      if (
+        asset?.token_info.price_info.price_per_token &&
+        +(transactionAmount || 0) >
+          +asset?.token_info.price_info.price_per_token
+      ) {
         setAmountError(AMOUNT_ERR);
       } else if (amountError) {
         setAmountError('');
       }
     } else {
-      if (asset?.uiAmount && +(transactionAmount || 0) > +asset?.uiAmount) {
+      if (
+        asset?.token_info.supply &&
+        +(transactionAmount || 0) > +asset?.token_info.supply
+      ) {
         setAmountError(AMOUNT_ERR);
       } else if (amountError) {
         setAmountError('');
@@ -57,14 +65,20 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const handleChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
     if (amountInputInUsd && event.target.value) {
       setTransactionAmount(event.target.value);
-      if (asset?.valueUsd && +event.target.value > +asset?.valueUsd) {
+      if (
+        asset?.token_info.price_info.total_price &&
+        +event.target.value > +asset?.token_info.price_info.total_price
+      ) {
         setAmountError(AMOUNT_ERR);
       } else if (amountError) {
         setAmountError('');
       }
     } else if (event.target.value || event.target.value === '') {
       setTransactionAmount(event.target.value);
-      if (asset?.uiAmount && +event.target.value > +asset?.uiAmount) {
+      if (
+        asset?.token_info.supply &&
+        +event.target.value > +asset?.token_info.supply
+      ) {
         setAmountError(AMOUNT_ERR);
       } else if (amountError) {
         setAmountError('');
@@ -74,9 +88,11 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
 
   const handleSetMax = () => {
     if (amountInputInUsd) {
-      setTransactionAmount(asset?.valueUsd.toFixed(2) || 0);
+      setTransactionAmount(
+        asset?.token_info.price_info.total_price.toFixed(2) || 0
+      );
     } else {
-      setTransactionAmount(asset?.uiAmount || 0);
+      setTransactionAmount(asset?.token_info.supply || 0);
     }
     if (amountError) {
       setAmountError('');
@@ -88,7 +104,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
       const { data: isSolanaWallet } = await axios.post(
         `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/validate-wallet`,
         {
-          wallet: toAddress,
+          wallet: toAddress
         }
       );
       if (!isSolanaWallet) {
@@ -105,7 +121,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
       <Text size="4" weight="bold">
-        {`Withdraw ${asset?.name}`}
+        {`Withdraw ${asset?.content.metadata.name}`}
       </Text>
       <Flex
         width="100%"
@@ -119,7 +135,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         <Flex direction="column" align="center" style={{ opacity: 0 }}>
           <Icon icon="switchHorizontal" />
           <Text size="4" weight="medium">
-            {asset?.name}
+            {asset?.content.metadata.name}
           </Text>
         </Flex>
         <Flex flexGrow="1" maxWidth="100%" justify="center" align="end">
@@ -131,23 +147,29 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
               maxWidth: '100%',
               overflow: 'hidden',
               textWrap: 'nowrap',
-              textOverflow: 'ellipsis',
+              textOverflow: 'ellipsis'
             }}
           >
             {amountInputInUsd
-              ? (+(transactionAmount || 0) / (asset?.priceUsd || 0)).toFixed(
+              ? (
+                  +(transactionAmount || 0) /
+                  (asset?.token_info.price_info.total_price || 0)
+                ).toFixed(
                   transactionAmount && +transactionAmount ? decimalLength : 0
                 )
               : formatNumberToUsd().format(
-                  +(transactionAmount || 0) * (asset?.priceUsd || 0)
+                  +(transactionAmount || 0) *
+                    (asset?.token_info.price_info.total_price || 0)
                 )}
           </Text>
-          {amountInputInUsd && <Text size="4">{asset?.name}</Text>}
+          {amountInputInUsd && (
+            <Text size="4">{asset?.content.metadata.name}</Text>
+          )}
         </Flex>
         <Flex direction="column" align="center" onClick={handleChangeCurrency}>
           <Icon icon="switchHorizontal" />
           <Text size="4" weight="medium">
-            {amountInputInUsd ? 'USD' : asset?.name}
+            {amountInputInUsd ? 'USD' : asset?.content.metadata.name}
           </Text>
         </Flex>
       </Flex>
@@ -171,11 +193,15 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
           error={!!amountError}
           onChange={handleChangeAmount}
           type={'number'}
-          endAdornment={<Text>{amountInputInUsd ? 'USD' : asset?.name}</Text>}
+          endAdornment={
+            <Text>
+              {amountInputInUsd ? 'USD' : asset?.content.metadata.name}
+            </Text>
+          }
         />
         <Flex justify="between">
           <Text size="2">
-            Available {asset?.uiAmount} {asset?.name}
+            Available {asset?.token_info.supply} {asset?.content.metadata.name}
           </Text>
           <Text size="1" className="transfer-card-max" onClick={handleSetMax}>
             Max

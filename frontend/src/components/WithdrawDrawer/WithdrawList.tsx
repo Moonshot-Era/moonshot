@@ -1,11 +1,11 @@
 'use client';
 
-import { FC } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
+import { FC } from 'react';
 
+import { AssetCard, Input } from '@/legos';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 import './style.scss';
-import { Input, AssetCard } from '@/legos';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 interface Props {
   toggleTransfer: (address: WalletPortfolioAssetType) => void;
@@ -22,7 +22,7 @@ export const WithdrawList: FC<Props> = ({ toggleTransfer, walletAssets }) => (
     <Flex width="100%" direction="column" gap="4">
       {walletAssets?.map((asset) => (
         <AssetCard
-          key={asset.address}
+          key={asset.id}
           asset={asset}
           onClick={() => toggleTransfer(asset)}
         />

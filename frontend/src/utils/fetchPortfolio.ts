@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { WalletPortfolioNormilizedType } from '@/services/birdeye/getWalletPortfolio';
+import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
 
 export const fetchPortfolio = (
   walletAddress: string

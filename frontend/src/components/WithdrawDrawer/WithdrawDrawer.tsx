@@ -1,16 +1,16 @@
 'use client';
 
-import { FC, useState } from 'react';
 import axios from 'axios';
+import { FC, useState } from 'react';
 
-import './style.scss';
 import { SheetDrawer } from '@/legos';
-import { WithdrawList } from './WithdrawList';
-import { WithdrawItem } from './WithdrawItem';
 import {
   WalletPortfolioAssetType,
-  WalletPortfolioNormilizedType,
-} from '@/services/birdeye/getWalletPortfolio';
+  WalletPortfolioNormilizedType
+} from '@/services/helius/getWalletPortfolio';
+import { WithdrawItem } from './WithdrawItem';
+import { WithdrawList } from './WithdrawList';
+import './style.scss';
 
 interface Props {
   isOpen: boolean;
@@ -21,7 +21,7 @@ interface Props {
 export const WithdrawDrawer: FC<Props> = ({
   isOpen,
   toggleOpen,
-  portfolio,
+  portfolio
 }) => {
   const [isTransfer, setIsTransfer] = useState(false);
   const [fromAsset, setFromAsset] = useState<WalletPortfolioAssetType>();
@@ -45,8 +45,8 @@ export const WithdrawDrawer: FC<Props> = ({
         fromAddress: portfolio?.wallet,
         toAddress: toAddress,
         amount: amount,
-        tokenAddress: fromAsset?.address,
-        tokenDecimals: fromAsset?.decimals,
+        tokenAddress: fromAsset?.id,
+        tokenDecimals: fromAsset?.token_info.decimals
       })
       .finally(handleClose);
   };

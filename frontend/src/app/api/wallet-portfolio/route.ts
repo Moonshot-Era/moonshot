@@ -1,16 +1,14 @@
-import { NextResponse } from 'next/server';
-import { WalletPortfolioType } from '@/@types/birdeye';
+import { WalletPortfolioType } from '@/@types/helius';
 import { getWalletPortfolio } from '@/services/helius/getWalletPortfolio';
+import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   const data = await request.json();
 
-  const walletAddress =
-    data?.walletAddress || 'B8xaui7xwQSZmuPwjem7Ka5Qobag7khJHNCPWzDpmXrD';
+  const walletAddress = data?.walletAddress;
 
   const walletPortfolio: WalletPortfolioType | {} = await getWalletPortfolio(
     walletAddress
   );
-  console.log('debug > walletPortfolio===', walletPortfolio);
   return NextResponse.json({ walletPortfolio });
 }

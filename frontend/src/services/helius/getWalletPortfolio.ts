@@ -1,25 +1,15 @@
-import { TokenItemBirdEyeType, WalletPortfolioType } from '@/@types/birdeye';
 import {
   PoolGeckoType,
   TokenAttributes,
   TokenItemGeckoType
 } from '@/@types/gecko';
+import { TokenItemHeliusType } from '@/@types/helius';
 import { isSolanaAddress } from '@/helpers/helpers';
 import axios from 'axios';
 
-export interface WalletPortfolioAssetType {
+export interface WalletPortfolioAssetType extends TokenItemHeliusType {
   imageUrl: string;
   percentage_change_h24: any;
-  address: string;
-  balance: number;
-  chainId?: string;
-  decimals?: number;
-  logoURI?: string;
-  name: string;
-  priceUsd: number;
-  symbol: string;
-  uiAmount: number;
-  valueUsd: number;
 }
 
 export interface WalletPortfolioNormilizedType {
@@ -54,15 +44,9 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       })
     });
     const { result } = await response.json();
-    console.log('========Search Assets: ', result);
 
-    // TODO: check further data
-    const walletPortfolio: WalletPortfolioType = result?.data;
-    const tokensAddresses = walletPortfolio?.items
-      ?.map(
-        (tok: TokenItemBirdEyeType) =>
-          isSolanaAddress(tok.address) || tok.address
-      )
+    const tokensAddresses = result?.items
+      ?.map((tok: TokenItemHeliusType) => isSolanaAddress(tok.id) || tok.id)
       .join(',');
 
     let walletPortfolioNormalized: WalletPortfolioAssetType[] = [];
@@ -76,18 +60,18 @@ export const getWalletPortfolio = async (walletAddress: string) => {
           }
         }
       );
-      walletPortfolioNormalized = walletPortfolio?.items?.map(
-        (asset: TokenItemBirdEyeType) => {
+      walletPortfolioNormalized = result?.items?.map(
+        (asset: TokenItemHeliusType) => {
           const token: TokenAttributes = tokensListGecko?.data?.find(
             (token: TokenItemGeckoType) =>
               token.attributes.address ===
-              (isSolanaAddress(asset?.address) || asset?.address)
+              (isSolanaAddress(asset?.id) || asset?.id)
           )?.attributes;
 
           const percentage_change_h24 = tokensListGecko?.included?.find(
             (included: PoolGeckoType) =>
               included?.relationships?.base_token?.data?.id ===
-              `solana_${isSolanaAddress(asset?.address) || asset?.address}`
+              `solana_${isSolanaAddress(asset?.id) || asset?.id}`
           )?.attributes?.price_change_percentage?.h24;
 
           return {
@@ -98,13 +82,12 @@ export const getWalletPortfolio = async (walletAddress: string) => {
         }
       );
     }
-    return data?.success
-      ? {
-          walletAssets: walletPortfolioNormalized,
-          totalUsd: walletPortfolio?.totalUsd,
-          wallet: walletPortfolio?.wallet
-        }
-      : {};
+
+    return {
+      walletAssets: walletPortfolioNormalized,
+      totalUsd: result?.nativeBalance.total_price || 0,
+      wallet: walletAddress
+    };
   } catch (err) {
     console.log('Error:', err.response);
   }
