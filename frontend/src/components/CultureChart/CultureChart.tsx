@@ -57,7 +57,11 @@ export const CultureChart = ({ data }: CultureChartProps) => {
       visible: false
     });
 
-    lineSeries.setData(data);
+    const orderedData = data.sort((a, b) => {
+      return +a.time - +b.time;
+    });
+
+    lineSeries.setData(orderedData);
 
     return () => chart.remove();
   }, [data]);

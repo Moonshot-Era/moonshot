@@ -1,24 +1,24 @@
 'use client';
 
-import Link from 'next/link';
-import Image from 'next/image';
 import { Box, Flex, Text } from '@radix-ui/themes';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Icon } from '@/legos';
-import { Toolbar } from '../Toolbar/Toolbar';
-import { OhlcvBirdEyeType, TokenOverviewBirdEyeType } from '@/@types/birdeye';
+import { TokenOverviewBirdEyeType } from '@/@types/birdeye';
 import {
   formatCashNumber,
   formatNumberToUsFormat,
   formatNumberToUsd,
   isSolanaAddress
 } from '@/helpers/helpers';
+import { Icon } from '@/legos';
+import { Toolbar } from '../Toolbar/Toolbar';
 
-import './style.scss';
-import { usePathname, useRouter } from 'next/navigation';
 import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
+import { useRouter } from 'next/navigation';
 import { CultureChart } from '../CultureChart/CultureChart';
+import './style.scss';
 
 export const CultureItem = ({
   tokenItem,
@@ -33,13 +33,13 @@ export const CultureItem = ({
 }) => {
   const router = useRouter();
   const { portfolio } = usePortfolio(walletAddress);
-  const pathname = usePathname();
-  const tokenAddress = pathname.replace('/culture/', '');
-  const { ohlcv } = useOhlcv(tokenAddress);
+  const poolAddress = tokenData.top_pools[0].id.replace('solana_', '');
+  const { ohlcv } = useOhlcv(poolAddress);
 
-  const chartData = ohlcv?.items.map((item: OhlcvBirdEyeType) => ({
-    time: item.unixTime,
-    value: item.c
+  const chartData = ohlcv?.attributes.ohlcv_list.map((item: Array<number>) => ({
+    // TODO: check!!!
+    time: item[0],
+    value: item[5]
   }));
 
   const asset = portfolio?.walletAssets?.find((item) =>

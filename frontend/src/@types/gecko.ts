@@ -98,7 +98,7 @@ export interface GeckoTokenIncluded {
     coingecko_coin_id: string;
     image_url: string;
     name: string;
-    symbol: string;    
+    symbol: string;
   };
   id: string;
   type: string;
@@ -114,7 +114,7 @@ export interface GeckoTokenOverview {
     image_url: string;
     market_cap_usd: void;
     name: string;
-    price_usd: string
+    price_usd: string;
     symbol: string;
     total_reserve_in_usd: string;
     total_supply: string;
@@ -122,9 +122,8 @@ export interface GeckoTokenOverview {
       h24: string;
     };
     h24: string;
-  }
+  };
 }
-
 
 export interface PoolGeckoType {
   id: string;
@@ -133,4 +132,14 @@ export interface PoolGeckoType {
   relationships: PoolRelationships;
   included?: GeckoTokenIncluded;
   tokenOverview?: GeckoTokenOverview;
+}
+
+export interface OhlcvDataType {
+  data: {
+    id: string;
+    type: string;
+    attributes: {
+      ohlcv_list: Array<number>;
+    };
+  };
 }

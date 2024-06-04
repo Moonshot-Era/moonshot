@@ -25,7 +25,8 @@ export const getTokenData = async (tokenAddress: string) => {
         telegram: '',
         twitter: '',
         website: ''
-      }
+      },
+      top_pools: tokenData.data.relationships.top_pools.data
     };
 
     return normalizedTokenData;
