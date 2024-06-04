@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { setUpTotp } from '@/services';
+import { approveMfaTotp, checkIfMfaReguired } from '@/services';
 import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
-  // const response = await request.json();
   const oidc = cookies()?.get('pt')?.value;
+  const response = await request.json();
 
-  if (!oidc) {
+  if (!oidc || !response?.totpCode || !response?.mfaId) {
     return NextResponse.next({
       request: {
         headers: request.headers
@@ -14,13 +14,15 @@ export async function POST(request: Request) {
     });
   }
 
-  const totp = await setUpTotp(oidc).catch((err) => {
+  const res = await approveMfaTotp(
+    oidc,
+    response.totpCode
+    // response.mfaId
+  ).catch((err) => {
     console.log('Err', err);
   });
 
-  // const keys = await exportUserInfo(oidc).catch((err) => {
-  //   console.log('Err', err);
-  // });
+  console.log('debug > res===', res);
 
   return NextResponse.json({});
 }

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { authenticator } from 'otplib';
 import { CubeSignerClient, Ed25519 } from '@cubist-labs/cubesigner-sdk';
 import { defaultManagementSessionManager } from '@cubist-labs/cubesigner-sdk-fs-storage';
 
@@ -25,8 +26,7 @@ class CubeSigner {
       ['sign:*']
     );
 
-    const sessionData = resp.data();
-    return CubeSignerClient.create(sessionData);
+    return CubeSignerClient.create(resp.data());
   }
 
   parseOidcToken(token: string): {
@@ -140,4 +140,145 @@ export const exportUserInfo = async (
     throw err;
   }
   return key.materialId;
+};
+
+// Set up TOTP for a user
+export const setUpTotp = async (oidcToken: string) => {
+  let mfaClient: CubeSignerClient | undefined = undefined;
+  const cubeClient = await CubeSignerInstance.getManagementSessionClient();
+  const oidcSessionResp = await CubeSignerClient.createOidcSession(
+    cubeClient.env,
+    cubeClient.orgId,
+    oidcToken,
+    ['sign:*', 'manage:mfa']
+  );
+
+  if (oidcSessionResp.requiresMfa()) {
+    const tmpClient = await oidcSessionResp.mfaClient()!;
+
+    mfaClient = tmpClient;
+
+    const mfaId = oidcSessionResp.mfaId();
+    console.log('debug > mfaId===', mfaId);
+
+    if (mfaClient) {
+      const mfaInfo = await mfaClient.org().getMfaRequest(mfaId).fetch();
+      console.log('debug > mfaInfo===', mfaInfo);
+    }
+  }
+
+  const oidcClient = await CubeSignerClient.create(oidcSessionResp.data());
+
+  let totpResetResp = await oidcClient.resetTotp();
+  //TODO implement TOTP user secret
+  const secret = 'KVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLD';
+  let totpSecret: string | null = process.env['CS_USER_TOTP_SECRET']! || secret;
+  console.log(
+    'debug > totpResetResp.requiresMfa()===',
+    totpResetResp.requiresMfa()
+  );
+  if (totpResetResp.requiresMfa()) {
+    console.log('Resetting TOTP requires MFA');
+    const code = authenticator.generate(totpSecret);
+    totpResetResp = await totpResetResp.totpApprove(oidcClient, code);
+    console.log('MFA approved using existing TOTP');
+  }
+
+  const totpChallenge = totpResetResp.data();
+  console.log('debug > totpChallenge.url===', totpChallenge);
+  if (totpChallenge.url) {
+    totpSecret = new URL(totpChallenge.url).searchParams.get('secret');
+    if (totpSecret) {
+      await totpChallenge.answer(authenticator.generate(totpSecret));
+      console.log(`Verifying current TOTP code`);
+      let code = authenticator.generate(totpSecret);
+      await oidcClient.verifyTotp(code);
+    }
+  }
+
+  const mfa = (await oidcClient.user()).mfa;
+  console.log('Configured MFA types', mfa);
+
+  console.log(mfa.map((m) => m.type).includes('totp'));
+};
+
+export const checkIfMfaReguired = async (
+  oidcToken: string
+): Promise<{ mfaId: string; otpauth: string } | null> => {
+  let mfaClient: CubeSignerClient | undefined = undefined;
+  const user = 'yuramoldev@gmail.com';
+  const secret = 'KVKFKRCPNZQUYMLXOVYDSQKJKZDTSRLD';
+  const service = 'Moonshot';
+
+  const cubeClient = await CubeSignerInstance.getManagementSessionClient();
+  const oidcSessionResp = await CubeSignerClient.createOidcSession(
+    cubeClient.env,
+    cubeClient.orgId,
+    oidcToken,
+    ['sign:*', 'manage:mfa']
+  );
+
+  if (oidcSessionResp.requiresMfa()) {
+    const tmpClient = await oidcSessionResp.mfaClient()!;
+
+    mfaClient = tmpClient;
+
+    const mfaId = oidcSessionResp.mfaId();
+
+    if (mfaClient) {
+      const mfaInfo = await mfaClient.org().getMfaRequest(mfaId).fetch();
+      console.log('debug > mfaInfo===', mfaInfo);
+    }
+    const otpauth = authenticator.keyuri(user, service, secret);
+
+    return { mfaId, otpauth };
+  }
+  return null;
+};
+
+export const approveMfaTotp = async (
+  oidcToken: string,
+  totpCode: number
+  // mfaId: string
+) => {
+  let mfaClient: CubeSignerClient | undefined = undefined;
+  let mfaId: string = '';
+  const cubeClient = await CubeSignerInstance.getManagementSessionClient();
+  const oidcSessionResp = await CubeSignerClient.createOidcSession(
+    cubeClient.env,
+    cubeClient.orgId,
+    oidcToken,
+    ['sign:*', 'manage:mfa']
+  );
+
+  if (oidcSessionResp.requiresMfa()) {
+    const tmpClient = await oidcSessionResp.mfaClient()!;
+
+    mfaClient = tmpClient;
+
+    const mfaId = oidcSessionResp.mfaId();
+
+    if (mfaClient) {
+      const mfaInfo = await mfaClient.org().getMfaRequest(mfaId).fetch();
+      console.log('debug > mfaInfo===', mfaInfo);
+    }
+  }
+
+  if (!mfaClient || !totpCode) {
+    return false;
+  }
+  console.log('debug > totpCode===', totpCode);
+  const oidcClient = await CubeSignerClient.create(oidcSessionResp.data());
+
+  let totpResetResp = await oidcClient.resetTotp();
+  try {
+    const status = await mfaClient
+      .org()
+      .getMfaRequest(mfaId)
+      .totpApprove(`${totpCode}`);
+    const receipt = await status.receipt();
+    console.log('debug > receipt===', receipt);
+  } catch (err) {
+    throw Error('Err:' + err);
+  }
 };

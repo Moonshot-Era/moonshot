@@ -1,11 +1,11 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { ChangeEvent, FC, useState } from 'react';
 import { Box, Checkbox, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 
-import { Button, Icon } from '@/legos';
+import { Button, Icon, Input, QrCodeImage } from '@/legos';
 import axios from 'axios';
 
 interface Props {
@@ -16,16 +16,87 @@ interface Props {
 
 export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   const [checked, setChecked] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const [mfaId, setMfaId] = useState('');
+  const [showQrCode, setShowQrCode] = useState(false);
+  const [totpCode, setTotpCode] = useState<number>();
+  const [showTotpCode, setShowTotpCode] = useState(false);
 
   const toggleChecked = () => setChecked(!checked);
 
+  const handleChangeTotpCode = (event: ChangeEvent<HTMLInputElement>) => {
+    setTotpCode(+event.target.value);
+  };
+
+  const handleCheckMfa = async () => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/mfa-check`
+    );
+    console.log('debug > res===', res?.data?.mfaId);
+    if (res?.data?.mfaId && res?.data?.qrCodeUrl) {
+      setQrCodeUrl(res.data.qrCodeUrl);
+      setMfaId(res?.data?.mfaId);
+      setShowQrCode(true);
+    }
+  };
+
+  const handleApproveMfa = async () => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/mfa-approve`,
+      {
+        totpCode,
+        mfaId
+      }
+    );
+    console.log('debug > res===', res?.data);
+    if (res?.data) {
+      setShowTotpCode(false);
+    }
+  };
+
   const handleExportKeys = async () => {
+    await handleCheckMfa();
     const res = await axios.post(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/cube/export-keys`
     );
     console.log('debug > res===', res);
   };
-  return (
+  return showQrCode && qrCodeUrl ? (
+    <Flex width="100%" direction="column" align="center">
+      <QrCodeImage value={qrCodeUrl} maxWidth={144} />
+      <Button
+        className="settings-export-button"
+        onClick={() => {
+          setShowTotpCode(true);
+          setShowQrCode(false);
+        }}
+      >
+        <Text size="2" weight="medium">
+          Continue
+        </Text>
+      </Button>
+    </Flex>
+  ) : showTotpCode ? (
+    <Flex width="100%" direction="column" align="center">
+      <Input
+        placeholder="6-digits code"
+        value={totpCode}
+        onChange={handleChangeTotpCode}
+        type={'number'}
+      />
+      <Button
+        disabled={!totpCode}
+        className="settings-export-button"
+        onClick={() => {
+          handleApproveMfa();
+        }}
+      >
+        <Text size="2" weight="medium">
+          Continue
+        </Text>
+      </Button>
+    </Flex>
+  ) : (
     <Flex width="100%" direction="column" align="center">
       <Flex
         position="relative"
