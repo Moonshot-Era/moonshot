@@ -8,7 +8,7 @@ export default async function Settings({ searchParams }: ServerPageProps) {
   return (
     <>
       <Header isPublic={!user?.id} />
-      <SettingsContent />;
+      <SettingsContent />
     </>
   );
 }
