@@ -11,6 +11,7 @@ import { formatNumberToUsd, isSolanaAddress } from '@/helpers/helpers';
 
 import './style.scss';
 import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
+import { Skeleton } from '../Skeleton/Skeleton';
 
 interface HomeContentProps {
   walletAddress: string;
@@ -44,7 +45,9 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
 
   const positiveBalance = portfolio?.totalUsd && portfolio.totalUsd > 0;
 
-  return isFetching ? null : (
+  return isFetching ? (
+    <Skeleton variant="home" />
+  ) : (
     <>
       <Flex
         direction="column"
