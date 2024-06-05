@@ -139,7 +139,7 @@ export interface OhlcvDataType {
     id: string;
     type: string;
     attributes: {
-      ohlcv_list: Array<number>;
+      ohlcv_list: Array<number[]>;
     };
   };
 }

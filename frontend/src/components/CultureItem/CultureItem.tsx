@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Flex, Text } from '@radix-ui/themes';
+import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -34,12 +34,13 @@ export const CultureItem = ({
 }) => {
   const router = useRouter();
   const { portfolio } = usePortfolio(walletAddress);
-  const { ohlcv } = useOhlcv(tokenData?.poolAddress);
+  const { ohlcv, isFetching: ohlcvLoading } = useOhlcv(tokenData?.poolAddress);
 
-  const chartData = ohlcv?.attributes.ohlcv_list.map((item: Array<number>) => ({
-    time: item[0],
-    value: item[5]
-  }));
+  const chartData: { time: number; value: number }[] | [] =
+    ohlcv?.attributes.ohlcv_list.map((item: Array<number[]>) => ({
+      time: item[0],
+      value: item[4]
+    })) || [];
 
   const asset = portfolio?.walletAssets?.find((item) =>
     isSolanaAddress(item?.id)
@@ -52,7 +53,7 @@ export const CultureItem = ({
       <Flex
         direction="column"
         align="center"
-        justify="center"
+        justify="start"
         width="100%"
         className="main-wrapper explore-wrapper"
       >
@@ -91,7 +92,9 @@ export const CultureItem = ({
               </Box>
             )}
           </Flex>
-          <CultureChart data={chartData} />
+          <Flex width="100%" height="200px" justify="center" align="center">
+            {ohlcvLoading ? <Spinner /> : <CultureChart data={chartData} />}
+          </Flex>
           {!isPublic && asset && portfolio && (
             <Toolbar portfolio={portfolio} withShare />
           )}
@@ -120,15 +123,17 @@ export const CultureItem = ({
                 justify="between"
                 align="end"
               >
-                {tokenInfo?.logoURI && <Flex position="relative" width="24px" height="24px">
-                  <Image
-                    className="border-radius-full"
-                    width={24}
-                    height={24}
-                    alt="Token logo"
-                    src={tokenInfo?.logoURI}
-                  />
-                </Flex>}
+                {tokenInfo?.logoURI && (
+                  <Flex position="relative" width="24px" height="24px">
+                    <Image
+                      className="border-radius-full"
+                      width={24}
+                      height={24}
+                      alt="Token logo"
+                      src={tokenInfo?.logoURI}
+                    />
+                  </Flex>
+                )}
                 <Text size="1" mt="1">
                   {asset?.token_info.balance} {asset?.token_info.symbol}
                 </Text>

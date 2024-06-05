@@ -7,8 +7,7 @@ export const getOhlcvData = async (poolAddress: string) => {
     }
 
     const network = 'solana';
-    const timeFrame = 'day';
-
+    const timeFrame = 'hour';
     const { data } = await axios.get(
       `${process.env.GECKO_URL_API}/onchain/networks/${network}/pools/${poolAddress}/ohlcv/${timeFrame}`,
       {
