@@ -7,7 +7,17 @@ import { TokenItemHeliusType } from '@/@types/helius';
 import { isSolanaAddress } from '@/helpers/helpers';
 import axios from 'axios';
 
-export interface WalletPortfolioAssetType extends TokenItemHeliusType {
+export interface WalletPortfolioAssetType {
+  address: string;
+  balance: number;
+  chainId: string;
+  decimals: number;
+  logoURI: string;
+  name: string;
+  priceUsd: number;
+  symbol: string;
+  uiAmount: number;
+  valueUsd: number;
   imageUrl: string;
   percentage_change_h24: any;
 }
@@ -75,7 +85,18 @@ export const getWalletPortfolio = async (walletAddress: string) => {
           )?.attributes?.price_change_percentage?.h24;
 
           return {
-            ...asset,
+            address: asset?.id,
+            balance:
+              asset?.token_info?.balance /
+              10 ** (asset?.token_info?.decimals || 1),
+            decimals: asset?.token_info?.decimals,
+            name: asset?.content?.metadata?.name || '',
+            priceUsd: asset?.token_info?.price_info?.price_per_token,
+            symbol: asset?.token_info?.symbol,
+            uiAmount:
+              asset?.token_info?.balance /
+              10 ** (asset?.token_info?.decimals || 1),
+            valueUsd: asset?.token_info?.price_info?.total_price,
             imageUrl: token?.image_url,
             percentage_change_h24
           };
@@ -89,7 +110,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       wallet: walletAddress
     };
   } catch (err) {
-    console.log('Error:', err.response);
+    console.log('Error:' + err);
   }
   return {};
 };

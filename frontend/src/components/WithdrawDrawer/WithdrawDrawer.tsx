@@ -45,8 +45,8 @@ export const WithdrawDrawer: FC<Props> = ({
         fromAddress: portfolio?.wallet,
         toAddress: toAddress,
         amount: amount,
-        tokenAddress: fromAsset?.id,
-        tokenDecimals: fromAsset?.token_info.decimals
+        tokenAddress: fromAsset?.address,
+        tokenDecimals: fromAsset?.decimals
       })
       .finally(handleClose);
   };

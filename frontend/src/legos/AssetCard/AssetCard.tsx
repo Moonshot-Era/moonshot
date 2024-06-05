@@ -12,6 +12,7 @@ interface Props {
 }
 
 export const AssetCard: FC<Props> = ({ asset, onClick }) => {
+  console.log('debug > asset===', asset);
   return (
     <Flex
       direction="row"
@@ -31,32 +32,30 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
       ) : null}
       <Flex direction="row">
         <Flex position="relative">
-          {(asset?.imageUrl || asset?.imageUrl) && (
+          {(asset?.logoURI || asset?.imageUrl) && (
             <Image
               alt="img"
               width={50}
               height={50}
-              src={asset?.imageUrl || asset?.imageUrl}
+              src={asset?.logoURI || asset?.imageUrl}
               style={{ borderRadius: '50%', height: 50, width: 50 }}
             />
           )}
         </Flex>
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size="3" weight="medium">
-            {asset?.content.metadata.name}
+            {asset?.name}
           </Text>
           <Text size="1" weight="regular">
-            {asset?.token_info.supply} {asset?.token_info.symbol}
+            {asset?.uiAmount} {asset?.symbol}
           </Text>
         </Flex>
       </Flex>
       <Flex direction="row" align="center" my="1">
-        {!!asset?.token_info.price_info.price_per_token && (
+        {!!asset?.valueUsd && (
           <Flex direction="column" justify="between" align="end" height="40px">
             <Text size="3" weight="medium">
-              {formatNumberToUsd().format(
-                asset?.token_info.price_info.price_per_token
-              )}
+              {formatNumberToUsd().format(asset?.valueUsd)}
             </Text>
             {asset?.percentage_change_h24 && (
               <Flex direction="row" align="center" gap="1">

@@ -43,9 +43,9 @@ export const CultureItem = ({
     })) || [];
 
   const asset = portfolio?.walletAssets?.find((item) =>
-    isSolanaAddress(item?.id)
-      ? isSolanaAddress(item?.id) === tokenInfo?.address
-      : item?.id === tokenInfo?.address
+    isSolanaAddress(item?.address)
+      ? isSolanaAddress(item?.address) === tokenInfo?.address
+      : item?.address === tokenInfo?.address
   );
 
   return tokenInfo ? (
@@ -111,10 +111,7 @@ export const CultureItem = ({
                   Your balance
                 </Text>
                 <Text size="2" weight="medium">
-                  {formatNumberToUsd().format(
-                    asset?.token_info.price_info.total_price *
-                      asset?.token_info.balance
-                  )}
+                  {formatNumberToUsd().format(asset?.valueUsd)}
                 </Text>
               </Flex>
               <Flex
@@ -135,7 +132,7 @@ export const CultureItem = ({
                   </Flex>
                 )}
                 <Text size="1" mt="1">
-                  {asset?.token_info.balance} {asset?.token_info.symbol}
+                  {asset?.uiAmount} {asset?.symbol}
                 </Text>
               </Flex>
             </Flex>

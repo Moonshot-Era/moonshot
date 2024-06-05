@@ -22,7 +22,7 @@ export const WithdrawList: FC<Props> = ({ toggleTransfer, walletAssets }) => (
     <Flex width="100%" direction="column" gap="4">
       {walletAssets?.map((asset) => (
         <AssetCard
-          key={asset.id}
+          key={asset.address}
           asset={asset}
           onClick={() => toggleTransfer(asset)}
         />

@@ -8,9 +8,9 @@ import { Toolbar } from '../Toolbar/Toolbar';
 import { BadgeSecond, AssetCard } from '@/legos';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { formatNumberToUsd, isSolanaAddress } from '@/helpers/helpers';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 import './style.scss';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 
 interface HomeContentProps {
   walletAddress: string;
