@@ -86,7 +86,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const handleSubmitWithdrawal = async () => {
     try {
       const { data: isSolanaWallet } = await axios.post(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/validate-wallet`,
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/validate-wallet`,
         {
           wallet: toAddress
         }

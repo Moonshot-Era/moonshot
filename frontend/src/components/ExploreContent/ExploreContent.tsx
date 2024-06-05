@@ -29,7 +29,7 @@ export const ExploreContent = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isFetchedAfterMount: poolListFetching
+    isSuccess
   } = usePoolsList();
   const {
     searchPools,
@@ -126,7 +126,7 @@ export const ExploreContent = () => {
     };
   }, [handleTokensListScroll]);
 
-  return !poolListFetching ? (
+  return !isSuccess ? (
     <Skeleton variant="explore" />
   ) : (
     <Flex
