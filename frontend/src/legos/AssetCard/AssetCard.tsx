@@ -12,7 +12,6 @@ interface Props {
 }
 
 export const AssetCard: FC<Props> = ({ asset, onClick }) => {
-  console.log('debug > asset===', asset);
   return (
     <Flex
       direction="row"
