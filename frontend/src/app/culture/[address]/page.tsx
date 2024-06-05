@@ -28,7 +28,7 @@ export default async function CultureItemPage({
   );
 
   const { data: walletData } = await axios.post(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/cube/get-wallet`,
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-wallet`,
     {
       oidc
     }
