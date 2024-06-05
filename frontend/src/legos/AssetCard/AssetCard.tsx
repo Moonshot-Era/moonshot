@@ -1,10 +1,10 @@
-import Image from 'next/image';
-import React, { FC } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
+import Image from 'next/image';
+import { FC } from 'react';
 
-import { Icon } from '../Icon';
 import { formatNumberToUsd } from '@/helpers/helpers';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
+import { Icon } from '../Icon';
 
 interface Props {
   asset?: WalletPortfolioAssetType;

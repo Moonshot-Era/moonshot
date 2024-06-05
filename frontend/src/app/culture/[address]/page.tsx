@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
 
+import { CultureError } from '@/components/CultureError/CultureError';
 import { CultureItem } from '@/components/CultureItem/CultureItem';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
-import { CultureError } from '@/components/CultureError/CultureError';
 
 export default async function CultureItemPage({
   params,
@@ -13,9 +13,14 @@ export default async function CultureItemPage({
   const oidc = cookies()?.get('pt')?.value;
 
   const tokenAddress = params?.address;
-
-  const { data: tokenData } = await axios.post(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/get-token-overview`,
+  const { data: tokenOverview } = await axios.post(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-overview`,
+    {
+      tokenAddress
+    }
+  );
+  const { data: tokenInfo } = await axios.post(
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-info`,
     {
       tokenAddress
     }
@@ -30,10 +35,11 @@ export default async function CultureItemPage({
 
   return (
     <>
-      {tokenData?.token.name ? (
+      {tokenInfo?.name ? (
         <CultureItem
           isPublic={!user?.id}
-          tokenItem={tokenData?.token}
+          tokenData={tokenOverview}
+          tokenInfo={tokenInfo}
           walletAddress={walletData?.wallet}
         />
       ) : (
