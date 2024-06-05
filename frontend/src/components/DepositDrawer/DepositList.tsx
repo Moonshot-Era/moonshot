@@ -18,7 +18,7 @@ export const DepositList: FC<Props> = ({
   walletAddress,
 }) => {
   const formConfiguration = {
-    apiKey: 'pk_fad9eca9a5a5dba43bf2294041f58526',
+    apiKey: 'pk_1062bb2f9ad6f30c76933e612bf29007',
     walletAddress
   };
   const handleShowShift4Form =
