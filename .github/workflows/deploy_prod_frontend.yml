@@ -31,6 +31,9 @@ env:
   
   JUPITER_URL: ${{ secrets.JUPITER_URL }}
 
+  HELIUS_URL_API: ${{ secrets.HELIUS_URL_API }}
+  HELIUS_API_KEY:  ${{ secrets.HELIUS_API_KEY }}
+
 
   
 jobs:
