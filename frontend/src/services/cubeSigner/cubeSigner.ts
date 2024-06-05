@@ -95,9 +95,10 @@ export const getUserWallet = async (
       throw Error('Wallet not created');
     }
   } catch (err: any) {
-    console.log('debug > err ==== ', JSON.stringify(err));
     if (Error(`${err}`).message.includes('Forbidden')) {
       await axios.post(`${process.env.SITE_URL}/auth/logout`);
+    } else {
+      console.log('err while getting wallet ==== ', JSON.stringify(err));
     }
     throw err;
   }

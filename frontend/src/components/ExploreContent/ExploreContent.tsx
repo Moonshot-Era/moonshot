@@ -18,13 +18,19 @@ import { useSearchPools } from '@/hooks/useSearchPools';
 import { usePoolsList } from '@/hooks/useTrendingPoolsList';
 
 import './style.scss';
+import { Skeleton } from '../Skeleton/Skeleton';
 
 export const ExploreContent = () => {
   const router = useRouter();
   const [search, setSearch] = useState('');
 
-  const { poolsList, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    usePoolsList();
+  const {
+    poolsList,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isFetchedAfterMount: poolListFetching
+  } = usePoolsList();
   const {
     searchPools,
     fetchNextPage: searchFetchNextPage,
@@ -120,78 +126,78 @@ export const ExploreContent = () => {
     };
   }, [handleTokensListScroll]);
 
-  return (
-    <>
+  return !poolListFetching ? (
+    <Skeleton variant="explore" />
+  ) : (
+    <Flex
+      className="main-wrapper explore-wrapper"
+      direction="column"
+      align="center"
+      justify="center"
+      width="100%"
+    >
       <Flex
-        className="main-wrapper explore-wrapper"
-        direction="column"
-        align="center"
-        justify="center"
         width="100%"
+        height="100%"
+        direction="column"
+        gap="4"
+        position="relative"
       >
+        <Box pr="2">
+          <Input
+            placeholder="Search assets"
+            type="search"
+            icon="search"
+            value={search}
+            onChange={handleSearchChange}
+          />
+        </Box>
         <Flex
+          ref={scrollerRef}
           width="100%"
-          height="100%"
           direction="column"
           gap="4"
-          position="relative"
+          overflow="auto"
+          pr="3"
+          pb="2"
         >
-          <Box pr="2">
-            <Input
-              placeholder="Search assets"
-              type="search"
-              icon="search"
-              value={search}
-              onChange={handleSearchChange}
-            />
-          </Box>
-          <Flex
-            ref={scrollerRef}
-            width="100%"
-            direction="column"
-            gap="4"
-            overflow="auto"
-            pr="3"
-            pb="2"
-          >
-            {isFetching && (
-              <Flex
-                className="sticky-spinner"
-                top="0"
-                align="center"
-                justify="center"
-              >
-                <Spinner size="3" />
-              </Flex>
-            )}
-            {search && searchPools?.length
-              ? searchPools?.map((pool) => (
-                  <TokenCard
-                    key={pool?.id}
-                    token={pool}
-                    onClick={() => handleGoToDetails(pool)}
-                  />
-                ))
-              : poolsList?.map((pool) => (
-                  <TokenCard
-                    key={pool?.id}
-                    token={pool}
-                    onClick={() => handleGoToDetails(pool)}
-                  />
-                ))}
-            {(isFetchingNextPage || isFetching) && (
-              <Flex
-                className="sticky-spinner"
-                align="center"
-                justify="center"
-                pb="5"
-              >
-                <Spinner size="3" />
-              </Flex>
-            )}
-          </Flex>
+          {isFetching && (
+            <Flex
+              className="sticky-spinner"
+              top="0"
+              align="center"
+              justify="center"
+            >
+              <Spinner size="3" />
+            </Flex>
+          )}
+          {search && searchPools?.length
+            ? searchPools?.map((pool) => (
+                <TokenCard
+                  key={pool?.id}
+                  token={pool}
+                  onClick={() => handleGoToDetails(pool)}
+                />
+              ))
+            : poolsList?.map((pool) => (
+                <TokenCard
+                  key={pool?.id}
+                  token={pool}
+                  onClick={() => handleGoToDetails(pool)}
+                />
+              ))}
+          {(isFetchingNextPage || isFetching) && (
+            <Flex
+              className="sticky-spinner"
+              align="center"
+              justify="center"
+              pb="5"
+            >
+              <Spinner size="3" />
+            </Flex>
+          )}
         </Flex>
       </Flex>
-    </>
+    </Flex>
   );
 };

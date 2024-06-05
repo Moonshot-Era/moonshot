@@ -7,14 +7,14 @@ import {
   PointElement
 } from 'chart.js';
 import { Filler } from 'chart.js';
-import { createChart, ColorType } from 'lightweight-charts';
+import { createChart, ColorType, Time, AreaData } from 'lightweight-charts';
 
 ChartJS.register(Filler);
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 interface CultureChartProps {
-  data: Array<{ time: string; value: number }>;
+  data: Array<{ time: number; value: number }>;
 }
 
 export const CultureChart = ({ data }: CultureChartProps) => {
@@ -57,7 +57,11 @@ export const CultureChart = ({ data }: CultureChartProps) => {
       visible: false
     });
 
-    lineSeries.setData(data);
+    const orderedData = data.sort((a, b) => {
+      return a.time - b.time;
+    });
+
+    lineSeries.setData(orderedData as unknown as AreaData<Time>[]);
 
     return () => chart.remove();
   }, [data]);

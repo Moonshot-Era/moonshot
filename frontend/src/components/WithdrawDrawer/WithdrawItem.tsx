@@ -6,8 +6,8 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon, Input, SlideButton } from '@/legos';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 import { formatNumberToUsd } from '@/helpers/helpers';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 
 interface WithdrawItemProps {
   asset?: WalletPortfolioAssetType;
@@ -88,7 +88,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
       const { data: isSolanaWallet } = await axios.post(
         `${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/validate-wallet`,
         {
-          wallet: toAddress,
+          wallet: toAddress
         }
       );
       if (!isSolanaWallet) {
@@ -131,7 +131,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
               maxWidth: '100%',
               overflow: 'hidden',
               textWrap: 'nowrap',
-              textOverflow: 'ellipsis',
+              textOverflow: 'ellipsis'
             }}
           >
             {amountInputInUsd

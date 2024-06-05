@@ -1,37 +1,31 @@
-import axios from "axios";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import axios from 'axios';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
-import { createBrowserClient } from '@/supabase/client';
-import { logout } from '@/utils';
 
 export default async function Home({ searchParams }: ServerPageProps) {
-  await checkProtectedRoute(searchParams);
-  const supabaseClient = createBrowserClient();
-  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = await checkProtectedRoute(searchParams);
 
-  const userId = sessionData.session?.user?.id;
-  const oidc = cookies()?.get("pt")?.value;
+  const oidc = cookies()?.get('pt')?.value;
 
   const { data: walletData } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/cube/get-wallet`,
     {
-      oidc,
+      oidc
     }
   );
 
   if (!walletData?.wallet) {
-    logout().then(() => {
-      redirect("/login");
-    });
+    redirect('/logout');
   }
 
   return (
     <>
-      <HomeContent walletAddress={walletData?.wallet} userId={userId} />
+      <Header isPublic={!user?.id} />
+      <HomeContent walletAddress={walletData?.wallet} userId={user?.id} />
     </>
   );
 }

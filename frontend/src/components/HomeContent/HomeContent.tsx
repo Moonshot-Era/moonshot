@@ -8,9 +8,10 @@ import { Toolbar } from '../Toolbar/Toolbar';
 import { BadgeSecond, AssetCard } from '@/legos';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { formatNumberToUsd, isSolanaAddress } from '@/helpers/helpers';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 import './style.scss';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
+import { Skeleton } from '../Skeleton/Skeleton';
 
 interface HomeContentProps {
   walletAddress: string;
@@ -44,7 +45,9 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
 
   const positiveBalance = portfolio?.totalUsd && portfolio.totalUsd > 0;
 
-  return isFetching ? null : (
+  return isFetching ? (
+    <Skeleton variant="home" />
+  ) : (
     <>
       <Flex
         direction="column"

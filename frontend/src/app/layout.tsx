@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next';
+import { Toaster } from 'sonner';
 import Script from 'next/script';
 import localFont from 'next/font/local';
 import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
-import { ReactQueryProvider } from '@/helpers/ReactQueryProvider'
+import { ReactQueryProvider } from '@/helpers/ReactQueryProvider';
 
 import './globals.scss';
 import './globals.css';
@@ -20,19 +21,19 @@ const clashDisplayFont = localFont({
     {
       path: '../assets/fonts/ClashDisplay-Regular.woff2',
       weight: '400',
-      style: 'normal',
+      style: 'normal'
     },
     {
       path: '../assets/fonts/ClashDisplay-Medium.woff2',
       weight: '500',
-      style: 'normal',
+      style: 'normal'
     },
     {
       path: '../assets/fonts/ClashDisplay-Semibold.woff2',
       weight: '600',
-      style: 'normal',
-    },
-  ],
+      style: 'normal'
+    }
+  ]
 });
 
 export const metadata: Metadata = {
@@ -45,13 +46,13 @@ export const metadata: Metadata = {
   authors: [{ name: 'Moonshot' }],
   icons: [
     { rel: 'apple-touch-icon', url: 'icons/icon-128x128.png' },
-    { rel: 'icon', url: 'icons/icon-128x128.png' },
+    { rel: 'icon', url: 'icons/icon-128x128.png' }
   ],
   openGraph: {
     images: {
-      url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/og-image`,
-    },
-  },
+      url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/og-image`
+    }
+  }
 };
 
 export const viewport: Viewport = {
@@ -59,11 +60,11 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
   minimumScale: 1,
   initialScale: 1,
-  width: 'device-width',
+  width: 'device-width'
 };
 
 export default function RootLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
@@ -77,12 +78,10 @@ export default function RootLayout({
         <Script
           src={`https://progressier.app/${process.env.NEXT_PUBLIC_PROGRESSIER_ID}/script.js`}
         />
-        <Script
-          src={`https://crypto.shift4.com/sdk/v1/shift4crypto-sdk-latest.js`}
-        />
+        <Script src={`${process.env.SHIFT4_URL}/shift4crypto-sdk-latest.js`} />
+        <Toaster />
         <ServiceWorkerRegister />
         <SplashScreen />
-        <Header />
         <ReactQueryProvider>
           <Theme className="bg-transparent">{children}</Theme>
         </ReactQueryProvider>
