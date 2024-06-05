@@ -6,8 +6,8 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon, Input, SlideButton } from '@/legos';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 import { formatNumberToUsd } from '@/helpers/helpers';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 
 interface WithdrawItemProps {
   asset?: WalletPortfolioAssetType;

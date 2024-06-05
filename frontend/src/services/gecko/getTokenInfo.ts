@@ -1,4 +1,3 @@
-import { TokenOverviewBirdEyeType } from '@/@types/birdeye';
 import axios from 'axios';
 
 export interface NormilizedTokenInfoOverview {

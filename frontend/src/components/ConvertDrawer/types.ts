@@ -1,6 +1,5 @@
-import { TokenItemBirdEyeType } from '@/@types/birdeye';
 import { PoolGeckoType } from '@/@types/gecko';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 
 export type SelectedTokens =
   | {

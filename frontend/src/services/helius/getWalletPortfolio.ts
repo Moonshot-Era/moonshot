@@ -10,7 +10,6 @@ import axios from 'axios';
 export interface WalletPortfolioAssetType {
   address: string;
   balance: number;
-  chainId: string;
   decimals: number;
   logoURI: string;
   name: string;
