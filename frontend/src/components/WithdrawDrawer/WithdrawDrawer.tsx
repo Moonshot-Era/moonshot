@@ -41,7 +41,7 @@ export const WithdrawDrawer: FC<Props> = ({
     amount: number | string
   ) => {
     await axios
-      .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/solana/send-tx`, {
+      .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
         fromAddress: portfolio?.wallet,
         toAddress: toAddress,
         amount: amount,

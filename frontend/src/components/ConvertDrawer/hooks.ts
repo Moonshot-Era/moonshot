@@ -9,20 +9,21 @@ const fetchSwapRoutes = (
   outputMint: string,
   amount: string | number,
   slippageBps: number
-): Promise<SwapRoute[]> => axios
-  .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jupiter/get-swap-routes`, {
-    inputMint,
-    outputMint,
-    amount,
-    slippageBps,
-  })
-  .then((response) => response.data?.swapRoutes);
+): Promise<SwapRoute[]> =>
+  axios
+    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/get-swap-routes`, {
+      inputMint,
+      outputMint,
+      amount,
+      slippageBps
+    })
+    .then((response) => response.data?.swapRoutes);
 
 
-const swapTokens = (swapRoutes: void) => axios
-  .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/jupiter/swap-tokens`, {
-    swapRoutes,
-  })
+const swapTokens = (swapRoutes: void) =>
+  axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/swap-tokens`, {
+    swapRoutes
+  });
 
 export const useSwapRoutes = (
   { from, to }: SelectedTokens,
