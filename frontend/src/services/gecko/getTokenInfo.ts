@@ -1,6 +1,16 @@
 import { TokenOverviewBirdEyeType } from '@/@types/birdeye';
 import axios from 'axios';
 
+export interface NormilizedTokenInfoOverview {
+  name: string;
+  address: string;
+  logoURI?: string;
+  description?: string;
+  telegramUrl?: string;
+  twitterUrl?: string;
+  websiteUrl?: string;
+}
+
 export const getTokenInfo = async (tokenAddress: string) => {
   try {
     const network = 'solana';
@@ -13,21 +23,23 @@ export const getTokenInfo = async (tokenAddress: string) => {
         }
       }
     );
-    const normalizedTokenData = {
+    const normalizedTokenData: NormilizedTokenInfoOverview = {
       name: tokenData.data.attributes.name,
       address: tokenData.data.attributes.address,
       logoURI: tokenData.data.attributes.image_url,
-      extensions: {
-        description: tokenData.data.attributes.description,
-        telegram: tokenData.data.attributes.telegram_handle,
-        twitter: tokenData.data.attributes.twitter_handle,
-        website: tokenData.data.attributes.websites[0]
-      }
+      description: tokenData.data.attributes.description,
+      telegramUrl: tokenData.data.attributes.telegram_handle
+        ? `https://t.me/${tokenData.data.attributes.telegram_handle}`
+        : '',
+      twitterUrl: tokenData.data.attributes.twitter_handle
+        ? `https://x.com/${tokenData.data.attributes.twitter_handle}`
+        : '',
+      websiteUrl: tokenData.data.attributes.websites[0]
     };
 
     return normalizedTokenData;
   } catch (err) {
     console.log('Error', err);
   }
-  return {} as TokenOverviewBirdEyeType;
+  return {};
 };

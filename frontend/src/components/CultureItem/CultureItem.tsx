@@ -4,7 +4,6 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { TokenOverviewBirdEyeType } from '@/@types/birdeye';
 import {
   formatCashNumber,
   formatNumberToUsFormat,
@@ -19,6 +18,8 @@ import { usePortfolio } from '@/hooks/usePortfolio';
 import { useRouter } from 'next/navigation';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
+import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
+import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 
 export const CultureItem = ({
   tokenInfo,
@@ -26,15 +27,14 @@ export const CultureItem = ({
   isPublic,
   walletAddress
 }: {
-  tokenData: any;
-  tokenInfo: TokenOverviewBirdEyeType;
+  tokenData: NormilizedTokenDataOverview;
+  tokenInfo: NormilizedTokenInfoOverview;
   isPublic?: boolean;
   walletAddress?: string;
 }) => {
   const router = useRouter();
   const { portfolio } = usePortfolio(walletAddress);
-  const poolAddress = tokenData.top_pools[0].id.replace('solana_', '');
-  const { ohlcv } = useOhlcv(poolAddress);
+  const { ohlcv } = useOhlcv(tokenData?.poolAddress);
 
   const chartData = ohlcv?.attributes.ohlcv_list.map((item: Array<number>) => ({
     time: item[0],
@@ -66,15 +66,17 @@ export const CultureItem = ({
             mb="8"
             gap="3"
           >
-            <Flex position="relative" width="24px" height="24px">
-              <Image
-                className="border-radius-full"
-                width={24}
-                height={24}
-                alt="Token logo"
-                src={tokenInfo?.logoURI}
-              />
-            </Flex>
+            {tokenInfo?.logoURI && (
+              <Flex position="relative" width="24px" height="24px">
+                <Image
+                  className="border-radius-full"
+                  width={24}
+                  height={24}
+                  alt="Token logo"
+                  src={tokenInfo?.logoURI}
+                />
+              </Flex>
+            )}
             <Text size="4" weight="bold">
               {tokenInfo.name}
             </Text>
@@ -90,7 +92,6 @@ export const CultureItem = ({
             )}
           </Flex>
           <CultureChart data={chartData} />
-          {/* TODO Check user asset and add data */}
           {!isPublic && asset && portfolio && (
             <Toolbar portfolio={portfolio} withShare />
           )}
@@ -119,7 +120,7 @@ export const CultureItem = ({
                 justify="between"
                 align="end"
               >
-                <Flex position="relative" width="24px" height="24px">
+                {tokenInfo?.logoURI && <Flex position="relative" width="24px" height="24px">
                   <Image
                     className="border-radius-full"
                     width={24}
@@ -127,7 +128,7 @@ export const CultureItem = ({
                     alt="Token logo"
                     src={tokenInfo?.logoURI}
                   />
-                </Flex>
+                </Flex>}
                 <Text size="1" mt="1">
                   {asset?.token_info.balance} {asset?.token_info.symbol}
                 </Text>
@@ -146,7 +147,9 @@ export const CultureItem = ({
               weight="medium"
               mb="2"
             >{`About ${tokenInfo.name}`}</Text>
-            <Text size="1">{tokenInfo.extensions?.description}</Text>
+            {tokenInfo?.description && (
+              <Text size="1">{tokenInfo?.description}</Text>
+            )}
           </Flex>
           <Flex
             direction="column"
@@ -160,80 +163,89 @@ export const CultureItem = ({
                 Stats
               </Text>
               <Flex direction="row" gap="1">
-                <Link
-                  href={`https://t.me/${tokenInfo?.extensions?.telegram}`}
-                  target="_blank"
-                >
-                  <Icon icon="telegram" width={16} height={16} />
-                </Link>
-                <Link
-                  href={`https://x.com/${tokenInfo?.extensions?.twitter}`}
-                  target="_blank"
-                >
-                  <Icon icon="twitter" width={16} height={16} />
-                </Link>
-                <Link
-                  href={`${tokenInfo?.extensions?.website}`}
-                  target="_blank"
-                >
-                  <Icon icon="monitor" width={16} height={16} />
-                </Link>
+                {tokenInfo?.telegramUrl && (
+                  <Link href={tokenInfo?.telegramUrl} target="_blank">
+                    <Icon icon="telegram" width={16} height={16} />
+                  </Link>
+                )}
+                {tokenInfo?.twitterUrl && (
+                  <Link href={tokenInfo?.twitterUrl} target="_blank">
+                    <Icon icon="twitter" width={16} height={16} />
+                  </Link>
+                )}
+                {tokenInfo?.websiteUrl && (
+                  <Link href={`${tokenInfo?.websiteUrl}`} target="_blank">
+                    <Icon icon="monitor" width={16} height={16} />
+                  </Link>
+                )}
               </Flex>
             </Flex>
 
-            <Flex direction="row" justify="between" align="center">
-              <Flex direction="row" gap="1">
-                <Icon icon="chartPie" width={14} height={14} />
-                <Text size="1" weight="medium">
-                  Market cap
+            {!!tokenData?.mc && (
+              <Flex direction="row" justify="between" align="center">
+                <Flex direction="row" gap="1">
+                  <Icon icon="chartPie" width={14} height={14} />
+                  <Text size="1" weight="medium">
+                    Market cap
+                  </Text>
+                </Flex>
+                <Text size="1">
+                  {formatCashNumber().format(+tokenData?.mc)}
                 </Text>
               </Flex>
-              <Text size="1">{formatCashNumber().format(tokenData?.mc)}</Text>
-            </Flex>
-            <Flex direction="row" justify="between" align="center">
-              <Flex direction="row" gap="1">
-                <Icon icon="chartBar" width={14} height={14} />
-                <Text size="1" weight="medium">
-                  24H volume
+            )}
+            {!!tokenData?.v24hUSD && (
+              <Flex direction="row" justify="between" align="center">
+                <Flex direction="row" gap="1">
+                  <Icon icon="chartBar" width={14} height={14} />
+                  <Text size="1" weight="medium">
+                    24H volume
+                  </Text>
+                </Flex>
+                <Text size="1">
+                  {formatCashNumber().format(+tokenData?.v24hUSD)}
                 </Text>
               </Flex>
-              <Text size="1">
-                {formatCashNumber().format(tokenData?.v24hUSD)}
-              </Text>
-            </Flex>
-            <Flex direction="row" justify="between" align="center">
-              <Flex direction="row" gap="1">
-                <Icon icon="chartLine" width={14} height={14} />
-                <Text size="1" weight="medium">
-                  Liquidity
+            )}
+            {!!tokenData?.liquidity && (
+              <Flex direction="row" justify="between" align="center">
+                <Flex direction="row" gap="1">
+                  <Icon icon="chartLine" width={14} height={14} />
+                  <Text size="1" weight="medium">
+                    Liquidity
+                  </Text>
+                </Flex>
+                <Text size="1">
+                  {formatCashNumber().format(+tokenData?.liquidity)}
                 </Text>
               </Flex>
-              <Text size="1">
-                {formatCashNumber().format(tokenData?.liquidity)}
-              </Text>
-            </Flex>
-            <Flex direction="row" justify="between" align="center">
-              <Flex direction="row" gap="1">
-                <Icon icon="coins" width={14} height={14} />
-                <Text size="1" weight="medium">
-                  Total supply
+            )}
+            {!!tokenData?.supply && (
+              <Flex direction="row" justify="between" align="center">
+                <Flex direction="row" gap="1">
+                  <Icon icon="coins" width={14} height={14} />
+                  <Text size="1" weight="medium">
+                    Total supply
+                  </Text>
+                </Flex>
+                <Text size="1">
+                  {formatNumberToUsFormat().format(+tokenData?.supply)}
                 </Text>
               </Flex>
-              <Text size="1">
-                {formatNumberToUsFormat().format(tokenData?.supply)}
-              </Text>
-            </Flex>
-            <Flex direction="row" justify="between" align="center">
-              <Flex direction="row" gap="1">
-                <Icon icon="wallet" width={14} height={14} stroke={'2'} />
-                <Text size="1" weight="medium">
-                  Holders
+            )}
+            {!!tokenData?.holder && (
+              <Flex direction="row" justify="between" align="center">
+                <Flex direction="row" gap="1">
+                  <Icon icon="wallet" width={14} height={14} stroke={'2'} />
+                  <Text size="1" weight="medium">
+                    Holders
+                  </Text>
+                </Flex>
+                <Text size="1">
+                  {formatNumberToUsFormat().format(tokenData?.holder)}
                 </Text>
               </Flex>
-              <Text size="1">
-                {formatNumberToUsFormat().format(tokenData?.holder)}
-              </Text>
-            </Flex>
+            )}
           </Flex>
         </Flex>
       </Flex>
