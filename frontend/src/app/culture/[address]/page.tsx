@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
 
-import { CultureError } from '@/components/CultureError/CultureError';
-import { CultureItem } from '@/components/CultureItem/CultureItem';
+import { Header } from '@/components/Header/Header';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
+import { CultureItem } from '@/components/CultureItem/CultureItem';
+import { CultureError } from '@/components/CultureError/CultureError';
 
 export default async function CultureItemPage({
   params,
@@ -35,6 +36,7 @@ export default async function CultureItemPage({
 
   return (
     <>
+      <Header isPublic={!user?.id} />
       {tokenInfo?.name ? (
         <CultureItem
           isPublic={!user?.id}

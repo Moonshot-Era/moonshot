@@ -5,14 +5,10 @@ import { redirect } from 'next/navigation';
 import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
-import { createBrowserClient } from '@/supabase/client';
 
 export default async function Home({ searchParams }: ServerPageProps) {
-  await checkProtectedRoute(searchParams);
-  const supabaseClient = createBrowserClient();
-  const { data: sessionData } = await supabaseClient.auth.getSession();
+  const user = await checkProtectedRoute(searchParams);
 
-  const userId = sessionData.session?.user?.id;
   const oidc = cookies()?.get('pt')?.value;
 
   const { data: walletData } = await axios.post(
@@ -28,7 +24,8 @@ export default async function Home({ searchParams }: ServerPageProps) {
 
   return (
     <>
-      <HomeContent walletAddress={walletData?.wallet} userId={userId} />
+      <Header isPublic={!user?.id} />
+      <HomeContent walletAddress={walletData?.wallet} userId={user?.id} />
     </>
   );
 }

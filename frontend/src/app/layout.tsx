@@ -82,7 +82,6 @@ export default function RootLayout({
         <Toaster />
         <ServiceWorkerRegister />
         <SplashScreen />
-        <Header />
         <ReactQueryProvider>
           <Theme className="bg-transparent">{children}</Theme>
         </ReactQueryProvider>

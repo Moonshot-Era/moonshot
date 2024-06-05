@@ -1,8 +1,14 @@
 import { ExploreContent } from '@/components/ExploreContent/ExploreContent';
+import { Header } from '@/components/Header/Header';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
 
 export default async function Explore({ searchParams }: ServerPageProps) {
-  await checkProtectedRoute(searchParams);
+  const user = await checkProtectedRoute(searchParams);
 
-  return <ExploreContent />;
+  return (
+    <>
+      <Header isPublic={!user?.id} />
+      <ExploreContent />;
+    </>
+  );
 }
