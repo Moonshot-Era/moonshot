@@ -8,6 +8,7 @@ import {
   WalletPortfolioAssetType,
   WalletPortfolioNormilizedType
 } from '@/services/helius/getWalletPortfolio';
+import { createBrowserClient } from '@/supabase/client';
 import { WithdrawItem } from './WithdrawItem';
 import { WithdrawList } from './WithdrawList';
 import './style.scss';
@@ -40,6 +41,7 @@ export const WithdrawDrawer: FC<Props> = ({
     toAddress: string,
     amount: number | string
   ) => {
+    const supabaseClient = createBrowserClient();
     await axios
       .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
         fromAddress: portfolio?.wallet,
@@ -47,6 +49,20 @@ export const WithdrawDrawer: FC<Props> = ({
         amount: amount,
         tokenAddress: fromAsset?.address,
         tokenDecimals: fromAsset?.decimals
+      })
+      .then(async () => {
+        await supabaseClient.from('transactions').insert({
+          created_at: new Date().toISOString(),
+          user_id: '',
+          token_name: fromAsset?.name,
+          token_address: fromAsset?.address,
+          token_amount: amount,
+          token_price: '',
+          transaction_type: 'sell',
+          image_url: fromAsset?.imageUrl,
+          // ?
+          wallet_address: toAddress
+        });
       })
       .finally(handleClose);
   };
