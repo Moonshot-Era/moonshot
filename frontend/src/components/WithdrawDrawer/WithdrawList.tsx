@@ -1,11 +1,11 @@
 'use client';
 
-import { FC } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
+import { FC } from 'react';
 
+import { AssetCard, Input } from '@/legos';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 import './style.scss';
-import { Input, AssetCard } from '@/legos';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 interface Props {
   toggleTransfer: (address: WalletPortfolioAssetType) => void;

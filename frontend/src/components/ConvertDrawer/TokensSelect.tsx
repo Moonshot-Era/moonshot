@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce';
 import './style.scss';
 import { PoolGeckoType } from '@/@types/gecko';
 import { AssetCard, Input, TokenCard } from '@/legos';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 
 interface Props {
   tokensList: WalletPortfolioAssetType[] | PoolGeckoType[];

@@ -10,10 +10,16 @@ export const checkProtectedRoute = async (
   forceRedirect: boolean = true
 ) => {
   const supabaseClient = createServerClient();
+  const header = headers();
+  const pathname = header.get('x-pathname');
 
   const {
-    data: { user },
+    data: { user }
   } = await supabaseClient.auth.getUser();
+
+  if (!user && pathname?.includes('culture')) {
+    return null;
+  }
 
   if (!user) {
     const cultureRef = searchParams
@@ -26,8 +32,6 @@ export const checkProtectedRoute = async (
       }`
     );
   }
-  const header = headers();
-  const pathname = header.get('x-pathname');
 
   const { data } = await supabaseClient
     .from('profiles')

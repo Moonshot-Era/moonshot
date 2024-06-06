@@ -10,10 +10,10 @@ const fetchSearchPools = (
   page: number = 1
 ): Promise<PoolGeckoType[]> =>
   axios
-    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/gecko/search-pools`, {
+    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/search-pools`, {
       query,
       page,
-      withTokensOverview,
+      withTokensOverview
     })
     .then((response) =>
       response.data?.searchPoolsData?.data?.map((tokenData: PoolGeckoType) => ({
@@ -23,13 +23,14 @@ const fetchSearchPools = (
             return id === tokenData.relationships.base_token.data.id;
           }
         ),
-        tokenOverview: response?.data?.searchPoolsData?.tokensOverview?.data.find(
-          (overview: GeckoTokenOverview) => {
-            return (
-              overview?.id === tokenData.relationships.base_token.data.id
-            );
-          }
-        )
+        tokenOverview:
+          response?.data?.searchPoolsData?.tokensOverview?.data.find(
+            (overview: GeckoTokenOverview) => {
+              return (
+                overview?.id === tokenData.relationships.base_token.data.id
+              );
+            }
+          )
       }))
     );
 

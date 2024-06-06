@@ -5,7 +5,6 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 import './style.scss';
 import { Button, QrCodeImage } from '@/legos';
 import { copyToClipboard } from '@/helpers/helpers';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 export const DepositItem = ({ walletAddress }: { walletAddress: string }) => (
   <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">

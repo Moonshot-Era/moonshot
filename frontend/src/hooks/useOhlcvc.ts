@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-export const fetchOhlcv = (tokenAddress: string) =>
+export const fetchOhlcv = (poolAddress: string) =>
   axios
     .post(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/birdeye/ohlcv`,
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/ohlcv`,
       {
-        tokenAddress
+        poolAddress
       },
       {
         headers: {
@@ -16,17 +16,17 @@ export const fetchOhlcv = (tokenAddress: string) =>
       }
     )
     .then((response) => {
-      return response.data.ohlcvData.data;
+      return response.data.data;
     });
 
-export const useOhlcv = (tokenAddress?: string) => {
+export const useOhlcv = (poolAddress?: string) => {
   const { data, ...rest } = useQuery({
     queryKey: ['ohlcv'],
     queryFn: () => {
-      if (!tokenAddress) {
+      if (!poolAddress) {
         return null;
       } else {
-        return fetchOhlcv(tokenAddress);
+        return fetchOhlcv(poolAddress);
       }
     }
   });

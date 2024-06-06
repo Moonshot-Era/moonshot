@@ -9,10 +9,13 @@ import {
   PoolGeckoType
 } from '@/@types/gecko';
 
-export const fetchPoolsList = (page: number, withTokensOverview: boolean): Promise<PoolGeckoType[]> =>
+export const fetchPoolsList = (
+  page: number,
+  withTokensOverview: boolean
+): Promise<PoolGeckoType[]> =>
   axios
     .post(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/gecko/get-trending-pools?page=${page}`,
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-trending-pools?page=${page}`,
       { page, withTokensOverview }
     )
     .then((response) => {
@@ -50,7 +53,7 @@ export const usePoolsList = (withTokensOverview: boolean = true) => {
       refetchOnWindowFocus: false,
       refetchOnMount: false,
     });
-  
+
   return {
     poolsList: data?.pages.flat(),
     fetchNextPage,

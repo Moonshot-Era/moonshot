@@ -57,7 +57,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   const handleExportKeys = async () => {
     await handleCheckMfa();
     const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/cube/export-keys`
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/export-keys`
     );
     console.log('debug > res===', res);
   };

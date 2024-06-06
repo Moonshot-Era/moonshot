@@ -32,14 +32,15 @@ import { TokensSelect } from './TokensSelect';
 import { ConvertForm } from './ConvertForm';
 import { Flex, Spinner } from '@radix-ui/themes';
 import debounce from 'lodash.debounce';
-import {
-  WalletPortfolioAssetType,
-  WalletPortfolioNormilizedType
-} from '@/services/birdeye/getWalletPortfolio';
+
 import { PoolGeckoType } from '@/@types/gecko';
 import { SelectedTokens } from './types';
 import { usePoolsList } from '@/hooks/useTrendingPoolsList';
 import { useSearchPools } from '@/hooks/useSearchPools';
+import {
+  WalletPortfolioAssetType,
+  WalletPortfolioNormilizedType
+} from '@/services/helius/getWalletPortfolio';
 
 interface Props {
   portfolio: WalletPortfolioNormilizedType;

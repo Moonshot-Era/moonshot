@@ -6,7 +6,6 @@ import './style.scss';
 import { SheetDrawer } from '@/legos';
 import { DepositList } from './DepositList';
 import { DepositItem } from './DepositItem';
-import { WalletPortfolioAssetType } from '@/services/birdeye/getWalletPortfolio';
 
 interface Props {
   isOpen: boolean;
