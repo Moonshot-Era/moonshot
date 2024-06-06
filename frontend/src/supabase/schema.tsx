@@ -13,94 +13,77 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
-          culture_ref: string | null
+          dob: string | null
           email: string
           full_name: string | null
-          get_notifications: boolean | null
           id: number
-          onboarding_completed: boolean | null
           roles: Database["public"]["Enums"]["role"][]
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
-          culture_ref?: string | null
+          dob?: string | null
           email: string
           full_name?: string | null
-          get_notifications?: boolean | null
           id?: number
-          onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
           user_id: string
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
-          culture_ref?: string | null
+          dob?: string | null
           email?: string
           full_name?: string | null
-          get_notifications?: boolean | null
           id?: number
-          onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
           user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "public_profiles_culture_ref_fkey"
-            columns: ["culture_ref"]
-            isOneToOne: false
-            referencedRelation: "referrals"
-            referencedColumns: ["culture_ref"]
-          },
-        ]
-      }
-      referrals: {
-        Row: {
-          created_at: string
-          culture_ref: string
-        }
-        Insert: {
-          created_at?: string
-          culture_ref: string
-        }
-        Update: {
-          created_at?: string
-          culture_ref?: string
         }
         Relationships: []
       }
       transactions: {
         Row: {
           created_at: string
-          date_purchased: string | null
-          date_sold: string | null
           id: number
+          image_url: string | null
+          token_address: string | null
           token_amount: number | null
           token_name: string | null
           token_price: number | null
+          transaction_type:
+            | Database["public"]["Enums"]["transaction_type"]
+            | null
           user_id: string | null
+          wallet_address: string | null
         }
         Insert: {
           created_at?: string
-          date_purchased?: string | null
-          date_sold?: string | null
           id?: number
+          image_url?: string | null
+          token_address?: string | null
           token_amount?: number | null
           token_name?: string | null
           token_price?: number | null
+          transaction_type?:
+            | Database["public"]["Enums"]["transaction_type"]
+            | null
           user_id?: string | null
+          wallet_address?: string | null
         }
         Update: {
           created_at?: string
-          date_purchased?: string | null
-          date_sold?: string | null
           id?: number
+          image_url?: string | null
+          token_address?: string | null
           token_amount?: number | null
           token_name?: string | null
           token_price?: number | null
+          transaction_type?:
+            | Database["public"]["Enums"]["transaction_type"]
+            | null
           user_id?: string | null
+          wallet_address?: string | null
         }
         Relationships: []
       }
@@ -109,15 +92,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      insert_culture_ref: {
-        Args: {
-          culture_ref: string
-        }
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
       role: "user" | "admin"
+      transaction_type: "buy" | "sell"
     }
     CompositeTypes: {
       [_ in never]: never

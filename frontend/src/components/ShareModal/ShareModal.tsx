@@ -1,88 +1,26 @@
 'use client';
 
+import { useShareImage } from '@/hooks/useShareImage';
 import { IconButton } from '@/legos';
+import { createBrowserClient } from '@/supabase/client';
 import { Dialog, Flex, Text } from '@radix-ui/themes';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import {
   TelegramIcon,
   TelegramShareButton,
   TwitterShareButton,
-  XIcon,
+  XIcon
 } from 'react-share';
 import './style.scss';
-import { createBrowserClient } from '@/supabase/client';
-import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
 
-export const ShareModal = () => {
-  const pathname = usePathname()
-  const imageUrl = new URL(
-    '/api/functions/v1/og-image',
-    process.env.NEXT_PUBLIC_SITE_URL
-  );
+export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
+  const pathname = usePathname();
 
-  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL}${pathname}`
+  const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL}${pathname}`;
+  const supabaseClient = createBrowserClient();
 
-  useEffect(() => {
-    generateImageSearchParams();
-  }, []);
-
-  const generateImageSearchParams = async () => {
-    const supabaseClient = createBrowserClient();
-    const { data } = await supabaseClient.auth.getSession();
-    const userId = data.session?.user?.id;
-
-    //TODO: change to real data
-    const tokenName = 'test_token';
-
-    const { data: transactions } = await supabaseClient
-      .from('transactions')
-      .select('*')
-      .eq('user_id', userId || '')
-      .eq('token_name', tokenName);
-
-    if (transactions?.length) {
-      const lastTransaction = transactions[transactions.length - 1];
-
-      const purchaseTransactions = transactions.filter(
-        (item) => !!item.date_purchased
-      );
-      const sellTransactions = transactions.filter((item) => !!item.date_sold);
-
-      const lastPurchaseTransaction =
-        purchaseTransactions[purchaseTransactions.length - 1];
-      const lastSellTransaction = sellTransactions[sellTransactions.length - 1];
-
-      const tokenAmount = lastTransaction.token_amount || 0;
-      const totalCost = purchaseTransactions.reduce((acc, transaction) => {
-        return (
-          acc + (transaction.token_amount || 0) * (transaction.token_price || 0)
-        );
-      }, 0);
-      const totalRevenue = sellTransactions.reduce((acc, transaction) => {
-        return (
-          acc + (transaction.token_amount || 0) * (transaction.token_price || 0)
-        );
-      }, 0);
-      const profit = totalRevenue - totalCost;
-
-      const profitPercent = (profit / totalCost) * 100;
-
-      const datePurchased = new Date(
-        lastPurchaseTransaction.date_purchased || ''
-      ).toLocaleDateString('en-US');
-      const dateSold = new Date(
-        lastSellTransaction.date_sold || ''
-      ).toLocaleDateString('en-US');
-
-      imageUrl.searchParams.append('name', tokenName);
-      imageUrl.searchParams.append('profitPercent', profitPercent.toString());
-      imageUrl.searchParams.append('entry', tokenAmount.toString());
-      imageUrl.searchParams.append('profit', profit.toFixed(2));
-      imageUrl.searchParams.append('purchaseDate', datePurchased);
-      imageUrl.searchParams.append('soldDate', dateSold);
-    }
-  };
+  const { imageUrl } = useShareImage(supabaseClient, tokenPrice);
 
   const imageLoader = () => {
     return imageUrl.href;

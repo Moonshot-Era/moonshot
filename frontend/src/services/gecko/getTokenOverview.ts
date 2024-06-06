@@ -6,6 +6,7 @@ export interface NormilizedTokenDataOverview {
   liquidity?: string;
   supply?: string;
   holder: number;
+  price_usd: number;
   poolAddress: string;
 }
 
@@ -30,6 +31,7 @@ export const getTokenOverview = async (tokenAddress: string) => {
       v24hUSD: tokenData.data.attributes.volume_usd.h24,
       liquidity: tokenData.data.attributes.total_reserve_in_usd,
       supply: tokenData.data.attributes.total_supply,
+      price_usd: tokenData.data.attributes.price_usd,
       holder: 0,
       poolAddress: tokenData.data.relationships.top_pools.data?.[0]?.id.replace(
         'solana_',

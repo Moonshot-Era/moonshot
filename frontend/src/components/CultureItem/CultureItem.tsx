@@ -15,11 +15,11 @@ import { Toolbar } from '../Toolbar/Toolbar';
 
 import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
+import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
+import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 import { useRouter } from 'next/navigation';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
-import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
-import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 
 export const CultureItem = ({
   tokenInfo,
@@ -96,7 +96,11 @@ export const CultureItem = ({
             {ohlcvLoading ? <Spinner /> : <CultureChart data={chartData} />}
           </Flex>
           {!isPublic && asset && portfolio && (
-            <Toolbar portfolio={portfolio} withShare />
+            <Toolbar
+              portfolio={portfolio}
+              withShare
+              tokenPrice={tokenData.price_usd}
+            />
           )}
 
           {asset && (
