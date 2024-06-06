@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -17,9 +17,9 @@ export type Database = {
           email: string
           full_name: string | null
           get_notifications: boolean | null
-          id: number
           onboarding_completed: boolean | null
           roles: Database["public"]["Enums"]["role"][]
+          rt: string | null
           user_id: string
         }
         Insert: {
@@ -29,9 +29,9 @@ export type Database = {
           email: string
           full_name?: string | null
           get_notifications?: boolean | null
-          id?: number
           onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
+          rt?: string | null
           user_id: string
         }
         Update: {
@@ -41,9 +41,9 @@ export type Database = {
           email?: string
           full_name?: string | null
           get_notifications?: boolean | null
-          id?: number
           onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
+          rt?: string | null
           user_id?: string
         }
         Relationships: [
@@ -109,9 +109,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_refresh_token: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       insert_culture_ref: {
         Args: {
           culture_ref: string
+        }
+        Returns: undefined
+      }
+      store_refresh_token: {
+        Args: {
+          refresh_token: string
         }
         Returns: undefined
       }

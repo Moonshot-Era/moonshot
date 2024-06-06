@@ -5,6 +5,7 @@ import { Header } from '@/components/Header/Header';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
 import { CultureItem } from '@/components/CultureItem/CultureItem';
 import { CultureError } from '@/components/CultureError/CultureError';
+import { axiosBrowserClient } from '@/services/axios/axiosBrowserClient';
 
 export default async function CultureItemPage({
   params,
@@ -27,7 +28,7 @@ export default async function CultureItemPage({
     }
   );
 
-  const { data: walletData } = await axios.post(
+  const { data: walletData } = await axiosBrowserClient.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-wallet`,
     {
       oidc
