@@ -30,21 +30,14 @@ export const useShareImage = (
       const { profit, profitPercent, datePurchased, dateSold, totalCost } =
         calculateShareImageData(transactions, tokenPrice);
 
-      imageUrl.searchParams.append('name', transactions[0].token_address);
+      imageUrl.searchParams.append('name', transactions[0].token_name);
       imageUrl.searchParams.append('profitPercent', profitPercent.toString());
       imageUrl.searchParams.append('entry', totalCost.toString());
       imageUrl.searchParams.append('profit', profit.toFixed(2));
       imageUrl.searchParams.append('purchaseDate', datePurchased);
       imageUrl.searchParams.append('soldDate', dateSold);
-      console.log('imageUrl.href', imageUrl.href);
     }
-  }, [
-    imageUrl.href,
-    imageUrl.searchParams,
-    pathname,
-    supabaseClient,
-    tokenPrice
-  ]);
+  }, [imageUrl.searchParams, pathname, supabaseClient, tokenPrice]);
 
   useEffect(() => {
     generateImageSearchParams();
