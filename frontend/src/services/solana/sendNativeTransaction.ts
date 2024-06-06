@@ -3,7 +3,7 @@ import {
   LAMPORTS_PER_SOL,
   PublicKey,
   SystemProgram,
-  Transaction,
+  Transaction
 } from '@solana/web3.js';
 
 import { authenticator } from 'otplib';
@@ -11,7 +11,7 @@ import { CubeSignerClient } from '@cubist-labs/cubesigner-sdk';
 
 import { CubeSignerInstance } from '../cubeSigner';
 
-export const sendTransaction = async (
+export const sendNativeTransaction = async (
   oidcToken: string,
   fromAddress: string,
   toAddress: string,
