@@ -96,14 +96,8 @@ alter table "public"."transactions" add column "transaction_type" transaction_ty
 
 alter table "public"."transactions" add column "wallet_address" text;
 
-alter table "public"."transactions" alter column "user_id" set data type bigint using "user_id"::bigint;
-
 CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id);
 
 alter table "public"."profiles" add constraint "profiles_pkey" PRIMARY KEY using index "profiles_pkey";
-
-alter table "public"."transactions" add constraint "public_transactions_user_id_fkey" FOREIGN KEY (user_id) REFERENCES profiles(id) not valid;
-
-alter table "public"."transactions" validate constraint "public_transactions_user_id_fkey";
 
 
