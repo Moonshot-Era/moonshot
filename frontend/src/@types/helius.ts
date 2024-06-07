@@ -153,3 +153,156 @@ export interface WalletPortfolioType {
   totalUsd: number;
   wallet: string;
 }
+
+export interface TokenTransfer {
+  fromUserAccount: string;
+  fromTokenAccount: string;
+  toUserAccount: string;
+  toTokenAccount: string;
+  tokenAmount: number;
+  mint: string;
+  tokenStandard: string;
+}
+export interface NativeTransfer {
+  fromUserAccount: string;
+  toUserAccount: string;
+  amount: number;
+}
+
+interface AccountData {
+  account: string;
+  nativeBalanceChange: number;
+  tokenBalanceChanges: {
+    userAccount: string;
+    tokenAccount: string;
+    mint: string;
+    rawTokenAmount: {
+      tokenAmount: string;
+    };
+  }[];
+}
+
+interface InnerInstruction {
+  accounts: string[];
+  data: string;
+  programId: string;
+}
+
+interface Instruction {
+  accounts: string[];
+  data: string;
+  programId: string;
+  innerInstructions: InnerInstruction[];
+}
+
+interface RawTokenAmount {
+  tokenAmount: string;
+}
+
+interface TokenAccountDetails {
+  userAccount: string;
+  tokenAccount: string;
+  mint: string;
+  rawTokenAmount: RawTokenAmount;
+}
+
+interface NativeAccountDetails {
+  account: string;
+  amount: string;
+}
+
+interface InnerSwapDetails {
+  fromUserAccount: string;
+  toUserAccount: string;
+  fromTokenAccount: string;
+  toTokenAccount: string;
+  tokenAmount: number;
+  mint: string;
+}
+
+interface ProgramInfo {
+  source: string;
+  account: string;
+  programName: string;
+  instructionName: string;
+}
+
+interface InnerSwap {
+  tokenInputs: InnerSwapDetails[];
+  tokenOutputs: InnerSwapDetails[];
+  tokenFees: InnerSwapDetails[];
+  nativeFees: {
+    fromUserAccount: string;
+    toUserAccount: string;
+  }[];
+  programInfo: ProgramInfo;
+}
+
+interface SwapEvent {
+  nativeInput: NativeAccountDetails;
+  nativeOutput: NativeAccountDetails;
+  tokenInputs: TokenAccountDetails[];
+  tokenOutputs: TokenAccountDetails[];
+  tokenFees: TokenAccountDetails[];
+  nativeFees: NativeAccountDetails[];
+  innerSwaps: InnerSwap[];
+}
+
+interface NftEvent {
+  description: string;
+  type: string;
+  source: string;
+  amount: number;
+  fee: number;
+  feePayer: string;
+  signature: string;
+  slot: number;
+  timestamp: number;
+  saleType: string;
+  buyer: string;
+  seller: string;
+  staker: string;
+  nfts: {
+    mint: string;
+    tokenStandard: string;
+  }[];
+}
+
+interface CompressedEvent {
+  type: string;
+  treeId: string;
+  assetId: string;
+  newLeafOwner: string;
+  oldLeafOwner: string;
+}
+
+interface SetAuthorityEvent {
+  account: string;
+  from: string;
+  to: string;
+}
+
+interface Events {
+  nft: NftEvent;
+  swap: SwapEvent;
+  compressed: CompressedEvent;
+  distributeCompressionRewards: {};
+  setAuthority: SetAuthorityEvent;
+}
+
+export interface Transaction {
+  description: string;
+  type: string;
+  source: string;
+  fee: number;
+  feePayer: string;
+  signature: string;
+  slot: number;
+  timestamp: number;
+  tokenTransfers: TokenTransfer[];
+  nativeTransfers: NativeTransfer[];
+  accountData: AccountData[];
+  transactionError: null | any;
+  instructions: Instruction[];
+  events: Events;
+}

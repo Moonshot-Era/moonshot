@@ -1,25 +1,29 @@
 'use client';
 
-import { useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
+import { useState } from 'react';
 
 import './style.scss';
 
 import { Icon } from '@/legos';
-import { RecentTab } from './RecentTab';
-import { AccountTab } from './AccountTab';
-import { ExportKeyTab } from './ExportKeyTab';
 import { ROUTES, logout } from '@/utils';
 import { useRouter } from 'next/navigation';
+import { AccountTab } from './AccountTab';
+import { ExportKeyTab } from './ExportKeyTab';
+import { RecentTab } from './RecentTab';
 
-export const SettingsContent = () => {
+export const SettingsContent = ({
+  walletAddress
+}: {
+  walletAddress: string;
+}) => {
   const [activeTab, setActiveTab] = useState<
     'account' | 'recent' | 'export' | 'logout' | null
   >(null);
   const router = useRouter();
 
   const handleActiveTab = (
-    tab: 'account' | 'recent' | 'export' | 'logout' | null,
+    tab: 'account' | 'recent' | 'export' | 'logout' | null
   ) => setActiveTab(tab);
 
   const handleLogout = () => {
@@ -100,7 +104,10 @@ export const SettingsContent = () => {
         ) : activeTab === 'account' ? (
           <AccountTab handleActiveTab={handleActiveTab} />
         ) : activeTab === 'recent' ? (
-          <RecentTab handleActiveTab={handleActiveTab} />
+          <RecentTab
+            walletAddress={walletAddress}
+            handleActiveTab={handleActiveTab}
+          />
         ) : activeTab === 'export' ? (
           <ExportKeyTab handleActiveTab={handleActiveTab} />
         ) : null}
