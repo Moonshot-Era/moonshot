@@ -33,6 +33,7 @@ env:
 
   HELIUS_URL_API: ${{ secrets.HELIUS_URL_API }}
   HELIUS_API_KEY:  ${{ secrets.HELIUS_API_KEY }}
+  HELIUS_XYZ_URL_API: ${{ secrets.HELIUS_XYZ_URL_API }}
 
 
   
