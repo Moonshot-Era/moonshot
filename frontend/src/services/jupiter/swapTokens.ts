@@ -7,6 +7,7 @@ import axios from 'axios';
 import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
 import { CubeSignerClient } from '@cubist-labs/cubesigner-sdk';
 import { authenticator } from 'otplib';
+import { getMfaSecret } from '../helpers/getMfaSecret';
 
 const sleep = async (ms: number) => {
   return new Promise((r) => setTimeout(r, ms));
@@ -15,9 +16,7 @@ const sleep = async (ms: number) => {
 export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
   try {
     console.log('Initializing client session...');
-
-    //TODO get from supabase
-    let totpSecret: string = 'SBCXRKMQOSFA6QTRGGVQR4BDWVPNQN5Y';
+    const totpSecret = await getMfaSecret();
     let userClient: CubeSignerClient | undefined = undefined;
 
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();

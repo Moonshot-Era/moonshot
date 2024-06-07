@@ -7,6 +7,8 @@ import {
   userExportKeygen
 } from '@cubist-labs/cubesigner-sdk';
 import { defaultManagementSessionManager } from '@cubist-labs/cubesigner-sdk-fs-storage';
+import { getMfaSecret } from '../helpers/getMfaSecret';
+import { setMfaSecret } from '../helpers/setMfaSecret';
 
 class CubeSigner {
   private managementSessionClient?: CubeSignerClient;
@@ -74,12 +76,11 @@ const getLatestKey = (keys: Key[]) => {
   return latestKey || keys?.[keys?.length - 1];
 };
 
-let totpSecret: string = 'SBCXRKMQOSFA6QTRGGVQR4BDWVPNQN5Y';
-
 export const getUserWallet = async (
   oidcToken: string
 ): Promise<string | null> => {
   let key;
+  const totpSecret = await getMfaSecret();
 
   try {
     const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
@@ -142,6 +143,7 @@ export const getUserWallet = async (
 
 export const fetchExportKeys = async (oidcToken: string) => {
   let userClient: CubeSignerClient | undefined = undefined;
+  let totpSecret = await getMfaSecret();
   const cubeClient = await CubeSignerInstance.getManagementSessionClient();
 
   try {
@@ -168,21 +170,20 @@ export const fetchExportKeys = async (oidcToken: string) => {
       if (totpChallenge.url) {
         totpSecret =
           new URL(totpChallenge.url).searchParams.get('secret') || '';
-        // TODO Save secren in supabase
-        console.log('debug > totpSecret===', totpSecret);
+
+        await setMfaSecret(totpSecret);
         await totpChallenge.answer(authenticator.generate(totpSecret));
       }
     }
 
     if (userClient) {
       const keys = await userClient.sessionKeys();
-      // TODO uncomment after testing
-      // const key = getLatestKey(keys)
-      const key =
-        keys?.find(
-          (key) =>
-            key.materialId === 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh'
-        ) || keys?.[keys?.length - 1];
+      const key = getLatestKey(keys);
+      // const key =
+      //   keys?.find(
+      //     (key) =>
+      //       key.materialId === 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh'
+      //   ) || keys?.[keys?.length - 1];
 
       let exportInProgress = await userClient.org().exports(key?.id).fetch();
       console.log('debug > exportInProgress===', exportInProgress);
