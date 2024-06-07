@@ -11,7 +11,11 @@ import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 
 interface WithdrawItemProps {
   asset?: WalletPortfolioAssetType;
-  onSlideHandler(toAddress: string, transactionAmount: number | string): void;
+  onSlideHandler(
+    toAddress: string,
+    transactionAmount: number | string,
+    symbol: string
+  ): void;
 }
 
 const TO_ADDRESS_ERROR = 'Invalid Solana address';
@@ -95,10 +99,10 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         setToAddressError(TO_ADDRESS_ERROR);
       }
       if (toAddress && transactionAmount) {
-        onSlideHandler(toAddress, transactionAmount);
+        onSlideHandler(toAddress, transactionAmount, asset?.symbol || '');
       }
     } catch (err) {
-      console.log('Err:', err);
+      throw err;
     }
   };
 

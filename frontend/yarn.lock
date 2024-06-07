@@ -964,15 +964,15 @@
     "@babel/helper-validator-identifier" "^7.24.6"
     to-fast-properties "^2.0.0"
 
-"@cubist-labs/cubesigner-sdk-fs-storage@^0.4.24-0":
-  version "0.4.24-0"
-  resolved "https://registry.yarnpkg.com/@cubist-labs/cubesigner-sdk-fs-storage/-/cubesigner-sdk-fs-storage-0.4.24-0.tgz#9ad20da8a52a0e451b052731b413deb01121d009"
-  integrity sha512-xWsOaBk91jhT/7Lqoj/tCobiG5Bw5XH4lFnAoYCfpfvJr2Lm7Epsoahzdu514J45t29BcWI+Pb0cRnSsyNKkWQ==
+"@cubist-labs/cubesigner-sdk-fs-storage@^0.4.32-0":
+  version "0.4.32-0"
+  resolved "https://registry.yarnpkg.com/@cubist-labs/cubesigner-sdk-fs-storage/-/cubesigner-sdk-fs-storage-0.4.32-0.tgz#7769e6a32de341fb5d9b2f4a05094bd06bc79a2d"
+  integrity sha512-UjwevN5jBqXUUeC0+PS+7JjkXfVoEtJ5j8JxPSYdCa4coWE1Tf6M4lgkcPvG3V65zg8rzCNmBST3J4egs9MgjQ==
 
-"@cubist-labs/cubesigner-sdk@^0.4.24-0":
-  version "0.4.24-0"
-  resolved "https://registry.yarnpkg.com/@cubist-labs/cubesigner-sdk/-/cubesigner-sdk-0.4.24-0.tgz#f5d162ca2a99e612eb2cea1a48cfdc536f11e7b1"
-  integrity sha512-OszDJljG7lOQlUX7SzR44n4w1txeUhv/rMsT5mYTR66WtagPNbRtnw4IeXCIvnRrpiVP9zQm2u/sMLFJuDHeSQ==
+"@cubist-labs/cubesigner-sdk@^0.4.32-0":
+  version "0.4.32-0"
+  resolved "https://registry.yarnpkg.com/@cubist-labs/cubesigner-sdk/-/cubesigner-sdk-0.4.32-0.tgz#21724b8dcf4d1bd270d1901b5d567dc5b6a71eb3"
+  integrity sha512-Ecq8xnlSaj2H8ZNsOrWixZr0PZYYPuyrcagqNodRIJmvjftjbV058bgMtsRLRW5SDfJ0PwvTyGKfw8PjL2JO3A==
   dependencies:
     openapi-fetch "0.8.2"
   optionalDependencies:

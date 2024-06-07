@@ -8,23 +8,27 @@ export async function POST(request: Request) {
   const response = await request.json();
   const oidc = cookies()?.get('pt')?.value;
 
-  if (isSolanaAddress(response.tokenAddress)) {
-    await sendNativeTransaction(
-      oidc!,
-      response.fromAddress,
-      response.toAddress,
-      response.amount
-    );
-  } else {
-    await sendTokensTransaction(
-      oidc!,
-      response.fromAddress,
-      response.toAddress,
-      +response.amount,
-      response.tokenAddress,
-      response.tokenDecimals
-    );
+  let withdrawalResp;
+  try {
+    if (isSolanaAddress(response.tokenAddress)) {
+      withdrawalResp = await sendNativeTransaction(
+        oidc!,
+        response.fromAddress,
+        response.toAddress,
+        response.amount
+      );
+    } else {
+      withdrawalResp = await sendTokensTransaction(
+        oidc!,
+        response.fromAddress,
+        response.toAddress,
+        +response.amount,
+        response.tokenAddress,
+        response.tokenDecimals
+      );
+    }
+  } catch (err) {
+    throw err;
   }
-
-  return NextResponse.json({});
+  return NextResponse.json({ withdrawalResp });
 }

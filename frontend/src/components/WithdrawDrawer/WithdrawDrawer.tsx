@@ -11,7 +11,10 @@ import {
 import { createBrowserClient } from '@/supabase/client';
 import { WithdrawItem } from './WithdrawItem';
 import { WithdrawList } from './WithdrawList';
+import { snackbar } from '@/helpers/snackbar/snackbar';
+
 import './style.scss';
+import { tokenAddressWithDots } from '@/helpers/helpers';
 
 interface Props {
   isOpen: boolean;
@@ -39,29 +42,40 @@ export const WithdrawDrawer: FC<Props> = ({
 
   const handleConfirmWithdraw = async (
     toAddress: string,
-    amount: number | string
+    amount: number | string,
+    symbol: string
   ) => {
     const supabaseClient = createBrowserClient();
-    await axios
-      .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
-        fromAddress: portfolio?.wallet,
-        toAddress: toAddress,
-        amount: amount,
-        tokenAddress: fromAsset?.address,
-        tokenDecimals: fromAsset?.decimals
-      })
-      .then(async () => {
-        await supabaseClient.from('transactions').insert({
-          created_at: new Date().toISOString(),
-          user_id: '',
-          token_name: fromAsset?.name,
-          token_address: fromAsset?.address,
-          token_amount: amount,
-          token_price: '',
-          transaction_type: 'sell'
-        });
-      })
-      .finally(handleClose);
+    snackbar(
+      'info',
+      `Withdrawing ${amount} ${symbol} to ${tokenAddressWithDots(toAddress)}`
+    );
+    try {
+      const resp = await axios
+        .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
+          fromAddress: portfolio?.wallet,
+          toAddress: toAddress,
+          amount: amount,
+          tokenAddress: fromAsset?.address,
+          tokenDecimals: fromAsset?.decimals
+        })
+        .then(async () => {
+          await supabaseClient.from('transactions').insert({
+            created_at: new Date().toISOString(),
+            user_id: '',
+            token_name: fromAsset?.name,
+            token_address: fromAsset?.address,
+            token_amount: amount,
+            token_price: '',
+            transaction_type: 'sell'
+          });
+        })
+        .then(() => snackbar('error', `Withdrawal succeeded!`));
+      console.log('debug > resp===', resp);
+    } catch (err) {
+      console.log('debug > err===', err);
+      snackbar('error', `Something went wrong, please try again.`);
+    }
   };
 
   return (
