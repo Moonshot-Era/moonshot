@@ -153,3 +153,60 @@ export interface WalletPortfolioType {
   totalUsd: number;
   wallet: string;
 }
+
+export interface TokenTransfer {
+  fromUserAccount: string;
+  fromTokenAccount: string;
+  toUserAccount: string;
+  toTokenAccount: string;
+  tokenAmount: number;
+  mint: string;
+  tokenStandard: string;
+}
+export interface NativeTransfer {
+  fromUserAccount: string;
+  toUserAccount: string;
+  amount: number;
+}
+
+interface AccountData {
+  account: string;
+  nativeBalanceChange: number;
+  tokenBalanceChanges: {
+    userAccount: string;
+    tokenAccount: string;
+    mint: string;
+    rawTokenAmount: {
+      tokenAmount: string;
+    };
+  }[];
+}
+
+interface InnerInstruction {
+  accounts: string[];
+  data: string;
+  programId: string;
+}
+
+interface Instruction {
+  accounts: string[];
+  data: string;
+  programId: string;
+  innerInstructions: InnerInstruction[];
+}
+
+export interface Transaction {
+  description: string;
+  type: string;
+  source: string;
+  fee: number;
+  feePayer: string;
+  signature: string;
+  slot: number;
+  timestamp: number;
+  tokenTransfers: TokenTransfer[];
+  nativeTransfers: NativeTransfer[];
+  accountData: AccountData[];
+  transactionError: null | any;
+  instructions: Instruction[];
+}

@@ -1,3 +1,4 @@
+import { Transaction } from '@/@types/helius';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -7,7 +8,7 @@ export const fetchTransactionHistory = (walletAddress: string) =>
       walletAddress
     })
     .then((response) => {
-      return response.data.transactionHistory;
+      return response.data.transactionHistory as Transaction[];
     });
 
 export const useTransactionHistory = (walletAddress: string) => {
