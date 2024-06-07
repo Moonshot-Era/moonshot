@@ -1,8 +1,8 @@
-import axios from 'axios';
-import { authenticator, totp } from 'otplib';
+import { authenticator } from 'otplib';
 import {
   CubeSignerClient,
   Ed25519,
+  Key,
   userExportDecrypt,
   userExportKeygen
 } from '@cubist-labs/cubesigner-sdk';
@@ -64,26 +64,23 @@ const findUser = async (email: string) => {
   );
 };
 
+const getLatestKey = (keys: Key[]) => {
+  return keys?.[keys?.length - 1];
+};
+
+let totpSecret: string = 'SBCXRKMQOSFA6QTRGGVQR4BDWVPNQN5Y';
+
 export const getUserWallet = async (
   oidcToken: string
 ): Promise<string | null> => {
   let key;
-  let totpSecret: string | null = 'SBCXRKMQOSFA6QTRGGVQR4BDWVPNQN5Y';
-  let mfaClient: CubeSignerClient | undefined = undefined;
 
   try {
     const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
     const user = await findUser(email);
 
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();
-
     const org = cubeClient.org();
-    console.log('debug > user ==== ', user?.id);
-    // key = await org.createKey(Ed25519.Solana, user?.id, {
-    //   // @ts-ignore
-    //   policy: ['AllowRawBlobSigning']
-    // });
-    // console.log('debug > materialId===', key.materialId);
 
     if (!user) {
       const userId = await org.createOidcUser({ iss, sub }, email, {
@@ -105,10 +102,7 @@ export const getUserWallet = async (
 
       if (oidcSessionResp.requiresMfa()) {
         const tmpClient = await oidcSessionResp.mfaClient()!;
-
-        mfaClient = tmpClient;
-
-        if (mfaClient && tmpClient) {
+        if (tmpClient) {
           const totpOidcCode = authenticator.generate(totpSecret);
           const totpResp = await oidcSessionResp.totpApprove(
             tmpClient,
@@ -117,45 +111,31 @@ export const getUserWallet = async (
 
           const userCubeSigner = await CubeSignerClient.create(totpResp.data());
           const keys = await userCubeSigner.sessionKeys();
-          key = keys?.[keys?.length - 1];
+          key = getLatestKey(keys);
           keys?.map((keyItem) => {
-            console.log('debug > keyItem===', keyItem?.materialId);
+            console.log('debug > keyItem===', keyItem);
           });
-          // console.log('debug > userCubeSigner===', key?.materialId);
         }
       } else {
         const userCubeSigner = await CubeSignerClient.create(
           oidcSessionResp.data()
         );
-
-        console.log('debug > userCubeSigner===', userCubeSigner);
-
         const keys = await userCubeSigner.sessionKeys();
-        key = keys?.[keys?.length - 1];
-        keys?.map((keyItem) => {
-          console.log('debug > keyItem===', keyItem?.materialId);
-        });
+        key = getLatestKey(keys);
       }
     }
 
-    if (!key) {
+    if (!key || !key?.materialId) {
       throw Error('Wallet not created');
     }
   } catch (err: any) {
-    // if (Error(`${err}`).message.includes('Forbidden')) {
-    //   await axios.post(`${process.env.SITE_URL}/auth/logout`);
-    // } else {
-    //   console.log('err while getting wallet ==== ', JSON.stringify(err));
-    // }
     throw err;
   }
-  return key?.materialId || '';
+  return key?.materialId;
 };
 
 export const fetchExportKeys = async (oidcToken: string) => {
-  let mfaClient: CubeSignerClient | undefined = undefined;
   let userClient: CubeSignerClient | undefined = undefined;
-  let totpSecret: string = 'SBCXRKMQOSFA6QTRGGVQR4BDWVPNQN5Y';
   const cubeClient = await CubeSignerInstance.getManagementSessionClient();
 
   const userSessionResp = await CubeSignerClient.createOidcSession(
@@ -167,8 +147,7 @@ export const fetchExportKeys = async (oidcToken: string) => {
 
   if (userSessionResp.requiresMfa()) {
     const tmpClient = await userSessionResp.mfaClient()!;
-    mfaClient = tmpClient;
-    if (mfaClient && tmpClient) {
+    if (tmpClient) {
       const totpResp = await userSessionResp.totpApprove(
         tmpClient,
         authenticator.generate(totpSecret)
@@ -181,6 +160,7 @@ export const fetchExportKeys = async (oidcToken: string) => {
     const totpChallenge = totpResetResp.data();
     if (totpChallenge.url) {
       totpSecret = new URL(totpChallenge.url).searchParams.get('secret') || '';
+      // TODO Save secren in supabase
       console.log('debug > totpSecret===', totpSecret);
       await totpChallenge.answer(authenticator.generate(totpSecret));
     }
@@ -188,23 +168,15 @@ export const fetchExportKeys = async (oidcToken: string) => {
 
   if (userClient) {
     const keys = await userClient.sessionKeys();
-    // const key = keys?.[keys?.length - 1];
+    // TODO uncomment after testing
+    // const key = getLatestKey(keys)
     const key =
       keys?.find(
         (key) =>
           key.materialId === 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh'
       ) || keys?.[keys?.length - 1];
-    console.log('debug > keyForExport===', key?.id);
 
     const exportInProgress = await userClient.org().exports(key?.id).fetch();
-
-    console.log(
-      'debug > exportInProgress===',
-      exportInProgress?.length,
-      !exportInProgress?.length,
-      exportInProgress
-    );
-
     if (!exportInProgress?.length) {
       // initiate an export
       const initExportResp = await userClient.org().initExport(key.id);
@@ -226,22 +198,17 @@ export const fetchExportKeys = async (oidcToken: string) => {
       userClient,
       authenticator.generate(totpSecret)
     );
-    console.log(
-      'completeExportResp.requiresMfa ====',
-      completeExportResp.requiresMfa()
-    );
     const completeExportResult = completeExportResp.data();
-
     console.log('Complete export');
 
+    // decrypt key
     const decryptedKey = await userExportDecrypt(
       exportKey.privateKey,
       completeExportResult
     );
-
-    console.log('debug > decryptedKeys===', decryptedKey);
-
-    // const deleteExportResp = await org.deleteExport(key.id);
+    if (decryptedKey) {
+      await userClient.org().deleteExport(key.id);
+    }
 
     if (!decryptedKey) {
       throw Error('Export keys failed');

@@ -25,8 +25,8 @@ export const sendTokensTransaction = async (
   tokenAddress: string,
   tokenDecimals: number
 ) => {
+  //TODO get from supabase
   let totpSecret: string = 'SBCXRKMQOSFA6QTRGGVQR4BDWVPNQN5Y';
-  let mfaClient: CubeSignerClient | undefined = undefined;
   let userClient: CubeSignerClient | undefined = undefined;
 
   const cubeClient = await CubeSignerInstance.getManagementSessionClient();
@@ -39,14 +39,15 @@ export const sendTokensTransaction = async (
 
   if (userSessionResp.requiresMfa()) {
     const tmpClient = await userSessionResp.mfaClient()!;
-    mfaClient = tmpClient;
-    if (mfaClient && tmpClient) {
+    if (tmpClient) {
       const totpResp = await userSessionResp.totpApprove(
         tmpClient,
         authenticator.generate(totpSecret)
       );
       userClient = await CubeSignerClient.create(totpResp.data());
     }
+  } else {
+    userClient = await CubeSignerClient.create(userSessionResp.data());
   }
 
   if (userClient) {
@@ -127,7 +128,7 @@ export const sendTokensTransaction = async (
         userClient,
         authenticator.generate(totpSecret)
       );
-      console.log('debug > sig===', sig);
+
       // conver the signature 0x... to bytes
       const sigBytes = Buffer.from(sig.data().signature.slice(2), 'hex');
 

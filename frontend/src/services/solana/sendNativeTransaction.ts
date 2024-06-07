@@ -17,8 +17,8 @@ export const sendNativeTransaction = async (
   toAddress: string,
   amount: number
 ) => {
+  //TODO get from supabase
   let totpSecret: string = 'SBCXRKMQOSFA6QTRGGVQR4BDWVPNQN5Y';
-  let mfaClient: CubeSignerClient | undefined = undefined;
   let userClient: CubeSignerClient | undefined = undefined;
 
   const cubeClient = await CubeSignerInstance.getManagementSessionClient();
@@ -29,21 +29,17 @@ export const sendNativeTransaction = async (
     ['sign:*', 'manage:*']
   );
 
-  console.log(
-    'debug > userSessionResp.requiresMfa()===',
-    userSessionResp.requiresMfa()
-  );
-
   if (userSessionResp.requiresMfa()) {
     const tmpClient = await userSessionResp.mfaClient()!;
-    mfaClient = tmpClient;
-    if (mfaClient && tmpClient) {
+    if (tmpClient) {
       const totpResp = await userSessionResp.totpApprove(
         tmpClient,
         authenticator.generate(totpSecret)
       );
       userClient = await CubeSignerClient.create(totpResp.data());
     }
+  } else {
+    userClient = await CubeSignerClient.create(userSessionResp.data());
   }
 
   if (userClient) {
@@ -53,10 +49,6 @@ export const sendNativeTransaction = async (
         'confirmed'
       );
 
-      // const fromAddress = await getUserWallet(oidcToken);
-      // if (!fromAddress) {
-      //   throw Error('Wallet not found');
-      // }
       const fromPubkey = new PublicKey(fromAddress);
       const toPubkey = new PublicKey(toAddress);
 
@@ -84,7 +76,7 @@ export const sendNativeTransaction = async (
         userClient,
         authenticator.generate(totpSecret)
       );
-      console.log('debug > sig===', sig);
+
       // conver the signature 0x... to bytes
       const sigBytes = Buffer.from(sig.data().signature.slice(2), 'hex');
 
