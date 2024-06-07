@@ -1,11 +1,11 @@
 'use client';
 
-import { FC } from 'react';
-import Image from 'next/image';
 import { Box, Flex, Text } from '@radix-ui/themes';
+import Image from 'next/image';
+import { FC } from 'react';
 
-import './style.scss';
 import userIcon from '../../assets/images/user-icon.png';
+import './style.scss';
 
 import { Icon } from '@/legos';
 
@@ -21,7 +21,7 @@ const mockRecentActivityData = [
         currencyType: 'SOL',
         time: '3:31 PM',
         icon: userIcon,
-        wallet: '3xKg...2jXh',
+        wallet: '3xKg...2jXh'
       },
       {
         id: 2,
@@ -30,9 +30,9 @@ const mockRecentActivityData = [
         currencyType: 'SOL',
         time: '8:31 AM',
         icon: userIcon,
-        wallet: '3xKg...2jXh',
-      },
-    ],
+        wallet: '3xKg...2jXh'
+      }
+    ]
   },
   {
     id: 2,
@@ -45,10 +45,10 @@ const mockRecentActivityData = [
         currencyType: 'SOL',
         time: '3:31 PM',
         icon: userIcon,
-        wallet: '3xKg...2jXh',
-      },
-    ],
-  },
+        wallet: '3xKg...2jXh'
+      }
+    ]
+  }
 ];
 
 interface Props {
@@ -93,7 +93,7 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => (
               total,
               transactionType,
               icon,
-              wallet,
+              wallet
             }) => (
               <Flex
                 key={id}

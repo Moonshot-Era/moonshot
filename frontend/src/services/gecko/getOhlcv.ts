@@ -1,13 +1,12 @@
 import axios from 'axios';
 
-export const getOhlcvData = async (poolAddress: string) => {
+export const getOhlcvData = async (poolAddress: string, timeFrame: string) => {
   try {
     if (!poolAddress) {
       throw Error(`No pool address provided`);
     }
 
     const network = 'solana';
-    const timeFrame = 'hour';
     const { data } = await axios.get(
       `${process.env.GECKO_URL_API}/onchain/networks/${network}/pools/${poolAddress}/ohlcv/${timeFrame}`,
       {

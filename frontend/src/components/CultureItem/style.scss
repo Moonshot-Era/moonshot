@@ -1,5 +1,9 @@
 @import '../../styles/variables.scss';
 
+@import '@radix-ui/colors/black-alpha.css';
+@import '@radix-ui/colors/mauve.css';
+@import '@radix-ui/colors/violet.css';
+
 .explore-wrapper {
   padding-top: 70px;
   padding-bottom: 120px;
@@ -15,4 +19,52 @@
   box-shadow: $shadow-2;
   border-radius: 8px;
   background-color: $white;
+}
+
+/* reset */
+button {
+  all: unset;
+}
+
+.ToggleGroup {
+  display: inline-flex;
+  width: 160px;
+  @include border-dark;
+  box-shadow: $shadow-2;
+  border-radius: 8px;
+  background-color: $white;
+}
+
+.ToggleGroupItem {
+  background-color: white;
+  color: $greyscale;
+  height: 35px;
+  width: auto;
+  display: flex;
+  font-size: 15px;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1px;
+  padding: 0 7px;
+}
+.ToggleGroupItem:first-child {
+  margin-left: 0;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+.ToggleGroupItem:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.ToggleGroupItem:hover {
+  background-color: $greeny-2;
+}
+.ToggleGroupItem[data-state='on'] {
+  background-color: $greeny-3;
+  color: $greyscale;
+}
+.ToggleGroupItem:focus {
+  position: relative;
+  box-shadow: 0 0 0 0.5px $greyscale;
 }
