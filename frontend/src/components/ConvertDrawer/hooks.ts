@@ -19,7 +19,6 @@ const fetchSwapRoutes = (
     })
     .then((response) => response.data?.swapRoutes);
 
-
 const swapTokens = (swapRoutes: void) =>
   axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/swap-tokens`, {
     swapRoutes
@@ -33,7 +32,7 @@ export const useSwapRoutes = (
 ) => {
   const { data, ...rest } = useQuery({
     queryKey: [
-      `getSwapRoutes_${from?.address}_${to?.included?.attributes.address}_${amount}_${slippageBps}`,
+      `getSwapRoutes_${from?.address}_${to?.included?.attributes.address}_${amount}_${slippageBps}`
     ],
     queryFn: () =>
       fetchSwapRoutes(
@@ -42,7 +41,7 @@ export const useSwapRoutes = (
         amount,
         slippageBps
       ),
-    enabled: !!(isValidAmount && amount && from && to && slippageBps),
+    enabled: !!(isValidAmount && amount && from && to && slippageBps)
   });
 
   return { swapRoutes: data, ...rest };

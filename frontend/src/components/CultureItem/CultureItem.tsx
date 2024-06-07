@@ -82,14 +82,14 @@ export const CultureItem = ({
             mb="8"
             gap="3"
           >
-            {tokenInfo?.logoURI && (
+            {tokenInfo?.imageUrl && (
               <Flex position="relative" width="24px" height="24px">
                 <Image
                   className="border-radius-full"
                   width={24}
                   height={24}
                   alt="Token logo"
-                  src={tokenInfo?.logoURI}
+                  src={tokenInfo?.imageUrl}
                 />
               </Flex>
             )}
@@ -161,14 +161,14 @@ export const CultureItem = ({
                 justify="between"
                 align="end"
               >
-                {tokenInfo?.logoURI && (
+                {tokenInfo?.imageUrl && (
                   <Flex position="relative" width="24px" height="24px">
                     <Image
                       className="border-radius-full"
                       width={24}
                       height={24}
                       alt="Token logo"
-                      src={tokenInfo?.logoURI}
+                      src={tokenInfo?.imageUrl}
                     />
                   </Flex>
                 )}

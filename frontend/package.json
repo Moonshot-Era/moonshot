@@ -15,8 +15,8 @@
   },
   "proxy": "https://lmeghvxxxrzawjsqcmij.supabase.co",
   "dependencies": {
-    "@cubist-labs/cubesigner-sdk": "^0.4.24-0",
-    "@cubist-labs/cubesigner-sdk-fs-storage": "^0.4.24-0",
+    "@cubist-labs/cubesigner-sdk": "^0.4.32-0",
+    "@cubist-labs/cubesigner-sdk-fs-storage": "^0.4.32-0",
     "@radix-ui/themes": "^3.0.3",
     "@solana/spl-token": "^0.4.6",
     "@solana/web3.js": "^1.91.8",

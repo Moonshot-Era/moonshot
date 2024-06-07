@@ -3,7 +3,7 @@ import axios from 'axios';
 export interface NormilizedTokenInfoOverview {
   name: string;
   address: string;
-  logoURI?: string;
+  imageUrl?: string;
   description?: string;
   telegramUrl?: string;
   twitterUrl?: string;
@@ -25,7 +25,7 @@ export const getTokenInfo = async (tokenAddress: string) => {
     const normalizedTokenData: NormilizedTokenInfoOverview = {
       name: tokenData.data.attributes.name,
       address: tokenData.data.attributes.address,
-      logoURI: tokenData.data.attributes.image_url,
+      imageUrl: tokenData.data.attributes.image_url,
       description: tokenData.data.attributes.description,
       telegramUrl: tokenData.data.attributes.telegram_handle
         ? `https://t.me/${tokenData.data.attributes.telegram_handle}`
