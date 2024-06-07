@@ -138,81 +138,96 @@ export const fetchExportKeys = async (oidcToken: string) => {
   let userClient: CubeSignerClient | undefined = undefined;
   const cubeClient = await CubeSignerInstance.getManagementSessionClient();
 
-  const userSessionResp = await CubeSignerClient.createOidcSession(
-    cubeClient.env,
-    cubeClient.orgId,
-    oidcToken,
-    ['sign:*', 'export:user:*', 'manage:*']
-  );
+  try {
+    const userSessionResp = await CubeSignerClient.createOidcSession(
+      cubeClient.env,
+      cubeClient.orgId,
+      oidcToken,
+      ['sign:*', 'export:user:*', 'manage:*']
+    );
 
-  if (userSessionResp.requiresMfa()) {
-    const tmpClient = await userSessionResp.mfaClient()!;
-    if (tmpClient) {
-      const totpResp = await userSessionResp.totpApprove(
-        tmpClient,
-        authenticator.generate(totpSecret)
-      );
-      userClient = await CubeSignerClient.create(totpResp.data());
+    if (userSessionResp.requiresMfa()) {
+      const tmpClient = await userSessionResp.mfaClient()!;
+      if (tmpClient) {
+        const totpResp = await userSessionResp.totpApprove(
+          tmpClient,
+          authenticator.generate(totpSecret)
+        );
+        userClient = await CubeSignerClient.create(totpResp.data());
+      }
+    } else {
+      userClient = await CubeSignerClient.create(userSessionResp.data());
+      let totpResetResp = await userClient.resetTotp();
+      const totpChallenge = totpResetResp.data();
+      if (totpChallenge.url) {
+        totpSecret =
+          new URL(totpChallenge.url).searchParams.get('secret') || '';
+        // TODO Save secren in supabase
+        console.log('debug > totpSecret===', totpSecret);
+        await totpChallenge.answer(authenticator.generate(totpSecret));
+      }
     }
-  } else {
-    userClient = await CubeSignerClient.create(userSessionResp.data());
-    let totpResetResp = await userClient.resetTotp();
-    const totpChallenge = totpResetResp.data();
-    if (totpChallenge.url) {
-      totpSecret = new URL(totpChallenge.url).searchParams.get('secret') || '';
-      // TODO Save secren in supabase
-      console.log('debug > totpSecret===', totpSecret);
-      await totpChallenge.answer(authenticator.generate(totpSecret));
-    }
-  }
 
-  if (userClient) {
-    const keys = await userClient.sessionKeys();
-    // TODO uncomment after testing
-    // const key = getLatestKey(keys)
-    const key =
-      keys?.find(
-        (key) =>
-          key.materialId === 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh'
-      ) || keys?.[keys?.length - 1];
+    if (userClient) {
+      const keys = await userClient.sessionKeys();
+      // TODO uncomment after testing
+      // const key = getLatestKey(keys)
+      const key =
+        keys?.find(
+          (key) =>
+            key.materialId === 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh'
+        ) || keys?.[keys?.length - 1];
 
-    const exportInProgress = await userClient.org().exports(key?.id).fetch();
-    if (!exportInProgress?.length) {
-      // initiate an export
-      const initExportResp = await userClient.org().initExport(key.id);
-      await initExportResp.totpApprove(
+      let exportInProgress = await userClient.org().exports(key?.id).fetch();
+      console.log('debug > exportInProgress===', exportInProgress);
+      if (!exportInProgress?.length) {
+        // initiate an export
+        const initExportResp = await userClient.org().initExport(key.id);
+        await initExportResp.totpApprove(
+          userClient,
+          authenticator.generate(totpSecret)
+        );
+        console.log('Initialize export');
+      }
+
+      const timeoutDelay = async () => setTimeout(() => {}, 2000);
+
+      await timeoutDelay();
+      console.log('Timeout....');
+      exportInProgress = await userClient.org().exports(key?.id).fetch();
+      console.log('debug > exportInProgress===', exportInProgress);
+
+      // generate a key
+      const exportKey = await userExportKeygen();
+
+      // complete an export
+      let completeExportResp = await userClient
+        .org()
+        .completeExport(key.id, exportKey.publicKey);
+      completeExportResp = await completeExportResp.totpApprove(
         userClient,
         authenticator.generate(totpSecret)
       );
-      console.log('Initialize export');
+      const completeExportResult = completeExportResp.data();
+      console.log('Complete export');
+
+      // decrypt key
+      const decryptedKey = await userExportDecrypt(
+        exportKey.privateKey,
+        completeExportResult
+      );
+
+      console.log('decryptedKey', decryptedKey);
+      // if (decryptedKey) {
+      //   await userClient.org().deleteExport(key.id);
+      // }
+
+      if (!decryptedKey) {
+        throw Error('Export keys failed');
+      }
+      return decryptedKey;
     }
-
-    // generate a key
-    const exportKey = await userExportKeygen();
-
-    // complete an export
-    let completeExportResp = await userClient
-      .org()
-      .completeExport(key.id, exportKey.publicKey);
-    completeExportResp = await completeExportResp.totpApprove(
-      userClient,
-      authenticator.generate(totpSecret)
-    );
-    const completeExportResult = completeExportResp.data();
-    console.log('Complete export');
-
-    // decrypt key
-    const decryptedKey = await userExportDecrypt(
-      exportKey.privateKey,
-      completeExportResult
-    );
-    if (decryptedKey) {
-      await userClient.org().deleteExport(key.id);
-    }
-
-    if (!decryptedKey) {
-      throw Error('Export keys failed');
-    }
-    return decryptedKey;
+  } catch (err) {
+    throw Error('Export keys failed' + err);
   }
 };
