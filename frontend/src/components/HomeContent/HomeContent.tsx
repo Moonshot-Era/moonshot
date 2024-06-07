@@ -68,7 +68,7 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
                 {formatNumberToUsd().format(totalBalance).split('.')[0]}
               </Text>
               <Text size="5" weight="medium" mt="2" ml="2px">
-                {((totalBalance % 1) * 10000).toFixed(0)}
+                {((totalBalance % 1) * 100).toFixed(0)}
               </Text>
             </>
           ) : (
