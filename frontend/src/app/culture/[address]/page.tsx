@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 import { Header } from '@/components/Header/Header';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
@@ -10,6 +11,7 @@ export default async function CultureItemPage({
   params,
   searchParams
 }: ServerPageProps<{ address: string }>) {
+  let walletAddress = '';
   const user = await checkProtectedRoute(searchParams, false);
   const oidc = cookies()?.get('pt')?.value;
 
@@ -27,12 +29,18 @@ export default async function CultureItemPage({
     }
   );
 
-  const { data: walletData } = await axios.post(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-wallet`,
-    {
-      oidc
+  if (user?.id) {
+    const { data: walletData } = await axios.post(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-wallet`,
+      {
+        oidc
+      }
+    );
+    walletAddress = walletData?.wallet;
+    if (!walletData?.wallet) {
+      redirect('/logout');
     }
-  );
+  }
 
   return (
     <>
@@ -42,7 +50,7 @@ export default async function CultureItemPage({
           isPublic={!user?.id}
           tokenData={tokenOverview}
           tokenInfo={tokenInfo}
-          walletAddress={walletData?.wallet}
+          walletAddress={walletAddress}
         />
       ) : (
         <CultureError />
