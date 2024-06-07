@@ -3,7 +3,6 @@
 import { useTransactionHistory } from '@/hooks/useTransactionHistory';
 import { Icon } from '@/legos';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
-import axios from 'axios';
 import Image, { StaticImageData } from 'next/image';
 import { FC } from 'react';
 import solanaIcon from '../../assets/images/solana-icon.png';
@@ -12,7 +11,8 @@ import './style.scss';
 interface FormattedTransactionType {
   id: string;
   transactionType: 'deposit' | 'withdraw' | 'convert';
-  wallet: string;
+  transferFrom: string;
+  transferTo: string;
   tokenAmount: number;
   tokenName: string;
   transactionDate: string;
@@ -38,22 +38,23 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
     );
 
   const getTokenData = (tokenAddress: string) => {
-    return axios
-      .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-info`, {
-        tokenAddress
-      })
-      .then((response) => {
-        const tokenOverview = response.data;
+    return { tokenName: '', logoURI: '' };
+    // return axios
+    //   .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-info`, {
+    //     tokenAddress
+    //   })
+    //   .then((response) => {
+    //     const tokenOverview = response.data;
 
-        return {
-          tokenName: tokenOverview.name,
-          logoURI: tokenOverview.logoURI
-        };
-      })
-      .catch((error) => {
-        console.error('Error fetching token info:', error);
-        return { tokenName: '', logoURI: solanaIcon };
-      });
+    //     return {
+    //       tokenName: tokenOverview.name,
+    //       logoURI: tokenOverview.logoURI
+    //     };
+    //   })
+    //   .catch((error) => {
+    //     console.error('Error fetching token info:', error);
+    //     return { tokenName: '', logoURI: solanaIcon };
+    //   });
   };
 
   const convertTimestamp = (timestamp: number) => {
@@ -98,7 +99,8 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
     return {
       id: transaction.signature,
       transactionType: operationType,
-      wallet: walletAddress,
+      transferFrom: transfer.fromUserAccount,
+      transferTo: transfer.toUserAccount,
       tokenAmount: transfer.amount,
       tokenName: tokenName,
       transactionDate: transaction.timestamp,
@@ -194,7 +196,8 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                   tokenAmount,
                   transactionType,
                   imageUrl,
-                  wallet
+                  transferFrom,
+                  transferTo
                 }) => (
                   <Flex
                     key={id}
@@ -216,9 +219,9 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                         </Text>
                         <Text className="font-size-xs">
                           {transactionType === 'deposit'
-                            ? `FROM ${wallet}`
+                            ? `FROM ${transferFrom}`
                             : transactionType === 'withdraw'
-                            ? `TO ${wallet}`
+                            ? `TO ${transferTo}`
                             : convertTimestamp(+transactionDate)}
                         </Text>
                       </Flex>
