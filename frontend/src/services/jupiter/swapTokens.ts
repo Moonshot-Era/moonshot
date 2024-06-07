@@ -41,10 +41,8 @@ export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
       userClient = await CubeSignerClient.create(userSessionResp.data());
     }
 
-    // const client = await CubeSignerInstance.getUserSessionClient(oidcToken);
-
     if (userClient) {
-      const walletAddress = await getUserWallet(oidcToken);
+      const walletAddress = await getUserWallet(oidcToken, totpSecret);
       const connection = new Connection(
         process.env.SOLANA_RPC_PROVIDER,
         'confirmed'

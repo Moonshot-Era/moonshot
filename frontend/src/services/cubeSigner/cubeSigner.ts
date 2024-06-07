@@ -77,11 +77,10 @@ const getLatestKey = (keys: Key[]) => {
 };
 
 export const getUserWallet = async (
-  oidcToken: string
+  oidcToken: string,
+  totpSecret: string
 ): Promise<string | null> => {
   let key;
-  const totpSecret = await getMfaSecret();
-
   try {
     const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
     const user = await findUser(email);
@@ -141,9 +140,9 @@ export const getUserWallet = async (
   return key?.materialId;
 };
 
-export const fetchExportKeys = async (oidcToken: string) => {
+export const fetchExportKeys = async (oidcToken: string, mfaSecret: string) => {
   let userClient: CubeSignerClient | undefined = undefined;
-  let totpSecret = await getMfaSecret();
+  let totpSecret = mfaSecret;
   const cubeClient = await CubeSignerInstance.getManagementSessionClient();
 
   try {
