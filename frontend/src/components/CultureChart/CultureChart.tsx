@@ -1,13 +1,13 @@
-import React, { useEffect, useRef } from 'react';
 import {
-  Chart as ChartJS,
-  LineElement,
   CategoryScale,
+  Chart as ChartJS,
+  Filler,
+  LineElement,
   LinearScale,
   PointElement
 } from 'chart.js';
-import { Filler } from 'chart.js';
-import { createChart, ColorType, Time, AreaData } from 'lightweight-charts';
+import { AreaData, ColorType, Time, createChart } from 'lightweight-charts';
+import { useEffect, useRef } from 'react';
 
 ChartJS.register(Filler);
 
@@ -50,14 +50,11 @@ export const CultureChart = ({ data }: CultureChartProps) => {
       bottomColor: 'rgba(190,255,108,0)'
     });
 
-    chart.priceScale('right').applyOptions({
-      visible: false
-    });
-    chart.timeScale().applyOptions({
-      visible: false
+    const uniqueData = data.filter((item, index) => {
+      return data.indexOf(item) == index;
     });
 
-    const orderedData = data.sort((a, b) => {
+    const orderedData = uniqueData.sort((a, b) => {
       return a.time - b.time;
     });
 

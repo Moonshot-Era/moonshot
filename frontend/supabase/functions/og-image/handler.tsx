@@ -9,8 +9,8 @@ export default async function handler(req: Request) {
     const profitPercent = url.searchParams.get('profitPercent') || 0;
     const entry = url.searchParams.get('entry') || '0';
     const profit = url.searchParams.get('profit') || '0';
-    const purchaseDate = url.searchParams.get('purchaseDate') || '';
-    const soldDate = url.searchParams.get('soldDate') || '';
+    const purchaseDate = url.searchParams.get('purchaseDate') || '-';
+    const soldDate = url.searchParams.get('soldDate') || '-';
 
     return new ImageResponse(
       (
@@ -25,7 +25,7 @@ export default async function handler(req: Request) {
             height: '100%',
             color: '#fff',
             padding: '75px',
-            fontFamily: 'Clash Display',
+            fontFamily: 'Clash Display'
           }}
         >
           <div
@@ -34,18 +34,20 @@ export default async function handler(req: Request) {
               flexDirection: 'column',
               fontSize: 96,
               fontWeight: 600,
-              lineHeight: '120px',
+              lineHeight: '120px'
             }}
           >
             <div>{name}</div>
-            <div>{`+${profitPercent}%`}</div>
+            <div>
+              {profitPercent > 0 ? `+${profitPercent}%` : `${profitPercent}%`}
+            </div>
           </div>
 
           <div
             style={{
               display: 'flex',
               justifyContent: 'space-between',
-              width: '100%',
+              width: '100%'
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -56,7 +58,9 @@ export default async function handler(req: Request) {
 
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span>Current profit</span>
-                <span>${profit}</span>
+                <span>
+                  {profit >= 0 ? `$${profit}` : `-$${Math.abs(profit)}`}
+                </span>
               </div>
             </div>
 
@@ -76,7 +80,7 @@ export default async function handler(req: Request) {
       ),
       {
         width: 750,
-        height: 750,
+        height: 750
       }
     );
   } catch (error) {
