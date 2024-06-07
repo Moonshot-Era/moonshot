@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import { sendTransaction } from '@/services/solana/sendTransaction';
+import { sendNativeTransaction } from '@/services/solana/sendNativeTransaction';
 import { sendTokensTransaction } from '@/services/solana/sendTokensTransaction';
 import { isSolanaAddress } from '@/helpers/helpers';
 
@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   const oidc = cookies()?.get('pt')?.value;
 
   if (isSolanaAddress(response.tokenAddress)) {
-    await sendTransaction(
+    await sendNativeTransaction(
       oidc!,
       response.fromAddress,
       response.toAddress,

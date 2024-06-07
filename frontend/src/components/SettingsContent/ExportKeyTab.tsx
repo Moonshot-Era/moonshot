@@ -16,15 +16,17 @@ interface Props {
 
 export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   const [checked, setChecked] = useState(false);
+  const [privateKey, setPrivateKey] = useState();
 
   const toggleChecked = () => setChecked(!checked);
 
   const handleExportKeys = async () => {
-    const res = await axios.post(
+    const { data } = await axios.post(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/export-keys`
     );
-    console.log('debug > res===', res);
+    console.log('debug > res===', data);
   };
+
   return (
     <Flex width="100%" direction="column" align="center">
       <Flex
