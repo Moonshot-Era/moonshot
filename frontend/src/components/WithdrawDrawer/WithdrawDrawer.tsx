@@ -58,10 +58,7 @@ export const WithdrawDrawer: FC<Props> = ({
           token_address: fromAsset?.address,
           token_amount: amount,
           token_price: '',
-          transaction_type: 'sell',
-          image_url: fromAsset?.imageUrl,
-          // ?
-          wallet_address: toAddress
+          transaction_type: 'sell'
         });
       })
       .finally(handleClose);
