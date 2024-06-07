@@ -1,22 +1,28 @@
 'use client';
 
+import { tokenAddressWithDots } from '@/helpers/helpers';
 import { useTransactionHistory } from '@/hooks/useTransactionHistory';
 import { Icon } from '@/legos';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import { FC } from 'react';
 import solanaIcon from '../../assets/images/solana-icon.png';
 import './style.scss';
 
 interface FormattedTransactionType {
   id: string;
-  transactionType: 'deposit' | 'withdraw' | 'convert';
-  transferFrom: string;
-  transferTo: string;
+  transactionType: 'Deposit' | 'Withdraw' | 'Convert';
+  wallet: string;
   tokenAmount: number;
   tokenName: string;
   transactionDate: string;
   imageUrl: string;
+  tokenAmountDeposit?: number;
+  tokenAmountWithdraw?: number;
+  tokenDepositName?: string;
+  tokenWithdrawName?: string;
+  tokenDepositImage?: string;
+  tokenWithdrawImage?: string;
 }
 
 interface TransactionGroupArraysType {
@@ -34,28 +40,8 @@ interface Props {
 export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
   const { transactionHistory, isFetching: transactionLoading } =
     useTransactionHistory(
-      walletAddress || 'HTnKf3f3vtLaGVVtYkZ8oCTyWEA64n5a1P4Dkkk5vjmH'
+      walletAddress || 'CNPdPrt1smECmRqFFhN9iZzDRV6BiqDVxQThgydsDT64'
     );
-
-  const getTokenData = (tokenAddress: string) => {
-    return { tokenName: '', logoURI: '' };
-    // return axios
-    //   .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-info`, {
-    //     tokenAddress
-    //   })
-    //   .then((response) => {
-    //     const tokenOverview = response.data;
-
-    //     return {
-    //       tokenName: tokenOverview.name,
-    //       logoURI: tokenOverview.logoURI
-    //     };
-    //   })
-    //   .catch((error) => {
-    //     console.error('Error fetching token info:', error);
-    //     return { tokenName: '', logoURI: solanaIcon };
-    //   });
-  };
 
   const convertTimestamp = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
@@ -64,77 +50,82 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
     return `${hour}:${minutes}`;
   };
 
-  const determineOperationType = (
-    transfer: { fromUserAccount: string; toUserAccount: string },
-    walletAddress: string
-  ): FormattedTransactionType['transactionType'] => {
-    if (
-      transfer.fromUserAccount ===
-      (walletAddress || 'HTnKf3f3vtLaGVVtYkZ8oCTyWEA64n5a1P4Dkkk5vjmH')
-    ) {
-      return 'withdraw';
-    } else if (
-      transfer.toUserAccount ===
-      (walletAddress || 'HTnKf3f3vtLaGVVtYkZ8oCTyWEA64n5a1P4Dkkk5vjmH')
-    ) {
-      return 'deposit';
-    } else {
-      return 'convert';
-    }
-  };
+  const determineOperationType = (transfer: {
+    fromUserAccount: string;
+    toUserAccount: string;
+  }): FormattedTransactionType['transactionType'] | null => {
+    const DEFAULT_ADDRESS = 'CNPdPrt1smECmRqFFhN9iZzDRV6BiqDVxQThgydsDT64';
+    const address = walletAddress || DEFAULT_ADDRESS;
 
-  const processTransfer = (
-    transfer: {
-      fromUserAccount: string;
-      toUserAccount: string;
-      amount: number;
-    },
-    transaction: any,
-    walletAddress: string,
-    tokenName: string = 'SOL',
-    logoURI: string | StaticImageData = solanaIcon,
-    convertLogoURI: string | StaticImageData = solanaIcon
-  ) => {
-    const operationType = determineOperationType(transfer, walletAddress);
-    return {
-      id: transaction.signature,
-      transactionType: operationType,
-      transferFrom: transfer.fromUserAccount,
-      transferTo: transfer.toUserAccount,
-      tokenAmount: transfer.amount,
-      tokenName: tokenName,
-      transactionDate: transaction.timestamp,
-      imageUrl: logoURI,
-      ...(operationType === 'convert' && { convertLogoURI })
-    };
+    if (transfer.fromUserAccount === address) {
+      return 'Withdraw';
+    } else if (transfer.toUserAccount === address) {
+      return 'Deposit';
+    }
+    return null;
   };
 
   const processedData: FormattedTransactionType[] =
-    transactionHistory?.flatMap((transaction) => {
-      const nativeTransfers = transaction.nativeTransfers.map(
-        (nativeTransfer) =>
-          processTransfer(nativeTransfer, transaction, walletAddress)
-      );
+    transactionHistory
+      ?.filter(
+        (transaction) =>
+          !transaction.description.includes('to multiple accounts') &&
+          (transaction.type === 'SWAP' ||
+            transaction.nativeTransfers.length > 0 ||
+            transaction.tokenTransfers.length > 0)
+      )
+      ?.flatMap((transaction) => {
+        if (transaction.type === 'SWAP') {
+          return {
+            id: transaction.signature,
+            transactionType: 'Convert',
+            tokenAmountDeposit:
+              transaction.events.swap.innerSwaps[0].tokenInputs[0]?.tokenAmount,
+            tokenAmountWithdraw:
+              transaction.events.swap.innerSwaps[0].tokenOutputs[0]
+                ?.tokenAmount,
+            tokenDepositName: '',
+            tokenWithdrawName: '',
+            transactionDate: transaction.timestamp,
+            tokenDepositImage: '',
+            tokenWithdrawImage: ''
+          };
+        } else if (transaction.tokenTransfers.length > 0) {
+          const transactionType = determineOperationType(
+            transaction.tokenTransfers[0]
+          );
+          return {
+            id: transaction.signature,
+            transactionType,
+            wallet:
+              transactionType === 'Deposit'
+                ? transaction.tokenTransfers[0].fromUserAccount
+                : transaction.tokenTransfers[0].toUserAccount,
+            tokenAmount: transaction.tokenTransfers[0].tokenAmount,
+            tokenName: '',
+            transactionDate: transaction.timestamp,
+            imageUrl: ''
+          };
+        } else if (transaction.nativeTransfers.length > 0) {
+          const transactionType = determineOperationType(
+            transaction.nativeTransfers[0]
+          );
+          return {
+            id: transaction.signature,
+            transactionType,
+            wallet:
+              transactionType === 'Deposit'
+                ? transaction.nativeTransfers[0].fromUserAccount
+                : transaction.nativeTransfers[0].toUserAccount,
+            tokenAmount: transaction.nativeTransfers[0].amount,
+            tokenName: 'SOL',
+            transactionDate: transaction.timestamp,
+            imageUrl: solanaIcon
+          };
+        }
 
-      const tokenTransfers = transaction.tokenTransfers.map((tokenTransfer) => {
-        // ????
-        const { tokenName, logoURI } = getTokenData(tokenTransfer.mint || '');
-
-        return processTransfer(
-          {
-            fromUserAccount: tokenTransfer.fromUserAccount,
-            toUserAccount: tokenTransfer.toUserAccount,
-            amount: tokenTransfer.tokenAmount
-          },
-          transaction,
-          walletAddress,
-          tokenName,
-          logoURI
-        );
-      });
-
-      return [...nativeTransfers, ...tokenTransfers];
-    }) || [];
+        return {};
+      }) || [];
 
   const transactionGroups =
     processedData?.reduce((groups, item) => {
@@ -196,8 +187,13 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                   tokenAmount,
                   transactionType,
                   imageUrl,
-                  transferFrom,
-                  transferTo
+                  wallet,
+                  tokenAmountWithdraw,
+                  tokenAmountDeposit,
+                  tokenDepositImage,
+                  tokenDepositName,
+                  tokenWithdrawImage,
+                  tokenWithdrawName
                 }) => (
                   <Flex
                     key={id}
@@ -218,25 +214,25 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                           {transactionType}
                         </Text>
                         <Text className="font-size-xs">
-                          {transactionType === 'deposit'
-                            ? `FROM ${transferFrom}`
-                            : transactionType === 'withdraw'
-                            ? `TO ${transferTo}`
+                          {transactionType === 'Deposit'
+                            ? `FROM ${tokenAddressWithDots(wallet)}`
+                            : transactionType === 'Withdraw'
+                            ? `TO ${tokenAddressWithDots(wallet)}`
                             : convertTimestamp(+transactionDate)}
                         </Text>
                       </Flex>
                     </Flex>
                     <Flex direction="column" align="end" justify="between">
                       <Text size="2" weight="medium">
-                        {transactionType === 'deposit'
+                        {transactionType === 'Deposit'
                           ? `+${tokenAmount} ${tokenName}`
-                          : transactionType === 'withdraw'
+                          : transactionType === 'Withdraw'
                           ? `-${tokenAmount} ${tokenName}`
-                          : `+${tokenAmount} ${tokenName}`}
+                          : `+${tokenAmountDeposit} ${tokenDepositName}`}
                       </Text>
                       <Text className="font-size-xs">
-                        {transactionType === 'convert'
-                          ? `-32,980 WIF`
+                        {transactionType === 'Convert'
+                          ? `-${tokenAmountWithdraw} ${tokenWithdrawName}`
                           : convertTimestamp(+transactionDate)}
                       </Text>
                     </Flex>
