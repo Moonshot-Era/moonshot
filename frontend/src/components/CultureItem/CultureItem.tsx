@@ -1,5 +1,6 @@
 'use client';
 
+import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,11 +16,12 @@ import { Toolbar } from '../Toolbar/Toolbar';
 
 import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
+import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
+import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
-import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
-import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 
 export const CultureItem = ({
   tokenInfo,
@@ -34,11 +36,20 @@ export const CultureItem = ({
 }) => {
   const router = useRouter();
   const { portfolio } = usePortfolio(walletAddress);
-  const { ohlcv, isFetching: ohlcvLoading } = useOhlcv(tokenData?.poolAddress);
+  const [timeFrame, setTimeFrame] = useState('hour');
+  const {
+    ohlcv,
+    isFetching: ohlcvLoading,
+    refetch
+  } = useOhlcv(tokenData?.poolAddress, timeFrame);
+
+  useEffect(() => {
+    refetch();
+  }, [timeFrame]);
 
   const chartData: { time: number; value: number }[] | [] =
     ohlcv?.attributes.ohlcv_list.map((item: Array<number[]>) => ({
-      time: item[0],
+      time: +item[0],
       value: item[4]
     })) || [];
 
@@ -47,6 +58,10 @@ export const CultureItem = ({
       ? isSolanaAddress(item?.address) === tokenInfo?.address
       : item?.address === tokenInfo?.address
   );
+
+  const handleChangeTimeFrame = (value: string) => {
+    setTimeFrame(value);
+  };
 
   return tokenInfo ? (
     <>
@@ -92,9 +107,31 @@ export const CultureItem = ({
               </Box>
             )}
           </Flex>
-          <Flex width="100%" height="200px" justify="center" align="center">
+          <Flex
+            width="100%"
+            height="200px"
+            direction="column"
+            justify="center"
+            align="center"
+          >
             {ohlcvLoading ? <Spinner /> : <CultureChart data={chartData} />}
           </Flex>
+          <ToggleGroup.Root
+            className="ToggleGroup"
+            type="single"
+            value={timeFrame}
+            onValueChange={handleChangeTimeFrame}
+          >
+            <ToggleGroup.Item className="ToggleGroupItem" value="day">
+              Day
+            </ToggleGroup.Item>
+            <ToggleGroup.Item className="ToggleGroupItem" value="hour">
+              Hour
+            </ToggleGroup.Item>
+            <ToggleGroup.Item className="ToggleGroupItem" value="minute">
+              Minute
+            </ToggleGroup.Item>
+          </ToggleGroup.Root>
           {!isPublic && asset && portfolio && (
             <Toolbar portfolio={portfolio} withShare />
           )}
