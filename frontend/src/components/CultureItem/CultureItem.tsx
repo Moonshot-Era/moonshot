@@ -133,7 +133,11 @@ export const CultureItem = ({
             </ToggleGroup.Item>
           </ToggleGroup.Root>
           {!isPublic && asset && portfolio && (
-            <Toolbar portfolio={portfolio} withShare />
+            <Toolbar
+              portfolio={portfolio}
+              withShare
+              tokenPrice={tokenData.price_usd}
+            />
           )}
 
           {asset && (
