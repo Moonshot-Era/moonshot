@@ -11,7 +11,7 @@ export const fetchTransactionHistory = (walletAddress: string) =>
       return response.data.transactionHistory as Transaction[];
     });
 
-export const useTransactionHistory = (walletAddress: string) => {
+export const useTransactionHistory = (walletAddress?: string) => {
   const { data, ...rest } = useQuery({
     queryKey: ['transaction_history'],
     queryFn: () => {

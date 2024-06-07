@@ -91,18 +91,21 @@ export const getWalletPortfolio = async (walletAddress: string) => {
           `solana_${SOLANA_WRAPPED_ADDRESS}`
       )?.attributes?.price_change_percentage?.h24;
 
-      walletPortfolioNormalized.push({
-        address: solanaToken?.address,
-        balance: result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
-        decimals: solanaToken?.decimals,
-        name: 'Solana',
-        priceUsd: result?.nativeBalance?.price_per_sol,
-        symbol: 'SOL',
-        uiAmount: result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
-        valueUsd: result?.nativeBalance?.total_price,
-        imageUrl: solanaToken?.image_url,
-        percentage_change_h24: solana_percentage_change_h24
-      });
+     if (result?.nativeBalance?.lamports) {
+       walletPortfolioNormalized.push({
+         address: solanaToken?.address,
+         balance: result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
+         decimals: solanaToken?.decimals,
+         name: 'Solana',
+         priceUsd: result?.nativeBalance?.price_per_sol,
+         symbol: 'SOL',
+         uiAmount:
+           result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
+         valueUsd: result?.nativeBalance?.total_price,
+         imageUrl: solanaToken?.image_url,
+         percentage_change_h24: solana_percentage_change_h24
+       });
+     }
 
       result?.items?.map((asset: TokenItemHeliusType) => {
         const token: TokenAttributes = tokensListGecko?.data?.find(
