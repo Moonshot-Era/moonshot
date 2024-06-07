@@ -8,13 +8,20 @@ import { axiosBrowserClient } from '@/services/axios/axiosBrowserClient';
 
 export default async function Home({ searchParams }: ServerPageProps) {
   const user = await checkProtectedRoute(searchParams);
-
+  const cookiesAll = cookies()?.getAll();
   const oidc = cookies()?.get('pt')?.value;
 
   const { data: walletData } = await axiosBrowserClient.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-wallet`,
     {
       oidc
+    },
+    {
+      headers: {
+        Cookie: encodeURI(
+          cookiesAll.map((cookie) => `${cookie.name}=${cookie.value}`).join(';')
+        )
+      }
     }
   );
 

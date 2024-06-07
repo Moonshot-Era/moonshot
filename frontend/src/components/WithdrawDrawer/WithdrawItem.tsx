@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
@@ -11,7 +11,11 @@ import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 
 interface WithdrawItemProps {
   asset?: WalletPortfolioAssetType;
-  onSlideHandler(toAddress: string, transactionAmount: number | string): void;
+  onSlideHandler(
+    toAddress: string,
+    transactionAmount: number | string,
+    symbol: string
+  ): void;
 }
 
 const TO_ADDRESS_ERROR = 'Invalid Solana address';
@@ -24,7 +28,9 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   );
   const [toAddressError, setToAddressError] = useState('');
   const [amountError, setAmountError] = useState('');
+  const [withdrawalError, setWithdrawalError] = useState('');
   const [amountInputInUsd, setAmountInputInUsd] = useState(true);
+  const btnRef = useRef();
 
   const decimalLength = `${asset?.uiAmount}`.split('.')?.[1]?.length || 0;
 
@@ -95,12 +101,19 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         setToAddressError(TO_ADDRESS_ERROR);
       }
       if (toAddress && transactionAmount) {
-        onSlideHandler(toAddress, transactionAmount);
+        onSlideHandler(toAddress, transactionAmount, asset?.symbol || '');
       }
     } catch (err) {
-      console.log('Err:', err);
+      setWithdrawalError('err');
     }
   };
+
+  useEffect(() => {
+    if (withdrawalError) {
+      //@ts-ignore
+      btnRef.current?.resetSlide();
+    }
+  }, [withdrawalError]);
 
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
@@ -183,6 +196,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         </Flex>
       </Flex>
       <SlideButton
+        ref={btnRef}
         disabled={
           !!amountError || !!toAddressError || !transactionAmount || !toAddress
         }

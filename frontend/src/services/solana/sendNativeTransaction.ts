@@ -10,6 +10,7 @@ import { authenticator } from 'otplib';
 import { CubeSignerClient } from '@cubist-labs/cubesigner-sdk';
 
 import { CubeSignerInstance } from '../cubeSigner';
+import { getMfaSecret } from '../helpers/getMfaSecret';
 
 export const sendNativeTransaction = async (
   oidcToken: string,
@@ -17,9 +18,8 @@ export const sendNativeTransaction = async (
   toAddress: string,
   amount: number
 ) => {
-  //TODO get from supabase
-  let totpSecret: string = 'SBCXRKMQOSFA6QTRGGVQR4BDWVPNQN5Y';
   let userClient: CubeSignerClient | undefined = undefined;
+  const totpSecret = await getMfaSecret();
 
   const cubeClient = await CubeSignerInstance.getManagementSessionClient();
   const userSessionResp = await CubeSignerClient.createOidcSession(

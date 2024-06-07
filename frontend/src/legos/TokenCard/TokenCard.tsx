@@ -27,7 +27,7 @@ export const TokenCard = ({ onClick, token, searchTo }: Props) => {
       className="token-card  bg-white"
       onClick={onClick}
     >
-      <Flex direction="row">
+      <Flex direction="row" width="100%">
         {token?.included?.attributes.image_url?.includes('http') && (
           <Flex position="relative" width="50px" height="50px">
             <img
