@@ -39,13 +39,13 @@ export const checkProtectedRoute = async (
     .eq('user_id', user.id)
     .maybeSingle();
 
-  // if (
-  //   forceRedirect &&
-  //   !pathname?.startsWith(ROUTES.onboarding) &&
-  //   !data?.onboarding_completed
-  // ) {
-  //   redirect(ROUTES.onboarding);
-  // }
+  if (
+    forceRedirect &&
+    !pathname?.startsWith(ROUTES.onboarding) &&
+    !data?.onboarding_completed
+  ) {
+    redirect(ROUTES.onboarding);
+  }
 
   return user;
 };
