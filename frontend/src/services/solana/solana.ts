@@ -16,10 +16,7 @@ export const Solana = async () => {
 
   // get airdrop
   try {
-    const airdropSignature = await connection.requestAirdrop(
-      fromPubkey,
-      LAMPORTS_PER_SOL
-    );
+    await connection.requestAirdrop(fromPubkey, LAMPORTS_PER_SOL);
     await connection.confirmTransaction({});
     console.log('Got an airdrop!');
   } catch (e) {
