@@ -65,7 +65,13 @@ const findUser = async (email: string) => {
 };
 
 const getLatestKey = (keys: Key[]) => {
-  return keys?.[keys?.length - 1];
+  const latestKey = keys?.sort((a, b) =>
+    a.cached.created && b.cached.created
+      ? b.cached.created - a.cached.created
+      : 0
+  )?.[0];
+
+  return latestKey || keys?.[keys?.length - 1];
 };
 
 let totpSecret: string = 'SBCXRKMQOSFA6QTRGGVQR4BDWVPNQN5Y';

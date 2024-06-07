@@ -31,12 +31,12 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
       ) : null}
       <Flex direction="row">
         <Flex position="relative">
-          {(asset?.logoURI || asset?.imageUrl) && (
+          {asset?.imageUrl && (
             <Image
               alt="img"
               width={50}
               height={50}
-              src={asset?.logoURI || asset?.imageUrl}
+              src={asset?.imageUrl}
               style={{ borderRadius: '50%', height: 50, width: 50 }}
             />
           )}
@@ -54,7 +54,7 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
         {!!asset?.valueUsd && (
           <Flex direction="column" justify="between" align="end" height="40px">
             <Text size="3" weight="medium">
-              {formatNumberToUsd().format(asset?.valueUsd)}
+              {formatNumberToUsd(4).format(asset?.valueUsd)}
             </Text>
             {asset?.percentage_change_h24 && (
               <Flex direction="row" align="center" gap="1">

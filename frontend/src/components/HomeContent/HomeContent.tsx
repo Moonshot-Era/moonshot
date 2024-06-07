@@ -26,6 +26,11 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
     return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
   }, 0);
 
+  const totalBalance =
+    portfolio?.walletAssets?.reduce((acc, cur) => {
+      return acc + cur?.valueUsd;
+    }, 0) || 0;
+
   useEffect(() => {
     window.addEventListener('load', function () {
       // @ts-ignore
@@ -43,7 +48,7 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
     };
   }, []);
 
-  const positiveBalance = portfolio?.totalUsd && portfolio.totalUsd > 0;
+  const positiveBalance = totalBalance > 0;
 
   return isFetching ? (
     <Skeleton variant="home" />
@@ -60,10 +65,10 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
           {positiveBalance ? (
             <>
               <Text size="8" weight="bold">
-                {formatNumberToUsd().format(portfolio.totalUsd).split('.')[0]}
+                {formatNumberToUsd().format(totalBalance).split('.')[0]}
               </Text>
               <Text size="5" weight="medium" mt="2" ml="2px">
-                {((portfolio?.totalUsd % 1) * 100).toFixed(0)}
+                {((totalBalance % 1) * 10000).toFixed(0)}
               </Text>
             </>
           ) : (
@@ -75,8 +80,8 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
         <Box mb="8">
           {positiveBalance && totalH24 ? (
             <BadgeSecond
-              percent={portfolio.totalUsd / totalH24}
-              total={portfolio.totalUsd - totalH24}
+              percent={totalBalance / totalH24}
+              total={totalBalance - totalH24}
             />
           ) : (
             '-'

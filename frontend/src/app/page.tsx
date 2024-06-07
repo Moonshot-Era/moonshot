@@ -25,7 +25,13 @@ export default async function Home({ searchParams }: ServerPageProps) {
   return (
     <>
       <Header isPublic={!user?.id} />
-      <HomeContent walletAddress={walletData?.wallet} userId={user?.id} />
+      <HomeContent
+        walletAddress={
+          // walletData?.wallet
+          '7MCZ8ggLrxPyAHm27EwLWBkqYTikyJnCdTKp1F3f7jQL'
+        }
+        userId={user?.id}
+      />
     </>
   );
 }

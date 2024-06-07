@@ -61,6 +61,7 @@ export const WithdrawDrawer: FC<Props> = ({
         })
         .then(async () => {
           await supabaseClient.from('transactions').insert({
+            // @ts-ignore
             created_at: new Date().toISOString(),
             user_id: '',
             token_name: fromAsset?.name,

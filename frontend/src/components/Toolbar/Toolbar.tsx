@@ -13,7 +13,7 @@ import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
 interface ToolbarProps {
   portfolio: WalletPortfolioNormilizedType;
   withShare?: boolean;
-  tokenPrice: number;
+  tokenPrice?: number;
 }
 
 export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
@@ -76,7 +76,9 @@ export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
             <Text size="2">Withdraw</Text>
           </Flex>
         )}
-        {withShare ? <ShareModal tokenPrice={tokenPrice} /> : null}
+        {withShare && tokenPrice ? (
+          <ShareModal tokenPrice={tokenPrice} />
+        ) : null}
       </Flex>
     </>
   );
