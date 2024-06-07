@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
@@ -28,7 +28,9 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   );
   const [toAddressError, setToAddressError] = useState('');
   const [amountError, setAmountError] = useState('');
+  const [withdrawalError, setWithdrawalError] = useState('');
   const [amountInputInUsd, setAmountInputInUsd] = useState(true);
+  const btnRef = useRef();
 
   const decimalLength = `${asset?.uiAmount}`.split('.')?.[1]?.length || 0;
 
@@ -102,9 +104,16 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         onSlideHandler(toAddress, transactionAmount, asset?.symbol || '');
       }
     } catch (err) {
-      throw err;
+      setWithdrawalError('err');
     }
   };
+
+  useEffect(() => {
+    if (withdrawalError) {
+      //@ts-ignore
+      btnRef.current?.resetSlide();
+    }
+  }, [withdrawalError]);
 
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
@@ -187,6 +196,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         </Flex>
       </Flex>
       <SlideButton
+        ref={btnRef}
         disabled={
           !!amountError || !!toAddressError || !transactionAmount || !toAddress
         }

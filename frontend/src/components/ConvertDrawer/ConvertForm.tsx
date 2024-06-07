@@ -11,6 +11,7 @@ import { Icon, Select, SlideButton, TokenNumberInput } from '@/legos';
 import { SelectedTokens } from './types';
 import { useSwapMutation, useSwapRoutes } from './hooks';
 import './style.scss';
+import { snackbar } from '@/helpers/snackbar/snackbar';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
@@ -41,17 +42,34 @@ export const ConvertForm = memo(
     const mutation = useSwapMutation();
 
     useEffect(() => {
-      if (mutation.isSuccess || mutation.isError) {
+      if (mutation.isSuccess) {
+        snackbar('success', `Finished converting!`);
         closeDrawer();
       }
     }, [mutation.isSuccess]);
 
     useEffect(() => {
       if (mutation.isError) {
+        snackbar('error', `Something went wrong, please try again.`);
         //@ts-ignore
         btnRef.current?.resetSlide();
       }
     }, [mutation.isError]);
+
+    const handleSwapSubmit = () => {
+      snackbar(
+        'info',
+        `Converting ${amount} ${
+          selectedTokens?.from?.symbol
+        } into ${convertToReadable(
+          // @ts-ignore
+          swapRoutes.outAmount,
+          selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
+        )} ${selectedTokens?.to?.included?.attributes.symbol}`
+      );
+      //@ts-ignore
+      mutation.mutate({ swapRoutes });
+    };
 
     return (
       <Flex
@@ -144,8 +162,7 @@ export const ConvertForm = memo(
             mutation.isPending ||
             !isValidAmount
           }
-          //@ts-ignore
-          handleSubmit={() => mutation.mutate({ swapRoutes })}
+          handleSubmit={handleSwapSubmit}
           loading={mutation.isPending}
           label={
             mutation.isPending ? 'Waiting for a transaction end' : undefined
