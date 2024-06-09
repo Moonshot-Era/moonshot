@@ -37,7 +37,15 @@ export const isSolanaAddress = (address: string) => {
 
 export const tokenAddressWithDots = (tokenAddress: string) =>
   `${tokenAddress.slice(0, 5)}...
-            ${tokenAddress.slice(
-              tokenAddress.length - 5 > 0 ? tokenAddress.length - 5 : 0,
-              tokenAddress.length
-            )}`;
+  ${tokenAddress.slice(
+    tokenAddress.length - 5 > 0 ? tokenAddress.length - 5 : 0,
+    tokenAddress.length
+  )}`;
+
+export const convertTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp * 1000);
+  const hour = date.getHours();
+  const minutes = date.getMinutes();
+  return `${hour}:${minutes}`;
+};
+

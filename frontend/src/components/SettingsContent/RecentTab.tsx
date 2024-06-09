@@ -1,13 +1,13 @@
 'use client';
 
-import { tokenAddressWithDots } from '@/helpers/helpers';
-import { useTransactionHistory } from '@/hooks/useTransactionHistory';
+import { convertTimestamp, tokenAddressWithDots } from '@/helpers/helpers';
 import { Icon } from '@/legos';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import Image, { StaticImageData } from 'next/image';
 import { FC } from 'react';
 import solanaIcon from '../../assets/images/solana-icon.png';
 import './style.scss';
+import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
 
 interface FormattedTransactionType {
   id?: string;
@@ -38,15 +38,10 @@ interface Props {
 }
 
 export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
-  const { transactionHistory, isFetching: transactionLoading } =
-    useTransactionHistory(walletAddress);
+  const { transactionsHistory, isFetching: transactionLoading } =
+    useTransactionsHistory(walletAddress);
 
-  const convertTimestamp = (timestamp: number) => {
-    const date = new Date(timestamp * 1000);
-    const hour = date.getHours();
-    const minutes = date.getMinutes();
-    return `${hour}:${minutes}`;
-  };
+  console.log('debug > transactionHistory===', transactionsHistory);
 
   const determineOperationType = (transfer: {
     fromUserAccount: string;
@@ -61,7 +56,7 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
   };
 
   const processedData =
-    transactionHistory
+    transactionsHistory
       ?.filter(
         (transaction) =>
           !transaction.description.includes('to multiple accounts') &&
