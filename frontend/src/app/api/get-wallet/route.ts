@@ -8,13 +8,11 @@ export async function POST(request: Request) {
   if (!response.oidc) {
     NextResponse.json({});
   }
-  const totpSecret = await getMfaSecret();
+  const totpSecret = (await getMfaSecret()) || '';
 
-  const wallet = await getUserWallet(response.oidc, totpSecret || '').catch(
-    (err) => {
-      console.log('Err', err);
-    }
-  );
+  const wallet = await getUserWallet(response.oidc, totpSecret).catch((err) => {
+    console.log('Err', err);
+  });
 
   return NextResponse.json({ wallet });
 }
