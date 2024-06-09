@@ -44,7 +44,7 @@ interface Props {
 }
 
 export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
-  walletAddress = 'C6Y3yRBvoZFXL1TiFatboMqgHAvtv9U3oFcdpVuddCvx';
+  // walletAddress = 'C6Y3yRBvoZFXL1TiFatboMqgHAvtv9U3oFcdpVuddCvx';
   const { transactionsHistory, isFetching: transactionLoading } =
     useTransactionsHistory(walletAddress);
 
