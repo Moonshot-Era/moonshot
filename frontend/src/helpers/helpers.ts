@@ -41,11 +41,3 @@ export const tokenAddressWithDots = (tokenAddress: string) =>
     tokenAddress.length - 5 > 0 ? tokenAddress.length - 5 : 0,
     tokenAddress.length
   )}`;
-
-export const convertTimestamp = (timestamp: number) => {
-  const date = new Date(timestamp * 1000);
-  const hour = date.getHours();
-  const minutes = date.getMinutes();
-  return `${hour}:${minutes}`;
-};
-
