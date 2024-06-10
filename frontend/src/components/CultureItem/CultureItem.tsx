@@ -82,7 +82,7 @@ export const CultureItem = ({
             mb="8"
             gap="3"
           >
-            {tokenInfo?.imageUrl && (
+            {tokenInfo?.imageUrl && tokenInfo?.imageUrl?.includes('http') && (
               <Flex position="relative" width="24px" height="24px">
                 <Image
                   className="border-radius-full"
@@ -114,7 +114,14 @@ export const CultureItem = ({
             justify="center"
             align="center"
           >
-            {ohlcvLoading ? <Spinner /> : <CultureChart data={chartData} />}
+            {ohlcvLoading ? (
+              <Spinner />
+            ) : (
+              <CultureChart
+                data={chartData}
+                tokenDecimals={tokenData?.decimals || 0}
+              />
+            )}
           </Flex>
           <ToggleGroup.Root
             className="ToggleGroup"
@@ -136,7 +143,7 @@ export const CultureItem = ({
             <Toolbar
               portfolio={portfolio}
               withShare
-              tokenPrice={tokenData.price_usd}
+              tokenPrice={+tokenData.price_usd}
             />
           )}
 
@@ -161,17 +168,18 @@ export const CultureItem = ({
                 justify="between"
                 align="end"
               >
-                {tokenInfo?.imageUrl && (
-                  <Flex position="relative" width="24px" height="24px">
-                    <Image
-                      className="border-radius-full"
-                      width={24}
-                      height={24}
-                      alt="Token logo"
-                      src={tokenInfo?.imageUrl}
-                    />
-                  </Flex>
-                )}
+                {tokenInfo?.imageUrl &&
+                  tokenInfo?.imageUrl?.includes('http') && (
+                    <Flex position="relative" width="24px" height="24px">
+                      <Image
+                        className="border-radius-full"
+                        width={24}
+                        height={24}
+                        alt="Token logo"
+                        src={tokenInfo?.imageUrl}
+                      />
+                    </Flex>
+                  )}
                 <Text size="1" mt="1">
                   {asset?.uiAmount} {asset?.symbol}
                 </Text>
