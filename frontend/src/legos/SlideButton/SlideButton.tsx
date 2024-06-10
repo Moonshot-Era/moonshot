@@ -8,18 +8,19 @@ import React, {
   TouchEvent as ReactTouchEvent,
   forwardRef,
   useImperativeHandle,
-} from "react";
-import { Spinner, Text } from "@radix-ui/themes";
+  useCallback
+} from 'react';
+import { Spinner, Text } from '@radix-ui/themes';
 
-import "./style.scss";
-import { Icon } from "../Icon";
+import './style.scss';
+import { Icon } from '../Icon';
 
 export const SlideButton = forwardRef(function SlideButton(
   {
     disabled,
     handleSubmit,
     loading,
-    label = "Swipe to confirm",
+    label = 'Swipe to confirm'
   }: {
     disabled?: boolean;
     handleSubmit(): void;
@@ -51,69 +52,82 @@ export const SlideButton = forwardRef(function SlideButton(
     }
   };
 
-  const handleMouseUp = (
-    event: globalThis.MouseEvent | globalThis.TouchEvent
-  ) => {
-    if (!mouseIsDown) return;
-    setMouseIsDown(false);
-    const currentMouse =
-      (event as globalThis.MouseEvent).clientX ||
-      (event as globalThis.TouchEvent).changedTouches[0].pageX;
-    const relativeMouse = currentMouse - initialMouse;
-    const slider = sliderRef.current;
-    const text = textRef.current;
+  const setSliderToPosition = useCallback(
+    (position: number, mouseUp?: boolean) => {
+      const slider = sliderRef.current;
+      const text = textRef.current;
 
-    if (slider && text) {
-      if (relativeMouse < slideMovementTotal) {
-        text.style.opacity = "1";
-        slider.style.left = "-1px";
-        return;
+      if (slider && text) {
+        if (mouseUp) {
+          if (position < slideMovementTotal) {
+            text.style.opacity = '1';
+            slider.style.left = '-1px';
+            return;
+          }
+          slider.classList.add('unlocked');
+          handleSubmit();
+        } else {
+          if (position === 0) {
+            text.style.opacity = '1';
+            slider.style.left = '-1px';
+            slider.classList.add('unlocked');
+            return;
+          }
+
+          if (position >= slideMovementTotal + 1) {
+            slider.style.left = `${slideMovementTotal}px`;
+            handleSubmit();
+            return;
+          }
+          slider.style.left = `${position - 1}px`;
+          const slidePercent = 1 - position / slideMovementTotal;
+          text.style.opacity = slidePercent.toString();
+        }
       }
-      slider.classList.add("unlocked");
+    },
+    [handleSubmit, slideMovementTotal]
+  );
 
-      setTimeout(() => {
-        slider.onclick = () => {
-          if (!slider.classList.contains("unlocked")) return;
-          slider.classList.remove("unlocked");
-          slider.onclick = null;
-        };
-      }, 0);
-    }
-    handleSubmit();
-  };
+  const handleMouseUp = useCallback(
+    (event: globalThis.MouseEvent | globalThis.TouchEvent) => {
+      if (!mouseIsDown) return;
+      setMouseIsDown(false);
+      const currentMouse =
+        (event as globalThis.MouseEvent).clientX ||
+        (event as globalThis.TouchEvent).changedTouches[0].pageX;
+      setSliderToPosition(currentMouse, true);
+    },
+    [mouseIsDown, setSliderToPosition]
+  );
 
-  const handleMouseMove = (
-    event: globalThis.MouseEvent | globalThis.TouchEvent
-  ) => {
-    if (!mouseIsDown) return;
-    const currentMouse =
-      (event as globalThis.MouseEvent).clientX ||
-      (event as globalThis.TouchEvent).touches[0].pageX;
-    const relativeMouse = currentMouse - initialMouse;
-    const slidePercent = 1 - relativeMouse / slideMovementTotal;
-    const slider = sliderRef.current;
-    const text = textRef.current;
-
-    if (slider && text) {
-      text.style.opacity = slidePercent.toString();
-
-      if (relativeMouse <= 0) {
-        slider.style.left = "-1px";
-        return;
-      }
-      if (relativeMouse >= slideMovementTotal + 1) {
-        slider.style.left = `${slideMovementTotal}px`;
-        return;
-      }
-      slider.style.left = `${relativeMouse - 1}px`;
-    }
-  };
+  const handleMouseMove = useCallback(
+    (event: globalThis.MouseEvent | globalThis.TouchEvent) => {
+      if (!mouseIsDown) return;
+      const currentMouse =
+        (event as globalThis.MouseEvent).clientX ||
+        (event as globalThis.TouchEvent).touches[0].pageX;
+      const relativeMouse = currentMouse - initialMouse;
+      setSliderToPosition(relativeMouse);
+    },
+    [initialMouse, mouseIsDown, setSliderToPosition]
+  );
 
   useImperativeHandle(
     ref,
     () => {
       return {
-        resetSlide: () => setSlideMovementTotal(0),
+        resetSlide: () => {
+          if (
+            sliderRef.current &&
+            sliderRef.current.classList.contains('unlocked')
+          ) {
+            sliderRef.current.classList.remove('unlocked');
+          }
+          setInitialMouse(0);
+          setMouseIsDown(false);
+          setSlideMovementTotal(0);
+          setSliderToPosition(0);
+        }
       };
     },
     []
@@ -126,23 +140,23 @@ export const SlideButton = forwardRef(function SlideButton(
       handleMouseMove(event);
     const handleTouchEndWrapper = (event: TouchEvent) => handleMouseUp(event);
 
-    document.addEventListener("mousemove", handleMouseMoveWrapper);
-    document.addEventListener("mouseup", handleMouseUpWrapper);
-    document.addEventListener("touchmove", handleTouchMoveWrapper);
-    document.addEventListener("touchend", handleTouchEndWrapper);
+    document.addEventListener('mousemove', handleMouseMoveWrapper);
+    document.addEventListener('mouseup', handleMouseUpWrapper);
+    document.addEventListener('touchmove', handleTouchMoveWrapper);
+    document.addEventListener('touchend', handleTouchEndWrapper);
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMoveWrapper);
-      document.removeEventListener("mouseup", handleMouseUpWrapper);
-      document.removeEventListener("touchmove", handleTouchMoveWrapper);
-      document.removeEventListener("touchend", handleTouchEndWrapper);
+      document.removeEventListener('mousemove', handleMouseMoveWrapper);
+      document.removeEventListener('mouseup', handleMouseUpWrapper);
+      document.removeEventListener('touchmove', handleTouchMoveWrapper);
+      document.removeEventListener('touchend', handleTouchEndWrapper);
     };
-  }, [mouseIsDown, initialMouse, slideMovementTotal]);
+  }, [handleMouseMove, handleMouseUp]);
 
   return (
     <div
       id="button-slider-container"
-      className={`button-slider-container ${disabled ? "disabled" : ""}`}
+      className={`button-slider-container ${disabled ? 'disabled' : ''}`}
       ref={backgroundRef}
     >
       <Text
@@ -154,9 +168,9 @@ export const SlideButton = forwardRef(function SlideButton(
         {label}
       </Text>
       <div
-        id="button-slider"
-        className={`button-slider ${disabled ? "disabled" : ""}`}
         ref={sliderRef}
+        id="button-slider"
+        className={`button-slider ${disabled ? 'disabled' : ''}`}
         onMouseDown={handleMouseDown}
         onTouchStart={handleMouseDown}
       >

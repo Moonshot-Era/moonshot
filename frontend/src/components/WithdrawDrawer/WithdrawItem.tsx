@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
@@ -30,7 +30,8 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const [toAddressError, setToAddressError] = useState('');
   const [amountError, setAmountError] = useState('');
   const [amountInputInUsd, setAmountInputInUsd] = useState(true);
-  const btnRef = useRef();
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const btnRef = useRef({});
 
   const decimalLength = `${asset?.uiAmount}`.split('.')?.[1]?.length || 0;
 
@@ -90,6 +91,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   };
 
   const handleSubmitWithdrawal = async () => {
+    setWithdrawLoading(true);
     try {
       const { data: isSolanaWallet } = await axios.post(
         `${process.env.NEXT_PUBLIC_SITE_URL}/api/validate-wallet`,
@@ -109,11 +111,12 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         );
       }
     } catch (err) {
-      //@ts-ignore
+      // @ts-ignore
       btnRef.current?.resetSlide();
+    } finally {
+      setWithdrawLoading(false);
     }
   };
-
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
       <Text size="4" weight="bold">
@@ -200,6 +203,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
           !!amountError || !!toAddressError || !transactionAmount || !toAddress
         }
         handleSubmit={handleSubmitWithdrawal}
+        loading={withdrawLoading}
       />
     </Flex>
   );

@@ -79,6 +79,7 @@ export const WithdrawDrawer: FC<Props> = ({
         err?.response?.data?.errorMessage ||
           `Something went wrong, please try again.`
       );
+      throw err;
     }
   };
 
