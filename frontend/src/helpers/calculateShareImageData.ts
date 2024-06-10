@@ -4,57 +4,57 @@ export const calculateShareImageData = (
   transactions: Tables<'transactions'>[],
   tokenPrice: number
 ) => {
-  const purchaseTransactions = transactions.filter(
-    (item) => item.transaction_type === 'buy'
+  let profit = 0;
+  let profitPercent = 0;
+
+  const totalRevenueAll = transactions.reduce(
+    (acc, cur) => {
+      const date = new Date(cur.created_at).toLocaleDateString('en-US');
+
+      if (cur.transaction_type === 'buy') {
+        acc.buyVolume += cur.token_amount ?? 0;
+        acc.buyAmountTotal += (cur.token_amount ?? 0) * (cur.token_price ?? 0);
+        acc.buyDates.push(date);
+      }
+
+      if (cur.transaction_type === 'sell') {
+        acc.sellVolume += cur.token_amount ?? 0;
+        acc.sellAmountTotal += (cur.token_amount ?? 0) * (cur.token_price ?? 0);
+        acc.sellDates.push(date);
+      }
+
+      return acc;
+    },
+    {
+      buyVolume: 0,
+      sellVolume: 0,
+      buyAmountTotal: 0,
+      sellAmountTotal: 0,
+      buyDates: [] as string[],
+      sellDates: [] as string[]
+    }
   );
-  const sellTransactions = transactions.filter(
-    (item) => item.transaction_type === 'sell'
-  );
 
-  const lastPurchaseTransaction =
-    purchaseTransactions[purchaseTransactions.length - 1];
-  const lastSellTransaction = sellTransactions[sellTransactions.length - 1];
-
-  const totalCost = purchaseTransactions.reduce((acc, transaction) => {
-    return (
-      acc + (transaction.token_amount || 0) * (transaction.token_price || 0)
-    );
-  }, 0);
-
-  let totalRevenue;
-
-  if (!sellTransactions.length) {
-    totalRevenue = purchaseTransactions.reduce((acc, transaction) => {
-      console.log(
-        'transaction.token_amount',
-        transaction.token_amount,
-        '*',
-        tokenPrice
-      );
-      return acc + (transaction.token_amount || 0) * tokenPrice;
-    }, 0);
-  } else {
-    totalRevenue = sellTransactions.reduce((acc, transaction) => {
-      return (
-        acc + (transaction.token_amount || 0) * (transaction.token_price || 0)
-      );
-    }, 0);
+  if (totalRevenueAll.buyVolume >= totalRevenueAll.sellVolume) {
+    const soldPrice =
+      (totalRevenueAll.buyVolume - totalRevenueAll.sellVolume) * tokenPrice;
+    profit =
+      totalRevenueAll.sellAmountTotal +
+      soldPrice -
+      totalRevenueAll.buyAmountTotal;
+    profitPercent = (profit / totalRevenueAll.buyAmountTotal) * 100;
   }
 
-  const profit = totalRevenue - totalCost;
+  const datePurchased =
+    totalRevenueAll.buyDates[totalRevenueAll.buyDates.length - 1];
 
-  const profitPercent = (profit / totalCost) * 100;
-
-  const datePurchased = new Date(
-    lastPurchaseTransaction.created_at || ''
-  ).toLocaleDateString('en-US');
-  const dateSold = lastSellTransaction
-    ? new Date(lastSellTransaction.created_at).toLocaleDateString('en-US')
+  const dateSold = totalRevenueAll.sellDates.length
+    ? totalRevenueAll.sellDates[totalRevenueAll.sellDates.length - 1]
     : '-';
 
   return {
     profitPercent,
-    totalCost,
+    totalCost: totalRevenueAll.buyAmountTotal,
     profit,
     datePurchased,
     dateSold
