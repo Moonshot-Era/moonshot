@@ -84,7 +84,10 @@ export default function RootLayout({
         <ServiceWorkerRegister />
         <SplashScreen />
         <ReactQueryProvider>
-          <Theme className="bg-transparent" style={{ maxWidth: 430 }}>
+          <Theme
+            className="bg-transparent"
+            style={{ width: '100%', maxWidth: 430 }}
+          >
             {children}
           </Theme>
         </ReactQueryProvider>
