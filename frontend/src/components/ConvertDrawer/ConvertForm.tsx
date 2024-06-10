@@ -24,6 +24,12 @@ export const ConvertForm = memo(
     const [amount, setAmount] = useState<number | string>(0.001);
     const btnRef = useRef();
     const [isValidAmount, setIsValidAmount] = useState(true);
+    const label =
+      selectedTokens?.from && selectedTokens?.to
+        ? `
+      Convert ${selectedTokens?.from?.name} to ${selectedTokens.to?.included?.attributes.name}
+    `
+        : 'Convert';
 
     useEffect(() => {
       const numericAmount = +amount;
@@ -81,31 +87,37 @@ export const ConvertForm = memo(
         gap="5"
       >
         <Text size="4" weight="bold">
-          Convert {selectedTokens?.from?.name} to{' '}
-          {selectedTokens.to?.included?.attributes.name}
+          {label}
         </Text>
         <Flex
           width="100%"
           justify="between"
+          align="center"
           py="3"
           px="4"
           className="bg-yellow transfer-card"
         >
-          <Flex direction="column" justify="between" gap="1">
-            <TokenNumberInput
-              decimalLimit={selectedTokens?.from?.decimals as number}
-              value={'' + amount}
-              onChange={setAmount}
-              hasError={!isValidAmount}
-            />
-            {!isValidAmount && (
-              <Text size="1" className="text-color-error">
-                Amount must be greater than 0 and less than or equal to
-                available amount
-              </Text>
-            )}
-            <Text size="1">{`Available: ${selectedTokens?.from?.uiAmount}`}</Text>
-          </Flex>
+          {selectedTokens.from ? (
+            <Flex direction="column" justify="between" gap="1">
+              <TokenNumberInput
+                decimalLimit={selectedTokens?.from?.decimals as number}
+                value={'' + amount}
+                onChange={setAmount}
+                hasError={!isValidAmount}
+              />
+              {!isValidAmount && (
+                <Text size="1" className="text-color-error">
+                  Amount must be greater than 0 and less than or equal to
+                  available amount
+                </Text>
+              )}
+              <Text size="1">{`Available: ${selectedTokens?.from?.uiAmount}`}</Text>
+            </Flex>
+          ) : (
+            <Text size="5" weight="bold">
+              Select culture
+            </Text>
+          )}
           <Flex direction="column" justify="between" align="end" gap="1">
             <Select
               mode="btn"
@@ -113,13 +125,15 @@ export const ConvertForm = memo(
               value={selectedTokens?.from?.name}
             />
 
-            <Text
-              size="1"
-              className="transfer-card-max"
-              onClick={() => setAmount(selectedTokens?.from?.uiAmount || 0)}
-            >
-              Max
-            </Text>
+            {selectedTokens.from && (
+              <Text
+                size="1"
+                className="transfer-card-max"
+                onClick={() => setAmount(selectedTokens?.from?.uiAmount || 0)}
+              >
+                Max
+              </Text>
+            )}
           </Flex>
         </Flex>
         <Box className="convert-icon-arrow">
@@ -133,6 +147,12 @@ export const ConvertForm = memo(
           px="4"
           className="bg-yellow transfer-card"
         >
+          {!selectedTokens.to && (
+            <Text size="5" weight="bold">
+              Select culture
+            </Text>
+          )}
+
           {isSwapRoutesLoading ? (
             <Spinner size="3" />
           ) : (
@@ -154,20 +174,22 @@ export const ConvertForm = memo(
             value={selectedTokens?.to?.included?.attributes.symbol}
           />
         </Flex>
-        <SlideButton
-          ref={btnRef}
-          disabled={
-            !swapRoutes ||
-            isSwapRoutesLoading ||
-            mutation.isPending ||
-            !isValidAmount
-          }
-          handleSubmit={handleSwapSubmit}
-          loading={mutation.isPending}
-          label={
-            mutation.isPending ? 'Waiting for a transaction end' : undefined
-          }
-        />
+        {selectedTokens.from && selectedTokens.to && (
+          <SlideButton
+            ref={btnRef}
+            disabled={
+              !swapRoutes ||
+              isSwapRoutesLoading ||
+              mutation.isPending ||
+              !isValidAmount
+            }
+            handleSubmit={handleSwapSubmit}
+            loading={mutation.isPending}
+            label={
+              mutation.isPending ? 'Waiting for a transaction end' : undefined
+            }
+          />
+        )}
       </Flex>
     );
   }

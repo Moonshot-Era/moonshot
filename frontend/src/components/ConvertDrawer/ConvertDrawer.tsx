@@ -1,22 +1,5 @@
 'use client';
 
-// TODO:
-// + Show available assets to convert
-// + Show price change of assets
-// + Add input of tokens to convert
-// + Add max btn for tokens to convert
-// + Find routes for convert in jupiter
-// + Convert
-// + Infinite scroll for tokens
-// + Selects as a btn
-// + Show progress
-// - show empty state
-// - validate number in input
-// + Search an asset
-// + Price of tokens in tokensList
-// + better types
-// - Snap on scroll
-
 import {
   FC,
   memo,
@@ -78,12 +61,7 @@ export const ConvertDrawer: FC<Props> = memo(
         ...selectedTokens,
         [`${state}`]: token
       });
-
-      if (state === 'from' && !selectedTokens.to) {
-        setState('to');
-      } else {
-        setState('convert');
-      }
+      setState('convert');
     };
 
     const handleClose = () => {
@@ -95,7 +73,7 @@ export const ConvertDrawer: FC<Props> = memo(
       ref,
       () => {
         return {
-          open: () => setState('from'),
+          open: () => setState('convert'),
           close: () => setState(null)
         };
       },
@@ -214,19 +192,17 @@ export const ConvertDrawer: FC<Props> = memo(
             </Flex>
           )}
         </SheetDrawer>
-        {selectedTokens?.from && selectedTokens?.to ? (
-          <SheetDrawer
-            isOpen={state === 'convert'}
-            detent="content-height"
-            handleClose={handleClose}
-          >
-            <ConvertForm
-              selectedTokens={selectedTokens}
-              changeSelected={(reselect) => setState(reselect)}
-              closeDrawer={handleClose}
-            />
-          </SheetDrawer>
-        ) : null}
+        <SheetDrawer
+          isOpen={state === 'convert'}
+          detent="content-height"
+          handleClose={handleClose}
+        >
+          <ConvertForm
+            selectedTokens={selectedTokens}
+            changeSelected={(reselect) => setState(reselect)}
+            closeDrawer={handleClose}
+          />
+        </SheetDrawer>
       </>
     );
   })
