@@ -9,10 +9,15 @@ interface Props extends SelectHTMLAttributes<HTMLSelectElement> {
   onClick?: () => void;
 }
 
-export const Select: FC<Props> = ({ values, onClick, mode = 'default', ...props }) =>
+export const Select: FC<Props> = ({
+  values,
+  onClick,
+  mode = 'default',
+  ...props
+}) =>
   mode === 'btn' ? (
     <button className="convert-select" onClick={onClick}>
-      {props.value}
+      {props.value || '-'}
     </button>
   ) : (
     <select
