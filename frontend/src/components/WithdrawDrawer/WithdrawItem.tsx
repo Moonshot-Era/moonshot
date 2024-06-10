@@ -14,6 +14,7 @@ interface WithdrawItemProps {
   onSlideHandler(
     toAddress: string,
     transactionAmount: number | string,
+    tokenPrice: number,
     symbol: string
   ): void;
 }
@@ -28,7 +29,6 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   );
   const [toAddressError, setToAddressError] = useState('');
   const [amountError, setAmountError] = useState('');
-  const [withdrawalError, setWithdrawalError] = useState('');
   const [amountInputInUsd, setAmountInputInUsd] = useState(true);
   const btnRef = useRef();
 
@@ -101,19 +101,18 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         setToAddressError(TO_ADDRESS_ERROR);
       }
       if (toAddress && transactionAmount) {
-        onSlideHandler(toAddress, transactionAmount, asset?.symbol || '');
+        onSlideHandler(
+          toAddress,
+          transactionAmount,
+          asset?.priceUsd || 0,
+          asset?.symbol || ''
+        );
       }
     } catch (err) {
-      setWithdrawalError('err');
-    }
-  };
-
-  useEffect(() => {
-    if (withdrawalError) {
       //@ts-ignore
       btnRef.current?.resetSlide();
     }
-  }, [withdrawalError]);
+  };
 
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
