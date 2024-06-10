@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-export const getOhlcvData = async (poolAddress: string, timeFrame: string) => {
+export const getOhlcvData = async (
+  poolAddress: string,
+  timeFrame: string,
+  aggregateParam: string
+) => {
   try {
     if (!poolAddress) {
       throw Error(`No pool address provided`);
@@ -13,6 +17,9 @@ export const getOhlcvData = async (poolAddress: string, timeFrame: string) => {
         headers: {
           'Content-Type': 'application/json',
           'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`
+        },
+        params: {
+          aggregate: aggregateParam
         }
       }
     );

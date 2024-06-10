@@ -1,16 +1,15 @@
-import type { Metadata, Viewport } from 'next';
-import { Toaster } from 'sonner';
-import Script from 'next/script';
-import localFont from 'next/font/local';
+import { ReactQueryProvider } from '@/helpers/ReactQueryProvider';
 import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
-import { ReactQueryProvider } from '@/helpers/ReactQueryProvider';
+import type { Metadata, Viewport } from 'next';
+import localFont from 'next/font/local';
+import Script from 'next/script';
+import { Toaster } from 'sonner';
 
-import './globals.scss';
-import './globals.css';
-import { Header } from '@/components/Header/Header';
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
 import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
+import './globals.css';
+import './globals.scss';
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -85,7 +84,9 @@ export default function RootLayout({
         <ServiceWorkerRegister />
         <SplashScreen />
         <ReactQueryProvider>
-          <Theme className="bg-transparent">{children}</Theme>
+          <Theme className="bg-transparent" style={{ maxWidth: 430 }}>
+            {children}
+          </Theme>
         </ReactQueryProvider>
       </body>
     </html>

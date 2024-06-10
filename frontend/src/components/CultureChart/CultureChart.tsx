@@ -20,6 +20,14 @@ interface CultureChartProps {
 export const CultureChart = ({ data }: CultureChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
+  const uniqueData = data.filter((item, index) => {
+    return data.indexOf(item) == index;
+  });
+
+  const orderedData = uniqueData.sort((a, b) => {
+    return a.time - b.time;
+  });
+
   useEffect(() => {
     if (!chartContainerRef.current || !data) return;
     const chart = createChart(chartContainerRef.current, {
@@ -28,11 +36,11 @@ export const CultureChart = ({ data }: CultureChartProps) => {
       layout: {
         background: {
           type: ColorType.Solid,
-
           color: 'rgba(0,0,0,0)'
         },
-        textColor: '#000000'
+        textColor: ' rgba(0, 0, 0, 0) '
       },
+
       grid: {
         vertLines: {
           visible: false
@@ -44,18 +52,10 @@ export const CultureChart = ({ data }: CultureChartProps) => {
     });
 
     const lineSeries = chart.addAreaSeries({
-      lineColor: '#000000',
-      lineWidth: 1,
+      lineColor: '#BEFF6C',
+      lineWidth: 2,
       topColor: 'rgba(190,255,108,1)',
       bottomColor: 'rgba(190,255,108,0)'
-    });
-
-    const uniqueData = data.filter((item, index) => {
-      return data.indexOf(item) == index;
-    });
-
-    const orderedData = uniqueData.sort((a, b) => {
-      return a.time - b.time;
     });
 
     lineSeries.setData(orderedData as unknown as AreaData<Time>[]);
@@ -63,7 +63,5 @@ export const CultureChart = ({ data }: CultureChartProps) => {
     return () => chart.remove();
   }, [data]);
 
-  return (
-    <div ref={chartContainerRef} style={{ width: '100%', height: '200px' }} />
-  );
+  return <div ref={chartContainerRef} style={{ width: '100%' }}></div>;
 };
