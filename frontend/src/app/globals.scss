@@ -88,9 +88,10 @@ body {
 }
 
 body {
-  max-width: 430px;
   margin: auto !important;
   background-image: url('../assets/images/bg.svg');
+  display: flex;
+  justify-content: center;
 }
 
 a {

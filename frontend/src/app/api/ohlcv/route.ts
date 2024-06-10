@@ -5,9 +5,9 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   const requestData = await request.json();
 
-  const { poolAddress, timeFrame } = requestData;
+  const { poolAddress, timeFrame, aggregateParam } = requestData;
 
-  const { data } = await getOhlcvData(poolAddress, timeFrame);
+  const { data } = await getOhlcvData(poolAddress, timeFrame, aggregateParam);
 
   return NextResponse.json({ data } as OhlcvDataType);
 }
