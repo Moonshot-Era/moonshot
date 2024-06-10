@@ -61,7 +61,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           <Icon icon="alertTriangle" width={64} height={64} />
         </Box>
         <Text
-          size="2"
+          size="3"
           mb="6"
           mx="2"
           align="center"
@@ -70,7 +70,18 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           Handle with utmost care. Store securely offline, never share, and
           remember, loss of key equals loss of funds.
         </Text>
-        <Text size="2" weight="bold" className="setting-export-card-subtitle">
+        <Text
+          size="3"
+          mb="6"
+          mx="2"
+          align="center"
+          className="setting-export-card-title"
+        >
+          To ensure your safety, there is a <Text weight="bold">48 hour </Text>
+          waiting period before you can retrieve a phrase.
+        </Text>
+
+        <Text size="3" weight="bold" className="setting-export-card-subtitle">
           You are solely responsible for its safety.
         </Text>
       </Flex>
@@ -91,7 +102,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           className="settings-export-checkbox"
           onClick={toggleChecked}
         />
-        <Text size="2">
+        <Text size="3">
           I understand that I am solely responsible for my private key’s
           security.
         </Text>
@@ -101,7 +112,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
         className="settings-export-button"
         onClick={handleExportKeys}
       >
-        <Text size="2" weight="medium">
+        <Text size="3" weight="medium">
           Continue
         </Text>
       </Button>

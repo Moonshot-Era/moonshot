@@ -1,3 +1,4 @@
+import { formatNumberToUsd } from '@/helpers/helpers';
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -15,9 +16,10 @@ ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 interface CultureChartProps {
   data: Array<{ time: number; value: number }>;
+  tokenDecimals: number;
 }
 
-export const CultureChart = ({ data }: CultureChartProps) => {
+export const CultureChart = ({ data, tokenDecimals }: CultureChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,7 +49,13 @@ export const CultureChart = ({ data }: CultureChartProps) => {
       lineColor: '#000000',
       lineWidth: 1,
       topColor: 'rgba(190,255,108,1)',
-      bottomColor: 'rgba(190,255,108,0)'
+      bottomColor: 'rgba(190,255,108,0)',
+      priceFormat: {
+        type: 'custom',
+        formatter: (price: string) => {
+          return formatNumberToUsd(tokenDecimals).format(+price);
+        }
+      }
     });
 
     const uniqueData = data.filter((item, index) => {
