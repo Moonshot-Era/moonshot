@@ -200,7 +200,11 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
       <SlideButton
         ref={btnRef}
         disabled={
-          !!amountError || !!toAddressError || !transactionAmount || !toAddress
+          !!amountError ||
+          !!toAddressError ||
+          !transactionAmount ||
+          !toAddress ||
+          withdrawLoading
         }
         handleSubmit={handleSubmitWithdrawal}
         loading={withdrawLoading}
