@@ -82,7 +82,7 @@ export const CultureItem = ({
             mb="8"
             gap="3"
           >
-            {tokenInfo?.imageUrl && (
+            {tokenInfo?.imageUrl && tokenInfo?.imageUrl?.includes('http') && (
               <Flex position="relative" width="24px" height="24px">
                 <Image
                   className="border-radius-full"
@@ -161,17 +161,18 @@ export const CultureItem = ({
                 justify="between"
                 align="end"
               >
-                {tokenInfo?.imageUrl && (
-                  <Flex position="relative" width="24px" height="24px">
-                    <Image
-                      className="border-radius-full"
-                      width={24}
-                      height={24}
-                      alt="Token logo"
-                      src={tokenInfo?.imageUrl}
-                    />
-                  </Flex>
-                )}
+                {tokenInfo?.imageUrl &&
+                  tokenInfo?.imageUrl?.includes('http') && (
+                    <Flex position="relative" width="24px" height="24px">
+                      <Image
+                        className="border-radius-full"
+                        width={24}
+                        height={24}
+                        alt="Token logo"
+                        src={tokenInfo?.imageUrl}
+                      />
+                    </Flex>
+                  )}
                 <Text size="1" mt="1">
                   {asset?.uiAmount} {asset?.symbol}
                 </Text>
