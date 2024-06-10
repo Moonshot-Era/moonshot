@@ -114,7 +114,14 @@ export const CultureItem = ({
             justify="center"
             align="center"
           >
-            {ohlcvLoading ? <Spinner /> : <CultureChart data={chartData} />}
+            {ohlcvLoading ? (
+              <Spinner />
+            ) : (
+              <CultureChart
+                data={chartData}
+                tokenDecimals={tokenData?.decimals || 0}
+              />
+            )}
           </Flex>
           <ToggleGroup.Root
             className="ToggleGroup"
@@ -136,7 +143,7 @@ export const CultureItem = ({
             <Toolbar
               portfolio={portfolio}
               withShare
-              tokenPrice={tokenData.price_usd}
+              tokenPrice={+tokenData.price_usd}
             />
           )}
 

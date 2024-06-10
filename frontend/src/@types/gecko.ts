@@ -112,9 +112,9 @@ export interface GeckoTokenOverview {
     decimals: number;
     fdv_usd: string;
     image_url: string;
-    market_cap_usd: void;
+    market_cap_usd: number;
     name: string;
-    price_usd: string;
+    price_usd: number;
     symbol: string;
     total_reserve_in_usd: string;
     total_supply: string;
