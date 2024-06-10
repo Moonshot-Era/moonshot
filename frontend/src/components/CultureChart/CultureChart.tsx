@@ -61,7 +61,7 @@ export const CultureChart = ({ data, tokenDecimals }: CultureChartProps) => {
       priceFormat: {
         type: 'custom',
         formatter: (price: string) => {
-          return formatNumberToUsd(tokenDecimals).format(+price);
+          return formatNumberToUsd(Math.abs(tokenDecimals / 2)).format(+price);
         }
       }
     });
