@@ -3,8 +3,9 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '../Icon';
-import { formatNumberToUsd, tokenAddressWithDots } from '@/helpers/helpers';
+import { tokenAddressWithDots } from '@/helpers/helpers';
 import { PoolGeckoType } from '@/@types/gecko';
+import { TokenPrice } from '../TokenPrice/TokenPrice';
 
 interface Props {
   token: PoolGeckoType;
@@ -63,7 +64,7 @@ export const TokenCard = ({ onClick, token, searchTo }: Props) => {
       <Flex direction="row" align="center" my="1">
         <Flex direction="column" justify="between" align="end" height="40px">
           <Text size="3" weight="medium">
-            {formatNumberToUsd(4).format(+tokenItem?.base_token_price_usd || 0)}
+            <TokenPrice price={`${tokenItem?.base_token_price_usd}`} />
           </Text>
           {percentageChange && (
             <Flex direction="row" align="center" gap="1">
