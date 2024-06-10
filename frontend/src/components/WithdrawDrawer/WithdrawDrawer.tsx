@@ -52,34 +52,33 @@ export const WithdrawDrawer: FC<Props> = ({
       `Withdrawing ${amount} ${symbol} to ${tokenAddressWithDots(toAddress)}`
     );
     try {
-      const resp = await axios
-        .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
-          fromAddress: portfolio?.wallet,
-          toAddress: toAddress,
-          amount: amount,
-          tokenAddress: fromAsset?.address,
-          tokenDecimals: fromAsset?.decimals
-        })
-        .then(async () => {
-          if (toAddress !== portfolio?.wallet) {
-            await supabaseClient.from('transactions').insert({
-              // @ts-ignore
-              created_at: new Date().toISOString(),
-              user_id: '',
-              token_name: fromAsset?.name,
-              token_address: fromAsset?.address,
-              token_amount: amount,
-              token_price: `${tokenPrice ?? 0}`,
-              transaction_type: 'sell'
-            });
-          }
-        })
-        .then(() => {
-          snackbar('success', `Withdrawal succeeded!`);
-          handleClose();
-        });
-    } catch (err) {
-      snackbar('error', `Something went wrong, please try again.`);
+       await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
+         fromAddress: portfolio?.wallet,
+         toAddress: toAddress,
+         amount: amount,
+         tokenAddress: fromAsset?.address,
+         tokenDecimals: fromAsset?.decimals
+       });
+       if (toAddress !== portfolio?.wallet) {
+         await supabaseClient.from('transactions').insert({
+           // @ts-ignore
+           created_at: new Date().toISOString(),
+           user_id: '',
+           token_name: fromAsset?.name,
+           token_address: fromAsset?.address,
+           token_amount: amount,
+           token_price: `${tokenPrice ?? 0}`,
+           transaction_type: 'sell'
+         });
+       }
+      snackbar('success', `Withdrawal succeeded!`);
+      handleClose();
+    } catch (err:any) {
+      snackbar(
+        'error',
+        err?.response?.data?.errorMessage ||
+          `Something went wrong, please try again.`
+      );
     }
   };
 

@@ -16,7 +16,7 @@ interface WithdrawItemProps {
     transactionAmount: number | string,
     tokenPrice: number,
     symbol: string
-  ): void;
+  ): Promise<void>;
 }
 
 const TO_ADDRESS_ERROR = 'Invalid Solana address';
@@ -101,7 +101,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         setToAddressError(TO_ADDRESS_ERROR);
       }
       if (toAddress && transactionAmount) {
-        onSlideHandler(
+        await onSlideHandler(
           toAddress,
           transactionAmount,
           asset?.priceUsd || 0,
