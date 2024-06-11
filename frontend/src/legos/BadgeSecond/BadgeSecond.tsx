@@ -20,8 +20,8 @@ export const BadgeSecond: FC<Props> = ({ percent, total }) => (
         {formatNumberToUsd().format(total)}
       </Text>
     </div>
-    <Text className="badge-second-percent" size="2" weight="medium">{`${(
-      1 - percent
-    ).toFixed(2)}%`}</Text>
+    <Text className="badge-second-percent" size="2" weight="medium">{`${
+      total > 0 ? '' : '-'
+    }${(100 - percent * 100).toFixed(2)}%`}</Text>
   </div>
 );
