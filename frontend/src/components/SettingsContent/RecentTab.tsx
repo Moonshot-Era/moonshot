@@ -73,12 +73,20 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
             id: transaction.signature,
             transactionType: 'Convert',
             tokenAmount: 0,
-            tokenAmountConvertFrom:
+            tokenAmountConvertFrom: Number(
               transaction.events?.swap?.innerSwaps[0]?.tokenInputs[0]
-                ?.tokenAmount,
-            tokenAmountConvertTo:
+                ?.tokenAmount ||
+                transaction.events?.swap?.tokenInputs[0]?.rawTokenAmount
+                  .tokenAmount ||
+                0
+            ),
+            tokenAmountConvertTo: Number(
               transaction.events?.swap?.innerSwaps[0]?.tokenOutputs[0]
-                ?.tokenAmount,
+                ?.tokenAmount ||
+                transaction.events?.swap?.tokenOutputs[0]?.rawTokenAmount
+                  .tokenAmount ||
+                0
+            ),
             tokenConvertFromSymbol: '',
             tokenConvertToSymbol: '',
             transactionDate: transaction.timestamp * 1000,
@@ -202,8 +210,9 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                       tokenAmountConvertTo,
                       tokenConvertFromSymbol,
                       tokenConvertToSymbol
-                    }) =>
-                      transactionType ? (
+                    }) => {
+                      const amount = tokenAmount || 0;
+                      return transactionType ? (
                         <Flex
                           key={id}
                           width="100%"
@@ -240,25 +249,23 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                             align="end"
                             justify="between"
                           >
-                            {!!tokenAmount && (
-                              <Text size="2" weight="medium">
-                                {transactionType === 'Deposit'
-                                  ? `+${
-                                      tokenName === 'SOL'
-                                        ? (tokenAmount / 10 ** 9).toFixed(4)
-                                        : tokenAmount.toFixed(4)
-                                    } ${tokenName}`
-                                  : transactionType === 'Withdraw'
-                                  ? `-${
-                                      tokenName === 'SOL'
-                                        ? (tokenAmount / 10 ** 9).toFixed(4)
-                                        : tokenAmount.toFixed(4)
-                                    } ${tokenName}`
-                                  : `+${tokenAmountConvertFrom?.toFixed(
-                                      4
-                                    )} ${tokenConvertFromSymbol}`}
-                              </Text>
-                            )}
+                            <Text size="2" weight="medium">
+                              {transactionType === 'Deposit'
+                                ? `+${
+                                    tokenName === 'SOL'
+                                      ? (amount / 10 ** 9).toFixed(4)
+                                      : amount.toFixed(4)
+                                  } ${tokenName}`
+                                : transactionType === 'Withdraw'
+                                ? `-${
+                                    tokenName === 'SOL'
+                                      ? (amount / 10 ** 9).toFixed(4)
+                                      : amount.toFixed(4)
+                                  } ${tokenName}`
+                                : `+${tokenAmountConvertFrom?.toFixed(
+                                    4
+                                  )} ${tokenConvertFromSymbol}`}
+                            </Text>
                             {transactionDate && (
                               <Text className="font-size-xs">
                                 {transactionType === 'Convert'
@@ -270,7 +277,8 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                             )}
                           </Flex>
                         </Flex>
-                      ) : null
+                      ) : null;
+                    }
                   )}
                 </Flex>
               ) : null
