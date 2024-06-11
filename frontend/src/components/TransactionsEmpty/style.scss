@@ -1,0 +1,9 @@
+@import '../../styles/variables.scss';
+
+.no-activity-card {
+  @include border-dark;
+  box-shadow: $shadow-2;
+  border-radius: 16px;
+  background-color: $grey;
+  text-align: center;
+}

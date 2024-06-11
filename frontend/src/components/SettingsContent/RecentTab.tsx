@@ -1,15 +1,16 @@
 'use client';
 
-import { FC } from 'react';
-import Image, { StaticImageData } from 'next/image';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import { format } from 'date-fns';
+import Image, { StaticImageData } from 'next/image';
+import { FC } from 'react';
 
-import { Icon } from '@/legos';
-import solanaIcon from '../../assets/images/solana-icon.png';
 import { tokenAddressWithDots } from '@/helpers/helpers';
 import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
+import { Icon } from '@/legos';
+import solanaIcon from '../../assets/images/solana-icon.png';
 
+import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
 import './style.scss';
 
 interface FormattedTransactionType {
@@ -88,6 +89,9 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
           const transactionType = determineOperationType(
             transaction.tokenTransfers[0]
           );
+          const namePattern = /\d+(\.\d+)?\s(\w+)\sto/;
+          const name = transaction.description.match(namePattern)?.[2] || '';
+
           return {
             id: transaction.signature,
             transactionType,
@@ -100,7 +104,7 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                 ? transaction.tokenTransfers[0].toUserAccount
                 : '',
             tokenAmount: transaction.tokenTransfers[0].tokenAmount || 0,
-            tokenName: '',
+            tokenName: name,
             mint: transaction.tokenTransfers[0].mint,
             transactionDate: transaction.timestamp * 1000,
             imageUrl: ''
@@ -177,103 +181,103 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
         <Spinner />
       ) : (
         <Flex width="100%" direction="column" align="start" gap="24px">
-          {transactionGroupArrays?.length
-            ? transactionGroupArrays.map(({ date, transactions }) =>
-                transactions?.length ? (
-                  <Flex key={date} width="100%" direction="column" gap="2">
-                    <Text size="3" weight="medium">
-                      {format(date, 'PP')}
-                    </Text>
-                    {transactions.map(
-                      ({
-                        id,
-                        tokenName,
-                        transactionDate,
-                        tokenAmount,
-                        transactionType,
-                        imageUrl,
-                        fromWallet,
-                        toWallet,
-                        tokenAmountConvertFrom,
-                        tokenAmountConvertTo,
-                        tokenConvertFromSymbol,
-                        tokenConvertToSymbol
-                      }) =>
-                        transactionType ? (
-                          <Flex
-                            key={id}
-                            width="100%"
-                            justify="between"
-                            p="3"
-                            className="setting-recent-card"
-                          >
-                            <Flex direction="row" gap="2">
-                              {imageUrl && (
-                                <Image
-                                  alt="user-icon"
-                                  width={48}
-                                  height={48}
-                                  src={imageUrl}
-                                />
-                              )}
-                              <Flex direction="column" justify="between">
-                                <Text size="2" weight="medium">
-                                  {transactionType}
-                                </Text>
-                                {transactionDate && (
-                                  <Text className="font-size-xs">
-                                    {fromWallet
-                                      ? `FROM ${tokenAddressWithDots(
-                                          fromWallet
-                                        )}`
-                                      : toWallet
-                                      ? `TO ${tokenAddressWithDots(toWallet)}`
-                                      : format(transactionDate, 'hh:mm a')}
-                                  </Text>
-                                )}
-                              </Flex>
-                            </Flex>
-                            <Flex
-                              direction="column"
-                              align="end"
-                              justify="between"
-                            >
-                              {!!tokenAmount && (
-                                <Text size="2" weight="medium">
-                                  {transactionType === 'Deposit'
-                                    ? `+${
-                                        tokenName === 'SOL'
-                                          ? (tokenAmount / 10 ** 9).toFixed(4)
-                                          : tokenAmount.toFixed(4)
-                                      } ${tokenName}`
-                                    : transactionType === 'Withdraw'
-                                    ? `-${
-                                        tokenName === 'SOL'
-                                          ? (tokenAmount / 10 ** 9).toFixed(4)
-                                          : tokenAmount.toFixed(4)
-                                      } ${tokenName}`
-                                    : `+${tokenAmountConvertFrom?.toFixed(
-                                        4
-                                      )} ${tokenConvertFromSymbol}`}
-                                </Text>
-                              )}
+          {transactionGroupArrays?.length ? (
+            transactionGroupArrays.map(({ date, transactions }) =>
+              transactions?.length ? (
+                <Flex key={date} width="100%" direction="column" gap="2">
+                  <Text size="3" weight="medium">
+                    {format(date, 'PP')}
+                  </Text>
+                  {transactions.map(
+                    ({
+                      id,
+                      tokenName,
+                      transactionDate,
+                      tokenAmount,
+                      transactionType,
+                      imageUrl,
+                      fromWallet,
+                      toWallet,
+                      tokenAmountConvertFrom,
+                      tokenAmountConvertTo,
+                      tokenConvertFromSymbol,
+                      tokenConvertToSymbol
+                    }) =>
+                      transactionType ? (
+                        <Flex
+                          key={id}
+                          width="100%"
+                          justify="between"
+                          p="3"
+                          className="setting-recent-card"
+                        >
+                          <Flex direction="row" gap="2">
+                            {imageUrl && (
+                              <Image
+                                alt="user-icon"
+                                width={48}
+                                height={48}
+                                src={imageUrl}
+                              />
+                            )}
+                            <Flex direction="column" justify="between">
+                              <Text size="2" weight="medium">
+                                {transactionType}
+                              </Text>
                               {transactionDate && (
                                 <Text className="font-size-xs">
-                                  {transactionType === 'Convert'
-                                    ? `-${tokenAmountConvertTo?.toFixed(
-                                        4
-                                      )} ${tokenConvertToSymbol}`
+                                  {fromWallet
+                                    ? `FROM ${tokenAddressWithDots(fromWallet)}`
+                                    : toWallet
+                                    ? `TO ${tokenAddressWithDots(toWallet)}`
                                     : format(transactionDate, 'hh:mm a')}
                                 </Text>
                               )}
                             </Flex>
                           </Flex>
-                        ) : null
-                    )}
-                  </Flex>
-                ) : null
-              )
-            : null}
+                          <Flex
+                            direction="column"
+                            align="end"
+                            justify="between"
+                          >
+                            {!!tokenAmount && (
+                              <Text size="2" weight="medium">
+                                {transactionType === 'Deposit'
+                                  ? `+${
+                                      tokenName === 'SOL'
+                                        ? (tokenAmount / 10 ** 9).toFixed(4)
+                                        : tokenAmount.toFixed(4)
+                                    } ${tokenName}`
+                                  : transactionType === 'Withdraw'
+                                  ? `-${
+                                      tokenName === 'SOL'
+                                        ? (tokenAmount / 10 ** 9).toFixed(4)
+                                        : tokenAmount.toFixed(4)
+                                    } ${tokenName}`
+                                  : `+${tokenAmountConvertFrom?.toFixed(
+                                      4
+                                    )} ${tokenConvertFromSymbol}`}
+                              </Text>
+                            )}
+                            {transactionDate && (
+                              <Text className="font-size-xs">
+                                {transactionType === 'Convert'
+                                  ? `-${tokenAmountConvertTo?.toFixed(
+                                      4
+                                    )} ${tokenConvertToSymbol}`
+                                  : format(transactionDate, 'hh:mm a')}
+                              </Text>
+                            )}
+                          </Flex>
+                        </Flex>
+                      ) : null
+                  )}
+                </Flex>
+              ) : null
+            )
+          ) : (
+            <TransactionsEmpty />
+          )}
         </Flex>
       )}
     </Flex>
