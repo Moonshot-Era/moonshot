@@ -2,9 +2,9 @@
 
 import { Box, Flex, Text } from '@radix-ui/themes';
 
-import './style.scss';
-import { Button, QrCodeImage } from '@/legos';
 import { copyToClipboard } from '@/helpers/helpers';
+import { Button, QrCodeImage } from '@/legos';
+import './style.scss';
 
 export const DepositItem = ({ walletAddress }: { walletAddress: string }) => (
   <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
@@ -39,7 +39,7 @@ export const DepositItem = ({ walletAddress }: { walletAddress: string }) => (
     )}
     <Box className="deposit-info-card" py="2" px="4" mb="9">
       <Text size="1" weight="medium">
-        Only deposit MICHI from the Solana network. Deposits of other assets or
+        Only deposit token from the Solana network. Deposits of other assets or
         from other networks will be lost.
       </Text>
     </Box>
