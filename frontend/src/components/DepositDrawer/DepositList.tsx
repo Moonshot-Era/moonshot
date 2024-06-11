@@ -1,10 +1,11 @@
 'use client';
 
 import { FC } from 'react';
-import { Box, Flex, Text } from '@radix-ui/themes';
+import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '@/legos';
+import { useWidth } from '@/hooks/useWidth';
 
 interface Props {
   toggleTransfer: () => void;
@@ -15,8 +16,10 @@ interface Props {
 export const DepositList: FC<Props> = ({
   toggleTransfer,
   handleClose,
-  walletAddress,
+  walletAddress
 }) => {
+  const { mdScreen } = useWidth();
+
   const formConfiguration = {
     apiKey: 'pk_1062bb2f9ad6f30c76933e612bf29007',
     walletAddress
@@ -32,7 +35,7 @@ export const DepositList: FC<Props> = ({
 
   return (
     <Flex width="100%" direction="column" align="center" gap="4" px="4" pb="6">
-      <Text size="4" weight="bold">
+      <Text size={mdScreen ? '5' : '4'} weight="bold">
         Deposit
       </Text>
       <Flex
@@ -49,7 +52,7 @@ export const DepositList: FC<Props> = ({
           justify="between"
           onClick={handleDepositWithShift4}
         >
-          <Text size="3" weight="medium">
+          <Text size={mdScreen ? '4' : '3'} weight="medium">
             Shift4
           </Text>
           <Text>Card or bank transfer</Text>
@@ -65,7 +68,7 @@ export const DepositList: FC<Props> = ({
       >
         <Icon icon="wallet" size={48} />
         <Flex direction="column" justify="between" onClick={toggleTransfer}>
-          <Text size="3" weight="medium">
+          <Text size={mdScreen ? '4' : '3'} weight="medium">
             Your wallet
           </Text>
           <Text>

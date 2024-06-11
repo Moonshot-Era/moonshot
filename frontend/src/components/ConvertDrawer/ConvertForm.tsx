@@ -2,16 +2,18 @@
 
 import { memo, useEffect, useRef, useState } from 'react';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
+
 import {
   convertToInteger,
   convertToReadable
 } from '@/helpers/convertAmountToInt';
+import { SelectedTokens } from './types';
+import { useWidth } from '@/hooks/useWidth';
+import { snackbar } from '@/helpers/snackbar/snackbar';
+import { useSwapMutation, useSwapRoutes } from './hooks';
 import { Icon, Select, SlideButton, TokenNumberInput } from '@/legos';
 
-import { SelectedTokens } from './types';
-import { useSwapMutation, useSwapRoutes } from './hooks';
 import './style.scss';
-import { snackbar } from '@/helpers/snackbar/snackbar';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
@@ -21,6 +23,8 @@ type ConvertForm = {
 
 export const ConvertForm = memo(
   ({ selectedTokens, changeSelected, closeDrawer }: ConvertForm) => {
+    const { mdScreen } = useWidth();
+
     const [amount, setAmount] = useState<number | string>(0.001);
     const btnRef = useRef();
     const [isValidAmount, setIsValidAmount] = useState(true);
@@ -86,7 +90,7 @@ export const ConvertForm = memo(
         pb="6"
         gap="5"
       >
-        <Text size="4" weight="bold">
+        <Text size={mdScreen ? '5' : '4'} weight="bold">
           {label}
         </Text>
         <Flex
@@ -106,15 +110,17 @@ export const ConvertForm = memo(
                 hasError={!isValidAmount}
               />
               {!isValidAmount && (
-                <Text size="1" className="text-color-error">
+                <Text size={mdScreen ? '3' : '1'} className="text-color-error">
                   Amount must be greater than 0 and less than or equal to
                   available amount
                 </Text>
               )}
-              <Text size="1">{`Available: ${selectedTokens?.from?.uiAmount}`}</Text>
+              <Text
+                size={mdScreen ? '3' : '1'}
+              >{`Available: ${selectedTokens?.from?.uiAmount}`}</Text>
             </Flex>
           ) : (
-            <Text size="5" weight="bold">
+            <Text size={mdScreen ? '6' : '5'} weight="bold">
               Select culture
             </Text>
           )}
@@ -127,7 +133,7 @@ export const ConvertForm = memo(
 
             {selectedTokens.from && (
               <Text
-                size="1"
+                size={mdScreen ? '3' : '1'}
                 className="transfer-card-max"
                 onClick={() => setAmount(selectedTokens?.from?.uiAmount || 0)}
               >
@@ -148,7 +154,7 @@ export const ConvertForm = memo(
           className="bg-yellow transfer-card"
         >
           {!selectedTokens.to && (
-            <Text size="5" weight="bold">
+            <Text size={mdScreen ? '6' : '5'} weight="bold">
               Select culture
             </Text>
           )}
@@ -156,7 +162,7 @@ export const ConvertForm = memo(
           {isSwapRoutesLoading ? (
             <Spinner size="3" />
           ) : (
-            <Text size="5" weight="bold">
+            <Text size={mdScreen ? '6' : '5'} weight="bold">
               {swapRoutes
                 ? convertToReadable(
                     // @ts-ignore

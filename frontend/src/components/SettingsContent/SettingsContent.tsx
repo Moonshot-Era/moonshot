@@ -1,22 +1,24 @@
 'use client';
 
-import { Flex, Text } from '@radix-ui/themes';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 
 import { Icon } from '@/legos';
 import { ROUTES, logout } from '@/utils';
-import { useRouter } from 'next/navigation';
-import { AccountTab } from './AccountTab';
-import { ExportKeyTab } from './ExportKeyTab';
 import { RecentTab } from './RecentTab';
+import { AccountTab } from './AccountTab';
+import { useWidth } from '@/hooks/useWidth';
+import { ExportKeyTab } from './ExportKeyTab';
 
 export const SettingsContent = ({
   walletAddress
 }: {
   walletAddress: string;
 }) => {
+  const { mdScreen } = useWidth();
   const [activeTab, setActiveTab] = useState<
     'account' | 'recent' | 'export' | 'logout' | null
   >(null);
@@ -54,7 +56,7 @@ export const SettingsContent = ({
               onClick={() => handleActiveTab('account')}
             >
               <Icon icon="userCircle" />
-              <Text size="3" weight="medium">
+              <Text size={mdScreen ? '5' : '3'} weight="medium">
                 Account
               </Text>
             </Flex>
@@ -68,7 +70,7 @@ export const SettingsContent = ({
               onClick={() => handleActiveTab('recent')}
             >
               <Icon icon="notes" />
-              <Text size="3" weight="medium">
+              <Text size={mdScreen ? '5' : '3'} weight="medium">
                 Recent activity
               </Text>
             </Flex>
@@ -82,7 +84,7 @@ export const SettingsContent = ({
               onClick={() => handleActiveTab('export')}
             >
               <Icon icon="key" />
-              <Text size="3" weight="medium">
+              <Text size={mdScreen ? '5' : '3'} weight="medium">
                 Export private key
               </Text>
             </Flex>
@@ -96,7 +98,7 @@ export const SettingsContent = ({
               onClick={handleLogout}
             >
               <Icon icon="logout" />
-              <Text size="3" weight="medium">
+              <Text size={mdScreen ? '5' : '3'} weight="medium">
                 Log out
               </Text>
             </Flex>

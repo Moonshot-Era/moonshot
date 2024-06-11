@@ -6,8 +6,9 @@ import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import { format } from 'date-fns';
 
 import { Icon } from '@/legos';
-import solanaIcon from '../../assets/images/solana-icon.png';
+import { useWidth } from '@/hooks/useWidth';
 import { tokenAddressWithDots } from '@/helpers/helpers';
+import solanaIcon from '../../assets/images/solana-icon.png';
 import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
 
 import './style.scss';
@@ -45,6 +46,8 @@ interface Props {
 
 export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
   // walletAddress = 'C6Y3yRBvoZFXL1TiFatboMqgHAvtv9U3oFcdpVuddCvx';
+  const { mdScreen } = useWidth();
+
   const { transactionsHistory, isFetching: transactionLoading } =
     useTransactionsHistory(walletAddress);
 
@@ -161,7 +164,7 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
         direction="row"
         mb="6"
       >
-        <Text size="4" weight="bold">
+        <Text size={mdScreen ? '6' : '4'} weight="bold">
           Recent activity
         </Text>
         <Box
@@ -181,7 +184,7 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
             ? transactionGroupArrays.map(({ date, transactions }) =>
                 transactions?.length ? (
                   <Flex key={date} width="100%" direction="column" gap="2">
-                    <Text size="3" weight="medium">
+                    <Text size={mdScreen ? '4' : '3'} weight="medium">
                       {format(date, 'PP')}
                     </Text>
                     {transactions.map(
@@ -217,11 +220,17 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                                 />
                               )}
                               <Flex direction="column" justify="between">
-                                <Text size="2" weight="medium">
+                                <Text
+                                  size={mdScreen ? '3' : '2'}
+                                  weight="medium"
+                                >
                                   {transactionType}
                                 </Text>
                                 {transactionDate && (
-                                  <Text className="font-size-xs">
+                                  <Text
+                                    className="font-size-xs"
+                                    size={mdScreen ? '3' : '1'}
+                                  >
                                     {fromWallet
                                       ? `FROM ${tokenAddressWithDots(
                                           fromWallet
@@ -239,7 +248,10 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                               justify="between"
                             >
                               {!!tokenAmount && (
-                                <Text size="2" weight="medium">
+                                <Text
+                                  size={mdScreen ? '3' : '2'}
+                                  weight="medium"
+                                >
                                   {transactionType === 'Deposit'
                                     ? `+${
                                         tokenName === 'SOL'
@@ -258,7 +270,10 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                                 </Text>
                               )}
                               {transactionDate && (
-                                <Text className="font-size-xs">
+                                <Text
+                                  className="font-size-xs"
+                                  size={mdScreen ? '3' : '1'}
+                                >
                                   {transactionType === 'Convert'
                                     ? `-${tokenAmountConvertTo?.toFixed(
                                         4

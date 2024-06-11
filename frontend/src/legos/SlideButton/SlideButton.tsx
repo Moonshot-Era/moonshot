@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, {
   useState,
@@ -14,6 +14,7 @@ import { Spinner, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '../Icon';
+import { useWidth } from '@/hooks/useWidth';
 
 export const SlideButton = forwardRef(function SlideButton(
   {
@@ -29,6 +30,7 @@ export const SlideButton = forwardRef(function SlideButton(
   },
   ref
 ) {
+  const { mdScreen } = useWidth();
   const [initialMouse, setInitialMouse] = useState(0);
   const [slideMovementTotal, setSlideMovementTotal] = useState(0);
   const [mouseIsDown, setMouseIsDown] = useState(false);
@@ -162,7 +164,7 @@ export const SlideButton = forwardRef(function SlideButton(
       <Text
         className="button-slide-text"
         ref={textRef}
-        size="2"
+        size={mdScreen ? '4' : '2'}
         weight="medium"
       >
         {label}

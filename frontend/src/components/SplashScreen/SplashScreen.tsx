@@ -5,9 +5,12 @@ import { useEffect, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
+import { useWidth } from '@/hooks/useWidth';
 import cubistLogo from '../../assets/images/cubist_logo.svg';
 
 export const SplashScreen = () => {
+  const { mdScreen } = useWidth();
+
   const [isPageLoaded, setIsPageLoaded] = useState(false);
   const [isVisibility, setIsVisibility] = useState(false);
 
@@ -27,7 +30,7 @@ export const SplashScreen = () => {
           className="splash-container"
           style={{
             opacity: isVisibility ? 0 : 100,
-            transition: 'all 0.7s',
+            transition: 'all 0.7s'
           }}
         >
           <div className="splash-figure1"></div>
@@ -40,12 +43,12 @@ export const SplashScreen = () => {
             <Text size="8" weight="bold">
               Moonshot
             </Text>
-            <Text size="3" weight="medium">
+            <Text size={mdScreen ? '4' : '3'} weight="medium">
               Trade Culture
             </Text>
           </Flex>
           <Flex direction="row" position="absolute" bottom="50px">
-            <Text size="1">Powered by</Text>
+            <Text size={mdScreen ? '3' : '1'}>Powered by</Text>
             <Image src={cubistLogo} alt="cubist-logo" />
           </Flex>
         </Flex>

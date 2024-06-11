@@ -1,10 +1,11 @@
 'use client';
 
 import { Flex, Text } from '@radix-ui/themes';
+import { MutableRefObject, useRef, useState } from 'react';
 
 import { IconButton } from '@/legos';
+import { useWidth } from '@/hooks/useWidth';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
-import { MutableRefObject, useRef, useState } from 'react';
 import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
 import { ShareModal } from '../ShareModal/ShareModal';
@@ -17,6 +18,8 @@ interface ToolbarProps {
 }
 
 export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
+  const { mdScreen } = useWidth();
+
   const convertDrawerRef: MutableRefObject<null> = useRef(null);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
@@ -55,7 +58,7 @@ export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
               // @ts-ignore
               onClick={() => convertDrawerRef.current?.open()}
             />
-            <Text size="2">Convert</Text>
+            <Text size={mdScreen ? '4' : '2'}>Convert</Text>
           </Flex>
         )}
         <Flex direction="column" align="center" gap="1">
@@ -64,7 +67,7 @@ export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
             className="bg-magenta"
             onClick={toggleDepositDrawer}
           />
-          <Text size="2">Deposit</Text>
+          <Text size={mdScreen ? '4' : '2'}>Deposit</Text>
         </Flex>
         {!!portfolio?.totalUsd && (
           <Flex direction="column" align="center" gap="1">
@@ -73,7 +76,7 @@ export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
               className="bg-violet"
               onClick={toggleWithdrawDrawer}
             />
-            <Text size="2">Withdraw</Text>
+            <Text size={mdScreen ? '4' : '2'}>Withdraw</Text>
           </Flex>
         )}
         {withShare && tokenPrice ? (
