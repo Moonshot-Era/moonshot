@@ -65,7 +65,6 @@ export const SlideButton = forwardRef(function SlideButton(
             return;
           }
           slider.classList.add('unlocked');
-          handleSubmit();
         } else {
           if (position === 0) {
             text.style.opacity = '1';
@@ -76,7 +75,6 @@ export const SlideButton = forwardRef(function SlideButton(
 
           if (position >= slideMovementTotal + 1) {
             slider.style.left = `${slideMovementTotal}px`;
-            handleSubmit();
             return;
           }
           slider.style.left = `${position - 1}px`;
@@ -85,7 +83,7 @@ export const SlideButton = forwardRef(function SlideButton(
         }
       }
     },
-    [handleSubmit, slideMovementTotal]
+    [slideMovementTotal]
   );
 
   const handleMouseUp = useCallback(
@@ -96,8 +94,12 @@ export const SlideButton = forwardRef(function SlideButton(
         (event as globalThis.MouseEvent).clientX ||
         (event as globalThis.TouchEvent).changedTouches[0].pageX;
       setSliderToPosition(currentMouse, true);
+      if (currentMouse >= slideMovementTotal) {
+        handleSubmit();
+      }
+
     },
-    [mouseIsDown, setSliderToPosition]
+    [handleSubmit, mouseIsDown, setSliderToPosition, slideMovementTotal]
   );
 
   const handleMouseMove = useCallback(
@@ -130,7 +132,7 @@ export const SlideButton = forwardRef(function SlideButton(
         }
       };
     },
-    []
+    [setSliderToPosition]
   );
   useEffect(() => {
     const handleMouseMoveWrapper = (event: MouseEvent) =>
