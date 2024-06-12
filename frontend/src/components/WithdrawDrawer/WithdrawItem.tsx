@@ -100,7 +100,10 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         }
       );
       if (!isSolanaWallet) {
+        // @ts-ignore
+        btnRef.current?.resetSlide();
         setToAddressError(TO_ADDRESS_ERROR);
+        return;
       }
       if (toAddress && transactionAmount) {
         await onSlideHandler(

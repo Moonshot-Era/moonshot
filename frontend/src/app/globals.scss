@@ -155,3 +155,19 @@ a {
     text-decoration: underline;
   }
 }
+
+.snackbar-success {
+  background-color: $success;
+}
+
+.snackbar-error {
+  background-color: $error;
+}
+
+.snackbar-info {
+  background-color: $info;
+}
+
+.snackbar-promise {
+  background-color: $yellow;
+}

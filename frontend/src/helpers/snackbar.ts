@@ -1,7 +1,5 @@
 import { toast } from 'sonner';
 
-import './style.scss';
-
 export const snackbar = (type: 'success' | 'error' | 'info', text: string) => {
   switch (type) {
     case 'success':
