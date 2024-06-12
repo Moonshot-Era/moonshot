@@ -5,6 +5,8 @@ import { redirect } from 'next/navigation';
 import { HomeContent } from '@/components/HomeContent/HomeContent';
 import { Header } from '@/components/Header/Header';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/Skeleton/Skeleton';
 
 export default async function Home({ searchParams }: ServerPageProps) {
   const user = await checkProtectedRoute(searchParams);
@@ -32,7 +34,9 @@ export default async function Home({ searchParams }: ServerPageProps) {
   return (
     <>
       <Header isPublic={!user?.id} />
-      <HomeContent walletAddress={walletData?.wallet} userId={user?.id} />
+      <Suspense fallback={<Skeleton variant="home" />}>
+        <HomeContent walletAddress={walletData?.wallet} userId={user?.id} />
+      </Suspense>
     </>
   );
 }

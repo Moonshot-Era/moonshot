@@ -65,22 +65,18 @@ export const ConvertForm = memo(
 
     const handleSwapSubmit = () => {
       //@ts-ignore
-      mutation.mutate({ swapRoutes });
-      // @ts-ignore
-      // toast.promise(() => mutation.mutate({ swapRoutes }), {
-      //   loading: `Converting ${amount} ${
-      //     selectedTokens?.from?.symbol
-      //   } into ${convertToReadable(
-      //     // @ts-ignore
-      //     swapRoutes?.outAmount,
-      //     selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
-      //   )} ${selectedTokens?.to?.included?.attributes.symbol}`,
-      //   success: mutation.isSuccess,
-      //   error: mutation.isError,
-      //   dismissible: true,
-      //   className: 'snackbar-promise',
-      //   position: 'top-center'
-      // });
+      toast.promise(mutation.mutateAsync({ swapRoutes }), {
+        loading: `Converting ${amount} ${
+          selectedTokens?.from?.symbol
+        } into ${convertToReadable(
+          // @ts-ignore
+          swapRoutes?.outAmount,
+          selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
+        )} ${selectedTokens?.to?.included?.attributes.symbol}`,
+        dismissible: true,
+        className: 'snackbar-promise',
+        position: 'top-center'
+      });
     };
 
     return (
