@@ -11,7 +11,7 @@ export default async function Home({ searchParams }: ServerPageProps) {
     <>
       <Header isPublic={!user?.id} />
       <Suspense fallback={<Skeleton variant="home" />}>
-        <HomeContent suserId={user?.id} />
+        <HomeContent userId={user?.id} />
       </Suspense>
     </>
   );
