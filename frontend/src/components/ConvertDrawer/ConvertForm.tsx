@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import {
   convertToInteger,
@@ -11,7 +12,7 @@ import { Icon, Select, SlideButton, TokenNumberInput } from '@/legos';
 import { SelectedTokens } from './types';
 import { useSwapMutation, useSwapRoutes } from './hooks';
 import './style.scss';
-import { snackbar } from '@/helpers/snackbar/snackbar';
+import { snackbar } from '@/helpers/snackbar';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
@@ -63,18 +64,23 @@ export const ConvertForm = memo(
     }, [mutation.isError]);
 
     const handleSwapSubmit = () => {
-      snackbar(
-        'info',
-        `Converting ${amount} ${
-          selectedTokens?.from?.symbol
-        } into ${convertToReadable(
-          // @ts-ignore
-          swapRoutes.outAmount,
-          selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
-        )} ${selectedTokens?.to?.included?.attributes.symbol}`
-      );
       //@ts-ignore
       mutation.mutate({ swapRoutes });
+      // @ts-ignore
+      // toast.promise(() => mutation.mutate({ swapRoutes }), {
+      //   loading: `Converting ${amount} ${
+      //     selectedTokens?.from?.symbol
+      //   } into ${convertToReadable(
+      //     // @ts-ignore
+      //     swapRoutes?.outAmount,
+      //     selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
+      //   )} ${selectedTokens?.to?.included?.attributes.symbol}`,
+      //   success: mutation.isSuccess,
+      //   error: mutation.isError,
+      //   dismissible: true,
+      //   className: 'snackbar-promise',
+      //   position: 'top-center'
+      // });
     };
 
     return (
