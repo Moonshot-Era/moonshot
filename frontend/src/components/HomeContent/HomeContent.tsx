@@ -23,7 +23,11 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
   const { mdScreen } = useWidth();
   const { walletData } = useWallet();
 
-  const { portfolio, isLoading } = usePortfolio(walletData?.wallet);
+  const {
+    portfolio,
+    isLoading,
+    refetch: refetchPortfolio
+  } = usePortfolio(walletData?.wallet);
   const router = useRouter();
 
   const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {
@@ -53,6 +57,12 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
   }, []);
 
   const positiveBalance = totalBalance > 0;
+
+  useEffect(() => {
+    if (!portfolio && walletData) {
+      refetchPortfolio();
+    }
+  }, [portfolio, refetchPortfolio, walletData]);
 
   return isLoading ? (
     <Skeleton variant="home" />
