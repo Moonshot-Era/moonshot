@@ -1,28 +1,35 @@
 'use client';
 
-import { tokenAddressWithDots } from '@/helpers/helpers';
-import { useTransactionHistory } from '@/hooks/useTransactionHistory';
-import { Icon } from '@/legos';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
+import { format } from 'date-fns';
 import Image, { StaticImageData } from 'next/image';
 import { FC } from 'react';
+
+import { tokenAddressWithDots } from '@/helpers/helpers';
+import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
+import { Icon } from '@/legos';
 import solanaIcon from '../../assets/images/solana-icon.png';
+
+import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
 import './style.scss';
 
 interface FormattedTransactionType {
   id?: string;
   transactionType?: string | null;
   wallet?: string;
+  fromWallet?: string;
+  toWallet?: string;
+  mint?: string;
   tokenAmount?: number;
   tokenName?: string;
-  transactionDate?: string;
+  transactionDate?: number;
   imageUrl?: string | StaticImageData;
-  tokenAmountDeposit?: number;
-  tokenAmountWithdraw?: number;
-  tokenDepositName?: string;
-  tokenWithdrawName?: string;
-  tokenDepositImage?: string;
-  tokenWithdrawImage?: string;
+  tokenAmountConvertFrom?: number;
+  tokenAmountConvertTo?: number;
+  tokenConvertFromSymbol?: string;
+  tokenConvertToSymbol?: string;
+  tokenConvertFromImage?: string;
+  tokenConvertToImage?: string;
 }
 
 interface TransactionGroupArraysType {
@@ -38,15 +45,9 @@ interface Props {
 }
 
 export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
-  const { transactionHistory, isFetching: transactionLoading } =
-    useTransactionHistory(walletAddress);
-
-  const convertTimestamp = (timestamp: number) => {
-    const date = new Date(timestamp * 1000);
-    const hour = date.getHours();
-    const minutes = date.getMinutes();
-    return `${hour}:${minutes}`;
-  };
+  // walletAddress = 'C6Y3yRBvoZFXL1TiFatboMqgHAvtv9U3oFcdpVuddCvx';
+  const { transactionsHistory, isFetching: transactionLoading } =
+    useTransactionsHistory(walletAddress);
 
   const determineOperationType = (transfer: {
     fromUserAccount: string;
@@ -60,45 +61,60 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
     return null;
   };
 
-  const processedData =
-    transactionHistory
+  const processedData: FormattedTransactionType[] =
+    transactionsHistory
       ?.filter(
         (transaction) =>
-          !transaction.description.includes('to multiple accounts') &&
-          (transaction.type === 'SWAP' ||
-            transaction.nativeTransfers.length > 0 ||
-            transaction.tokenTransfers.length > 0)
+          !transaction.description.includes('to multiple accounts')
       )
       ?.flatMap((transaction) => {
         if (transaction.type === 'SWAP') {
           return {
             id: transaction.signature,
             transactionType: 'Convert',
-            tokenAmountDeposit:
-              transaction.events.swap.innerSwaps[0].tokenInputs[0]?.tokenAmount,
-            tokenAmountWithdraw:
-              transaction.events.swap.innerSwaps[0].tokenOutputs[0]
-                ?.tokenAmount,
-            tokenDepositName: '',
-            tokenWithdrawName: '',
-            transactionDate: `${transaction.timestamp}`,
-            tokenDepositImage: '',
-            tokenWithdrawImage: ''
+            tokenAmount: 0,
+            tokenAmountConvertFrom: Number(
+              transaction.events?.swap?.innerSwaps[0]?.tokenInputs[0]
+                ?.tokenAmount ||
+                transaction.events?.swap?.tokenInputs[0]?.rawTokenAmount
+                  .tokenAmount ||
+                0
+            ),
+            tokenAmountConvertTo: Number(
+              transaction.events?.swap?.innerSwaps[0]?.tokenOutputs[0]
+                ?.tokenAmount ||
+                transaction.events?.swap?.tokenOutputs[0]?.rawTokenAmount
+                  .tokenAmount ||
+                0
+            ),
+            tokenConvertFromSymbol: '',
+            tokenConvertToSymbol: '',
+            transactionDate: transaction.timestamp * 1000,
+            tokenConvertFromImage: '',
+            tokenConvertToImage: ''
           };
         } else if (transaction.tokenTransfers.length > 0) {
           const transactionType = determineOperationType(
             transaction.tokenTransfers[0]
           );
+          const namePattern = /\d+(\.\d+)?\s(\w+)\sto/;
+          const name = transaction.description.match(namePattern)?.[2] || '';
+
           return {
             id: transaction.signature,
             transactionType,
-            wallet:
+            fromWallet:
               transactionType === 'Deposit'
                 ? transaction.tokenTransfers[0].fromUserAccount
-                : transaction.tokenTransfers[0].toUserAccount,
-            tokenAmount: transaction.tokenTransfers[0].tokenAmount,
-            tokenName: '',
-            transactionDate: `${transaction.timestamp}`,
+                : '',
+            toWallet:
+              transactionType === 'Withdraw'
+                ? transaction.tokenTransfers[0].toUserAccount
+                : '',
+            tokenAmount: transaction.tokenTransfers[0].tokenAmount || 0,
+            tokenName: name,
+            mint: transaction.tokenTransfers[0].mint,
+            transactionDate: transaction.timestamp * 1000,
             imageUrl: ''
           };
         } else if (transaction.nativeTransfers.length > 0) {
@@ -108,13 +124,17 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
           return {
             id: transaction.signature,
             transactionType,
-            wallet:
+            fromWallet:
               transactionType === 'Deposit'
                 ? transaction.nativeTransfers[0].fromUserAccount
-                : transaction.nativeTransfers[0].toUserAccount,
-            tokenAmount: transaction.nativeTransfers[0].amount,
+                : '',
+            toWallet:
+              transactionType === 'Withdraw'
+                ? transaction.nativeTransfers[0].toUserAccount
+                : '',
+            tokenAmount: transaction.nativeTransfers[0].amount || 0,
             tokenName: 'SOL',
-            transactionDate: `${transaction.timestamp}`,
+            transactionDate: transaction.timestamp * 1000,
             imageUrl: solanaIcon
           };
         }
@@ -124,10 +144,8 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
 
   const transactionGroups =
     processedData?.reduce((groups, item) => {
-      if (item) {
-        const date = new Date(+(item.transactionDate || 0) * 1000)
-          .toISOString()
-          .split('T')[0];
+      if (item && item.transactionDate && item.transactionType) {
+        const date = format(new Date(item.transactionDate), 'PP');
         if (!groups[date]) {
           groups[date] = [];
         }
@@ -171,11 +189,12 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
         <Spinner />
       ) : (
         <Flex width="100%" direction="column" align="start" gap="24px">
-          {transactionGroupArrays?.length
-            ? transactionGroupArrays.map(({ date, transactions }) => (
+          {transactionGroupArrays?.length ? (
+            transactionGroupArrays.map(({ date, transactions }) =>
+              transactions?.length ? (
                 <Flex key={date} width="100%" direction="column" gap="2">
                   <Text size="3" weight="medium">
-                    {date}
+                    {format(date, 'PP')}
                   </Text>
                   {transactions.map(
                     ({
@@ -185,67 +204,88 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                       tokenAmount,
                       transactionType,
                       imageUrl,
-                      wallet,
-                      tokenAmountWithdraw,
-                      tokenAmountDeposit,
-                      tokenDepositImage,
-                      tokenDepositName,
-                      tokenWithdrawImage,
-                      tokenWithdrawName
-                    }) => (
-                      <Flex
-                        key={id}
-                        width="100%"
-                        justify="between"
-                        p="3"
-                        className="setting-recent-card"
-                      >
-                        <Flex direction="row" gap="2">
-                          {imageUrl && (
-                            <Image
-                              alt="user-icon"
-                              width={48}
-                              height={48}
-                              src={imageUrl}
-                            />
-                          )}
-                          <Flex direction="column" justify="between">
+                      fromWallet,
+                      toWallet,
+                      tokenAmountConvertFrom,
+                      tokenAmountConvertTo,
+                      tokenConvertFromSymbol,
+                      tokenConvertToSymbol
+                    }) => {
+                      const amount = tokenAmount || 0;
+                      return transactionType ? (
+                        <Flex
+                          key={id}
+                          width="100%"
+                          justify="between"
+                          p="3"
+                          className="setting-recent-card"
+                        >
+                          <Flex direction="row" gap="2">
+                            {imageUrl && (
+                              <Image
+                                alt="user-icon"
+                                width={48}
+                                height={48}
+                                src={imageUrl}
+                              />
+                            )}
+                            <Flex direction="column" justify="between">
+                              <Text size="2" weight="medium">
+                                {transactionType}
+                              </Text>
+                              {transactionDate && (
+                                <Text className="font-size-xs">
+                                  {fromWallet
+                                    ? `FROM ${tokenAddressWithDots(fromWallet)}`
+                                    : toWallet
+                                    ? `TO ${tokenAddressWithDots(toWallet)}`
+                                    : format(transactionDate, 'hh:mm a')}
+                                </Text>
+                              )}
+                            </Flex>
+                          </Flex>
+                          <Flex
+                            direction="column"
+                            align="end"
+                            justify="between"
+                          >
                             <Text size="2" weight="medium">
-                              {transactionType}
+                              {transactionType === 'Deposit'
+                                ? `+${
+                                    tokenName === 'SOL'
+                                      ? (amount / 10 ** 9).toFixed(4)
+                                      : amount.toFixed(4)
+                                  } ${tokenName}`
+                                : transactionType === 'Withdraw'
+                                ? `-${
+                                    tokenName === 'SOL'
+                                      ? (amount / 10 ** 9).toFixed(4)
+                                      : amount.toFixed(4)
+                                  } ${tokenName}`
+                                : `+${tokenAmountConvertFrom?.toFixed(
+                                    4
+                                  )} ${tokenConvertFromSymbol}`}
                             </Text>
-                            {wallet && transactionDate && (
+                            {transactionDate && (
                               <Text className="font-size-xs">
-                                {transactionType === 'Deposit'
-                                  ? `FROM ${tokenAddressWithDots(wallet)}`
-                                  : transactionType === 'Withdraw'
-                                  ? `TO ${tokenAddressWithDots(wallet)}`
-                                  : convertTimestamp(+transactionDate)}
+                                {transactionType === 'Convert'
+                                  ? `-${tokenAmountConvertTo?.toFixed(
+                                      4
+                                    )} ${tokenConvertToSymbol}`
+                                  : format(transactionDate, 'hh:mm a')}
                               </Text>
                             )}
                           </Flex>
                         </Flex>
-                        <Flex direction="column" align="end" justify="between">
-                          <Text size="2" weight="medium">
-                            {transactionType === 'Deposit'
-                              ? `+${tokenAmount} ${tokenName}`
-                              : transactionType === 'Withdraw'
-                              ? `-${tokenAmount} ${tokenName}`
-                              : `+${tokenAmountDeposit} ${tokenDepositName}`}
-                          </Text>
-                          {transactionDate && (
-                            <Text className="font-size-xs">
-                              {transactionType === 'Convert'
-                                ? `-${tokenAmountWithdraw} ${tokenWithdrawName}`
-                                : convertTimestamp(+transactionDate)}
-                            </Text>
-                          )}
-                        </Flex>
-                      </Flex>
-                    )
+                      ) : null;
+                    }
                   )}
                 </Flex>
-              ))
-            : null}
+              ) : null
+            )
+          ) : (
+            <TransactionsEmpty />
+          )}
         </Flex>
       )}
     </Flex>

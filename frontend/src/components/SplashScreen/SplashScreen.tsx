@@ -27,15 +27,9 @@ export const SplashScreen = () => {
           className="splash-container"
           style={{
             opacity: isVisibility ? 0 : 100,
-            transition: 'all 0.7s',
+            transition: 'all 0.7s'
           }}
         >
-          <div className="splash-figure1"></div>
-          <div className="splash-figure2"></div>
-          <div className="splash-figure3"></div>
-          <div className="splash-figure4"></div>
-          <div className="splash-figure5"></div>
-          <div className="splash-figure6"></div>
           <Flex direction="column" align="center" justify="center" flexGrow="1">
             <Text size="8" weight="bold">
               Moonshot

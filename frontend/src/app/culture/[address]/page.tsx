@@ -15,6 +15,7 @@ export default async function CultureItemPage({
   let walletAddress = '';
   const user = await checkProtectedRoute(searchParams, false);
   const oidc = cookies()?.get('pt')?.value;
+  const cookiesAll = cookies()?.getAll();
 
   const tokenAddress = params?.address;
   const { data: tokenOverview } = await axios.post(
@@ -35,6 +36,15 @@ export default async function CultureItemPage({
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-wallet`,
       {
         oidc
+      },
+      {
+        headers: {
+          Cookie: encodeURI(
+            cookiesAll
+              .map((cookie) => `${cookie.name}=${cookie.value}`)
+              .join(';')
+          )
+        }
       }
     );
     walletAddress = walletData?.wallet;

@@ -37,7 +37,29 @@ export const isSolanaAddress = (address: string) => {
 
 export const tokenAddressWithDots = (tokenAddress: string) =>
   `${tokenAddress.slice(0, 5)}...
-            ${tokenAddress.slice(
-              tokenAddress.length - 5 > 0 ? tokenAddress.length - 5 : 0,
-              tokenAddress.length
-            )}`;
+  ${tokenAddress.slice(
+    tokenAddress.length - 5 > 0 ? tokenAddress.length - 5 : 0,
+    tokenAddress.length
+  )}`;
+
+export const formatTokenPrice = (price: string) => {
+  if (+price > 1) {
+    return formatNumberToUsd().format(+price);
+  }
+
+  let formatted = price;
+
+  let [integerPart, decimalPart] = formatted.split('.');
+  if (decimalPart) {
+    let nonZeroDecimals = decimalPart.replace(/^0+/, '').slice(0, 4);
+    let zeroCount = decimalPart.indexOf(nonZeroDecimals);
+    decimalPart = decimalPart.substring(0, zeroCount + nonZeroDecimals.length);
+    if (decimalPart.indexOf(nonZeroDecimals) > 3) {
+      decimalPart = `0{{${zeroCount}}}` + decimalPart.replace(/^0+/, '');
+      formatted = integerPart + '.' + decimalPart;
+    } else {
+      formatted = integerPart + '.' + decimalPart;
+    }
+  }
+  return '$' + formatted;
+};

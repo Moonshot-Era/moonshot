@@ -27,8 +27,11 @@ export async function POST(request: Request) {
         response.tokenDecimals
       );
     }
-  } catch (err) {
-    throw err;
+  } catch (err: any) {
+    return NextResponse.json(
+      { errorMessage: err?.message ?? '' },
+      { status: 400 }
+    );
   }
   return NextResponse.json({ withdrawalResp });
 }

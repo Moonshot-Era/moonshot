@@ -43,51 +43,45 @@ export const sendNativeTransaction = async (
   }
 
   if (userClient) {
-    try {
-      const connection = new Connection(
-        process.env.SOLANA_RPC_PROVIDER,
-        'confirmed'
-      );
+    const connection = new Connection(
+      process.env.SOLANA_RPC_PROVIDER,
+      'confirmed'
+    );
 
-      const fromPubkey = new PublicKey(fromAddress);
-      const toPubkey = new PublicKey(toAddress);
+    const fromPubkey = new PublicKey(fromAddress);
+    const toPubkey = new PublicKey(toAddress);
 
-      console.log(
-        `Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}`
-      );
+    console.log(`Transferring ${amount} SOL from ${fromPubkey} to ${toPubkey}`);
 
-      const tx = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey,
-          toPubkey,
-          lamports: amount * LAMPORTS_PER_SOL
-        })
-      );
+    const tx = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey,
+        toPubkey,
+        lamports: amount * LAMPORTS_PER_SOL
+      })
+    );
 
-      tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-      tx.feePayer = fromPubkey;
-      const base64 = tx.serializeMessage().toString('base64');
+    tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+    tx.feePayer = fromPubkey;
+    const base64 = tx.serializeMessage().toString('base64');
 
-      // sign using the well-typed solana end point (which requires a base64 serialized Message)
-      let resp = await userClient.apiClient.signSolana(fromAddress, {
-        message_base64: base64
-      });
-      const sig = await resp.totpApprove(
-        userClient,
-        authenticator.generate(totpSecret)
-      );
+    // sign using the well-typed solana end point (which requires a base64 serialized Message)
+    let resp = await userClient.apiClient.signSolana(fromAddress, {
+      message_base64: base64
+    });
+    const sig = await resp.totpApprove(
+      userClient,
+      authenticator.generate(totpSecret)
+    );
 
-      // conver the signature 0x... to bytes
-      const sigBytes = Buffer.from(sig.data().signature.slice(2), 'hex');
+    // conver the signature 0x... to bytes
+    const sigBytes = Buffer.from(sig.data().signature.slice(2), 'hex');
 
-      // add signature to transaction
-      tx.addSignature(fromPubkey, sigBytes);
+    // add signature to transaction
+    tx.addSignature(fromPubkey, sigBytes);
 
-      // send transaction
-      const txHash = await connection.sendRawTransaction(tx.serialize());
-      console.log(`txHash: ${txHash}`);
-    } catch (err) {
-      throw Error('Error sending transaction: ' + err);
-    }
+    // send transaction
+    const txHash = await connection.sendRawTransaction(tx.serialize());
+    console.log(`txHash: ${txHash}`);
   }
 };

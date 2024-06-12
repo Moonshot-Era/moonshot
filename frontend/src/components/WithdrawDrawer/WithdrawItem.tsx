@@ -1,7 +1,7 @@
 'use client';
 
 import axios from 'axios';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
@@ -14,8 +14,9 @@ interface WithdrawItemProps {
   onSlideHandler(
     toAddress: string,
     transactionAmount: number | string,
+    tokenPrice: number,
     symbol: string
-  ): void;
+  ): Promise<void>;
 }
 
 const TO_ADDRESS_ERROR = 'Invalid Solana address';
@@ -28,9 +29,9 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   );
   const [toAddressError, setToAddressError] = useState('');
   const [amountError, setAmountError] = useState('');
-  const [withdrawalError, setWithdrawalError] = useState('');
   const [amountInputInUsd, setAmountInputInUsd] = useState(true);
-  const btnRef = useRef();
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const btnRef = useRef({});
 
   const decimalLength = `${asset?.uiAmount}`.split('.')?.[1]?.length || 0;
 
@@ -90,6 +91,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   };
 
   const handleSubmitWithdrawal = async () => {
+    setWithdrawLoading(true);
     try {
       const { data: isSolanaWallet } = await axios.post(
         `${process.env.NEXT_PUBLIC_SITE_URL}/api/validate-wallet`,
@@ -101,20 +103,20 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         setToAddressError(TO_ADDRESS_ERROR);
       }
       if (toAddress && transactionAmount) {
-        onSlideHandler(toAddress, transactionAmount, asset?.symbol || '');
+        await onSlideHandler(
+          toAddress,
+          transactionAmount,
+          asset?.priceUsd || 0,
+          asset?.symbol || ''
+        );
       }
     } catch (err) {
-      setWithdrawalError('err');
+      // @ts-ignore
+      btnRef.current?.resetSlide();
+    } finally {
+      setWithdrawLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (withdrawalError) {
-      //@ts-ignore
-      btnRef.current?.resetSlide();
-    }
-  }, [withdrawalError]);
-
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
       <Text size="4" weight="bold">
@@ -198,9 +200,14 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
       <SlideButton
         ref={btnRef}
         disabled={
-          !!amountError || !!toAddressError || !transactionAmount || !toAddress
+          !!amountError ||
+          !!toAddressError ||
+          !transactionAmount ||
+          !toAddress ||
+          withdrawLoading
         }
         handleSubmit={handleSubmitWithdrawal}
+        loading={withdrawLoading}
       />
     </Flex>
   );

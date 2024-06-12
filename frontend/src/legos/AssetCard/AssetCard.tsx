@@ -2,9 +2,9 @@ import { Flex, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import { FC } from 'react';
 
-import { formatNumberToUsd } from '@/helpers/helpers';
 import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 import { Icon } from '../Icon';
+import { TokenPrice } from '../TokenPrice/TokenPrice';
 
 interface Props {
   asset?: WalletPortfolioAssetType;
@@ -54,7 +54,7 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
         {!!asset?.valueUsd && (
           <Flex direction="column" justify="between" align="end" height="40px">
             <Text size="3" weight="medium">
-              {formatNumberToUsd(4).format(asset?.valueUsd)}
+              <TokenPrice price={`${asset?.valueUsd}`} />
             </Text>
             {asset?.percentage_change_h24 && (
               <Flex direction="row" align="center" gap="1">

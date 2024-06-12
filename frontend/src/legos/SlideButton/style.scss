@@ -24,10 +24,8 @@
   @include border-dark;
   @include flex-center;
   &.unlocked {
-    transition: all 0.3s;
-    right: -1px !important;
-    left: auto !important;
-    pointer-events: none;
+    right: -1px ;
+    left: auto ;
   }
   &.disabled {
     background-color: $grey-1;

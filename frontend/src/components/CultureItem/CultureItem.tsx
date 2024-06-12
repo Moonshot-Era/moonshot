@@ -36,12 +36,12 @@ export const CultureItem = ({
 }) => {
   const router = useRouter();
   const { portfolio } = usePortfolio(walletAddress);
-  const [timeFrame, setTimeFrame] = useState('hour');
+  const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const {
     ohlcv,
     isFetching: ohlcvLoading,
     refetch
-  } = useOhlcv(tokenData?.poolAddress, timeFrame);
+  } = useOhlcv(tokenData?.poolAddress, timeFrame.time, timeFrame.aggregate);
 
   useEffect(() => {
     refetch();
@@ -60,7 +60,8 @@ export const CultureItem = ({
   );
 
   const handleChangeTimeFrame = (value: string) => {
-    setTimeFrame(value);
+    const [aggregateValue, timeFrameValue] = value.split('-');
+    setTimeFrame({ aggregate: aggregateValue, time: timeFrameValue });
   };
 
   return tokenInfo ? (
@@ -82,7 +83,7 @@ export const CultureItem = ({
             mb="8"
             gap="3"
           >
-            {tokenInfo?.imageUrl && (
+            {tokenInfo?.imageUrl && tokenInfo?.imageUrl?.includes('http') && (
               <Flex position="relative" width="24px" height="24px">
                 <Image
                   className="border-radius-full"
@@ -107,36 +108,52 @@ export const CultureItem = ({
               </Box>
             )}
           </Flex>
-          <Flex
-            width="100%"
-            height="200px"
-            direction="column"
-            justify="center"
-            align="center"
-          >
-            {ohlcvLoading ? <Spinner /> : <CultureChart data={chartData} />}
+
+          <Flex direction="column" width="100%" className="chart-wrapper">
+            <ToggleGroup.Root
+              className="ToggleGroup"
+              type="single"
+              value={`${timeFrame.aggregate}-${timeFrame.time}`}
+              onValueChange={handleChangeTimeFrame}
+            >
+              <ToggleGroup.Item className="ToggleGroupItem" value="1-day">
+                1D
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="12-h">
+                12H
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="4-hour">
+                4H
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="1-hour">
+                1H
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="15-minute">
+                15m
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="5-minute">
+                5m
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="1-minute">
+                1m
+              </ToggleGroup.Item>
+            </ToggleGroup.Root>
+            <Flex height="200px" justify="center" align="center">
+              {ohlcvLoading ? (
+                <Spinner />
+              ) : (
+                <CultureChart
+                  data={chartData}
+                  tokenDecimals={tokenData?.decimals || 0}
+                />
+              )}
+            </Flex>
           </Flex>
-          <ToggleGroup.Root
-            className="ToggleGroup"
-            type="single"
-            value={timeFrame}
-            onValueChange={handleChangeTimeFrame}
-          >
-            <ToggleGroup.Item className="ToggleGroupItem" value="day">
-              Day
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="hour">
-              Hour
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="minute">
-              Minute
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
           {!isPublic && asset && portfolio && (
             <Toolbar
               portfolio={portfolio}
               withShare
-              tokenPrice={tokenData.price_usd}
+              tokenPrice={+tokenData.price_usd}
             />
           )}
 
@@ -161,17 +178,18 @@ export const CultureItem = ({
                 justify="between"
                 align="end"
               >
-                {tokenInfo?.imageUrl && (
-                  <Flex position="relative" width="24px" height="24px">
-                    <Image
-                      className="border-radius-full"
-                      width={24}
-                      height={24}
-                      alt="Token logo"
-                      src={tokenInfo?.imageUrl}
-                    />
-                  </Flex>
-                )}
+                {tokenInfo?.imageUrl &&
+                  tokenInfo?.imageUrl?.includes('http') && (
+                    <Flex position="relative" width="24px" height="24px">
+                      <Image
+                        className="border-radius-full"
+                        width={24}
+                        height={24}
+                        alt="Token logo"
+                        src={tokenInfo?.imageUrl}
+                      />
+                    </Flex>
+                  )}
                 <Text size="1" mt="1">
                   {asset?.uiAmount} {asset?.symbol}
                 </Text>

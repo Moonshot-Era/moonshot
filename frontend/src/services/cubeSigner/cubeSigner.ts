@@ -107,6 +107,9 @@ export const getUserWallet = async (
       );
 
       if (oidcSessionResp.requiresMfa()) {
+        if (!totpSecret) {
+          throw Error('Wrong TOTP secret');
+        }
         const tmpClient = await oidcSessionResp.mfaClient()!;
         if (tmpClient) {
           const totpOidcCode = authenticator.generate(totpSecret);

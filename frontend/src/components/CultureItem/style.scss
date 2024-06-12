@@ -27,16 +27,13 @@ button {
 }
 
 .ToggleGroup {
-  display: inline-flex;
-  width: 160px;
-  @include border-dark;
-  box-shadow: $shadow-2;
-  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
   background-color: $white;
 }
 
 .ToggleGroupItem {
-  background-color: white;
   color: $greyscale;
   height: 35px;
   width: auto;
@@ -47,6 +44,7 @@ button {
   justify-content: center;
   margin-left: 1px;
   padding: 0 7px;
+  border-radius: 4px;
 }
 .ToggleGroupItem:first-child {
   margin-left: 0;
@@ -61,10 +59,18 @@ button {
   background-color: $greeny-2;
 }
 .ToggleGroupItem[data-state='on'] {
-  background-color: $greeny-3;
+  background-color: $greeny;
   color: $greyscale;
 }
 .ToggleGroupItem:focus {
   position: relative;
   box-shadow: 0 0 0 0.5px $greyscale;
+}
+
+.chart-wrapper {
+  background-color: #fff;
+  padding: 25px 25px 0 25px;
+  @include border-dark;
+  box-shadow: $shadow-2;
+  border-radius: 8px;
 }
