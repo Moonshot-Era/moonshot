@@ -4,235 +4,235 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[];
+  | Json[]
 
 export type Database = {
   public: {
     Tables: {
       profiles: {
         Row: {
-          avatar_url: string | null;
-          created_at: string;
-          culture_ref: string | null;
-          email: string;
-          full_name: string | null;
-          get_notifications: boolean | null;
-          mfa_s: string | null;
-          onboarding_completed: boolean | null;
-          roles: Database['public']['Enums']['role'][];
-          rt: string | null;
-          user_id: string;
-        };
+          avatar_url: string | null
+          created_at: string
+          culture_ref: string | null
+          email: string
+          full_name: string | null
+          get_notifications: boolean | null
+          mfa_s: string | null
+          onboarding_completed: boolean | null
+          roles: Database["public"]["Enums"]["role"][]
+          rt: string | null
+          user_id: string
+        }
         Insert: {
-          avatar_url?: string | null;
-          created_at?: string;
-          culture_ref?: string | null;
-          email: string;
-          full_name?: string | null;
-          get_notifications?: boolean | null;
-          mfa_s?: string | null;
-          onboarding_completed?: boolean | null;
-          roles?: Database['public']['Enums']['role'][];
-          rt?: string | null;
-          user_id: string;
-        };
+          avatar_url?: string | null
+          created_at?: string
+          culture_ref?: string | null
+          email: string
+          full_name?: string | null
+          get_notifications?: boolean | null
+          mfa_s?: string | null
+          onboarding_completed?: boolean | null
+          roles?: Database["public"]["Enums"]["role"][]
+          rt?: string | null
+          user_id: string
+        }
         Update: {
-          avatar_url?: string | null;
-          created_at?: string;
-          culture_ref?: string | null;
-          email?: string;
-          full_name?: string | null;
-          get_notifications?: boolean | null;
-          mfa_s?: string | null;
-          onboarding_completed?: boolean | null;
-          roles?: Database['public']['Enums']['role'][];
-          rt?: string | null;
-          user_id?: string;
-        };
+          avatar_url?: string | null
+          created_at?: string
+          culture_ref?: string | null
+          email?: string
+          full_name?: string | null
+          get_notifications?: boolean | null
+          mfa_s?: string | null
+          onboarding_completed?: boolean | null
+          roles?: Database["public"]["Enums"]["role"][]
+          rt?: string | null
+          user_id?: string
+        }
         Relationships: [
           {
-            foreignKeyName: 'public_profiles_culture_ref_fkey';
-            columns: ['culture_ref'];
-            isOneToOne: false;
-            referencedRelation: 'referrals';
-            referencedColumns: ['culture_ref'];
-          }
-        ];
-      };
+            foreignKeyName: "public_profiles_culture_ref_fkey"
+            columns: ["culture_ref"]
+            isOneToOne: false
+            referencedRelation: "referrals"
+            referencedColumns: ["culture_ref"]
+          },
+        ]
+      }
       referrals: {
         Row: {
-          created_at: string;
-          culture_ref: string;
-        };
+          created_at: string
+          culture_ref: string
+        }
         Insert: {
-          created_at?: string;
-          culture_ref: string;
-        };
+          created_at?: string
+          culture_ref: string
+        }
         Update: {
-          created_at?: string;
-          culture_ref?: string;
-        };
-        Relationships: [];
-      };
+          created_at?: string
+          culture_ref?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
-          created_at: string;
-          id: number;
-          token_address: string | null;
-          token_amount: number | null;
-          token_name: string | null;
-          token_price: number | null;
+          created_at: string
+          id: number
+          token_address: string | null
+          token_amount: number | null
+          token_name: string | null
+          token_price: number | null
           transaction_type:
-            | Database['public']['Enums']['transaction_type']
-            | null;
-          user_id: string | null;
-        };
+            | Database["public"]["Enums"]["transaction_type"]
+            | null
+          user_id: string | null
+        }
         Insert: {
-          created_at?: string;
-          id?: number;
-          token_address?: string | null;
-          token_amount?: number | null;
-          token_name?: string | null;
-          token_price?: number | null;
+          created_at?: string
+          id?: number
+          token_address?: string | null
+          token_amount?: number | null
+          token_name?: string | null
+          token_price?: number | null
           transaction_type?:
-            | Database['public']['Enums']['transaction_type']
-            | null;
-          user_id?: string | null;
-        };
+            | Database["public"]["Enums"]["transaction_type"]
+            | null
+          user_id?: string | null
+        }
         Update: {
-          created_at?: string;
-          id?: number;
-          token_address?: string | null;
-          token_amount?: number | null;
-          token_name?: string | null;
-          token_price?: number | null;
+          created_at?: string
+          id?: number
+          token_address?: string | null
+          token_amount?: number | null
+          token_name?: string | null
+          token_price?: number | null
           transaction_type?:
-            | Database['public']['Enums']['transaction_type']
-            | null;
-          user_id?: string | null;
-        };
-        Relationships: [];
-      };
-    };
+            | Database["public"]["Enums"]["transaction_type"]
+            | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+    }
     Views: {
-      [_ in never]: never;
-    };
+      [_ in never]: never
+    }
     Functions: {
       get_mfa_secret: {
-        Args: Record<PropertyKey, never>;
-        Returns: string;
-      };
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_refresh_token: {
-        Args: Record<PropertyKey, never>;
-        Returns: string;
-      };
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       insert_culture_ref: {
         Args: {
-          culture_ref: string;
-        };
-        Returns: undefined;
-      };
+          culture_ref: string
+        }
+        Returns: undefined
+      }
       store_mfa_secret: {
         Args: {
-          mfa_secret: string;
-        };
-        Returns: undefined;
-      };
+          mfa_secret: string
+        }
+        Returns: undefined
+      }
       store_refresh_token: {
         Args: {
-          refresh_token: string;
-        };
-        Returns: undefined;
-      };
-    };
+          refresh_token: string
+        }
+        Returns: undefined
+      }
+    }
     Enums: {
-      role: 'user' | 'admin';
-      transaction_type: 'buy' | 'sell';
-    };
+      role: "user" | "admin"
+      transaction_type: "buy" | "sell"
+    }
     CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
-};
+      [_ in never]: never
+    }
+  }
+}
 
-type PublicSchema = Database[Extract<keyof Database, 'public'>];
+type PublicSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
   PublicTableNameOrOptions extends
-    | keyof (PublicSchema['Tables'] & PublicSchema['Views'])
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions['schema']]['Tables'] &
-        Database[PublicTableNameOrOptions['schema']]['Views'])
-    : never = never
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions['schema']]['Tables'] &
-      Database[PublicTableNameOrOptions['schema']]['Views'])[TableName] extends {
-      Row: infer R;
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema['Tables'] &
-      PublicSchema['Views'])
-  ? (PublicSchema['Tables'] &
-      PublicSchema['Views'])[PublicTableNameOrOptions] extends {
-      Row: infer R;
-    }
-    ? R
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
     : never
-  : never;
 
 export type TablesInsert<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema['Tables']
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
-    : never = never
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
-      Insert: infer I;
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
-  ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
-      Insert: infer I;
-    }
-    ? I
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
     : never
-  : never;
 
 export type TablesUpdate<
   PublicTableNameOrOptions extends
-    | keyof PublicSchema['Tables']
+    | keyof PublicSchema["Tables"]
     | { schema: keyof Database },
   TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions['schema']]['Tables']
-    : never = never
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions['schema']]['Tables'][TableName] extends {
-      Update: infer U;
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema['Tables']
-  ? PublicSchema['Tables'][PublicTableNameOrOptions] extends {
-      Update: infer U;
-    }
-    ? U
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
     : never
-  : never;
 
 export type Enums<
   PublicEnumNameOrOptions extends
-    | keyof PublicSchema['Enums']
+    | keyof PublicSchema["Enums"]
     | { schema: keyof Database },
   EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions['schema']]['Enums']
-    : never = never
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
 > = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
-  ? PublicSchema['Enums'][PublicEnumNameOrOptions]
-  : never;
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never

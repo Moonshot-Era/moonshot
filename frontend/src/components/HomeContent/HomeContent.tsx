@@ -12,14 +12,16 @@ import { formatNumberToUsd, isSolanaAddress } from '@/helpers/helpers';
 import './style.scss';
 import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 import { Skeleton } from '../Skeleton/Skeleton';
+import { useWallet } from '@/hooks';
 
 interface HomeContentProps {
-  walletAddress: string;
   userId?: string;
 }
 
-export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
-  const { portfolio, isLoading } = usePortfolio(walletAddress);
+export const HomeContent = ({ userId }: HomeContentProps) => {
+  const { walletData } = useWallet();
+
+  const { portfolio, isLoading } = usePortfolio(walletData?.wallet);
   const router = useRouter();
 
   const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {

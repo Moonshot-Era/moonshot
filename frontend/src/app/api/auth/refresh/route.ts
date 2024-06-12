@@ -1,9 +1,11 @@
 import { createServerClient } from '@/supabase/server';
-import { COOKIE_PROVIDER, COOKIE_PROVIDER_TOKEN } from '@/utils';
-import { cookies } from 'next/headers';
+import { HEADER_PROVIDER } from '@/utils';
 import { googleRefreshToken } from './googleRefresh';
+import { NextResponse } from 'next/server';
 
-export async function POST() {
+export async function POST(request: Request) {
+  const provider = request.headers.get(HEADER_PROVIDER);
+
   try {
     const supabaseServerClient = createServerClient();
     const { data: userData, error: userError } =
@@ -22,19 +24,14 @@ export async function POST() {
       throw refreshTokenError;
     }
 
-    const provider = cookies().get(COOKIE_PROVIDER);
-    if (provider?.value === 'g') {
-      const googleAuthResponse = await googleRefreshToken(refreshToken);
-      const idToken = googleAuthResponse.id_token;
+    if (provider === 'g') {
+      const idToken = await googleRefreshToken(refreshToken);
 
-      cookies().set(COOKIE_PROVIDER, 'g');
-      cookies().set(COOKIE_PROVIDER_TOKEN, idToken);
-
-      return idToken;
+      return NextResponse.json({ idToken });
     }
 
-    return null;
+    return NextResponse.json({ idToken: null });
   } catch (error) {
-    return null;
+    return NextResponse.json({ idToken: null });
   }
 }

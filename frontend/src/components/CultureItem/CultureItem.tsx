@@ -22,20 +22,20 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
+import { useWallet } from '@/hooks';
 
 export const CultureItem = ({
   tokenInfo,
   tokenData,
-  isPublic,
-  walletAddress
+  isPublic
 }: {
   tokenData: NormilizedTokenDataOverview;
   tokenInfo: NormilizedTokenInfoOverview;
   isPublic?: boolean;
-  walletAddress?: string;
 }) => {
   const router = useRouter();
-  const { portfolio } = usePortfolio(walletAddress);
+  const { walletData } = useWallet();
+  const { portfolio } = usePortfolio(walletData?.wallet);
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const {
     ohlcv,

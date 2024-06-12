@@ -6,30 +6,24 @@ import { useState } from 'react';
 import './style.scss';
 
 import { Icon } from '@/legos';
-import { ROUTES, logout } from '@/utils';
-import { useRouter } from 'next/navigation';
 import { AccountTab } from './AccountTab';
 import { ExportKeyTab } from './ExportKeyTab';
 import { RecentTab } from './RecentTab';
+import { useLogout } from '@/hooks';
 
-export const SettingsContent = ({
-  walletAddress
-}: {
-  walletAddress: string;
-}) => {
+export const SettingsContent = () => {
   const [activeTab, setActiveTab] = useState<
     'account' | 'recent' | 'export' | 'logout' | null
   >(null);
-  const router = useRouter();
 
   const handleActiveTab = (
     tab: 'account' | 'recent' | 'export' | 'logout' | null
   ) => setActiveTab(tab);
 
+  const logout = useLogout();
+
   const handleLogout = () => {
-    logout().then(() => {
-      router.push(ROUTES.login);
-    });
+    logout();
   };
 
   return (
@@ -104,10 +98,7 @@ export const SettingsContent = ({
         ) : activeTab === 'account' ? (
           <AccountTab handleActiveTab={handleActiveTab} />
         ) : activeTab === 'recent' ? (
-          <RecentTab
-            walletAddress={walletAddress}
-            handleActiveTab={handleActiveTab}
-          />
+          <RecentTab handleActiveTab={handleActiveTab} />
         ) : activeTab === 'export' ? (
           <ExportKeyTab handleActiveTab={handleActiveTab} />
         ) : null}
