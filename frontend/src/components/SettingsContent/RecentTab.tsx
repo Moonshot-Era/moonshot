@@ -11,6 +11,7 @@ import {
 } from '@/helpers/helpers';
 import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
 import { Icon } from '@/legos';
+import { useWidth } from '@/hooks/useWidth';
 import solanaIcon from '../../assets/images/solana-icon.png';
 
 import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
@@ -48,6 +49,8 @@ interface Props {
 }
 
 export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
+  const { mdScreen } = useWidth();
+
   walletAddress = 'C6Y3yRBvoZFXL1TiFatboMqgHAvtv9U3oFcdpVuddCvx';
   const { transactionsHistory, isFetching: transactionLoading } =
     useTransactionsHistory(walletAddress);
@@ -176,7 +179,7 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
         direction="row"
         mb="6"
       >
-        <Text size="4" weight="bold">
+        <Text size={mdScreen ? '6' : '4'} weight="bold">
           Recent activity
         </Text>
         <Box
@@ -196,7 +199,7 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
             transactionGroupArrays.map(({ date, transactions }) =>
               transactions?.length ? (
                 <Flex key={date} width="100%" direction="column" gap="2">
-                  <Text size="3" weight="medium">
+                  <Text size={mdScreen ? '4' : '3'} weight="medium">
                     {format(date, 'PP')}
                   </Text>
                   {transactions.map(
@@ -233,7 +236,7 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                               />
                             )}
                             <Flex direction="column" justify="between">
-                              <Text size="2" weight="medium">
+                              <Text size={mdScreen ? '3' : '2'} weight="medium">
                                 {transactionType}
                               </Text>
                               {transactionDate && (
@@ -252,7 +255,7 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                             align="end"
                             justify="between"
                           >
-                            <Text size="2" weight="medium">
+                            <Text size={mdScreen ? '3' : '2'} weight="medium">
                               {transactionType === 'Deposit'
                                 ? `+${
                                     tokenName === 'SOL'

@@ -5,6 +5,7 @@ import { ChangeEvent, useRef, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
+import { useWidth } from '@/hooks/useWidth';
 import { Icon, Input, SlideButton } from '@/legos';
 import { formatNumberToUsd } from '@/helpers/helpers';
 import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
@@ -23,6 +24,8 @@ const TO_ADDRESS_ERROR = 'Invalid Solana address';
 const AMOUNT_ERR = 'Please porvide correct value';
 
 export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
+  const { mdScreen } = useWidth();
+
   const [toAddress, setToAddress] = useState<string>('');
   const [transactionAmount, setTransactionAmount] = useState<number | string>(
     ''
@@ -122,7 +125,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   };
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
-      <Text size="4" weight="bold">
+      <Text size={mdScreen ? '5' : '4'} weight="bold">
         {`Withdraw ${asset?.name}`}
       </Text>
       <Flex
@@ -136,7 +139,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
       >
         <Flex direction="column" align="center" style={{ opacity: 0 }}>
           <Icon icon="switchHorizontal" />
-          <Text size="4" weight="medium">
+          <Text size={mdScreen ? '5' : '4'} weight="medium">
             {asset?.name}
           </Text>
         </Flex>
@@ -160,18 +163,20 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
                   +(transactionAmount || 0) * (asset?.priceUsd || 0)
                 )}
           </Text>
-          {amountInputInUsd && <Text size="4">{asset?.name}</Text>}
+          {amountInputInUsd && (
+            <Text size={mdScreen ? '5' : '4'}>{asset?.name}</Text>
+          )}
         </Flex>
         <Flex direction="column" align="center" onClick={handleChangeCurrency}>
           <Icon icon="switchHorizontal" />
-          <Text size="4" weight="medium">
+          <Text size={mdScreen ? '5' : '4'} weight="medium">
             {amountInputInUsd ? 'USD' : asset?.name}
           </Text>
         </Flex>
       </Flex>
 
       {/* <Box width="100%" py="2" pl="2" pr="4" className="withdraw-info-card">
-      <Text size="1" weight="medium">
+      <Text size={mdScreen ? '3' : '1'} weight="medium">
         You need at least 1,000 MICHI to complete a withdrawal
       </Text>
     </Box> */}
@@ -192,10 +197,14 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
           endAdornment={<Text>{amountInputInUsd ? 'USD' : asset?.name}</Text>}
         />
         <Flex justify="between">
-          <Text size="2">
+          <Text size={mdScreen ? '3' : '2'}>
             Available {asset?.uiAmount} {asset?.name}
           </Text>
-          <Text size="1" className="transfer-card-max" onClick={handleSetMax}>
+          <Text
+            size={mdScreen ? '3' : '1'}
+            className="transfer-card-max"
+            onClick={handleSetMax}
+          >
             Max
           </Text>
         </Flex>

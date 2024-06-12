@@ -5,6 +5,7 @@ import { Flex, Spinner, Text } from '@radix-ui/themes';
 import debounce from 'lodash.debounce';
 
 import './style.scss';
+import { useWidth } from '@/hooks/useWidth';
 import { PoolGeckoType } from '@/@types/gecko';
 import { AssetCard, Input, TokenCard } from '@/legos';
 import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
@@ -26,6 +27,8 @@ export const TokensSelect: FC<Props> = ({
   handleChangeSearchTo,
   isLoading
 }) => {
+  const { mdScreen } = useWidth();
+
   const [searchFrom, setSearchFrom] = useState('');
   const [filteredPools, setFilteredPools] = useState<
     WalletPortfolioAssetType[]
@@ -70,7 +73,7 @@ export const TokensSelect: FC<Props> = ({
       position="relative"
     >
       <Flex className="search-input-holder" pb="2" px="4" direction="column">
-        <Text size="4" weight="bold" align="center" mb="2">
+        <Text size={mdScreen ? '5' : '4'} weight="bold" align="center" mb="2">
           Convert {selectMode === 'to' ? 'to' : 'from'}
         </Text>
         <Input

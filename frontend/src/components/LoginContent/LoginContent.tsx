@@ -1,20 +1,22 @@
 'use client';
 
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Flex, Text } from '@radix-ui/themes';
 
 import { Button, Icon } from '@/legos';
-import { SplashScreen } from '../SplashScreen/SplashScreen';
-
-import cubistLogo from '../../assets/images/cubist_logo.svg';
-import { useRouter } from 'next/navigation';
+import { useWidth } from '@/hooks/useWidth';
 import { QUERY_PARAM_CULTURE_REF } from '@/utils';
+import { SplashScreen } from '../SplashScreen/SplashScreen';
+import cubistLogo from '../../assets/images/cubist_logo.svg';
 
 interface Props {
   cultureRef?: string;
 }
 
 export const LoginContent = ({ cultureRef }: Props) => {
+  const { mdScreen } = useWidth();
+
   const router = useRouter();
   const handleGoogleLogin = () => {
     router.push(
@@ -49,7 +51,7 @@ export const LoginContent = ({ cultureRef }: Props) => {
             <Text size="8" weight="bold">
               Moonshot
             </Text>
-            <Text size="3" weight="medium">
+            <Text size={mdScreen ? '4' : '3'} weight="medium">
               Trade Culture
             </Text>
           </Flex>
@@ -57,14 +59,14 @@ export const LoginContent = ({ cultureRef }: Props) => {
           <Flex direction="column" gap="4" width="100%">
             <Button className="bg-white" onClick={handleGoogleLogin}>
               <Icon icon="google" width={16} />
-              <Text size="2" weight="medium">
+              <Text size={mdScreen ? '4' : '2'} weight="medium">
                 Sign in with Google
               </Text>
             </Button>
           </Flex>
         </Flex>
         <Flex direction="row" position="absolute" bottom="50px">
-          <Text size="1">Powered by</Text>
+          <Text size={mdScreen ? '3' : '1'}>Powered by</Text>
           <Image src={cubistLogo} alt="cubist-logo" />
         </Flex>
       </Flex>

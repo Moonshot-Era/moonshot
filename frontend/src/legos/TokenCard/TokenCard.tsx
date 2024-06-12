@@ -3,6 +3,7 @@ import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '../Icon';
+import { useWidth } from '@/hooks/useWidth';
 import { tokenAddressWithDots } from '@/helpers/helpers';
 import { PoolGeckoType } from '@/@types/gecko';
 import { TokenPrice } from '../TokenPrice/TokenPrice';
@@ -14,6 +15,8 @@ interface Props {
 }
 
 export const TokenCard = ({ onClick, token, searchTo }: Props) => {
+  const { mdScreen } = useWidth();
+
   const tokenItem = token?.attributes;
   const percentageChange = +(tokenItem?.price_change_percentage?.h24 || 0);
   const name = token.included?.attributes?.name;
@@ -49,12 +52,12 @@ export const TokenCard = ({ onClick, token, searchTo }: Props) => {
           overflow="hidden"
         >
           {name && (
-            <Text size="3" weight="medium" wrap="nowrap">
+            <Text size={mdScreen ? '4' : '3'} weight="medium" wrap="nowrap">
               {name?.slice(0, 40)}
               {name?.length > 40 ? '...' : ''}
             </Text>
           )}
-          <Text size="1" weight="regular" wrap="nowrap">
+          <Text size={mdScreen ? '3' : '1'} weight="regular" wrap="nowrap">
             {tokenAddressWithDots(
               token?.relationships?.base_token?.data?.id.replace('solana_', '')
             )}
@@ -63,7 +66,7 @@ export const TokenCard = ({ onClick, token, searchTo }: Props) => {
       </Flex>
       <Flex direction="row" align="center" my="1">
         <Flex direction="column" justify="between" align="end" height="40px">
-          <Text size="3" weight="medium">
+          <Text size={mdScreen ? '4' : '3'} weight="medium">
             <TokenPrice price={`${tokenItem?.base_token_price_usd}`} />
           </Text>
           {percentageChange && (
@@ -87,7 +90,7 @@ export const TokenCard = ({ onClick, token, searchTo }: Props) => {
                     ? 'text-color-success'
                     : 'text-color-error'
                 }
-                size="1"
+                size={mdScreen ? '3' : '1'}
                 weight="medium"
               >{`${percentageChange}%`}</Text>
             </Flex>
