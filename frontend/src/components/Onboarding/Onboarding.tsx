@@ -7,12 +7,14 @@ import { useRouter } from 'next/navigation';
 import './style.scss';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { Pagination } from 'swiper/modules';
+import 'swiper/css/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { IconButton } from '@/legos';
+import { Pagination, Navigation } from 'swiper/modules';
+
+import { ROUTES } from '@/utils';
+import { Icon, IconButton } from '@/legos';
 import { onboardingData } from './helpers';
 import { createBrowserClient } from '@/supabase/client';
-import { ROUTES } from '@/utils';
 
 export const OnboardingLayout = () => {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -28,7 +30,7 @@ export const OnboardingLayout = () => {
       await supabaseClient
         .from('profiles')
         .update({
-          onboarding_completed: true,
+          onboarding_completed: true
         })
         .eq('user_id', userId);
 
@@ -38,20 +40,23 @@ export const OnboardingLayout = () => {
 
   return (
     <Swiper
-      modules={[Pagination]}
+      modules={[Pagination, Navigation]}
       direction="horizontal"
       loop={false}
       pagination={{
         el: '.swiper-pagination',
         type: 'bullets',
-        clickable: true,
+        clickable: true
       }}
-      onSlideChange={swiper => setActiveSlide(swiper.realIndex)}
+      navigation={{
+        nextEl: '.swiper-button-next'
+      }}
+      onSlideChange={(swiper) => setActiveSlide(swiper.realIndex)}
     >
       {onboardingData.map(
         (
           { id, bgClassName, description, imgSrc, labelClassName, title },
-          index,
+          index
         ) => (
           <SwiperSlide key={id}>
             <Flex className={bgClassName} direction="column" align="center">
@@ -81,11 +86,14 @@ export const OnboardingLayout = () => {
               ) : null}
             </Flex>
           </SwiperSlide>
-        ),
+        )
       )}
       <div
         className={`swiper-pagination swiper-pagination-bg-${activeSlide}`}
       ></div>
+      <div className="swiper-button-next">
+        <Icon icon="chevronRight" />
+      </div>
     </Swiper>
   );
 };
