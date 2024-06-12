@@ -123,3 +123,25 @@
 .swiper-pagination-bg-2 .swiper-pagination-bullet-active {
   background-color: $magenta;
 }
+
+.swiper-button-next,
+.swiper-button-prev {
+  background-color: $white;
+  border-radius: 100%;
+  width: 40px !important;
+  height: 40px !important;
+  top: 93% !important;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  display: none !important;
+}
+
+.swiper-button-prev {
+  transform: rotate(180deg);
+}
+
+.swiper-button-disabled {
+  display: none !important;
+}

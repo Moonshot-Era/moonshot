@@ -18,7 +18,7 @@ import { useSearchPools } from '@/hooks/useSearchPools';
 import { usePoolsList } from '@/hooks/useTrendingPoolsList';
 
 import './style.scss';
-import { Skeleton } from '../Skeleton/Skeleton';
+import { SkeletonExploreList } from '../Skeleton/components/SkeletonExplore/SkeletonExploreList';
 
 export const ExploreContent = () => {
   const router = useRouter();
@@ -29,7 +29,7 @@ export const ExploreContent = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isSuccess
+    isFetching: isFetchingTrendingPools
   } = usePoolsList();
   const {
     searchPools,
@@ -126,9 +126,7 @@ export const ExploreContent = () => {
     };
   }, [handleTokensListScroll]);
 
-  return !isSuccess ? (
-    <Skeleton variant="explore" />
-  ) : (
+  return (
     <Flex
       className="main-wrapper explore-wrapper"
       direction="column"
@@ -161,15 +159,19 @@ export const ExploreContent = () => {
           pr="3"
           pb="2"
         >
-          {isFetching && (
-            <Flex
-              className="sticky-spinner"
-              top="0"
-              align="center"
-              justify="center"
-            >
-              <Spinner size="3" />
-            </Flex>
+          {isFetchingTrendingPools && !poolsList?.length ? (
+            <SkeletonExploreList />
+          ) : (
+            isFetching && (
+              <Flex
+                className="sticky-spinner"
+                top="0"
+                align="center"
+                justify="center"
+              >
+                <Spinner size="3" />
+              </Flex>
+            )
           )}
           {search && searchPools?.length
             ? searchPools?.map((pool) => (

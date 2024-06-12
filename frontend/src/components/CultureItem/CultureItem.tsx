@@ -111,49 +111,46 @@ export const CultureItem = ({
               </Box>
             )}
           </Flex>
-          <ToggleGroup.Root
-            className="ToggleGroup"
-            type="single"
-            value={`${timeFrame.aggregate}-${timeFrame.time}`}
-            onValueChange={handleChangeTimeFrame}
-          >
-            <ToggleGroup.Item className="ToggleGroupItem" value="1-day">
-              1D
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="12-h">
-              12H
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="4-hour">
-              4H
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="1-hour">
-              1H
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="15-minute">
-              15m
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="5-minute">
-              5m
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="1-minute">
-              1m
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
-          <Flex
-            width="100%"
-            height="200px"
-            direction="column"
-            justify="center"
-            align="center"
-          >
-            {ohlcvLoading ? (
-              <Spinner />
-            ) : (
-              <CultureChart
-                data={chartData}
-                tokenDecimals={tokenData?.decimals || 0}
-              />
-            )}
+
+          <Flex direction="column" width="100%" className="chart-wrapper">
+            <ToggleGroup.Root
+              className="ToggleGroup"
+              type="single"
+              value={`${timeFrame.aggregate}-${timeFrame.time}`}
+              onValueChange={handleChangeTimeFrame}
+            >
+              <ToggleGroup.Item className="ToggleGroupItem" value="1-day">
+                1D
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="12-h">
+                12H
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="4-hour">
+                4H
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="1-hour">
+                1H
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="15-minute">
+                15m
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="5-minute">
+                5m
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="1-minute">
+                1m
+              </ToggleGroup.Item>
+            </ToggleGroup.Root>
+            <Flex height="200px" justify="center" align="center">
+              {ohlcvLoading ? (
+                <Spinner />
+              ) : (
+                <CultureChart
+                  data={chartData}
+                  tokenDecimals={tokenData?.decimals || 0}
+                />
+              )}
+            </Flex>
           </Flex>
           {!isPublic && asset && portfolio && (
             <Toolbar

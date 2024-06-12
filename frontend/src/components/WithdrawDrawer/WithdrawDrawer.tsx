@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import { FC, useState } from 'react';
+import { toast } from 'sonner';
 
 import { SheetDrawer } from '@/legos';
 import {
@@ -11,7 +12,7 @@ import {
 import { createBrowserClient } from '@/supabase/client';
 import { WithdrawItem } from './WithdrawItem';
 import { WithdrawList } from './WithdrawList';
-import { snackbar } from '@/helpers/snackbar/snackbar';
+import { snackbar } from '@/helpers/snackbar';
 
 import './style.scss';
 import { tokenAddressWithDots } from '@/helpers/helpers';
@@ -40,40 +41,36 @@ export const WithdrawDrawer: FC<Props> = ({
     toggleOpen();
   };
 
-  const handleConfirmWithdraw = async (
+  const withdrawMutation = async (
     toAddress: string,
     amount: number | string,
-    tokenPrice: number,
-    symbol: string
+    tokenPrice: number
   ) => {
     const supabaseClient = createBrowserClient();
-    snackbar(
-      'info',
-      `Withdrawing ${amount} ${symbol} to ${tokenAddressWithDots(toAddress)}`
-    );
+
     try {
-       await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
-         fromAddress: portfolio?.wallet,
-         toAddress: toAddress,
-         amount: amount,
-         tokenAddress: fromAsset?.address,
-         tokenDecimals: fromAsset?.decimals
-       });
-       if (toAddress !== portfolio?.wallet) {
-         await supabaseClient.from('transactions').insert({
-           // @ts-ignore
-           created_at: new Date().toISOString(),
-           user_id: '',
-           token_name: fromAsset?.name,
-           token_address: fromAsset?.address,
-           token_amount: amount,
-           token_price: `${tokenPrice ?? 0}`,
-           transaction_type: 'sell'
-         });
-       }
+      await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
+        fromAddress: portfolio?.wallet,
+        toAddress: toAddress,
+        amount: amount,
+        tokenAddress: fromAsset?.address,
+        tokenDecimals: fromAsset?.decimals
+      });
+      if (toAddress !== portfolio?.wallet) {
+        await supabaseClient.from('transactions').insert({
+          // @ts-ignore
+          created_at: new Date().toISOString(),
+          user_id: '',
+          token_name: fromAsset?.name,
+          token_address: fromAsset?.address,
+          token_amount: amount,
+          token_price: `${tokenPrice ?? 0}`,
+          transaction_type: 'sell'
+        });
+      }
       snackbar('success', `Withdrawal succeeded!`);
       handleClose();
-    } catch (err:any) {
+    } catch (err: any) {
       snackbar(
         'error',
         err?.response?.data?.errorMessage ||
@@ -81,6 +78,21 @@ export const WithdrawDrawer: FC<Props> = ({
       );
       throw err;
     }
+  };
+
+  const handleConfirmWithdraw = async (
+    toAddress: string,
+    amount: number | string,
+    tokenPrice: number,
+    symbol: string
+  ) => {
+    toast.promise(withdrawMutation(toAddress, amount, tokenPrice), {
+      loading: `Withdrawing ${amount} ${symbol} to ${tokenAddressWithDots(
+        toAddress
+      )}`,
+      className: 'snackbar-promise',
+      position: 'top-center'
+    });
   };
 
   return (

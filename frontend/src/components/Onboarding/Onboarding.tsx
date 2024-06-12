@@ -8,9 +8,11 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 import './style.scss';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { Pagination } from 'swiper/modules';
+import 'swiper/css/navigation';
+import { Pagination, Navigation } from 'swiper/modules';
+
 import { ROUTES } from '@/utils';
-import { IconButton } from '@/legos';
+import { Icon, IconButton } from '@/legos';
 import { onboardingData } from './helpers';
 import { useWidth } from '@/hooks/useWidth';
 import { createBrowserClient } from '@/supabase/client';
@@ -41,7 +43,7 @@ export const OnboardingLayout = () => {
 
   return (
     <Swiper
-      modules={[Pagination]}
+      modules={[Pagination, Navigation]}
       direction="horizontal"
       loop={false}
       pagination={{
@@ -89,6 +91,9 @@ export const OnboardingLayout = () => {
       <div
         className={`swiper-pagination swiper-pagination-bg-${activeSlide}`}
       ></div>
+      <div className="swiper-button-next">
+        <Icon icon="chevronRight" />
+      </div>
     </Swiper>
   );
 };

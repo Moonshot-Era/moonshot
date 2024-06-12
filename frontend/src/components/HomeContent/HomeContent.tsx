@@ -21,7 +21,7 @@ interface HomeContentProps {
 
 export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
   const { mdScreen } = useWidth();
-  const { portfolio, isFetching } = usePortfolio(walletAddress);
+  const { portfolio, isLoading } = usePortfolio(walletAddress);
   const router = useRouter();
 
   const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {
@@ -52,7 +52,7 @@ export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
 
   const positiveBalance = totalBalance > 0;
 
-  return isFetching ? (
+  return isLoading ? (
     <Skeleton variant="home" />
   ) : (
     <>

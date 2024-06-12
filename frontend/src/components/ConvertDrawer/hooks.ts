@@ -19,7 +19,7 @@ const fetchSwapRoutes = (
     })
     .then((response) => response.data?.swapRoutes);
 
-const swapTokens = (swapRoutes: void) =>
+export const swapTokens = (swapRoutes: void) =>
   axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/swap-tokens`, {
     swapRoutes
   });

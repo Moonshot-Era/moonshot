@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 
 import {
@@ -9,7 +10,7 @@ import {
 } from '@/helpers/convertAmountToInt';
 import { SelectedTokens } from './types';
 import { useWidth } from '@/hooks/useWidth';
-import { snackbar } from '@/helpers/snackbar/snackbar';
+import { snackbar } from '@/helpers/snackbar';
 import { useSwapMutation, useSwapRoutes } from './hooks';
 import { Icon, Select, SlideButton, TokenNumberInput } from '@/legos';
 
@@ -67,18 +68,19 @@ export const ConvertForm = memo(
     }, [mutation.isError]);
 
     const handleSwapSubmit = () => {
-      snackbar(
-        'info',
-        `Converting ${amount} ${
+      //@ts-ignore
+      toast.promise(mutation.mutateAsync({ swapRoutes }), {
+        loading: `Converting ${amount} ${
           selectedTokens?.from?.symbol
         } into ${convertToReadable(
           // @ts-ignore
-          swapRoutes.outAmount,
+          swapRoutes?.outAmount,
           selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
-        )} ${selectedTokens?.to?.included?.attributes.symbol}`
-      );
-      //@ts-ignore
-      mutation.mutate({ swapRoutes });
+        )} ${selectedTokens?.to?.included?.attributes.symbol}`,
+        dismissible: true,
+        className: 'snackbar-promise',
+        position: 'top-center'
+      });
     };
 
     return (
