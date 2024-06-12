@@ -3,29 +3,32 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
-
 import {
   convertToInteger,
   convertToReadable
 } from '@/helpers/convertAmountToInt';
-import { SelectedTokens } from './types';
-import { useWidth } from '@/hooks/useWidth';
-import { snackbar } from '@/helpers/snackbar';
-import { useSwapMutation, useSwapRoutes } from './hooks';
 import { Icon, Select, SlideButton, TokenNumberInput } from '@/legos';
 
+import { SelectedTokens } from './types';
+import { useSwapMutation, useSwapRoutes } from './hooks';
 import './style.scss';
+import { snackbar } from '@/helpers/snackbar';
+import { formatNumberToUsFormat, formatNumberToUsd } from '@/helpers/helpers';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
   selectedTokens: SelectedTokens;
   closeDrawer: () => void;
+  walletAddress: string;
 };
 
 export const ConvertForm = memo(
-  ({ selectedTokens, changeSelected, closeDrawer }: ConvertForm) => {
-    const { mdScreen } = useWidth();
-
+  ({
+    selectedTokens,
+    changeSelected,
+    closeDrawer,
+    walletAddress
+  }: ConvertForm) => {
     const [amount, setAmount] = useState<number | string>(0.001);
     const btnRef = useRef();
     const [isValidAmount, setIsValidAmount] = useState(true);
@@ -57,7 +60,7 @@ export const ConvertForm = memo(
         snackbar('success', `Finished converting!`);
         closeDrawer();
       }
-    }, [mutation.isSuccess]);
+    }, [closeDrawer, mutation.isSuccess]);
 
     useEffect(() => {
       if (mutation.isError) {
@@ -68,20 +71,32 @@ export const ConvertForm = memo(
     }, [mutation.isError]);
 
     const handleSwapSubmit = () => {
-      //@ts-ignore
-      toast.promise(mutation.mutateAsync({ swapRoutes }), {
-        loading: `Converting ${amount} ${
-          selectedTokens?.from?.symbol
-        } into ${convertToReadable(
-          // @ts-ignore
-          swapRoutes?.outAmount,
-          selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
-        )} ${selectedTokens?.to?.included?.attributes.symbol}`,
-        dismissible: true,
-        className: 'snackbar-promise',
-        position: 'top-center'
-      });
+      toast.promise(
+        mutation.mutateAsync(
+          //@ts-ignore
+          { swapRoutes },
+          {
+            fromAddress: walletAddress,
+            amount,
+            tokenAddress: selectedTokens?.from?.address,
+            tokenDecimals: selectedTokens?.from?.decimals
+          }
+        ),
+        {
+          loading: `Converting ${amount} ${
+            selectedTokens?.from?.symbol
+          } into ${convertToReadable(
+            // @ts-ignore
+            swapRoutes?.outAmount,
+            selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
+          )} ${selectedTokens?.to?.included?.attributes.symbol}`,
+          dismissible: true,
+          className: 'snackbar-promise',
+          position: 'top-center'
+        }
+      );
     };
+    console.log('debug > swapRoutes===', swapRoutes);
 
     return (
       <Flex
@@ -92,7 +107,7 @@ export const ConvertForm = memo(
         pb="6"
         gap="5"
       >
-        <Text size={mdScreen ? '5' : '4'} weight="bold">
+        <Text size="4" weight="bold">
           {label}
         </Text>
         <Flex
@@ -112,17 +127,15 @@ export const ConvertForm = memo(
                 hasError={!isValidAmount}
               />
               {!isValidAmount && (
-                <Text size={mdScreen ? '3' : '1'} className="text-color-error">
+                <Text size="1" className="text-color-error">
                   Amount must be greater than 0 and less than or equal to
                   available amount
                 </Text>
               )}
-              <Text
-                size={mdScreen ? '3' : '1'}
-              >{`Available: ${selectedTokens?.from?.uiAmount}`}</Text>
+              <Text size="1">{`Available: ${selectedTokens?.from?.uiAmount}`}</Text>
             </Flex>
           ) : (
-            <Text size={mdScreen ? '6' : '5'} weight="bold">
+            <Text size="5" weight="bold">
               Select culture
             </Text>
           )}
@@ -135,7 +148,7 @@ export const ConvertForm = memo(
 
             {selectedTokens.from && (
               <Text
-                size={mdScreen ? '3' : '1'}
+                size="1"
                 className="transfer-card-max"
                 onClick={() => setAmount(selectedTokens?.from?.uiAmount || 0)}
               >
@@ -156,7 +169,7 @@ export const ConvertForm = memo(
           className="bg-yellow transfer-card"
         >
           {!selectedTokens.to && (
-            <Text size={mdScreen ? '6' : '5'} weight="bold">
+            <Text size="5" weight="bold">
               Select culture
             </Text>
           )}
@@ -164,12 +177,13 @@ export const ConvertForm = memo(
           {isSwapRoutesLoading ? (
             <Spinner size="3" />
           ) : (
-            <Text size={mdScreen ? '6' : '5'} weight="bold">
+            <Text size="5" weight="bold">
               {swapRoutes
-                ? convertToReadable(
-                    // @ts-ignore
-                    swapRoutes.outAmount,
+                ? formatNumberToUsFormat(
                     selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
+                  ).format(
+                    // @ts-ignore
+                    swapRoutes.outAmount
                   )
                 : swapRoutes}
             </Text>
