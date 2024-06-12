@@ -3,6 +3,7 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import {
   convertToInteger,
   convertToReadable
@@ -74,12 +75,14 @@ export const ConvertForm = memo(
       toast.promise(
         mutation.mutateAsync(
           //@ts-ignore
-          { swapRoutes },
           {
-            fromAddress: walletAddress,
-            amount,
-            tokenAddress: selectedTokens?.from?.address,
-            tokenDecimals: selectedTokens?.from?.decimals
+            swapRoutes,
+            feeData: {
+              fromAddress: walletAddress,
+              amount,
+              tokenAddress: selectedTokens?.from?.address,
+              tokenDecimals: selectedTokens?.from?.decimals
+            }
           }
         ),
         {
@@ -183,7 +186,7 @@ export const ConvertForm = memo(
                     selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
                   ).format(
                     // @ts-ignore
-                    swapRoutes.outAmount
+                    swapRoutes.outAmount / LAMPORTS_PER_SOL
                   )
                 : swapRoutes}
             </Text>

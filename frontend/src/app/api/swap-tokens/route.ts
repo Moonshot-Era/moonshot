@@ -23,40 +23,40 @@ export async function POST(request: Request) {
     });
   }
 
-  const txid = await swapTokens(oidc!, data.swapRoutes);
-  if (txid) {
-    if (isSolanaAddress(data.feeData.tokenAddress)) {
-      await sendNativeTransaction(
-        oidc!,
-        data.feeData.fromAddress,
-        MOONSHOT_WALLET_ADDRESS,
-        +data.feeData.amount * MOONSHOT_FEE
-      );
-      await sendNativeTransaction(
-        oidc!,
-        data.feeData.fromAddress,
-        REF_WALLET_ADDRESS,
-        +data.feeData.amount * REF_FEE
-      );
-    } else {
-      await sendTokensTransaction(
-        oidc!,
-        data.feeData.fromAddress,
-        MOONSHOT_WALLET_ADDRESS,
-        +data.feeData.amount * MOONSHOT_FEE,
-        data.feeData.tokenAddress,
-        data.feeData.tokenDecimals
-      );
-      await sendTokensTransaction(
-        oidc!,
-        data.feeData.fromAddress,
-        REF_WALLET_ADDRESS,
-        +data.feeData.amount * REF_FEE,
-        data.feeData.tokenAddress,
-        data.feeData.tokenDecimals
-      );
-    }
-  }
+  const txid = await swapTokens(oidc!, data.swapRoutes, data.feeData);
+  // if (txid) {
+  //   if (isSolanaAddress(data.feeData.tokenAddress)) {
+  //     await sendNativeTransaction(
+  //       oidc!,
+  //       data.feeData.fromAddress,
+  //       MOONSHOT_WALLET_ADDRESS,
+  //       +data.feeData.amount * MOONSHOT_FEE
+  //     );
+  //     await sendNativeTransaction(
+  //       oidc!,
+  //       data.feeData.fromAddress,
+  //       REF_WALLET_ADDRESS,
+  //       +data.feeData.amount * REF_FEE
+  //     );
+  //   } else {
+  //     await sendTokensTransaction(
+  //       oidc!,
+  //       data.feeData.fromAddress,
+  //       MOONSHOT_WALLET_ADDRESS,
+  //       +data.feeData.amount * MOONSHOT_FEE,
+  //       data.feeData.tokenAddress,
+  //       data.feeData.tokenDecimals
+  //     );
+  //     await sendTokensTransaction(
+  //       oidc!,
+  //       data.feeData.fromAddress,
+  //       REF_WALLET_ADDRESS,
+  //       +data.feeData.amount * REF_FEE,
+  //       data.feeData.tokenAddress,
+  //       data.feeData.tokenDecimals
+  //     );
+  //   }
+  // }
 
   return NextResponse.json({
     txid

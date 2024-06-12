@@ -1,15 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { SelectedTokens } from "./types";
+import { FeeDataType, SelectedTokens } from "./types";
 import axios from "axios";
 
 type SwapRoute = {};
-
-interface feeDataType {
-  fromAddress: string;
-  amount: number;
-  tokenAddress: string;
-  tokenDecimals: number;
-}
 
 const fetchSwapRoutes = (
   inputMint: string,
@@ -26,7 +19,7 @@ const fetchSwapRoutes = (
     })
     .then((response) => response.data?.swapRoutes);
 
-export const swapTokens = (swapRoutes: void, feeData: feeDataType) =>
+export const swapTokens = (swapRoutes: void, feeData: FeeDataType) =>
   axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/swap-tokens`, {
     swapRoutes,
     feeData
