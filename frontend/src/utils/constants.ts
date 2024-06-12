@@ -1,10 +1,14 @@
+export const COOKIE_PROVIDER = 'p';
 export const COOKIE_PROVIDER_TOKEN = 'pt';
+
+export const HEADER_PROVIDER_TOKEN = 'Authorization';
+export const HEADER_PROVIDER = 'Authorization_provider';
 
 export const ROUTES = {
   home: '/',
   login: '/login',
   explore: '/explore',
-  onboarding: '/onboarding',
+  onboarding: '/onboarding'
 };
 
 export const QUERY_PARAM_CULTURE_REF = 'culture_ref';

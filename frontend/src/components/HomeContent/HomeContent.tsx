@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
+import { useWallet } from '@/hooks';
 import { useWidth } from '@/hooks/useWidth';
 import { Skeleton } from '../Skeleton/Skeleton';
 import { Toolbar } from '../Toolbar/Toolbar';
@@ -15,13 +16,14 @@ import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 import './style.scss';
 
 interface HomeContentProps {
-  walletAddress: string;
   userId?: string;
 }
 
-export const HomeContent = ({ walletAddress, userId }: HomeContentProps) => {
+export const HomeContent = ({ userId }: HomeContentProps) => {
   const { mdScreen } = useWidth();
-  const { portfolio, isLoading } = usePortfolio(walletAddress);
+  const { walletData } = useWallet();
+
+  const { portfolio, isLoading } = usePortfolio(walletData?.wallet);
   const router = useRouter();
 
   const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {

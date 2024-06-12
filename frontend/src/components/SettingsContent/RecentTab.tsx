@@ -16,6 +16,7 @@ import solanaIcon from '../../assets/images/solana-icon.png';
 
 import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
 import './style.scss';
+import { useWallet } from '@/hooks';
 
 interface FormattedTransactionType {
   id?: string;
@@ -45,23 +46,22 @@ interface Props {
   handleActiveTab: (
     tab: 'account' | 'recent' | 'export' | 'logout' | null
   ) => void;
-  walletAddress: string;
 }
 
-export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
+export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
   const { mdScreen } = useWidth();
 
-  walletAddress = 'C6Y3yRBvoZFXL1TiFatboMqgHAvtv9U3oFcdpVuddCvx';
+  const { walletData } = useWallet();
   const { transactionsHistory, isFetching: transactionLoading } =
-    useTransactionsHistory(walletAddress);
+    useTransactionsHistory(walletData?.wallet);
 
   const determineOperationType = (transfer: {
     fromUserAccount: string;
     toUserAccount: string;
   }): FormattedTransactionType['transactionType'] | null => {
-    if (transfer.fromUserAccount === walletAddress) {
+    if (transfer.fromUserAccount === walletData?.wallet) {
       return 'Withdraw';
-    } else if (transfer.toUserAccount === walletAddress) {
+    } else if (transfer.toUserAccount === walletData?.wallet) {
       return 'Deposit';
     }
     return null;
