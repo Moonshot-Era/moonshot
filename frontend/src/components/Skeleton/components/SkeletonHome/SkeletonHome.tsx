@@ -4,11 +4,8 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon } from '@/legos';
-import { useWidth } from '@/hooks/useWidth';
 
 export const SkeletonHome = () => {
-  const { mdScreen } = useWidth();
-
   return (
     <Flex
       direction="column"
@@ -29,7 +26,7 @@ export const SkeletonHome = () => {
       </Box>
 
       <Flex width="100%" direction="column">
-        <Text size={mdScreen ? '4' : '3'} weight="medium" mb="2">
+        <Text size={'3'} weight="medium" mb="2">
           My portfolio
         </Text>
 

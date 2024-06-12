@@ -3,13 +3,10 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
-import { useWidth } from '@/hooks/useWidth';
 
 const toolbarTitles = ['Convert', 'Deposit', 'Withdraw', 'Share'];
 
 export const SkeletonCulture = () => {
-  const { mdScreen } = useWidth();
-
   return (
     <Flex
       direction="column"
@@ -32,7 +29,7 @@ export const SkeletonCulture = () => {
                 className="skeleton-empty-card-icon"
               />
             </Box>
-            <Text size={mdScreen ? '3' : '1'}>{title}</Text>
+            <Text size={'1'}>{title}</Text>
           </Flex>
         ))}
       </Flex>
