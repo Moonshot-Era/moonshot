@@ -4,21 +4,23 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
+import { useWallet } from '@/hooks';
+import { useWidth } from '@/hooks/useWidth';
+import { Skeleton } from '../Skeleton/Skeleton';
 import { Toolbar } from '../Toolbar/Toolbar';
 import { BadgeSecond, AssetCard } from '@/legos';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { formatNumberToUsd, isSolanaAddress } from '@/helpers/helpers';
+import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 
 import './style.scss';
-import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
-import { Skeleton } from '../Skeleton/Skeleton';
-import { useWallet } from '@/hooks';
 
 interface HomeContentProps {
   userId?: string;
 }
 
 export const HomeContent = ({ userId }: HomeContentProps) => {
+  const { mdScreen } = useWidth();
   const { walletData } = useWallet();
 
   const { portfolio, isLoading } = usePortfolio(walletData?.wallet);
@@ -69,7 +71,7 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
               <Text size="8" weight="bold">
                 {formatNumberToUsd().format(totalBalance).split('.')[0]}
               </Text>
-              <Text size="5" weight="medium" mt="2" ml="2px">
+              <Text size={mdScreen ? '6' : '5'} weight="medium" mt="2" ml="2px">
                 {((totalBalance % 1) * 100).toFixed(0)}
               </Text>
             </>
@@ -98,7 +100,7 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
           gap="4"
           mb={positiveBalance ? '100px' : '1'}
         >
-          <Text size="3" weight="medium" mb="2">
+          <Text size={mdScreen ? '5' : '3'} weight="medium" mb="2">
             My portfolio
           </Text>
           {portfolio?.walletAssets?.length ? (
@@ -123,7 +125,7 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
               className={`border-1 bg-magenta empty-card`}
               p="4"
             >
-              <Text size="2">
+              <Text size={mdScreen ? '4' : '2'}>
                 Your wallet is currently empty. Deposit funds to start using
                 your wallet!
               </Text>

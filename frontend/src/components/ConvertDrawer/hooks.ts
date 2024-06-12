@@ -4,6 +4,13 @@ import axios from "axios";
 
 type SwapRoute = {};
 
+interface feeDataType {
+  fromAddress: string;
+  amount: number;
+  tokenAddress: string;
+  tokenDecimals: number;
+}
+
 const fetchSwapRoutes = (
   inputMint: string,
   outputMint: string,
@@ -19,9 +26,10 @@ const fetchSwapRoutes = (
     })
     .then((response) => response.data?.swapRoutes);
 
-const swapTokens = (swapRoutes: void) =>
+export const swapTokens = (swapRoutes: void, feeData: feeDataType) =>
   axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/swap-tokens`, {
-    swapRoutes
+    swapRoutes,
+    feeData
   });
 
 export const useSwapRoutes = (
@@ -50,10 +58,10 @@ export const useSwapRoutes = (
 export const useSwapMutation = () => {
   const mutation = useMutation({
     // @ts-ignore
-    mutationFn: ({ swapRoutes }) => {
-      return swapTokens(swapRoutes);
-    },
+    mutationFn: ({ swapRoutes, feeData }) => {
+      return swapTokens(swapRoutes, feeData);
+    }
   });
 
   return mutation;
-}
+};

@@ -5,9 +5,13 @@ import { format } from 'date-fns';
 import Image, { StaticImageData } from 'next/image';
 import { FC } from 'react';
 
-import { tokenAddressWithDots } from '@/helpers/helpers';
+import {
+  formatNumberToUsFormat,
+  tokenAddressWithDots
+} from '@/helpers/helpers';
 import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
 import { Icon } from '@/legos';
+import { useWidth } from '@/hooks/useWidth';
 import solanaIcon from '../../assets/images/solana-icon.png';
 
 import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
@@ -45,9 +49,9 @@ interface Props {
 }
 
 export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
-  const { walletData } = useWallet();
-  console.log('debug > walletData===', walletData);
+  const { mdScreen } = useWidth();
 
+  const { walletData } = useWallet();
   const { transactionsHistory, isFetching: transactionLoading } =
     useTransactionsHistory(walletData?.wallet);
 
@@ -175,7 +179,7 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
         direction="row"
         mb="6"
       >
-        <Text size="4" weight="bold">
+        <Text size={mdScreen ? '6' : '4'} weight="bold">
           Recent activity
         </Text>
         <Box
@@ -195,7 +199,7 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
             transactionGroupArrays.map(({ date, transactions }) =>
               transactions?.length ? (
                 <Flex key={date} width="100%" direction="column" gap="2">
-                  <Text size="3" weight="medium">
+                  <Text size={mdScreen ? '4' : '3'} weight="medium">
                     {format(date, 'PP')}
                   </Text>
                   {transactions.map(
@@ -232,7 +236,7 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                               />
                             )}
                             <Flex direction="column" justify="between">
-                              <Text size="2" weight="medium">
+                              <Text size={mdScreen ? '3' : '2'} weight="medium">
                                 {transactionType}
                               </Text>
                               {transactionDate && (
@@ -251,28 +255,32 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                             align="end"
                             justify="between"
                           >
-                            <Text size="2" weight="medium">
+                            <Text size={mdScreen ? '3' : '2'} weight="medium">
                               {transactionType === 'Deposit'
                                 ? `+${
                                     tokenName === 'SOL'
-                                      ? (amount / 10 ** 9).toFixed(4)
-                                      : amount.toFixed(4)
+                                      ? formatNumberToUsFormat(9).format(
+                                          amount / 10 ** 9
+                                        )
+                                      : formatNumberToUsFormat().format(amount)
                                   } ${tokenName}`
                                 : transactionType === 'Withdraw'
                                 ? `-${
                                     tokenName === 'SOL'
-                                      ? (amount / 10 ** 9).toFixed(4)
-                                      : amount.toFixed(4)
+                                      ? formatNumberToUsFormat(9).format(
+                                          amount / 10 ** 9
+                                        )
+                                      : formatNumberToUsFormat().format(amount)
                                   } ${tokenName}`
-                                : `+${tokenAmountConvertFrom?.toFixed(
-                                    4
+                                : `+${formatNumberToUsFormat().format(
+                                    tokenAmountConvertFrom || 0
                                   )} ${tokenConvertFromSymbol}`}
                             </Text>
                             {transactionDate && (
                               <Text className="font-size-xs">
                                 {transactionType === 'Convert'
-                                  ? `-${tokenAmountConvertTo?.toFixed(
-                                      4
+                                  ? `-${formatNumberToUsFormat().format(
+                                      tokenAmountConvertTo || 0
                                     )} ${tokenConvertToSymbol}`
                                   : format(transactionDate, 'hh:mm a')}
                               </Text>

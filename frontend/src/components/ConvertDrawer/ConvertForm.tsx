@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import {
   convertToInteger,
@@ -11,16 +12,23 @@ import { Icon, Select, SlideButton, TokenNumberInput } from '@/legos';
 import { SelectedTokens } from './types';
 import { useSwapMutation, useSwapRoutes } from './hooks';
 import './style.scss';
-import { snackbar } from '@/helpers/snackbar/snackbar';
+import { snackbar } from '@/helpers/snackbar';
+import { formatNumberToUsFormat, formatNumberToUsd } from '@/helpers/helpers';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
   selectedTokens: SelectedTokens;
   closeDrawer: () => void;
+  walletAddress: string;
 };
 
 export const ConvertForm = memo(
-  ({ selectedTokens, changeSelected, closeDrawer }: ConvertForm) => {
+  ({
+    selectedTokens,
+    changeSelected,
+    closeDrawer,
+    walletAddress
+  }: ConvertForm) => {
     const [amount, setAmount] = useState<number | string>(0.001);
     const btnRef = useRef();
     const [isValidAmount, setIsValidAmount] = useState(true);
@@ -52,7 +60,7 @@ export const ConvertForm = memo(
         snackbar('success', `Finished converting!`);
         closeDrawer();
       }
-    }, [mutation.isSuccess]);
+    }, [closeDrawer, mutation.isSuccess]);
 
     useEffect(() => {
       if (mutation.isError) {
@@ -63,19 +71,32 @@ export const ConvertForm = memo(
     }, [mutation.isError]);
 
     const handleSwapSubmit = () => {
-      snackbar(
-        'info',
-        `Converting ${amount} ${
-          selectedTokens?.from?.symbol
-        } into ${convertToReadable(
-          // @ts-ignore
-          swapRoutes.outAmount,
-          selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
-        )} ${selectedTokens?.to?.included?.attributes.symbol}`
+      toast.promise(
+        mutation.mutateAsync(
+          //@ts-ignore
+          { swapRoutes },
+          {
+            fromAddress: walletAddress,
+            amount,
+            tokenAddress: selectedTokens?.from?.address,
+            tokenDecimals: selectedTokens?.from?.decimals
+          }
+        ),
+        {
+          loading: `Converting ${amount} ${
+            selectedTokens?.from?.symbol
+          } into ${convertToReadable(
+            // @ts-ignore
+            swapRoutes?.outAmount,
+            selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
+          )} ${selectedTokens?.to?.included?.attributes.symbol}`,
+          dismissible: true,
+          className: 'snackbar-promise',
+          position: 'top-center'
+        }
       );
-      //@ts-ignore
-      mutation.mutate({ swapRoutes });
     };
+    console.log('debug > swapRoutes===', swapRoutes);
 
     return (
       <Flex
@@ -158,10 +179,11 @@ export const ConvertForm = memo(
           ) : (
             <Text size="5" weight="bold">
               {swapRoutes
-                ? convertToReadable(
-                    // @ts-ignore
-                    swapRoutes.outAmount,
+                ? formatNumberToUsFormat(
                     selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
+                  ).format(
+                    // @ts-ignore
+                    swapRoutes.outAmount
                   )
                 : swapRoutes}
             </Text>

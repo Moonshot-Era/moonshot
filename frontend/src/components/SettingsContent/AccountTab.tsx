@@ -3,11 +3,12 @@
 import { FC } from 'react';
 import Image from 'next/image';
 import { Box, Flex, Text } from '@radix-ui/themes';
-import { Button, Icon } from '@/legos';
-import userIcon from '../../assets/images/user-icon.png';
+import { createBrowserClient } from '@/supabase/client';
 
 import './style.scss';
-import { createBrowserClient } from '@/supabase/client';
+import { Button, Icon } from '@/legos';
+import { useWidth } from '@/hooks/useWidth';
+import userIcon from '../../assets/images/user-icon.png';
 
 interface Props {
   handleActiveTab: (
@@ -31,6 +32,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
 
   //   route.replace(ROUTES.home);
   // }
+  const { mdScreen } = useWidth();
 
   return (
     <Flex width="100%" direction="column" align="center">
@@ -42,7 +44,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
         direction="row"
         mb="6"
       >
-        <Text size="4" weight="bold">
+        <Text size={mdScreen ? '6' : '4'} weight="bold">
           Account
         </Text>
         <Box
@@ -58,7 +60,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
         <Image alt="user-photo" src={userIcon} width={80} height={80} />
       </Box>
       <Button className="settings-account-button">
-        <Text size="2" weight="medium">
+        <Text size={mdScreen ? '4' : '2'} weight="medium">
           Edit photo
         </Text>
       </Button>

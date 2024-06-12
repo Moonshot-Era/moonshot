@@ -1,43 +1,21 @@
+import { Box, Flex } from '@radix-ui/themes';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { Box, Flex, Text } from '@radix-ui/themes';
 
-import './style.scss';
 import { Icon } from '@/legos';
-import { useWidth } from '@/hooks/useWidth';
+import './style.scss';
 
-export const SkeletonHome = () => {
-  const { mdScreen } = useWidth();
-
-  return (
-    <Flex
-      direction="column"
-      align="center"
-      width="100%"
-      height="100vh"
-      mt="147px"
-      className="main-wrapper"
-    >
-      <Box width="100%" maxWidth="256px" mb="3">
-        <Skeleton />
-      </Box>
-      <Box width="100%" maxWidth="128px" mb="134px">
-        <Skeleton />
-      </Box>
-      <Box width="100%" maxWidth="256px" mb="74px">
-        <Skeleton />
-      </Box>
-
-      <Flex width="100%" direction="column">
-        <Text size={mdScreen ? '4' : '3'} weight="medium" mb="2">
-          My portfolio
-        </Text>
-
+export const SkeletonExploreList = () => (
+  <Flex width="100%" direction="column" gap="4">
+    {Array(10)
+      .fill(10)
+      .map((item, index) => (
         <Flex
+          key={index}
           direction="row"
           align="center"
           justify="between"
-          gap="8px"
+          gap="2"
           width="100%"
           height="fit-content"
           className={`border-1 bg-white skeleton-empty-card`}
@@ -73,7 +51,6 @@ export const SkeletonHome = () => {
             <Icon icon="chevronRight" />
           </Flex>
         </Flex>
-      </Flex>
-    </Flex>
-  );
-};
+      ))}
+  </Flex>
+);

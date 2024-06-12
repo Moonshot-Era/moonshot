@@ -1,12 +1,13 @@
 'use client';
 
+import axios from 'axios';
 import { FC, useState } from 'react';
 import { Box, Checkbox, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 
 import { Button, Icon } from '@/legos';
-import axios from 'axios';
+import { useWidth } from '@/hooks/useWidth';
 
 interface Props {
   handleActiveTab: (
@@ -15,6 +16,8 @@ interface Props {
 }
 
 export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
+  const { mdScreen } = useWidth();
+
   const [checked, setChecked] = useState(false);
   const [privateKey, setPrivateKey] = useState();
 
@@ -37,7 +40,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
         direction="row"
         mb="6"
       >
-        <Text size="4" weight="bold">
+        <Text size={mdScreen ? '6' : '4'} weight="bold">
           Export private key
         </Text>
         <Box
@@ -61,7 +64,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           <Icon icon="alertTriangle" width={64} height={64} />
         </Box>
         <Text
-          size="3"
+          size={mdScreen ? '4' : '3'}
           mb="6"
           mx="2"
           align="center"
@@ -71,7 +74,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           remember, loss of key equals loss of funds.
         </Text>
         <Text
-          size="3"
+          size={mdScreen ? '4' : '3'}
           mb="6"
           mx="2"
           align="center"
@@ -81,7 +84,12 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           waiting period before you can retrieve a phrase.
         </Text>
 
-        <Text size="3" weight="bold" className="setting-export-card-subtitle">
+        <Text
+          size={mdScreen ? '4' : '3'}
+          weight="bold"
+          align="center"
+          className="setting-export-card-subtitle"
+        >
           You are solely responsible for its safety.
         </Text>
       </Flex>
@@ -97,12 +105,12 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
         className="setting-export-checkbox-card"
       >
         <Checkbox
-          size="1"
+          size={mdScreen ? '2' : '1'}
           checked={checked}
           className="settings-export-checkbox"
           onClick={toggleChecked}
         />
-        <Text size="3">
+        <Text size={mdScreen ? '4' : '3'}>
           I understand that I am solely responsible for my private key’s
           security.
         </Text>
@@ -112,7 +120,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
         className="settings-export-button"
         onClick={handleExportKeys}
       >
-        <Text size="3" weight="medium">
+        <Text size={mdScreen ? '4' : '3'} weight="medium">
           Continue
         </Text>
       </Button>
