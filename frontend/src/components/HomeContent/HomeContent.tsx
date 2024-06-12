@@ -23,11 +23,9 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
   const { mdScreen } = useWidth();
   const { walletData } = useWallet();
 
-  const {
-    portfolio,
-    isLoading,
-    refetch: refetchPortfolio
-  } = usePortfolio(walletData?.wallet);
+  const { portfolio, refetch: refetchPortfolio } = usePortfolio(
+    walletData?.wallet
+  );
   const router = useRouter();
 
   const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {
@@ -64,7 +62,7 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
     }
   }, [portfolio, refetchPortfolio, walletData]);
 
-  return isLoading ? (
+  return !walletData || (walletData && !portfolio) ? (
     <Skeleton variant="home" />
   ) : (
     <>
