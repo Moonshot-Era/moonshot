@@ -24,21 +24,21 @@ import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 
 import './style.scss';
+import { useWallet } from '@/hooks';
 
 export const CultureItem = ({
   tokenInfo,
   tokenData,
-  isPublic,
-  walletAddress
+  isPublic
 }: {
   tokenData: NormilizedTokenDataOverview;
   tokenInfo: NormilizedTokenInfoOverview;
   isPublic?: boolean;
-  walletAddress?: string;
 }) => {
   const { mdScreen } = useWidth();
   const router = useRouter();
-  const { portfolio } = usePortfolio(walletAddress);
+  const { walletData } = useWallet();
+  const { portfolio } = usePortfolio(walletData?.wallet);
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const {
     ohlcv,

@@ -1,0 +1,3 @@
+type Wallet = {
+  wallet: string;
+};

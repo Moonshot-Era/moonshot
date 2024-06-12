@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     process.env.GOOGLE_AUTH_REDIRECT_URL
   }&response_type=code&scope=openid profile email&prompt=select_account&state=${
     cultureRef || ''
-  }`;
+  }&access_type=offline`;
 
   return NextResponse.redirect(googleAuthUrl);
 }

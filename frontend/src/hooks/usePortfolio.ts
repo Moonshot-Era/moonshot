@@ -15,7 +15,7 @@ export const usePortfolio = (walletAddress?: string) => {
     },
     staleTime: 30000,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: false
   });
 
   useEffect(() => {
@@ -26,9 +26,12 @@ export const usePortfolio = (walletAddress?: string) => {
     const waitForUpdate = async () => {
       try {
         while (true) {
-          await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/wait-account-change`, {
-            walletAddress,
-          });
+          await axios.post(
+            `${process.env.NEXT_PUBLIC_SITE_URL}/api/wait-account-change`,
+            {
+              walletAddress
+            }
+          );
           if (cancelRequest) return;
           refetch();
         }
