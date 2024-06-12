@@ -5,7 +5,10 @@ import { format } from 'date-fns';
 import Image, { StaticImageData } from 'next/image';
 import { FC } from 'react';
 
-import { tokenAddressWithDots } from '@/helpers/helpers';
+import {
+  formatNumberToUsFormat,
+  tokenAddressWithDots
+} from '@/helpers/helpers';
 import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
 import { Icon } from '@/legos';
 import solanaIcon from '../../assets/images/solana-icon.png';
@@ -45,7 +48,7 @@ interface Props {
 }
 
 export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
-  // walletAddress = 'C6Y3yRBvoZFXL1TiFatboMqgHAvtv9U3oFcdpVuddCvx';
+  walletAddress = 'C6Y3yRBvoZFXL1TiFatboMqgHAvtv9U3oFcdpVuddCvx';
   const { transactionsHistory, isFetching: transactionLoading } =
     useTransactionsHistory(walletAddress);
 
@@ -253,24 +256,28 @@ export const RecentTab: FC<Props> = ({ walletAddress, handleActiveTab }) => {
                               {transactionType === 'Deposit'
                                 ? `+${
                                     tokenName === 'SOL'
-                                      ? (amount / 10 ** 9).toFixed(4)
-                                      : amount.toFixed(4)
+                                      ? formatNumberToUsFormat(9).format(
+                                          amount / 10 ** 9
+                                        )
+                                      : formatNumberToUsFormat().format(amount)
                                   } ${tokenName}`
                                 : transactionType === 'Withdraw'
                                 ? `-${
                                     tokenName === 'SOL'
-                                      ? (amount / 10 ** 9).toFixed(4)
-                                      : amount.toFixed(4)
+                                      ? formatNumberToUsFormat(9).format(
+                                          amount / 10 ** 9
+                                        )
+                                      : formatNumberToUsFormat().format(amount)
                                   } ${tokenName}`
-                                : `+${tokenAmountConvertFrom?.toFixed(
-                                    4
+                                : `+${formatNumberToUsFormat().format(
+                                    tokenAmountConvertFrom || 0
                                   )} ${tokenConvertFromSymbol}`}
                             </Text>
                             {transactionDate && (
                               <Text className="font-size-xs">
                                 {transactionType === 'Convert'
-                                  ? `-${tokenAmountConvertTo?.toFixed(
-                                      4
+                                  ? `-${formatNumberToUsFormat().format(
+                                      tokenAmountConvertTo || 0
                                     )} ${tokenConvertToSymbol}`
                                   : format(transactionDate, 'hh:mm a')}
                               </Text>
