@@ -17,9 +17,14 @@ ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 interface CultureChartProps {
   data: Array<{ time: number; value: number }>;
   tokenDecimals: number;
+  setBeforeTimestamp: (timestamp: number) => void;
 }
 
-export const CultureChart = ({ data, tokenDecimals }: CultureChartProps) => {
+export const CultureChart = ({
+  data,
+  tokenDecimals,
+  setBeforeTimestamp
+}: CultureChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
 
   const uniqueData = data.filter((item, index) => {
@@ -67,6 +72,16 @@ export const CultureChart = ({ data, tokenDecimals }: CultureChartProps) => {
     });
 
     lineSeries.setData(orderedData as unknown as AreaData<Time>[]);
+
+    chart
+      .timeScale()
+      .subscribeVisibleLogicalRangeChange((logicalRange: any) => {
+        if (logicalRange.from < 10) {
+          setTimeout(() => {
+            setBeforeTimestamp(orderedData[0].time);
+          }, 500);
+        }
+      });
 
     return () => chart.remove();
   }, [data]);

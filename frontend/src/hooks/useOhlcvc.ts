@@ -1,16 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
 export const fetchOhlcv = (
   poolAddress: string,
   timeFrame: string,
-  aggregateParam: string
+  aggregateParam: string,
+  beforeTimestamp?: number,
 ) =>
   axios
     .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/ohlcv`, {
       poolAddress,
       timeFrame,
-      aggregateParam
+      aggregateParam,
+      beforeTimestamp,
     })
     .then((response) => {
       return response.data.data;
@@ -19,18 +21,23 @@ export const fetchOhlcv = (
 export const useOhlcv = (
   poolAddress?: string,
   timeFrame: string = 'hour',
-  aggregateParam: string = '1'
+  aggregateParam: string = '1',
+  beforeTimestamp?: number,
 ) => {
-  const { data, ...rest } = useQuery({
-    queryKey: ['ohlcv'],
+  const { data, ...rest } = useInfiniteQuery({
+    initialPageParam: 1,
+    queryKey: ['ohlcv', poolAddress],
+    enabled: !!poolAddress,
     queryFn: () => {
-      if (!poolAddress) {
-        return null;
-      } else {
-        return fetchOhlcv(poolAddress, timeFrame, aggregateParam);
-      }
-    }
+      return fetchOhlcv(poolAddress!, timeFrame, aggregateParam, beforeTimestamp);
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const nextPage = allPages.length + 1;
+      return nextPage <= 15 ? nextPage : undefined;
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
-  return { ohlcv: data, ...rest };
+  return { ohlcv: data?.pages?.flat(), ...rest };
 };

@@ -40,21 +40,38 @@ export const CultureItem = ({
   const { walletData } = useWallet();
   const { portfolio } = usePortfolio(walletData?.wallet);
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
+  const [beforeTimestamp, setBeforeTimestamp] = useState<number | undefined>();
   const {
     ohlcv,
-    isFetching: ohlcvLoading,
-    refetch
-  } = useOhlcv(tokenData?.poolAddress, timeFrame.time, timeFrame.aggregate);
+    isLoading: ohlcvLoading,
+    refetch,
+    fetchNextPage
+  } = useOhlcv(
+    tokenData?.poolAddress,
+    timeFrame.time,
+    timeFrame.aggregate,
+    beforeTimestamp
+  );
 
   useEffect(() => {
     refetch();
   }, [timeFrame]);
 
+  useEffect(() => {
+    if (beforeTimestamp) {
+      fetchNextPage();
+    }
+  }, [beforeTimestamp]);
+
   const chartData: { time: number; value: number }[] | [] =
-    ohlcv?.attributes.ohlcv_list.map((item: Array<number[]>) => ({
-      time: +item[0],
-      value: item[4]
-    })) || [];
+    ohlcv
+      ?.map((page) => page.attributes.ohlcv_list)
+      .reverse()
+      .flat()
+      .map((item: Array<number[]>) => ({
+        time: +item[0],
+        value: item[4]
+      })) || [];
 
   const asset = portfolio?.walletAssets?.find((item) =>
     isSolanaAddress(item?.address)
@@ -148,6 +165,7 @@ export const CultureItem = ({
                 <CultureChart
                   data={chartData}
                   tokenDecimals={tokenData?.decimals || 0}
+                  setBeforeTimestamp={setBeforeTimestamp}
                 />
               )}
             </Flex>

@@ -3,7 +3,8 @@ import axios from 'axios';
 export const getOhlcvData = async (
   poolAddress: string,
   timeFrame: string,
-  aggregateParam: string
+  aggregateParam: string,
+  beforeTimestamp?: number,
 ) => {
   try {
     if (!poolAddress) {
@@ -19,7 +20,8 @@ export const getOhlcvData = async (
           'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`
         },
         params: {
-          aggregate: aggregateParam
+          aggregate: aggregateParam,
+          before_timestamp: beforeTimestamp,
         }
       }
     );
