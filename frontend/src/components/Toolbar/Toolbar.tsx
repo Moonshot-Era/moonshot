@@ -14,9 +14,15 @@ interface ToolbarProps {
   portfolio: WalletPortfolioNormilizedType;
   withShare?: boolean;
   tokenPrice?: number;
+  hasWalletAddress?: boolean;
 }
 
-export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
+export const Toolbar = ({
+  withShare,
+  portfolio,
+  tokenPrice,
+  hasWalletAddress
+}: ToolbarProps) => {
   const convertDrawerRef: MutableRefObject<null> = useRef(null);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
@@ -47,17 +53,15 @@ export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
         mb="8"
         px={withShare ? '5' : '7'}
       >
-        {!!portfolio?.totalUsd && (
-          <Flex direction="column" align="center" gap="1">
-            <IconButton
-              icon="transfer"
-              className="bg-yellow"
-              // @ts-ignore
-              onClick={() => convertDrawerRef.current?.open()}
-            />
-            <Text size="2">Convert</Text>
-          </Flex>
-        )}
+        <Flex direction="column" align="center" gap="1">
+          <IconButton
+            icon="transfer"
+            className="bg-yellow"
+            // @ts-ignore
+            onClick={() => convertDrawerRef.current?.open()}
+          />
+          <Text size="2">Convert</Text>
+        </Flex>
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="deposit"
@@ -66,7 +70,7 @@ export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
           />
           <Text size="2">Deposit</Text>
         </Flex>
-        {!!portfolio?.totalUsd && (
+        {hasWalletAddress && (
           <Flex direction="column" align="center" gap="1">
             <IconButton
               icon="withdraw"

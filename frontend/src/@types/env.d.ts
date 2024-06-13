@@ -24,5 +24,7 @@ namespace NodeJS {
     SHIFT4_API_KEY: string;
 
     NEXT_PUBLIC_PROGRESSIER_ID: string;
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
+    NEXT_PUBLIC_SUPABASE_URL: string;
   }
 }

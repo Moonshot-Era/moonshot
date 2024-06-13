@@ -23,7 +23,7 @@ export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
   const { imageUrl } = useShareImage(supabaseClient, tokenPrice);
 
   const imageLoader = () => {
-    return imageUrl.href;
+    return imageUrl?.href || '';
   };
 
   const shareMessage = () => {
@@ -36,6 +36,9 @@ export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
 
   const downloadImage = async () => {
     try {
+      if (!imageUrl) {
+        throw new Error(`No image found`);
+      }
       const response = await fetch(imageUrl.href);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -66,15 +69,17 @@ export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
       <Dialog.Content maxWidth="293px" className="dialog-content">
         <Flex direction="column" gap="4" align="center">
           <Text size="4">Share your moonshot!</Text>
-          <div className="share-image-wrapper">
-            <Image
-              loader={imageLoader}
-              src={imageUrl.href}
-              alt="monshootShareImage"
-              width={235}
-              height={237}
-            />
-          </div>
+          {imageUrl && (
+            <div className="share-image-wrapper">
+              <Image
+                loader={imageLoader}
+                src={imageUrl.href}
+                alt="monshootShareImage"
+                width={235}
+                height={237}
+              />
+            </div>
+          )}
           <Flex width="100%" direction="row" justify="between">
             <TwitterShareButton url={shareUrl}>
               <button className="icon-button small">
@@ -98,14 +103,16 @@ export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
                 onClick={shareMessage}
               />
             )}
-            <a id="moonshot-image">
-              <IconButton
-                icon="fileDownload"
-                size="small"
-                className="bg-orange"
-                onClick={downloadImage}
-              />
-            </a>
+            {imageUrl && (
+              <a id="moonshot-image">
+                <IconButton
+                  icon="fileDownload"
+                  size="small"
+                  className="bg-orange"
+                  onClick={downloadImage}
+                />
+              </a>
+            )}
           </Flex>
         </Flex>
       </Dialog.Content>

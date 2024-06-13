@@ -18,6 +18,7 @@ import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
+import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { CultureChart } from '../CultureChart/CultureChart';
@@ -152,13 +153,12 @@ export const CultureItem = ({
               />
             )}
           </Flex>
-          {!isPublic && asset && portfolio && (
-            <Toolbar
-              portfolio={portfolio}
-              withShare
-              tokenPrice={+tokenData.price_usd}
-            />
-          )}
+          <Toolbar
+            portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
+            withShare
+            tokenPrice={+tokenData.price_usd}
+            hasWalletAddress={!!walletAddress}
+          />
 
           {asset && (
             <Flex

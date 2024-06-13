@@ -1,13 +1,12 @@
 'use client';
 
-import { FC } from 'react';
-import Image from 'next/image';
-import { Box, Flex, Text } from '@radix-ui/themes';
+import { useAvatarImage } from '@/hooks/useAvatarImage';
 import { Button, Icon } from '@/legos';
-import userIcon from '../../assets/images/user-icon.png';
-
-import './style.scss';
 import { createBrowserClient } from '@/supabase/client';
+import { Box, Flex, Text } from '@radix-ui/themes';
+import Image from 'next/image';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import './style.scss';
 
 interface Props {
   handleActiveTab: (
@@ -16,21 +15,45 @@ interface Props {
 }
 
 export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
-  // const supabaseClient = createBrowserClient();
-  // const { data } = supabaseClient.auth.getSession();
+  const inputFile = useRef(null);
+  const [avatar, setAvatar] = useState('');
+  const supabaseClient = createBrowserClient();
+  const { imageUrl, mutate } = useAvatarImage();
 
-  // const userId = data.session?.user?.id;
+  const getUser = async () => {
+    const { data } = await supabaseClient.auth.getSession();
+    const userId = data.session?.user.id;
+    if (!userId) return;
+    const { data: avatarData } = await supabaseClient
+      .from('profiles')
+      .select('avatar_url')
+      .eq('user_id', userId);
+    const userAvatar = avatarData?.[0].avatar_url;
+    userAvatar && setAvatar(userAvatar);
+  };
 
-  // if (userId) {
-  //   await supabaseClient
-  //     .from('profiles')
-  //     .update({
-  //       onboarding_completed: true
-  //     })
-  //     .eq('user_id', userId);
+  useEffect(() => {
+    getUser();
+  }, []);
 
-  //   route.replace(ROUTES.home);
-  // }
+  useEffect(() => {
+    console.log('imageUrl', imageUrl);
+    imageUrl && setAvatar(imageUrl);
+  }, [imageUrl]);
+
+  const handleUploadImage = () => {
+    inputFile.current && inputFile.current.click();
+  };
+
+  const handleChangeFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+    var file = event.target.files?.[0];
+
+    if (file) {
+      mutate(file);
+    }
+  };
 
   return (
     <Flex width="100%" direction="column" align="center">
@@ -55,13 +78,27 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
         </Box>
       </Flex>
       <Box mb="2">
-        <Image alt="user-photo" src={userIcon} width={80} height={80} />
+        <Image
+          alt="user-photo"
+          src={avatar}
+          width={80}
+          height={80}
+          style={{ borderRadius: '50%' }}
+        />
       </Box>
-      <Button className="settings-account-button">
+      <Button className="settings-account-button" onClick={handleUploadImage}>
         <Text size="2" weight="medium">
           Edit photo
         </Text>
       </Button>
+      <input
+        type="file"
+        id="file"
+        accept="image/*"
+        ref={inputFile}
+        style={{ display: 'none' }}
+        onChange={handleChangeFile}
+      />
       <Flex
         width="100%"
         direction="row"
