@@ -140,6 +140,74 @@ export const getUserWallet = async (
   return key?.materialId;
 };
 
+export const fetchInitiateExportKeys = async (
+  oidcToken: string,
+  mfaSecret: string
+) => {
+  let userClient: CubeSignerClient | undefined = undefined;
+  let totpSecret = mfaSecret;
+  const cubeClient = await CubeSignerInstance.getManagementSessionClient();
+
+  try {
+    const userSessionResp = await CubeSignerClient.createOidcSession(
+      cubeClient.env,
+      cubeClient.orgId,
+      oidcToken,
+      ['sign:*', 'export:user:*', 'manage:*']
+    );
+
+    if (userSessionResp.requiresMfa()) {
+      const tmpClient = await userSessionResp.mfaClient()!;
+      if (tmpClient) {
+        const totpResp = await userSessionResp.totpApprove(
+          tmpClient,
+          authenticator.generate(totpSecret)
+        );
+        userClient = await CubeSignerClient.create(totpResp.data());
+      }
+    } else {
+      userClient = await CubeSignerClient.create(userSessionResp.data());
+      let totpResetResp = await userClient.resetTotp();
+      const totpChallenge = totpResetResp.data();
+      if (totpChallenge.url) {
+        totpSecret =
+          new URL(totpChallenge.url).searchParams.get('secret') || '';
+
+        await setMfaSecret(totpSecret);
+        await totpChallenge.answer(authenticator.generate(totpSecret));
+      }
+    }
+
+    if (userClient) {
+      const keys = await userClient.sessionKeys();
+      const key = getLatestKey(keys);
+
+      let exportInProgress = await userClient.org().exports(key?.id).fetch();
+      if (!exportInProgress?.length) {
+        // initiate an export
+        const initExportResp = await userClient.org().initExport(key.id);
+        const resp = await initExportResp.totpApprove(
+          userClient,
+          authenticator.generate(totpSecret)
+        );
+        console.log('Initialize export');
+        console.log(
+          'debug > resp?.data()?.valid_epoch===',
+          resp?.data()?.valid_epoch
+        );
+        return resp?.data()?.valid_epoch;
+      }
+      console.log(
+        'debug > exportInProgress===',
+        exportInProgress?.[0]?.valid_epoch
+      );
+      return exportInProgress?.[0]?.valid_epoch;
+    }
+  } catch (err) {
+    throw Error('Export keys failed' + err);
+  }
+};
+
 export const fetchExportKeys = async (oidcToken: string, mfaSecret: string) => {
   let userClient: CubeSignerClient | undefined = undefined;
   let totpSecret = mfaSecret;
@@ -178,30 +246,6 @@ export const fetchExportKeys = async (oidcToken: string, mfaSecret: string) => {
     if (userClient) {
       const keys = await userClient.sessionKeys();
       const key = getLatestKey(keys);
-      // const key =
-      //   keys?.find(
-      //     (key) =>
-      //       key.materialId === 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh'
-      //   ) || keys?.[keys?.length - 1];
-
-      let exportInProgress = await userClient.org().exports(key?.id).fetch();
-      console.log('debug > exportInProgress===', exportInProgress);
-      if (!exportInProgress?.length) {
-        // initiate an export
-        const initExportResp = await userClient.org().initExport(key.id);
-        await initExportResp.totpApprove(
-          userClient,
-          authenticator.generate(totpSecret)
-        );
-        console.log('Initialize export');
-      }
-
-      const timeoutDelay = async () => setTimeout(() => {}, 2000);
-
-      await timeoutDelay();
-      console.log('Timeout....');
-      exportInProgress = await userClient.org().exports(key?.id).fetch();
-      console.log('debug > exportInProgress===', exportInProgress);
 
       // generate a key
       const exportKey = await userExportKeygen();
@@ -222,11 +266,6 @@ export const fetchExportKeys = async (oidcToken: string, mfaSecret: string) => {
         exportKey.privateKey,
         completeExportResult
       );
-
-      console.log('decryptedKey', decryptedKey);
-      // if (decryptedKey) {
-      //   await userClient.org().deleteExport(key.id);
-      // }
 
       if (!decryptedKey) {
         throw Error('Export keys failed');

@@ -1,17 +1,41 @@
 import { FC } from 'react';
+import axios from 'axios';
 import { Flex, Text } from '@radix-ui/themes';
 
-import './style.scss';
 import { useWidth } from '@/hooks/useWidth';
 
+import './style.scss';
+
 interface Props {
-  daysRemaining: number;
+  delayRemaining: Date | null;
 }
 
-export const ExportRemaining: FC<Props> = ({ daysRemaining }) => {
+const getDelayLabel = (delayRemaining: Date) => {
+  if (new Date(delayRemaining).getDay() > new Date().getDay()) {
+    return `${new Date(delayRemaining).getDay() - new Date().getDay()} ${
+      new Date(delayRemaining).getHours() > 1 ? 'days' : 'day'
+    }`;
+  }
+  if (new Date(delayRemaining).getHours() > new Date().getHours()) {
+    return `${new Date(delayRemaining).getHours() - new Date().getHours()} ${
+      new Date(delayRemaining).getHours() > 1 ? 'hours' : 'hour'
+    }`;
+  }
+  if (new Date(delayRemaining).getMinutes() > new Date().getMinutes()) {
+    return `${
+      new Date(delayRemaining).getMinutes() - new Date().getMinutes()
+    } ${new Date(delayRemaining).getMinutes() > 1 ? 'minutes' : 'minute'}`;
+  }
+};
+
+export const ExportRemaining: FC<Props> = ({ delayRemaining }) => {
   const { mdScreen } = useWidth();
 
-  return (
+  const delayRemainingLabel = delayRemaining
+    ? getDelayLabel(delayRemaining)
+    : '';
+
+  return delayRemaining ? (
     <Flex
       direction="column"
       align="center"
@@ -25,11 +49,11 @@ export const ExportRemaining: FC<Props> = ({ daysRemaining }) => {
         size={mdScreen ? '6' : '5'}
         weight="medium"
         align="center"
-      >{`${daysRemaining} days remaining`}</Text>
+      >{`${delayRemainingLabel} remaining`}</Text>
       <Text size={mdScreen ? '4' : '3'} weight="medium" align="center">
         Your recovery phrase is being generated. You will receive a notification
         once it&apos;s ready. Please check back shortly.
       </Text>
     </Flex>
-  );
+  ) : null;
 };
