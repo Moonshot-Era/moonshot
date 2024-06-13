@@ -10,6 +10,7 @@ import { useWidth } from '@/hooks/useWidth';
 import { createBrowserClient } from '@/supabase/client';
 import { ExportRemaining } from '../ExportRemaining/ExportRemaining';
 import { ExportMnemonic } from '../ExportMnemonic/ExportMnemonic';
+import { useLogout } from '@/hooks';
 
 interface Props {
   handleActiveTab: (
@@ -23,6 +24,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   const supabaseClient = createBrowserClient();
   const [exportDelay, setExportDelay] = useState<Date | null>(null);
   const [exportWindow, setExportWindow] = useState<Date | null>(null);
+  const logout = useLogout();
 
   const [checked, setChecked] = useState(false);
 
@@ -54,7 +56,12 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
         type: 'initiate'
       }
     );
-    console.log('debug > data===', new Date(data * 1000));
+    console.log('debug > data===', data);
+    if (data?.error?.statusText === 'Forbidden') {
+      logout();
+    } else {
+      console.log('debug > data===', new Date(data * 1000));
+    }
   };
   console.log('debug > exportInfo===', exportDelay, exportWindow);
   return (
@@ -87,7 +94,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
             direction="column"
             align="center"
             p="4"
-            mb="24px"
+            mb="8px"
             className="setting-export-card"
           >
             <Box mb="4">
@@ -132,7 +139,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
             py="2"
             pl="4"
             pr="7"
-            mb="24px"
+            mb="8px"
             className="setting-export-checkbox-card"
           >
             <Checkbox

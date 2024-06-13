@@ -11,19 +11,19 @@ export async function POST(request: Request) {
   let exportKeysData;
   let timestamp;
   if (!oidc) {
-    return NextResponse.next({
-      request: {
-        headers: request.headers
-      }
-    });
+    return NextResponse.json({ error: { statusText: 'Forbidden' } });
   }
-  if (response.type === 'initiate') {
-    timestamp = await fetchInitiateExportKeys(oidc, totpSecret);
-  }
+  try {
+    if (response.type === 'initiate') {
+      timestamp = await fetchInitiateExportKeys(oidc, totpSecret);
+    }
 
-  if (response.type === 'export') {
-    exportKeysData = await fetchExportKeys(oidc, totpSecret);
-  }
+    if (response.type === 'export') {
+      exportKeysData = await fetchExportKeys(oidc, totpSecret);
+    }
 
-  return NextResponse.json(exportKeysData || timestamp || {});
+    return NextResponse.json(exportKeysData || timestamp || {});
+  } catch (err) {
+    return NextResponse.json({ error: err });
+  }
 }

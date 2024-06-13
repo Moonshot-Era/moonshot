@@ -204,7 +204,7 @@ export const fetchInitiateExportKeys = async (
       return exportInProgress?.[0]?.valid_epoch;
     }
   } catch (err) {
-    throw Error('Export keys failed' + err);
+    throw err;
   }
 };
 
