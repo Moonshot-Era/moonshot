@@ -32,7 +32,7 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
         </Flex>
       ) : null}
       <Flex direction="row">
-        <Flex position="relative">
+        <Flex position="relative" flexShrink="0">
           {asset?.imageUrl && (
             <Image
               alt="img"
