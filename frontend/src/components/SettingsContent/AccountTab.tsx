@@ -3,7 +3,7 @@
 import { useAvatarImage } from '@/hooks/useAvatarImage';
 import { Button, Icon } from '@/legos';
 import { createBrowserClient } from '@/supabase/client';
-import { Box, Flex, Text } from '@radix-ui/themes';
+import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import './style.scss';
@@ -18,7 +18,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
   const inputFile = useRef(null);
   const [avatar, setAvatar] = useState('');
   const supabaseClient = createBrowserClient();
-  const { imageUrl, mutate } = useAvatarImage();
+  const { imageUrl, mutate, isPending } = useAvatarImage();
 
   const getUser = async () => {
     const { data } = await supabaseClient.auth.getSession();
@@ -77,28 +77,39 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
           <Icon icon="arrowRight" />
         </Box>
       </Flex>
-      <Box mb="2">
-        <Image
-          alt="user-photo"
-          src={avatar}
-          width={80}
-          height={80}
-          style={{ borderRadius: '50%' }}
-        />
-      </Box>
-      <Button className="settings-account-button" onClick={handleUploadImage}>
-        <Text size="2" weight="medium">
-          Edit photo
-        </Text>
-      </Button>
-      <input
-        type="file"
-        id="file"
-        accept="image/*"
-        ref={inputFile}
-        style={{ display: 'none' }}
-        onChange={handleChangeFile}
-      />
+      <Flex height="150px" gap="8px" direction="column">
+        {isPending || !avatar ? (
+          <Spinner />
+        ) : (
+          <>
+            <Box mb="2">
+              <Image
+                alt="user-photo"
+                src={avatar}
+                width={80}
+                height={80}
+                style={{ borderRadius: '50%' }}
+              />
+            </Box>
+            <Button
+              className="settings-account-button"
+              onClick={handleUploadImage}
+            >
+              <Text size="2" weight="medium">
+                Edit photo
+              </Text>
+            </Button>
+            <input
+              type="file"
+              id="file"
+              accept="image/*"
+              ref={inputFile}
+              style={{ display: 'none' }}
+              onChange={handleChangeFile}
+            />
+          </>
+        )}
+      </Flex>
       <Flex
         width="100%"
         direction="row"
