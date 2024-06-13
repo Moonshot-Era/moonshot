@@ -2,7 +2,7 @@
 
 import { useShareImage } from '@/hooks/useShareImage';
 import { createBrowserClient } from '@/supabase/client';
-import { Dialog, Flex, Text } from '@radix-ui/themes';
+import { Dialog, Flex, Spinner, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
@@ -23,7 +23,7 @@ export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
   const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL}${pathname}`;
   const supabaseClient = createBrowserClient();
 
-  const { imageUrl } = useShareImage(supabaseClient, tokenPrice);
+  const { imageUrl, isLoading } = useShareImage(supabaseClient, tokenPrice);
 
   const imageLoader = () => {
     return imageUrl?.href || '';
@@ -64,17 +64,22 @@ export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
     <Dialog.Content maxWidth="293px" className="dialog-content">
       <Flex direction="column" gap="4" align="center">
         <Text size={mdScreen ? '5' : '4'}>Share your moonshot!</Text>
-        {imageUrl && (
-          <div className="share-image-wrapper">
-            <Image
-              loader={imageLoader}
-              src={imageUrl.href}
-              alt="monshootShareImage"
-              width={235}
-              height={237}
-            />
-          </div>
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          imageUrl && (
+            <div className="share-image-wrapper">
+              <Image
+                loader={imageLoader}
+                src={imageUrl.href}
+                alt="monshootShareImage"
+                width={235}
+                height={237}
+              />
+            </div>
+          )
         )}
+
         <Flex width="100%" direction="row" justify="between">
           <TwitterShareButton url={shareUrl}>
             <button className="icon-button small">
