@@ -15,6 +15,8 @@ export type Database = {
           created_at: string
           culture_ref: string | null
           email: string
+          export_keys_delay: string | null
+          export_keys_window: string | null
           full_name: string | null
           get_notifications: boolean | null
           mfa_s: string | null
@@ -28,6 +30,8 @@ export type Database = {
           created_at?: string
           culture_ref?: string | null
           email: string
+          export_keys_delay?: string | null
+          export_keys_window?: string | null
           full_name?: string | null
           get_notifications?: boolean | null
           mfa_s?: string | null
@@ -41,6 +45,8 @@ export type Database = {
           created_at?: string
           culture_ref?: string | null
           email?: string
+          export_keys_delay?: string | null
+          export_keys_window?: string | null
           full_name?: string | null
           get_notifications?: boolean | null
           mfa_s?: string | null

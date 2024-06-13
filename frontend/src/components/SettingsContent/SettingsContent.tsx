@@ -35,6 +35,7 @@ export const SettingsContent = () => {
         align="center"
         justify="center"
         width="100%"
+        height="100%"
         gap="4"
         className="main-wrapper settings-wrapper"
       >
