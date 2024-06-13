@@ -191,16 +191,8 @@ export const fetchInitiateExportKeys = async (
           authenticator.generate(totpSecret)
         );
         console.log('Initialize export');
-        console.log(
-          'debug > resp?.data()?.valid_epoch===',
-          resp?.data()?.valid_epoch
-        );
         return resp?.data()?.valid_epoch;
       }
-      console.log(
-        'debug > exportInProgress===',
-        exportInProgress?.[0]?.valid_epoch
-      );
       return exportInProgress?.[0]?.valid_epoch;
     }
   } catch (err) {
@@ -254,10 +246,12 @@ export const fetchExportKeys = async (oidcToken: string, mfaSecret: string) => {
       let completeExportResp = await userClient
         .org()
         .completeExport(key.id, exportKey.publicKey);
+
       completeExportResp = await completeExportResp.totpApprove(
         userClient,
         authenticator.generate(totpSecret)
       );
+
       const completeExportResult = completeExportResp.data();
       console.log('Complete export');
 
@@ -273,6 +267,6 @@ export const fetchExportKeys = async (oidcToken: string, mfaSecret: string) => {
       return decryptedKey;
     }
   } catch (err) {
-    throw Error('Export keys failed' + err);
+    throw err;
   }
 };

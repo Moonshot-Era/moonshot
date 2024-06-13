@@ -1,9 +1,9 @@
 'use client';
 
 import axios from 'axios';
-import { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { Box, Checkbox, Flex, Spinner, Text } from '@radix-ui/themes';
-import './style.scss';
+import { addDays } from 'date-fns';
 
 import { Button, Icon } from '@/legos';
 import { useWidth } from '@/hooks/useWidth';
@@ -11,6 +11,8 @@ import { createBrowserClient } from '@/supabase/client';
 import { ExportRemaining } from '../ExportRemaining/ExportRemaining';
 import { ExportMnemonic } from '../ExportMnemonic/ExportMnemonic';
 import { useLogout } from '@/hooks';
+
+import './style.scss';
 
 interface Props {
   handleActiveTab: (
@@ -21,6 +23,7 @@ interface Props {
 export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   const { mdScreen } = useWidth();
   const [loading, setLoading] = useState(false);
+  const [mnemonic, setMnemonic] = useState('');
   const supabaseClient = createBrowserClient();
   const [exportDelay, setExportDelay] = useState<Date | null>(null);
   const [exportWindow, setExportWindow] = useState<Date | null>(null);
@@ -28,7 +31,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
 
   const [checked, setChecked] = useState(false);
 
-  const getExportInfo = async () => {
+  const getExportInfo = useCallback(async () => {
     setLoading(true);
     const { data } = await supabaseClient.auth.getSession();
     const userId = data.session?.user.id;
@@ -39,12 +42,23 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
       .eq('user_id', userId);
     const delay = avatarData?.[0]?.export_keys_delay;
     const window = avatarData?.[0]?.export_keys_window;
-    delay && setExportDelay(new Date(delay));
-    window && setExportWindow(new Date(window));
-  };
+    if (delay) {
+      setExportDelay(new Date(delay));
+    } else {
+      setExportDelay(null);
+    }
+
+    if (window) {
+      setExportWindow(new Date(window));
+    } else {
+      setExportWindow(null);
+    }
+  }, [supabaseClient]);
 
   useEffect(() => {
-    getExportInfo().finally(() => setLoading(false));
+    if (!exportDelay && !exportWindow) {
+      getExportInfo().finally(() => setLoading(false));
+    }
   }, []);
 
   const toggleChecked = () => setChecked(!checked);
@@ -56,16 +70,83 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
         type: 'initiate'
       }
     );
-    console.log('debug > data===', data);
     if (data?.error?.statusText === 'Forbidden') {
       logout();
     } else {
-      console.log('debug > data===', new Date(data * 1000));
+      const { data: userData } = await supabaseClient.auth.getSession();
+      const userId = userData.session?.user.id;
+      if (userId) {
+        await supabaseClient
+          .from('profiles')
+          .update({
+            export_keys_delay: `${addDays(
+              new Date(data * 1000),
+              2
+            ).toUTCString()}`,
+            export_keys_window: `${addDays(
+              new Date(data * 1000),
+              3
+            ).toUTCString()}`
+          })
+          .eq('user_id', userId);
+        getExportInfo().finally(() => setLoading(false));
+      }
     }
   };
-  console.log('debug > exportInfo===', exportDelay, exportWindow);
+
+  const handleCompleteExportKeys = useCallback(async () => {
+    setLoading(true);
+    const { data: userData } = await supabaseClient.auth.getSession();
+    const userId = userData.session?.user.id;
+    if (userId) {
+      await supabaseClient
+        .from('profiles')
+        .update({
+          export_keys_delay: null,
+          export_keys_window: null
+        })
+        .eq('user_id', userId);
+      getExportInfo().finally(() => setLoading(false));
+    }
+    setLoading(false);
+  }, [getExportInfo, supabaseClient]);
+
+  const getMnemonic = useCallback(async () => {
+    setLoading(true);
+    const { data } = await axios.post(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/export-keys`,
+      {
+        type: 'export'
+      }
+    );
+    if (data?.mnemonic) {
+      setMnemonic(data?.mnemonic);
+    }
+    if (data?.error?.statusText === 'Not Found') {
+      await handleCompleteExportKeys();
+    }
+    setLoading(false);
+  }, [handleCompleteExportKeys]);
+
+  useEffect(() => {
+    if (
+      exportDelay &&
+      exportDelay < addDays(new Date(), 2) &&
+      exportWindow &&
+      exportWindow < addDays(new Date(), 3)
+    ) {
+      getMnemonic().finally(() => setLoading(false));
+    }
+  }, [exportDelay, exportWindow, getMnemonic]);
+
   return (
-    <Flex width="100%" direction="column" align="center">
+    <Flex
+      width="100%"
+      height="100%"
+      direction="column"
+      align="center"
+      style={{ justifyContent: 'stretch' }}
+    >
       <Flex
         position="relative"
         width="100%"
@@ -161,17 +242,14 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
             <Text size={mdScreen ? '4' : '3'} weight="medium">
               Continue
             </Text>
+            {loading && <Spinner size="3" />}
           </Button>
         </>
       )}
-      {!loading && exportDelay && exportDelay > new Date() && (
+      {!loading && exportDelay && exportDelay > addDays(new Date(), 2) && (
         <ExportRemaining delayRemaining={exportDelay} />
       )}
-      {!loading &&
-        exportDelay &&
-        exportDelay < new Date() &&
-        exportWindow &&
-        exportWindow < new Date() && <ExportMnemonic />}
+      {!loading && mnemonic && <ExportMnemonic mnemonic={mnemonic} />}
     </Flex>
   );
 };

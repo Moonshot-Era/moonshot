@@ -42,7 +42,6 @@ export const ExportRemaining: FC<Props> = ({ delayRemaining }) => {
       gap="5"
       py="4"
       px="2"
-      mx="37px"
       className="export-remaining-card"
     >
       <Text
