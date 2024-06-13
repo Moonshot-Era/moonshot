@@ -1,0 +1,8 @@
+@import '../../styles/variables.scss';
+
+.export-remaining-card {
+  border-radius: 8px;
+  @include border-dark;
+  background-color: $grey;
+  box-shadow: $shadow-2;
+}

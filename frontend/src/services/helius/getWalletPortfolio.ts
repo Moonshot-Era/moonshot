@@ -5,7 +5,7 @@ import {
 } from '@/@types/gecko';
 import { TokenItemHeliusType } from '@/@types/helius';
 import { isSolanaAddress } from '@/helpers/helpers';
-import { SOLANA_WRAPPED_ADDRESS } from '@/utils';
+import { SOLANA_ADDRESS, SOLANA_WRAPPED_ADDRESS } from '@/utils';
 import axios from 'axios';
 
 type HeliusWalletType = {
@@ -87,10 +87,10 @@ export const getWalletPortfolio = async (walletAddress: string) => {
 
       const solana_percentage_change_h24 = tokensListGecko?.included?.find(
         (included: PoolGeckoType) =>
-          included?.relationships?.base_token?.data?.id ===
+          included?.relationships?.quote_token?.data?.id ===
           `solana_${SOLANA_WRAPPED_ADDRESS}`
       )?.attributes?.price_change_percentage?.h24;
-
+console.log('debug > tokensListGecko===', tokensListGecko?.included?.[0]?.relationships);
      if (result?.nativeBalance?.lamports) {
        walletPortfolioNormalized.push({
          address: solanaToken?.address,

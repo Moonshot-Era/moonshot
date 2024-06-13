@@ -4,6 +4,7 @@ import { FC } from 'react';
 
 import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 import { Icon } from '../Icon';
+import { useWidth } from '@/hooks/useWidth';
 import { TokenPrice } from '../TokenPrice/TokenPrice';
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const AssetCard: FC<Props> = ({ asset, onClick }) => {
+  const { mdScreen } = useWidth();
   return (
     <Flex
       direction="row"
@@ -42,10 +44,10 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
           )}
         </Flex>
         <Flex direction="column" justify="between" ml="2" my="1">
-          <Text size="3" weight="medium">
+          <Text size={mdScreen ? '4' : '3'} weight="medium">
             {asset?.name}
           </Text>
-          <Text size="1" weight="regular">
+          <Text size={mdScreen ? '3' : '1'} weight="regular">
             {asset?.uiAmount} {asset?.symbol}
           </Text>
         </Flex>
@@ -53,7 +55,7 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
       <Flex direction="row" align="center" my="1">
         {!!asset?.valueUsd && (
           <Flex direction="column" justify="between" align="end" height="40px">
-            <Text size="3" weight="medium">
+            <Text size={mdScreen ? '4' : '3'} weight="medium">
               <TokenPrice price={`${asset?.valueUsd}`} />
             </Text>
             {asset?.percentage_change_h24 && (
@@ -81,7 +83,7 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
                       ? 'text-color-success'
                       : 'text-color-error'
                   }
-                  size="1"
+                  size={mdScreen ? '3' : '1'}
                   weight="medium"
                 >{`${+asset?.percentage_change_h24}%`}</Text>
               </Flex>

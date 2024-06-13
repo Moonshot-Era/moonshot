@@ -1,35 +1,31 @@
 'use client';
 
-import { Flex, Text } from '@radix-ui/themes';
 import { useState } from 'react';
+import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 
 import { Icon } from '@/legos';
-import { ROUTES, logout } from '@/utils';
-import { useRouter } from 'next/navigation';
 import { AccountTab } from './AccountTab';
 import { ExportKeyTab } from './ExportKeyTab';
 import { RecentTab } from './RecentTab';
+import { useLogout } from '@/hooks';
+import { useWidth } from '@/hooks/useWidth';
 
-export const SettingsContent = ({
-  walletAddress
-}: {
-  walletAddress: string;
-}) => {
+export const SettingsContent = () => {
+  const { mdScreen } = useWidth();
   const [activeTab, setActiveTab] = useState<
     'account' | 'recent' | 'export' | 'logout' | null
   >(null);
-  const router = useRouter();
 
   const handleActiveTab = (
     tab: 'account' | 'recent' | 'export' | 'logout' | null
   ) => setActiveTab(tab);
 
+  const logout = useLogout();
+
   const handleLogout = () => {
-    logout().then(() => {
-      router.push(ROUTES.login);
-    });
+    logout();
   };
 
   return (
@@ -54,7 +50,7 @@ export const SettingsContent = ({
               onClick={() => handleActiveTab('account')}
             >
               <Icon icon="userCircle" />
-              <Text size="3" weight="medium">
+              <Text size={mdScreen ? '5' : '3'} weight="medium">
                 Account
               </Text>
             </Flex>
@@ -68,7 +64,7 @@ export const SettingsContent = ({
               onClick={() => handleActiveTab('recent')}
             >
               <Icon icon="notes" />
-              <Text size="3" weight="medium">
+              <Text size={mdScreen ? '5' : '3'} weight="medium">
                 Recent activity
               </Text>
             </Flex>
@@ -82,7 +78,7 @@ export const SettingsContent = ({
               onClick={() => handleActiveTab('export')}
             >
               <Icon icon="key" />
-              <Text size="3" weight="medium">
+              <Text size={mdScreen ? '5' : '3'} weight="medium">
                 Export private key
               </Text>
             </Flex>
@@ -96,7 +92,7 @@ export const SettingsContent = ({
               onClick={handleLogout}
             >
               <Icon icon="logout" />
-              <Text size="3" weight="medium">
+              <Text size={mdScreen ? '5' : '3'} weight="medium">
                 Log out
               </Text>
             </Flex>
@@ -104,10 +100,7 @@ export const SettingsContent = ({
         ) : activeTab === 'account' ? (
           <AccountTab handleActiveTab={handleActiveTab} />
         ) : activeTab === 'recent' ? (
-          <RecentTab
-            walletAddress={walletAddress}
-            handleActiveTab={handleActiveTab}
-          />
+          <RecentTab handleActiveTab={handleActiveTab} />
         ) : activeTab === 'export' ? (
           <ExportKeyTab handleActiveTab={handleActiveTab} />
         ) : null}

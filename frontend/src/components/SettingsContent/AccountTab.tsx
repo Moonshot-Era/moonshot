@@ -1,6 +1,7 @@
 'use client';
 
 import { useAvatarImage } from '@/hooks/useAvatarImage';
+import { useWidth } from '@/hooks/useWidth';
 import { Button, Icon } from '@/legos';
 import { createBrowserClient } from '@/supabase/client';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
@@ -19,6 +20,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
   const [avatar, setAvatar] = useState('');
   const supabaseClient = createBrowserClient();
   const { imageUrl, mutate, isPending } = useAvatarImage();
+  const { mdScreen } = useWidth();
 
   const getUser = async () => {
     const { data } = await supabaseClient.auth.getSession();
@@ -65,7 +67,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
         direction="row"
         mb="6"
       >
-        <Text size="4" weight="bold">
+        <Text size={mdScreen ? '6' : '4'} weight="bold">
           Account
         </Text>
         <Box
@@ -95,7 +97,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
               className="settings-account-button"
               onClick={handleUploadImage}
             >
-              <Text size="2" weight="medium">
+              <Text size={mdScreen ? '4' : '2'} weight="medium">
                 Edit photo
               </Text>
             </Button>

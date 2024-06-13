@@ -8,12 +8,15 @@ import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
 import { CubeSignerClient } from '@cubist-labs/cubesigner-sdk';
 import { authenticator } from 'otplib';
 import { getMfaSecret } from '../helpers/getMfaSecret';
+import { createNativeTxInstruction } from '../solana/createNativeTxInstruction';
+import { FeeDataType } from '@/components/ConvertDrawer/types';
+import { MOONSHOT_FEE, MOONSHOT_WALLET_ADDRESS } from '@/utils';
 
 const sleep = async (ms: number) => {
   return new Promise((r) => setTimeout(r, ms));
 };
 
-export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
+export const swapTokens = async (oidcToken: string, swapRoutes: any, feeData: FeeDataType) => {
   try {
     console.log('Initializing client session...');
     const totpSecret = await getMfaSecret();
@@ -68,16 +71,26 @@ export const swapTokens = async (oidcToken: string, swapRoutes: any) => {
       const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
       const transaction = Transaction.from(swapTransactionBuf);
 
+      // createNativeTxInstruction({
+      //   fromPublicKey: publicKey,
+      //   toAddress: MOONSHOT_WALLET_ADDRESS,
+      //   amount: feeData.amount * MOONSHOT_FEE,
+      //   tx: transaction,
+      // })
+
       const resp = await userClient.apiClient.signSolana(walletAddress!, {
         message_base64: transaction.serializeMessage().toString('base64')
       });
 
-      const sig = await resp.totpApprove(
-        userClient,
-        authenticator.generate(totpSecret)
-      );
+      let sig;
+      if (totpSecret) {
+        sig = await resp.totpApprove(
+          userClient,
+          authenticator.generate(totpSecret)
+        );
+      }
 
-      const sigBytes = Buffer.from(sig.data().signature.slice(2), 'hex');
+      const sigBytes = Buffer.from((sig || resp).data().signature.slice(2), 'hex');
 
       transaction.addSignature(publicKey, sigBytes);
 

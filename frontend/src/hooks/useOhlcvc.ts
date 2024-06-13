@@ -7,20 +7,11 @@ export const fetchOhlcv = (
   aggregateParam: string
 ) =>
   axios
-    .post(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/api/ohlcv`,
-      {
-        poolAddress,
-        timeFrame,
-        aggregateParam
-      },
-      {
-        headers: {
-          'x-chain': 'solana',
-          'X-API-KEY': process.env.BIRDEYE_X_API_KEY
-        }
-      }
-    )
+    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/ohlcv`, {
+      poolAddress,
+      timeFrame,
+      aggregateParam
+    })
     .then((response) => {
       return response.data.data;
     });

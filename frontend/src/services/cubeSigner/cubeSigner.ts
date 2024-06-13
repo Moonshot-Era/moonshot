@@ -60,7 +60,7 @@ const getCubistUsers = async () => {
 
 const findUser = async (email: string) => {
   const users = await getCubistUsers();
-  console.log('debug > users ==== ', users);
+  // console.log('debug > users ==== ', users);
   return users.find(
     (user) => user.email === email && user.membership === 'Alien'
   );
@@ -82,13 +82,13 @@ export const getUserWallet = async (
 ): Promise<string | null> => {
   let key;
   try {
+    const cubeClient = await CubeSignerInstance.getManagementSessionClient();
     const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
     const user = await findUser(email);
 
-    const cubeClient = await CubeSignerInstance.getManagementSessionClient();
-    const org = cubeClient.org();
-
     if (!user) {
+      const org = cubeClient.org();
+
       const userId = await org.createOidcUser({ iss, sub }, email, {
         mfaPolicy: undefined,
         memberRole: 'Alien'
@@ -121,9 +121,6 @@ export const getUserWallet = async (
           const userCubeSigner = await CubeSignerClient.create(totpResp.data());
           const keys = await userCubeSigner.sessionKeys();
           key = getLatestKey(keys);
-          keys?.map((keyItem) => {
-            console.log('debug > keyItem===', keyItem);
-          });
         }
       } else {
         const userCubeSigner = await CubeSignerClient.create(

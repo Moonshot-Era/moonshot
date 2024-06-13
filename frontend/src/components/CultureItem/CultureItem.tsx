@@ -4,6 +4,8 @@ import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import {
   formatCashNumber,
@@ -14,29 +16,29 @@ import {
 import { Icon } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 
+import { useWallet } from '@/hooks';
 import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
+import { useWidth } from '@/hooks/useWidth';
 import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
 
 export const CultureItem = ({
   tokenInfo,
   tokenData,
-  isPublic,
-  walletAddress
+  isPublic
 }: {
   tokenData: NormilizedTokenDataOverview;
   tokenInfo: NormilizedTokenInfoOverview;
   isPublic?: boolean;
-  walletAddress?: string;
 }) => {
+  const { mdScreen } = useWidth();
   const router = useRouter();
-  const { portfolio } = usePortfolio(walletAddress);
+  const { walletData } = useWallet();
+  const { portfolio } = usePortfolio(walletData?.wallet);
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const {
     ohlcv,
@@ -95,7 +97,7 @@ export const CultureItem = ({
                 />
               </Flex>
             )}
-            <Text size="4" weight="bold">
+            <Text size={mdScreen ? '5' : '4'} weight="bold">
               {tokenInfo.name}
             </Text>
             {!isPublic && (
@@ -109,55 +111,52 @@ export const CultureItem = ({
               </Box>
             )}
           </Flex>
-          <ToggleGroup.Root
-            className="ToggleGroup"
-            type="single"
-            value={`${timeFrame.aggregate}-${timeFrame.time}`}
-            onValueChange={handleChangeTimeFrame}
-          >
-            <ToggleGroup.Item className="ToggleGroupItem" value="1-day">
-              1D
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="12-h">
-              12H
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="4-hour">
-              4H
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="1-hour">
-              1H
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="15-minute">
-              15m
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="5-minute">
-              5m
-            </ToggleGroup.Item>
-            <ToggleGroup.Item className="ToggleGroupItem" value="1-minute">
-              1m
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
-          <Flex
-            width="100%"
-            height="200px"
-            direction="column"
-            justify="center"
-            align="center"
-          >
-            {ohlcvLoading ? (
-              <Spinner />
-            ) : (
-              <CultureChart
-                data={chartData}
-                tokenDecimals={tokenData?.decimals || 0}
-              />
-            )}
+
+          <Flex direction="column" width="100%" className="chart-wrapper">
+            <ToggleGroup.Root
+              className="ToggleGroup"
+              type="single"
+              value={`${timeFrame.aggregate}-${timeFrame.time}`}
+              onValueChange={handleChangeTimeFrame}
+            >
+              <ToggleGroup.Item className="ToggleGroupItem" value="1-day">
+                1D
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="12-h">
+                12H
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="4-hour">
+                4H
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="1-hour">
+                1H
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="15-minute">
+                15m
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="5-minute">
+                5m
+              </ToggleGroup.Item>
+              <ToggleGroup.Item className="ToggleGroupItem" value="1-minute">
+                1m
+              </ToggleGroup.Item>
+            </ToggleGroup.Root>
+            <Flex height="200px" justify="center" align="center">
+              {ohlcvLoading ? (
+                <Spinner />
+              ) : (
+                <CultureChart
+                  data={chartData}
+                  tokenDecimals={tokenData?.decimals || 0}
+                />
+              )}
+            </Flex>
           </Flex>
           <Toolbar
             portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
             withShare
             tokenPrice={+tokenData.price_usd}
-            hasWalletAddress={!!walletAddress}
+            hasWalletAddress={!!walletData?.wallet}
           />
 
           {asset && (
@@ -168,10 +167,10 @@ export const CultureItem = ({
               className="explore-card"
             >
               <Flex width="100%" direction="column" justify="between">
-                <Text size="3" weight="medium">
+                <Text size={mdScreen ? '4' : '3'} weight="medium">
                   Your balance
                 </Text>
-                <Text size="2" weight="medium">
+                <Text size={mdScreen ? '3' : '2'} weight="medium">
                   {formatNumberToUsd().format(asset?.valueUsd)}
                 </Text>
               </Flex>
@@ -193,7 +192,7 @@ export const CultureItem = ({
                       />
                     </Flex>
                   )}
-                <Text size="1" mt="1">
+                <Text size={mdScreen ? '3' : '1'} mt="1">
                   {asset?.uiAmount} {asset?.symbol}
                 </Text>
               </Flex>
@@ -207,12 +206,12 @@ export const CultureItem = ({
             className="explore-card"
           >
             <Text
-              size="3"
+              size={mdScreen ? '4' : '3'}
               weight="medium"
               mb="2"
             >{`About ${tokenInfo.name}`}</Text>
             {tokenInfo?.description && (
-              <Text size="1">{tokenInfo?.description}</Text>
+              <Text size={mdScreen ? '3' : '1'}>{tokenInfo?.description}</Text>
             )}
           </Flex>
           <Flex
@@ -223,7 +222,7 @@ export const CultureItem = ({
             className="explore-card"
           >
             <Flex direction="row" justify="between" align="center">
-              <Text size="3" weight="medium" mb="2">
+              <Text size={mdScreen ? '4' : '3'} weight="medium" mb="2">
                 Stats
               </Text>
               <Flex direction="row" gap="1">
@@ -249,11 +248,11 @@ export const CultureItem = ({
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="chartPie" width={14} height={14} />
-                  <Text size="1" weight="medium">
+                  <Text size={mdScreen ? '3' : '1'} weight="medium">
                     Market cap
                   </Text>
                 </Flex>
-                <Text size="1">
+                <Text size={mdScreen ? '3' : '1'}>
                   {formatCashNumber().format(+tokenData?.mc)}
                 </Text>
               </Flex>
@@ -262,11 +261,11 @@ export const CultureItem = ({
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="chartBar" width={14} height={14} />
-                  <Text size="1" weight="medium">
+                  <Text size={mdScreen ? '3' : '1'} weight="medium">
                     24H volume
                   </Text>
                 </Flex>
-                <Text size="1">
+                <Text size={mdScreen ? '3' : '1'}>
                   {formatCashNumber().format(+tokenData?.v24hUSD)}
                 </Text>
               </Flex>
@@ -275,11 +274,11 @@ export const CultureItem = ({
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="chartLine" width={14} height={14} />
-                  <Text size="1" weight="medium">
+                  <Text size={mdScreen ? '3' : '1'} weight="medium">
                     Liquidity
                   </Text>
                 </Flex>
-                <Text size="1">
+                <Text size={mdScreen ? '3' : '1'}>
                   {formatCashNumber().format(+tokenData?.liquidity)}
                 </Text>
               </Flex>
@@ -288,11 +287,11 @@ export const CultureItem = ({
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="coins" width={14} height={14} />
-                  <Text size="1" weight="medium">
+                  <Text size={mdScreen ? '3' : '1'} weight="medium">
                     Total supply
                   </Text>
                 </Flex>
-                <Text size="1">
+                <Text size={mdScreen ? '3' : '1'}>
                   {formatNumberToUsFormat().format(+tokenData?.supply)}
                 </Text>
               </Flex>
@@ -301,11 +300,11 @@ export const CultureItem = ({
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="wallet" width={14} height={14} stroke={'2'} />
-                  <Text size="1" weight="medium">
+                  <Text size={mdScreen ? '3' : '1'} weight="medium">
                     Holders
                   </Text>
                 </Flex>
-                <Text size="1">
+                <Text size={mdScreen ? '3' : '1'}>
                   {formatNumberToUsFormat().format(tokenData?.holder)}
                 </Text>
               </Flex>

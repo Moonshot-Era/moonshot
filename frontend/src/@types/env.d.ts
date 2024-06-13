@@ -14,9 +14,6 @@ namespace NodeJS {
     TWITTER_API_KEY: string;
     TWITTER_CLIENT_ID: string;
 
-    BIRDEYE_URL_API: string;
-    BIRDEYE_X_API_KEY: string;
-
     GECKO_URL_API: string;
     GECKO_API_KEY: string;
 

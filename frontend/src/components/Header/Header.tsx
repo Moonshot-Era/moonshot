@@ -1,14 +1,16 @@
 'use client';
 
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 import { Icon, NavButton } from '@/legos';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { useWidth } from '@/hooks/useWidth';
 
 export const Header = ({ isPublic }: { isPublic?: boolean }) => {
   const pathname = usePathname();
+  const { mdScreen } = useWidth();
 
   return (
     <header className="bg-white">
@@ -33,32 +35,36 @@ export const Header = ({ isPublic }: { isPublic?: boolean }) => {
             <>
               <Link href="/">
                 <NavButton
-                  className={pathname === '/' ? 'nav-button-active' : ''}
+                  className={`${mdScreen ? 'h-14' : 'h-10'} ${
+                    pathname === '/' ? 'nav-button-active' : ''
+                  }`}
                 >
                   <Icon icon="home" width={16} />
-                  <Text size="1">Home</Text>
+                  <Text size={mdScreen ? '3' : '1'}>Home</Text>
                 </NavButton>
               </Link>
               <Link href="/explore">
                 <NavButton
-                  className={
-                    pathname === '/explore' || pathname.includes('/culture')
-                      ? 'nav-button-active'
-                      : ''
-                  }
+                  className={`${mdScreen ? 'h-14' : 'h-10'} ${
+                    pathname === '/explore' ? 'nav-button-active' : ''
+                  }`}
                 >
-                  <Icon icon="search" width={16} />
-                  <Text size="1">Explore</Text>
+                  <div>
+                    <Icon icon="search" width={16} />
+                  </div>
+                  <Text size={mdScreen ? '3' : '1'}>Explore</Text>
                 </NavButton>
               </Link>
               <Link href="/settings">
                 <NavButton
-                  className={
+                  className={`${mdScreen ? 'h-14' : 'h-10'} ${
                     pathname === '/settings' ? 'nav-button-active' : ''
-                  }
+                  }`}
                 >
-                  <Icon icon="settings" width={16} />
-                  <Text size="1">Settings</Text>
+                  <div>
+                    <Icon icon="settings" width={16} />
+                  </div>
+                  <Text size={mdScreen ? '3' : '1'}>Settings</Text>
                 </NavButton>
               </Link>
             </>

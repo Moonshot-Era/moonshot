@@ -1,10 +1,11 @@
 'use client';
 
 import { Flex, Text } from '@radix-ui/themes';
+import { MutableRefObject, useRef, useState } from 'react';
 
+import { useWidth } from '@/hooks/useWidth';
 import { IconButton } from '@/legos';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
-import { MutableRefObject, useRef, useState } from 'react';
 import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
 import { ShareModal } from '../ShareModal/ShareModal';
@@ -23,6 +24,8 @@ export const Toolbar = ({
   tokenPrice,
   hasWalletAddress
 }: ToolbarProps) => {
+  const { mdScreen } = useWidth();
+
   const convertDrawerRef: MutableRefObject<null> = useRef(null);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
@@ -60,7 +63,7 @@ export const Toolbar = ({
             // @ts-ignore
             onClick={() => convertDrawerRef.current?.open()}
           />
-          <Text size="2">Convert</Text>
+          <Text size={mdScreen ? '4' : '2'}>Convert</Text>
         </Flex>
         <Flex direction="column" align="center" gap="1">
           <IconButton
@@ -68,7 +71,7 @@ export const Toolbar = ({
             className="bg-magenta"
             onClick={toggleDepositDrawer}
           />
-          <Text size="2">Deposit</Text>
+          <Text size={mdScreen ? '4' : '2'}>Deposit</Text>
         </Flex>
         {hasWalletAddress && (
           <Flex direction="column" align="center" gap="1">
@@ -77,7 +80,7 @@ export const Toolbar = ({
               className="bg-violet"
               onClick={toggleWithdrawDrawer}
             />
-            <Text size="2">Withdraw</Text>
+            <Text size={mdScreen ? '4' : '2'}>Withdraw</Text>
           </Flex>
         )}
         {withShare && tokenPrice ? (

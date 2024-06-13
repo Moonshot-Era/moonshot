@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { SelectedTokens } from "./types";
+import { FeeDataType, SelectedTokens } from "./types";
 import axios from "axios";
 
 type SwapRoute = {};
@@ -19,9 +19,10 @@ const fetchSwapRoutes = (
     })
     .then((response) => response.data?.swapRoutes);
 
-const swapTokens = (swapRoutes: void) =>
+export const swapTokens = (swapRoutes: void, feeData: FeeDataType) =>
   axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/swap-tokens`, {
-    swapRoutes
+    swapRoutes,
+    feeData
   });
 
 export const useSwapRoutes = (
@@ -50,10 +51,10 @@ export const useSwapRoutes = (
 export const useSwapMutation = () => {
   const mutation = useMutation({
     // @ts-ignore
-    mutationFn: ({ swapRoutes }) => {
-      return swapTokens(swapRoutes);
-    },
+    mutationFn: ({ swapRoutes, feeData }) => {
+      return swapTokens(swapRoutes, feeData);
+    }
   });
 
   return mutation;
-}
+};

@@ -1,7 +1,6 @@
 'use client';
 
 import { useShareImage } from '@/hooks/useShareImage';
-import { IconButton } from '@/legos';
 import { createBrowserClient } from '@/supabase/client';
 import { Dialog, Flex, Text } from '@radix-ui/themes';
 import Image from 'next/image';
@@ -12,9 +11,13 @@ import {
   TwitterShareButton,
   XIcon
 } from 'react-share';
+
+import { useWidth } from '@/hooks/useWidth';
+import { IconButton } from '@/legos';
 import './style.scss';
 
 export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
+  const { mdScreen } = useWidth();
   const pathname = usePathname();
 
   const shareUrl = `${process.env.NEXT_PUBLIC_SITE_URL}${pathname}`;
@@ -62,13 +65,13 @@ export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
       <Dialog.Trigger>
         <Flex direction="column" align="center" gap="1">
           <IconButton icon="share" className="bg-blue" />
-          <Text size="2">Share</Text>
+          <Text size={mdScreen ? '4' : '2'}>Share</Text>
         </Flex>
       </Dialog.Trigger>
 
       <Dialog.Content maxWidth="293px" className="dialog-content">
         <Flex direction="column" gap="4" align="center">
-          <Text size="4">Share your moonshot!</Text>
+          <Text size={mdScreen ? '5' : '4'}>Share your moonshot!</Text>
           {imageUrl && (
             <div className="share-image-wrapper">
               <Image

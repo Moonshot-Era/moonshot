@@ -38,7 +38,7 @@ export const CultureChart = ({ data, tokenDecimals }: CultureChartProps) => {
       layout: {
         background: {
           type: ColorType.Solid,
-          color: 'rgba(0,0,0,0)'
+          color: '#fff'
         },
         textColor: ' rgba(0, 0, 0, 0) '
       },

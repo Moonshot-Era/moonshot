@@ -201,6 +201,7 @@ export const ConvertDrawer: FC<Props> = memo(
             selectedTokens={selectedTokens}
             changeSelected={(reselect) => setState(reselect)}
             closeDrawer={handleClose}
+            walletAddress={portfolio?.wallet}
           />
         </SheetDrawer>
       </>
