@@ -6,12 +6,8 @@ import { ErrResponse } from '@cubist-labs/cubesigner-sdk';
 import { getResponseToRefreshToken } from '@/utils/getResponse';
 
 export async function POST(request: NextRequest) {
-  console.log('debug > request.headers ==== ', request.headers);
   const token = request.headers.get(HEADER_PROVIDER_TOKEN);
   const provider = request.headers.get(HEADER_PROVIDER);
-  console.log('debug > token ==== ', token);
-  console.log('debug > provider ==== ', provider);
-  console.log('debug > request.headers ==== ', request.headers);
 
   try {
     if (!token || !provider) {
@@ -24,7 +20,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ wallet });
   } catch (err: any) {
-    console.log('debug > get wallet err ==== ', err);
     if (
       (err as ErrResponse)?.errorCode === 'InvalidOidcToken' ||
       ((err as ErrResponse)?.statusText === 'Forbidden' &&

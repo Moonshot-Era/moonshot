@@ -85,7 +85,7 @@ export const getUserWallet = async (
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();
     const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
     const user = await findUser(email);
-    console.log('debug > user ==== ', user);
+
     if (!user) {
       const org = cubeClient.org();
 
@@ -130,8 +130,6 @@ export const getUserWallet = async (
         key = getLatestKey(keys);
       }
     }
-
-    console.log('debug > key?.materialId ==== ', key?.materialId);
 
     if (!key || !key?.materialId) {
       throw Error('Wallet not created');
