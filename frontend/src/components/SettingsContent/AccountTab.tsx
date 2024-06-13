@@ -7,6 +7,7 @@ import { createBrowserClient } from '@/supabase/client';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import userIcon from '../../assets/images/user-icon.png';
 import './style.scss';
 
 interface Props {
@@ -39,7 +40,6 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
   }, []);
 
   useEffect(() => {
-    console.log('imageUrl', imageUrl);
     imageUrl && setAvatar(imageUrl);
   }, [imageUrl]);
 
@@ -80,14 +80,14 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
         </Box>
       </Flex>
       <Flex height="150px" gap="8px" direction="column">
-        {isPending || !avatar ? (
+        {isPending ? (
           <Spinner />
         ) : (
           <>
             <Box mb="2">
               <Image
                 alt="user-photo"
-                src={avatar}
+                src={avatar || userIcon}
                 width={80}
                 height={80}
                 style={{ borderRadius: '50%' }}

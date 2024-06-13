@@ -26,7 +26,7 @@ export const uploadAvatarImage = async (imageFile: File) => {
     const userId = (await supabaseServerClient.auth.getUser()).data?.user?.id;
 
     if (avatarUrl && userId) {
-      supabaseServerClient
+      await supabaseServerClient
         .from('profiles')
         .update({ avatar_url: avatarUrl.signedUrl })
         .eq('user_id', userId);
