@@ -1,8 +1,8 @@
 export const COOKIE_PROVIDER = 'p';
 export const COOKIE_PROVIDER_TOKEN = 'pt';
 
-export const HEADER_PROVIDER_TOKEN = 'Authorization';
-export const HEADER_PROVIDER = 'Authorization_provider';
+export const HEADER_PROVIDER_TOKEN = 'authorization';
+export const HEADER_PROVIDER = 'authorization-provider';
 
 export const ROUTES = {
   home: '/',
