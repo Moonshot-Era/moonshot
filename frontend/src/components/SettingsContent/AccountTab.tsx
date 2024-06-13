@@ -19,6 +19,7 @@ interface Props {
 export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
   const inputFile = useRef(null);
   const [avatar, setAvatar] = useState('');
+  const [isUserLoading, setIsUserLoading] = useState(false);
   const supabaseClient = createBrowserClient();
   const { imageUrl, mutate, isPending } = useAvatarImage();
   const { mdScreen } = useWidth();
@@ -36,7 +37,8 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
   };
 
   useEffect(() => {
-    getUser();
+    setIsUserLoading(true);
+    getUser().finally(() => setIsUserLoading(false));
   }, []);
 
   useEffect(() => {
@@ -44,6 +46,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
   }, [imageUrl]);
 
   const handleUploadImage = () => {
+    // @ts-ignore
     inputFile.current && inputFile.current.click();
   };
 
@@ -80,7 +83,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
         </Box>
       </Flex>
       <Flex height="150px" gap="8px" direction="column">
-        {isPending ? (
+        {isPending || isUserLoading ? (
           <Spinner />
         ) : (
           <>

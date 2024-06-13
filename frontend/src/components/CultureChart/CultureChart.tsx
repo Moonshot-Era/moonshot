@@ -39,8 +39,7 @@ export const CultureChart = ({ data, tokenDecimals }: CultureChartProps) => {
         background: {
           type: ColorType.Solid,
           color: '#fff'
-        },
-        textColor: ' rgba(0, 0, 0, 0) '
+        }
       },
 
       grid: {
@@ -50,6 +49,13 @@ export const CultureChart = ({ data, tokenDecimals }: CultureChartProps) => {
         horzLines: {
           visible: false
         }
+      },
+      localization: {
+        locale: 'en-US'
+      },
+      timeScale: {
+        timeVisible: true,
+        secondsVisible: true
       }
     });
 
@@ -69,7 +75,7 @@ export const CultureChart = ({ data, tokenDecimals }: CultureChartProps) => {
     lineSeries.setData(orderedData as unknown as AreaData<Time>[]);
 
     return () => chart.remove();
-  }, [data]);
+  }, [data, orderedData, tokenDecimals]);
 
   return <div ref={chartContainerRef} style={{ width: '100%' }}></div>;
 };

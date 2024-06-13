@@ -1,6 +1,6 @@
 'use client';
 
-import { Flex, Text } from '@radix-ui/themes';
+import { Dialog, Flex, Text } from '@radix-ui/themes';
 import { MutableRefObject, useRef, useState } from 'react';
 
 import { useWidth } from '@/hooks/useWidth';
@@ -29,6 +29,7 @@ export const Toolbar = ({
   const convertDrawerRef: MutableRefObject<null> = useRef(null);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   const toggleDepositDrawer = () => setIsDepositOpen(!isDepositOpen);
   const toggleWithdrawDrawer = () => setIsWithdrawOpen(!isWithdrawOpen);
@@ -84,7 +85,15 @@ export const Toolbar = ({
           </Flex>
         )}
         {withShare && tokenPrice ? (
-          <ShareModal tokenPrice={tokenPrice} />
+          <Dialog.Root open={isShareOpen} onOpenChange={setIsShareOpen}>
+            <Dialog.Trigger>
+              <Flex direction="column" align="center" gap="1">
+                <IconButton icon="share" className="bg-blue" />
+                <Text size={mdScreen ? '4' : '2'}>Share</Text>
+              </Flex>
+            </Dialog.Trigger>
+            {isShareOpen && <ShareModal tokenPrice={tokenPrice} />}
+          </Dialog.Root>
         ) : null}
       </Flex>
     </>
