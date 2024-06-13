@@ -13,6 +13,7 @@ import { ExportMnemonic } from '../ExportMnemonic/ExportMnemonic';
 import { useLogout } from '@/hooks';
 
 import './style.scss';
+import { EXPORT_DELAY_DAYS, EXPORT_WINDOW_DAYS } from '@/utils';
 
 interface Props {
   handleActiveTab: (
@@ -36,12 +37,12 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
     const { data } = await supabaseClient.auth.getSession();
     const userId = data.session?.user.id;
     if (!userId) return;
-    const { data: avatarData } = await supabaseClient
+    const { data: userData } = await supabaseClient
       .from('profiles')
       .select('export_keys_delay,export_keys_window')
       .eq('user_id', userId);
-    const delay = avatarData?.[0]?.export_keys_delay;
-    const window = avatarData?.[0]?.export_keys_window;
+    const delay = userData?.[0]?.export_keys_delay;
+    const window = userData?.[0]?.export_keys_window;
     if (delay) {
       setExportDelay(new Date(delay));
     } else {
@@ -81,11 +82,11 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           .update({
             export_keys_delay: `${addDays(
               new Date(data * 1000),
-              2
+              EXPORT_DELAY_DAYS
             ).toUTCString()}`,
             export_keys_window: `${addDays(
               new Date(data * 1000),
-              3
+              EXPORT_WINDOW_DAYS
             ).toUTCString()}`
           })
           .eq('user_id', userId);
@@ -131,9 +132,11 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   useEffect(() => {
     if (
       exportDelay &&
-      exportDelay < addDays(new Date(), 2) &&
+      //TODO change to new Date()
+      exportDelay < addDays(new Date(), EXPORT_DELAY_DAYS) &&
       exportWindow &&
-      exportWindow < addDays(new Date(), 3)
+      //TODO change to new Date()
+      exportWindow < addDays(new Date(), EXPORT_WINDOW_DAYS)
     ) {
       getMnemonic().finally(() => setLoading(false));
     }
@@ -246,9 +249,11 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           </Button>
         </>
       )}
-      {!loading && exportDelay && exportDelay > addDays(new Date(), 2) && (
-        <ExportRemaining delayRemaining={exportDelay} />
-      )}
+      {!loading &&
+        exportDelay &&
+        exportDelay > addDays(new Date(), EXPORT_DELAY_DAYS) && (
+          <ExportRemaining delayRemaining={exportDelay} />
+        )}
       {!loading && mnemonic && <ExportMnemonic mnemonic={mnemonic} />}
     </Flex>
   );

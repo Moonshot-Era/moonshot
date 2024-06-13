@@ -26,3 +26,6 @@ export const MOONSHOT_FEE = 0.005;
 export const REF_FEE = 0.0025;
 
 export const MINIMUM_CONVERT_AMOUNT = 0.0005;
+
+export const EXPORT_DELAY_DAYS = 2;
+export const EXPORT_WINDOW_DAYS = 3;
