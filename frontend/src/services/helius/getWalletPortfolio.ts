@@ -4,8 +4,7 @@ import {
   TokenItemGeckoType
 } from '@/@types/gecko';
 import { TokenItemHeliusType } from '@/@types/helius';
-import { isSolanaAddress } from '@/helpers/helpers';
-import { SOLANA_ADDRESS, SOLANA_WRAPPED_ADDRESS } from '@/utils';
+import { SOLANA_WRAPPED_ADDRESS } from '@/utils';
 import axios from 'axios';
 
 type HeliusWalletType = {
@@ -64,11 +63,11 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       })
     });
     const { result }: { result: HeliusWalletType } = await response.json();
-    // console.log('debug > result===', result);
+
     const tokensAddresses =
       result?.items?.map((tok: TokenItemHeliusType) => tok.id).join(',') +
-      ',So11111111111111111111111111111111111111112';
-    console.log('debug > tokensAddresses===', tokensAddresses);
+      `,${SOLANA_WRAPPED_ADDRESS}`;
+
     let walletPortfolioNormalized: WalletPortfolioAssetType[] = [];
 
     if (tokensAddresses?.length) {
@@ -92,7 +91,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
           included?.relationships?.quote_token?.data?.id ===
             `solana_${SOLANA_WRAPPED_ADDRESS}`
       )?.attributes?.price_change_percentage?.h24;
-      // console.log('debug > tokensListGecko===', tokensListGecko?.included);
+
       if (result?.nativeBalance?.lamports) {
         walletPortfolioNormalized.push({
           address: solanaToken?.address,
@@ -118,7 +117,9 @@ export const getWalletPortfolio = async (walletAddress: string) => {
         const included = tokensListGecko?.included?.find(
           (included: PoolGeckoType) =>
             included?.relationships?.base_token?.data?.id ===
-            `solana_${asset?.id}`
+              `solana_${asset?.id}` ||
+            included?.relationships?.quote_token?.data?.id ===
+              `solana_${asset?.id}`
         )?.attributes;
 
         walletPortfolioNormalized.push({
