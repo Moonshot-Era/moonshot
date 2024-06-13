@@ -1,14 +1,14 @@
 'use client';
 
-import { FC } from 'react';
-import Image from 'next/image';
-import { Box, Flex, Text } from '@radix-ui/themes';
-import { createBrowserClient } from '@/supabase/client';
-
-import './style.scss';
-import { Button, Icon } from '@/legos';
+import { useAvatarImage } from '@/hooks/useAvatarImage';
 import { useWidth } from '@/hooks/useWidth';
+import { Button, Icon } from '@/legos';
+import { createBrowserClient } from '@/supabase/client';
+import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
+import Image from 'next/image';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import userIcon from '../../assets/images/user-icon.png';
+import './style.scss';
 
 interface Props {
   handleActiveTab: (
@@ -17,22 +17,45 @@ interface Props {
 }
 
 export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
-  // const supabaseClient = createBrowserClient();
-  // const { data } = supabaseClient.auth.getSession();
-
-  // const userId = data.session?.user?.id;
-
-  // if (userId) {
-  //   await supabaseClient
-  //     .from('profiles')
-  //     .update({
-  //       onboarding_completed: true
-  //     })
-  //     .eq('user_id', userId);
-
-  //   route.replace(ROUTES.home);
-  // }
+  const inputFile = useRef(null);
+  const [avatar, setAvatar] = useState('');
+  const supabaseClient = createBrowserClient();
+  const { imageUrl, mutate, isPending } = useAvatarImage();
   const { mdScreen } = useWidth();
+
+  const getUser = async () => {
+    const { data } = await supabaseClient.auth.getSession();
+    const userId = data.session?.user.id;
+    if (!userId) return;
+    const { data: avatarData } = await supabaseClient
+      .from('profiles')
+      .select('avatar_url')
+      .eq('user_id', userId);
+    const userAvatar = avatarData?.[0].avatar_url;
+    userAvatar && setAvatar(userAvatar);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    imageUrl && setAvatar(imageUrl);
+  }, [imageUrl]);
+
+  const handleUploadImage = () => {
+    inputFile.current && inputFile.current.click();
+  };
+
+  const handleChangeFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+    var file = event.target.files?.[0];
+
+    if (file) {
+      mutate(file);
+    }
+  };
 
   return (
     <Flex width="100%" direction="column" align="center">
@@ -56,14 +79,39 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
           <Icon icon="arrowRight" />
         </Box>
       </Flex>
-      <Box mb="2">
-        <Image alt="user-photo" src={userIcon} width={80} height={80} />
-      </Box>
-      <Button className="settings-account-button">
-        <Text size={mdScreen ? '4' : '2'} weight="medium">
-          Edit photo
-        </Text>
-      </Button>
+      <Flex height="150px" gap="8px" direction="column">
+        {isPending ? (
+          <Spinner />
+        ) : (
+          <>
+            <Box mb="2">
+              <Image
+                alt="user-photo"
+                src={avatar || userIcon}
+                width={80}
+                height={80}
+                style={{ borderRadius: '50%' }}
+              />
+            </Box>
+            <Button
+              className="settings-account-button"
+              onClick={handleUploadImage}
+            >
+              <Text size={mdScreen ? '4' : '2'} weight="medium">
+                Edit photo
+              </Text>
+            </Button>
+            <input
+              type="file"
+              id="file"
+              accept="image/*"
+              ref={inputFile}
+              style={{ display: 'none' }}
+              onChange={handleChangeFile}
+            />
+          </>
+        )}
+      </Flex>
       <Flex
         width="100%"
         direction="row"

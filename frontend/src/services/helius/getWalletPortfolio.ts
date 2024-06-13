@@ -4,8 +4,7 @@ import {
   TokenItemGeckoType
 } from '@/@types/gecko';
 import { TokenItemHeliusType } from '@/@types/helius';
-import { isSolanaAddress } from '@/helpers/helpers';
-import { SOLANA_ADDRESS, SOLANA_WRAPPED_ADDRESS } from '@/utils';
+import { SOLANA_WRAPPED_ADDRESS } from '@/utils';
 import axios from 'axios';
 
 type HeliusWalletType = {
@@ -64,10 +63,10 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       })
     });
     const { result }: { result: HeliusWalletType } = await response.json();
-    console.log('debug > result===', result);
+
     const tokensAddresses =
       result?.items?.map((tok: TokenItemHeliusType) => tok.id).join(',') +
-      ',So11111111111111111111111111111111111111112';
+      `,${SOLANA_WRAPPED_ADDRESS}`;
 
     let walletPortfolioNormalized: WalletPortfolioAssetType[] = [];
 
@@ -87,36 +86,41 @@ export const getWalletPortfolio = async (walletAddress: string) => {
 
       const solana_percentage_change_h24 = tokensListGecko?.included?.find(
         (included: PoolGeckoType) =>
+          included?.relationships?.base_token?.data?.id ===
+            `solana_${SOLANA_WRAPPED_ADDRESS}` ||
           included?.relationships?.quote_token?.data?.id ===
-          `solana_${SOLANA_WRAPPED_ADDRESS}`
+            `solana_${SOLANA_WRAPPED_ADDRESS}`
       )?.attributes?.price_change_percentage?.h24;
-console.log('debug > tokensListGecko===', tokensListGecko?.included?.[0]?.relationships);
-     if (result?.nativeBalance?.lamports) {
-       walletPortfolioNormalized.push({
-         address: solanaToken?.address,
-         balance: result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
-         decimals: solanaToken?.decimals,
-         name: 'Solana',
-         priceUsd: result?.nativeBalance?.price_per_sol,
-         symbol: 'SOL',
-         uiAmount:
-           result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
-         valueUsd: result?.nativeBalance?.total_price,
-         imageUrl: solanaToken?.image_url,
-         percentage_change_h24: solana_percentage_change_h24
-       });
-     }
+
+      if (result?.nativeBalance?.lamports) {
+        walletPortfolioNormalized.push({
+          address: solanaToken?.address,
+          balance:
+            result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
+          decimals: solanaToken?.decimals,
+          name: 'SOLANA / SOL',
+          priceUsd: result?.nativeBalance?.price_per_sol,
+          symbol: 'SOL',
+          uiAmount:
+            result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
+          valueUsd: result?.nativeBalance?.total_price,
+          imageUrl: solanaToken?.image_url,
+          percentage_change_h24: solana_percentage_change_h24
+        });
+      }
 
       result?.items?.map((asset: TokenItemHeliusType) => {
         const token: TokenAttributes = tokensListGecko?.data?.find(
           (token: TokenItemGeckoType) => token.attributes.address === asset?.id
         )?.attributes;
 
-        const percentage_change_h24 = tokensListGecko?.included?.find(
+        const included = tokensListGecko?.included?.find(
           (included: PoolGeckoType) =>
             included?.relationships?.base_token?.data?.id ===
-            `solana_${asset?.id}`
-        )?.attributes?.price_change_percentage?.h24;
+              `solana_${asset?.id}` ||
+            included?.relationships?.quote_token?.data?.id ===
+              `solana_${asset?.id}`
+        )?.attributes;
 
         walletPortfolioNormalized.push({
           address: asset?.id,
@@ -124,7 +128,7 @@ console.log('debug > tokensListGecko===', tokensListGecko?.included?.[0]?.relati
             asset?.token_info?.balance /
             10 ** (asset?.token_info?.decimals || 1),
           decimals: asset?.token_info?.decimals,
-          name: asset?.content?.metadata?.name || '',
+          name: included?.name || '',
           priceUsd: asset?.token_info?.price_info?.price_per_token,
           symbol: asset?.token_info?.symbol,
           uiAmount:
@@ -132,7 +136,7 @@ console.log('debug > tokensListGecko===', tokensListGecko?.included?.[0]?.relati
             10 ** (asset?.token_info?.decimals || 1),
           valueUsd: asset?.token_info?.price_info?.total_price,
           imageUrl: token?.image_url,
-          percentage_change_h24
+          percentage_change_h24: included?.price_change_percentage?.h24
         });
       });
     }

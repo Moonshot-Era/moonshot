@@ -1,11 +1,11 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import {
   formatCashNumber,
@@ -16,15 +16,15 @@ import {
 import { Icon } from '@/legos';
 import { Toolbar } from '../Toolbar/Toolbar';
 
-import { useWidth } from '@/hooks/useWidth';
+import { useWallet } from '@/hooks';
 import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
-import { CultureChart } from '../CultureChart/CultureChart';
+import { useWidth } from '@/hooks/useWidth';
 import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
-
+import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
+import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
-import { useWallet } from '@/hooks';
 
 export const CultureItem = ({
   tokenInfo,
@@ -170,13 +170,12 @@ export const CultureItem = ({
               )}
             </Flex>
           </Flex>
-          {!isPublic && asset && portfolio && (
-            <Toolbar
-              portfolio={portfolio}
-              withShare
-              tokenPrice={+tokenData.price_usd}
-            />
-          )}
+          <Toolbar
+            portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
+            withShare
+            tokenPrice={+tokenData.price_usd}
+            hasWalletAddress={!!walletData?.wallet}
+          />
 
           {asset && (
             <Flex

@@ -3,8 +3,8 @@
 import { Flex, Text } from '@radix-ui/themes';
 import { MutableRefObject, useRef, useState } from 'react';
 
-import { IconButton } from '@/legos';
 import { useWidth } from '@/hooks/useWidth';
+import { IconButton } from '@/legos';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
 import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
@@ -15,9 +15,15 @@ interface ToolbarProps {
   portfolio: WalletPortfolioNormilizedType;
   withShare?: boolean;
   tokenPrice?: number;
+  hasWalletAddress?: boolean;
 }
 
-export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
+export const Toolbar = ({
+  withShare,
+  portfolio,
+  tokenPrice,
+  hasWalletAddress
+}: ToolbarProps) => {
   const { mdScreen } = useWidth();
 
   const convertDrawerRef: MutableRefObject<null> = useRef(null);
@@ -50,17 +56,15 @@ export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
         mb="8"
         px={withShare ? '5' : '7'}
       >
-        {!!portfolio?.totalUsd && (
-          <Flex direction="column" align="center" gap="1">
-            <IconButton
-              icon="transfer"
-              className="bg-yellow"
-              // @ts-ignore
-              onClick={() => convertDrawerRef.current?.open()}
-            />
-            <Text size={mdScreen ? '4' : '2'}>Convert</Text>
-          </Flex>
-        )}
+        <Flex direction="column" align="center" gap="1">
+          <IconButton
+            icon="transfer"
+            className="bg-yellow"
+            // @ts-ignore
+            onClick={() => convertDrawerRef.current?.open()}
+          />
+          <Text size={mdScreen ? '4' : '2'}>Convert</Text>
+        </Flex>
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="deposit"
@@ -69,7 +73,7 @@ export const Toolbar = ({ withShare, portfolio, tokenPrice }: ToolbarProps) => {
           />
           <Text size={mdScreen ? '4' : '2'}>Deposit</Text>
         </Flex>
-        {!!portfolio?.totalUsd && (
+        {hasWalletAddress && (
           <Flex direction="column" align="center" gap="1">
             <IconButton
               icon="withdraw"

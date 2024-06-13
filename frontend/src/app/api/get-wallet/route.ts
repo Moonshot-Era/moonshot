@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
 
   try {
     if (!token || !provider) {
-      return NextResponse.json({ wallet: null });
+      throw Error('There is no token or provider in the headers');
     }
 
     const totpSecret = await getMfaSecret();
