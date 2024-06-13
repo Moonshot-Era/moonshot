@@ -61,64 +61,55 @@ export const ShareModal = ({ tokenPrice }: { tokenPrice: number }) => {
   };
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger>
-        <Flex direction="column" align="center" gap="1">
-          <IconButton icon="share" className="bg-blue" />
-          <Text size={mdScreen ? '4' : '2'}>Share</Text>
-        </Flex>
-      </Dialog.Trigger>
-
-      <Dialog.Content maxWidth="293px" className="dialog-content">
-        <Flex direction="column" gap="4" align="center">
-          <Text size={mdScreen ? '5' : '4'}>Share your moonshot!</Text>
-          {imageUrl && (
-            <div className="share-image-wrapper">
-              <Image
-                loader={imageLoader}
-                src={imageUrl.href}
-                alt="monshootShareImage"
-                width={235}
-                height={237}
-              />
-            </div>
+    <Dialog.Content maxWidth="293px" className="dialog-content">
+      <Flex direction="column" gap="4" align="center">
+        <Text size={mdScreen ? '5' : '4'}>Share your moonshot!</Text>
+        {imageUrl && (
+          <div className="share-image-wrapper">
+            <Image
+              loader={imageLoader}
+              src={imageUrl.href}
+              alt="monshootShareImage"
+              width={235}
+              height={237}
+            />
+          </div>
+        )}
+        <Flex width="100%" direction="row" justify="between">
+          <TwitterShareButton url={shareUrl}>
+            <button className="icon-button small">
+              <XIcon round size={32} />
+            </button>
+          </TwitterShareButton>
+          <TelegramShareButton url={shareUrl}>
+            <button className="icon-button small">
+              <TelegramIcon round size={32} />
+            </button>
+          </TelegramShareButton>
+          {isMobileDevice() ? (
+            <a href={`sms:?body=Check out my Moonshot at ${shareUrl}`}>
+              <IconButton icon="message" size="small" className="bg-violet" />
+            </a>
+          ) : (
+            <IconButton
+              icon="message"
+              size="small"
+              className="bg-violet"
+              onClick={shareMessage}
+            />
           )}
-          <Flex width="100%" direction="row" justify="between">
-            <TwitterShareButton url={shareUrl}>
-              <button className="icon-button small">
-                <XIcon round size={32} />
-              </button>
-            </TwitterShareButton>
-            <TelegramShareButton url={shareUrl}>
-              <button className="icon-button small">
-                <TelegramIcon round size={32} />
-              </button>
-            </TelegramShareButton>
-            {isMobileDevice() ? (
-              <a href={`sms:?body=Check out my Moonshot at ${shareUrl}`}>
-                <IconButton icon="message" size="small" className="bg-violet" />
-              </a>
-            ) : (
+          {imageUrl && (
+            <a id="moonshot-image">
               <IconButton
-                icon="message"
+                icon="fileDownload"
                 size="small"
-                className="bg-violet"
-                onClick={shareMessage}
+                className="bg-orange"
+                onClick={downloadImage}
               />
-            )}
-            {imageUrl && (
-              <a id="moonshot-image">
-                <IconButton
-                  icon="fileDownload"
-                  size="small"
-                  className="bg-orange"
-                  onClick={downloadImage}
-                />
-              </a>
-            )}
-          </Flex>
+            </a>
+          )}
         </Flex>
-      </Dialog.Content>
-    </Dialog.Root>
+      </Flex>
+    </Dialog.Content>
   );
 };
