@@ -7,36 +7,37 @@ import {
   LinearScale,
   PointElement
 } from 'chart.js';
-import { AreaData, ColorType, Time, createChart } from 'lightweight-charts';
-import { useEffect, useRef } from 'react';
+import {
+  AreaData,
+  ColorType,
+  ISeriesApi,
+  Time,
+  createChart
+} from 'lightweight-charts';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 ChartJS.register(Filler);
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 interface CultureChartProps {
-  data: Array<{ time: number; value: number }>;
+  data: Array<{ time: number; value: number[] }>;
   tokenDecimals: number;
-  setBeforeTimestamp: (timestamp: number) => void;
+  loadMoreBars: () => void;
 }
 
 export const CultureChart = ({
   data,
   tokenDecimals,
-  setBeforeTimestamp
+  loadMoreBars
 }: CultureChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
-
-  const uniqueData = data.filter((item, index) => {
-    return data.indexOf(item) == index;
-  });
-
-  const orderedData = uniqueData.sort((a, b) => {
-    return a.time - b.time;
-  });
+  const [lineSeries, setLineSeries] = useState<any>(null);
+  const [chart, setChart] = useState<any>(null);
 
   useEffect(() => {
-    if (!chartContainerRef.current || !data) return;
+    if (!chartContainerRef.current) return;
+
     const chart = createChart(chartContainerRef.current, {
       width: chartContainerRef.current.clientWidth,
       height: 200,
@@ -71,20 +72,33 @@ export const CultureChart = ({
       }
     });
 
-    lineSeries.setData(orderedData as unknown as AreaData<Time>[]);
-
-    chart
-      .timeScale()
-      .subscribeVisibleLogicalRangeChange((logicalRange: any) => {
-        if (logicalRange.from < 10) {
-          setTimeout(() => {
-            setBeforeTimestamp(orderedData[0].time);
-          }, 500);
-        }
-      });
+    setLineSeries(lineSeries);
+    setChart(chart);
 
     return () => chart.remove();
-  }, [data]);
+  }, []);
+
+  useEffect(() => {
+    if (chart) {
+      chart
+        .timeScale()
+        .subscribeVisibleLogicalRangeChange(
+          (logicalRange: { from: number }) => {
+            if (logicalRange.from < 50) {
+              loadMoreBars();
+            }
+          }
+        );
+    }
+  }, [chart, loadMoreBars]);
+
+  useEffect(() => {
+    if (!lineSeries || !data.length) return;
+
+    if (data.length) {
+      lineSeries.setData(data as unknown as AreaData<Time>[]);
+    }
+  }, [data, lineSeries]);
 
   return <div ref={chartContainerRef} style={{ width: '100%' }}></div>;
 };

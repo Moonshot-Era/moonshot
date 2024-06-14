@@ -26,7 +26,7 @@ export const useOhlcv = (
 ) => {
   const { data, ...rest } = useInfiniteQuery({
     initialPageParam: 1,
-    queryKey: ['ohlcv', poolAddress],
+    queryKey: ['ohlcv', timeFrame, aggregateParam],
     enabled: !!poolAddress,
     queryFn: () => {
       return fetchOhlcv(poolAddress!, timeFrame, aggregateParam, beforeTimestamp);
@@ -39,5 +39,15 @@ export const useOhlcv = (
     refetchOnMount: false,
   });
 
-  return { ohlcv: data?.pages?.flat(), ...rest };
+  return {
+    ohlcv: data?.pages?.flat()
+      .map((page) => page?.attributes?.ohlcv_list)
+      .flat()
+      .filter(val => val)
+      .map((item: Array<number[]>) => ({
+        time: +item[0],
+        value: item[4]
+      })),
+    ...rest
+  };
 };

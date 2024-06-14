@@ -5,7 +5,7 @@ import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   formatCashNumber,
@@ -42,8 +42,9 @@ export const CultureItem = ({
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const [beforeTimestamp, setBeforeTimestamp] = useState<number | undefined>();
   const {
-    ohlcv,
-    isLoading: ohlcvLoading,
+    ohlcv = [],
+    isFetching: ohlcvLoading,
+    isFetchingNextPage: ohlcvLoadingNextPage,
     refetch,
     fetchNextPage
   } = useOhlcv(
@@ -54,24 +55,14 @@ export const CultureItem = ({
   );
 
   useEffect(() => {
-    refetch();
-  }, [timeFrame]);
-
-  useEffect(() => {
     if (beforeTimestamp) {
       fetchNextPage();
     }
   }, [beforeTimestamp]);
 
-  const chartData: { time: number; value: number }[] | [] =
-    ohlcv
-      ?.map((page) => page.attributes.ohlcv_list)
-      .reverse()
-      .flat()
-      .map((item: Array<number[]>) => ({
-        time: +item[0],
-        value: item[4]
-      })) || [];
+  useEffect(() => {
+    refetch();
+  }, [timeFrame]);
 
   const asset = portfolio?.walletAssets?.find((item) =>
     isSolanaAddress(item?.address)
@@ -81,8 +72,21 @@ export const CultureItem = ({
 
   const handleChangeTimeFrame = (value: string) => {
     const [aggregateValue, timeFrameValue] = value.split('-');
+    setBeforeTimestamp(undefined);
     setTimeFrame({ aggregate: aggregateValue, time: timeFrameValue });
   };
+
+  const chartData: { time: number; value: number[] }[] | [] = ohlcv
+    .filter((item, index) => {
+      return ohlcv.indexOf(item) == index;
+    })
+    .sort((a, b) => {
+      return a.time - b.time;
+    });
+
+  const loadMoreBars = useCallback(() => {
+    setBeforeTimestamp(chartData[0].time);
+  }, [chartData]);
 
   return tokenInfo ? (
     <>
@@ -159,13 +163,14 @@ export const CultureItem = ({
               </ToggleGroup.Item>
             </ToggleGroup.Root>
             <Flex height="200px" justify="center" align="center">
-              {ohlcvLoading ? (
+              {ohlcvLoading && !ohlcvLoadingNextPage ? (
                 <Spinner />
               ) : (
                 <CultureChart
+                  key={`${timeFrame.aggregate}-${timeFrame.time}`}
                   data={chartData}
                   tokenDecimals={tokenData?.decimals || 0}
-                  setBeforeTimestamp={setBeforeTimestamp}
+                  loadMoreBars={loadMoreBars}
                 />
               )}
             </Flex>
