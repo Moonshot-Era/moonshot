@@ -83,6 +83,7 @@ export const CultureItem = ({
         justify="start"
         width="100%"
         className="main-wrapper explore-wrapper"
+        pr="2"
       >
         <Flex direction="column" width="100%" gap="4">
           <Flex
