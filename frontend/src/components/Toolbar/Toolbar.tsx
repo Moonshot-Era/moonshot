@@ -1,6 +1,6 @@
 'use client';
 
-import { Flex, Text } from '@radix-ui/themes';
+import { Dialog, Flex, Text } from '@radix-ui/themes';
 import { MutableRefObject, useRef, useState } from 'react';
 
 import { useWidth } from '@/hooks/useWidth';
@@ -15,20 +15,21 @@ interface ToolbarProps {
   portfolio: WalletPortfolioNormilizedType;
   withShare?: boolean;
   tokenPrice?: number;
-  hasWalletAddress?: boolean;
+  hideWithdraw?: boolean;
 }
 
 export const Toolbar = ({
   withShare,
   portfolio,
   tokenPrice,
-  hasWalletAddress
+  hideWithdraw
 }: ToolbarProps) => {
   const { mdScreen } = useWidth();
 
   const convertDrawerRef: MutableRefObject<null> = useRef(null);
   const [isDepositOpen, setIsDepositOpen] = useState(false);
   const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
   const toggleDepositDrawer = () => setIsDepositOpen(!isDepositOpen);
   const toggleWithdrawDrawer = () => setIsWithdrawOpen(!isWithdrawOpen);
@@ -51,10 +52,12 @@ export const Toolbar = ({
         width="100%"
         maxWidth="390px"
         direction="row"
-        justify={portfolio?.totalUsd ? 'between' : 'center'}
         gap="2"
-        mb="8"
+        my="4"
         px={withShare ? '5' : '7'}
+        style={{
+          justifyContent: 'space-around'
+        }}
       >
         <Flex direction="column" align="center" gap="1">
           <IconButton
@@ -73,7 +76,7 @@ export const Toolbar = ({
           />
           <Text size={mdScreen ? '4' : '2'}>Deposit</Text>
         </Flex>
-        {hasWalletAddress && (
+        {!hideWithdraw && (
           <Flex direction="column" align="center" gap="1">
             <IconButton
               icon="withdraw"
@@ -84,7 +87,15 @@ export const Toolbar = ({
           </Flex>
         )}
         {withShare && tokenPrice ? (
-          <ShareModal tokenPrice={tokenPrice} />
+          <Dialog.Root open={isShareOpen} onOpenChange={setIsShareOpen}>
+            <Dialog.Trigger>
+              <Flex direction="column" align="center" gap="1">
+                <IconButton icon="share" className="bg-blue" />
+                <Text size={mdScreen ? '4' : '2'}>Share</Text>
+              </Flex>
+            </Dialog.Trigger>
+            {isShareOpen && <ShareModal tokenPrice={tokenPrice} />}
+          </Dialog.Root>
         ) : null}
       </Flex>
     </>

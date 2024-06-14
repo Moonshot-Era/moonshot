@@ -45,8 +45,7 @@ export const CultureChart = ({
         background: {
           type: ColorType.Solid,
           color: '#fff'
-        },
-        textColor: ' rgba(0, 0, 0, 0) '
+        }
       },
 
       grid: {
@@ -56,6 +55,20 @@ export const CultureChart = ({
         horzLines: {
           visible: false
         }
+      },
+      localization: {
+        locale: 'en-US',
+        priceFormatter: (price: number) => {
+          if (price < 0.000001) {
+            return price.toExponential(1);
+          } else {
+            return formatNumberToUsd(Math.abs(tokenDecimals)).format(+price);
+          }
+        }
+      },
+      timeScale: {
+        timeVisible: true,
+        secondsVisible: true
       }
     });
 
@@ -65,9 +78,14 @@ export const CultureChart = ({
       topColor: 'rgba(190,255,108,1)',
       bottomColor: 'rgba(190,255,108,0)',
       priceFormat: {
-        type: 'custom',
-        formatter: (price: string) => {
-          return formatNumberToUsd(Math.abs(tokenDecimals / 2)).format(+price);
+        minMove: 0.00000001,
+        precision: 10,
+        formatter: (price: number) => {
+          if (price < 0.000001) {
+            return price.toExponential(1);
+          } else {
+            return formatNumberToUsd(Math.abs(tokenDecimals)).format(+price);
+          }
         }
       }
     });

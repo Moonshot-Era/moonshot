@@ -1,19 +1,21 @@
 import { createServerClient } from '@/supabase/server';
-import fs from 'fs/promises';
 import sharp from 'sharp';
 
 export const uploadAvatarImage = async (imageFile: File) => {
   try {
     const supabaseServerClient = createServerClient();
-    const convertedFilePath = await convertToJPG(imageFile);
-    const convertedFile = await fs.readFile(convertedFilePath);
+    const convertedFile = await convertToJPG(imageFile);
 
     const { data } = await supabaseServerClient.storage
       .from('moonshot_storage')
-      .upload(`user_avatar/${imageFile.name}`, convertedFile, {
-        cacheControl: '3600',
-        upsert: true
-      });
+      .upload(
+        `user_avatar/${imageFile.name.split('.')[0] + '.jpg'}`,
+        convertedFile,
+        {
+          cacheControl: '3600',
+          upsert: true
+        }
+      );
 
     const avatarPath = data?.path;
     if (!avatarPath) {
@@ -42,10 +44,8 @@ const convertToJPG = async (file: File) => {
   try {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-
-    const outputPath = 'avatar.jpeg';
-    await sharp(buffer).jpeg().toFile(outputPath);
-    return outputPath;
+    const jpegBuffer = await sharp(buffer).jpeg().toBuffer();
+    return jpegBuffer;
   } catch (err) {
     console.error('Error during conversion:', err);
     throw new Error('Error during conversion:' + err);

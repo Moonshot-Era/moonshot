@@ -37,8 +37,10 @@ export const CultureItem = ({
 }) => {
   const { mdScreen } = useWidth();
   const router = useRouter();
-  const { walletData } = useWallet();
-  const { portfolio } = usePortfolio(walletData?.wallet);
+  const { walletData, isFetching } = useWallet();
+  const { portfolio, refetch: refetchPortfolio } = usePortfolio(
+    walletData?.wallet
+  );
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const [beforeTimestamp, setBeforeTimestamp] = useState<number | undefined>();
   const {
@@ -63,6 +65,12 @@ export const CultureItem = ({
   useEffect(() => {
     refetch();
   }, [timeFrame]);
+
+  useEffect(() => {
+    if (walletData && !portfolio) {
+      refetchPortfolio();
+    }
+  }, [portfolio, refetchPortfolio, walletData]);
 
   const asset = portfolio?.walletAssets?.find((item) =>
     isSolanaAddress(item?.address)
@@ -96,6 +104,7 @@ export const CultureItem = ({
         justify="start"
         width="100%"
         className="main-wrapper explore-wrapper"
+        pr="2"
       >
         <Flex direction="column" width="100%" gap="4">
           <Flex
@@ -175,12 +184,18 @@ export const CultureItem = ({
               )}
             </Flex>
           </Flex>
-          <Toolbar
-            portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
-            withShare
-            tokenPrice={+tokenData.price_usd}
-            hasWalletAddress={!!walletData?.wallet}
-          />
+          {!isFetching ? (
+            <Toolbar
+              portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
+              withShare
+              tokenPrice={+tokenData.price_usd}
+              hideWithdraw={!asset}
+            />
+          ) : (
+            <Flex align="center" justify="center" width="100%">
+              <Spinner size="3" />
+            </Flex>
+          )}
 
           {asset && (
             <Flex

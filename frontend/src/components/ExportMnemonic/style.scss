@@ -7,13 +7,17 @@
 }
 
 .export-mnemonic-card-text {
-  font-size: 10px;
+    -moz-user-select: all;
+    -khtml-user-select: all;
+    -webkit-user-select: all;
+    -ms-user-select: all;
+    user-select: all;
 }
 
 .export-mnemonic-button {
   max-width: fit-content;
   background-color: $orange;
-  padding: 8px 12px;
+  padding: 8px 20px;
   box-shadow: $shadow-2;
   margin-bottom: 36px;
   &:active {
