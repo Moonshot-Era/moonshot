@@ -3,18 +3,15 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
-import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import {
-  convertToInteger,
-  convertToReadable
-} from '@/helpers/convertAmountToInt';
+import { convertToInteger } from '@/helpers/convertAmountToInt';
 import { Icon, Select, SlideButton, TokenNumberInput } from '@/legos';
 
 import { SelectedTokens } from './types';
 import { useSwapMutation, useSwapRoutes } from './hooks';
 import './style.scss';
 import { snackbar } from '@/helpers/snackbar';
-import { formatNumberToUsFormat, formatNumberToUsd } from '@/helpers/helpers';
+import { formatNumberToUsFormat } from '@/helpers/helpers';
+import { useLogout } from '@/hooks';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
@@ -33,6 +30,8 @@ export const ConvertForm = memo(
     const [amount, setAmount] = useState<number | string>(0.001);
     const btnRef = useRef();
     const [isValidAmount, setIsValidAmount] = useState(true);
+    const logout = useLogout();
+
     const label =
       selectedTokens?.from && selectedTokens?.to
         ? `
@@ -57,49 +56,67 @@ export const ConvertForm = memo(
     const mutation = useSwapMutation();
 
     useEffect(() => {
-      if (mutation.isSuccess) {
-        snackbar('success', `Finished converting!`);
-        closeDrawer();
-      }
-    }, [closeDrawer, mutation.isSuccess]);
-
-    useEffect(() => {
       if (mutation.isError) {
-        snackbar('error', `Something went wrong, please try again.`);
-        //@ts-ignore
-        btnRef.current?.resetSlide();
       }
     }, [mutation.isError]);
 
     const handleSwapSubmit = () => {
       toast.promise(
-        mutation.mutateAsync(
-          //@ts-ignore
-          {
-            swapRoutes,
-            feeData: {
-              fromAddress: walletAddress,
-              amount,
-              tokenAddress: selectedTokens?.from?.address,
-              tokenDecimals: selectedTokens?.from?.decimals
+        mutation
+          .mutateAsync(
+            //@ts-ignore
+            {
+              swapRoutes,
+              feeData: {
+                fromAddress: walletAddress,
+                amount,
+                tokenAddress: selectedTokens?.from?.address,
+                tokenDecimals: selectedTokens?.from?.decimals
+              }
             }
-          }
-        ),
+          )
+          .then((res) => {
+            console.log(res);
+            if (res?.data?.error?.statusText === 'Forbidden') {
+              logout();
+            }
+            if (res?.data?.error?.statusText) {
+              snackbar('error', res?.data?.error?.statusText);
+            }
+            if (res?.data?.txid) {
+              snackbar('success', `Finished converting!`);
+              closeDrawer();
+            }
+          })
+          .catch((err) => {
+            snackbar(
+              'error',
+              err?.message || `Something went wrong, please try again.`
+            );
+            //@ts-ignore
+            btnRef.current?.resetSlide();
+          })
+          //@ts-ignore
+          .finally(() => btnRef.current?.resetSlide()),
         {
-          loading: `Converting ${amount} ${
-            selectedTokens?.from?.symbol
-          } into ${convertToReadable(
+          loading: `Converting ${amount} ${selectedTokens?.from?.name} into ${
             // @ts-ignore
-            swapRoutes?.outAmount,
-            selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
-          )} ${selectedTokens?.to?.included?.attributes.symbol}`,
+            formatNumberToUsFormat(
+              selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
+            ).format(
+              // @ts-ignore
+              swapRoutes.outAmount /
+                (10 **
+                  (selectedTokens?.to?.tokenOverview?.attributes?.decimals ||
+                    0) || 1)
+            )
+          } ${selectedTokens?.to?.included?.attributes.name}`,
           dismissible: true,
           className: 'snackbar-promise',
           position: 'top-center'
         }
       );
     };
-    console.log('debug > swapRoutes===', swapRoutes);
 
     return (
       <Flex
@@ -187,8 +204,9 @@ export const ConvertForm = memo(
                   ).format(
                     // @ts-ignore
                     swapRoutes.outAmount /
-                      (selectedTokens?.to?.tokenOverview?.attributes
-                        ?.decimals || 1)
+                      (10 **
+                        (selectedTokens?.to?.tokenOverview?.attributes
+                          ?.decimals || 0) || 1)
                   )
                 : swapRoutes}
             </Text>
@@ -198,7 +216,7 @@ export const ConvertForm = memo(
             mode="btn"
             onClick={() => changeSelected('to')}
             defaultValue={2}
-            value={selectedTokens?.to?.included?.attributes.symbol}
+            value={selectedTokens?.to?.included?.attributes.name}
           />
         </Flex>
         {selectedTokens.from && selectedTokens.to && (
