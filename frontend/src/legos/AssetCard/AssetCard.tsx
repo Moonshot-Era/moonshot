@@ -45,7 +45,7 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
         </Flex>
         <Flex direction="column" justify="between" ml="2" my="1">
           <Text size={mdScreen ? '4' : '3'} weight="medium">
-            {asset?.name}
+            {asset?.symbol}
           </Text>
           <Text size={mdScreen ? '3' : '1'} weight="regular">
             {asset?.uiAmount} {asset?.symbol}

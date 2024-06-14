@@ -85,20 +85,15 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       )?.attributes;
 
       const solana_percentage_change_h24 = tokensListGecko?.included?.find(
-        (included: PoolGeckoType) =>
-          included?.relationships?.base_token?.data?.id ===
-            `solana_${SOLANA_WRAPPED_ADDRESS}` ||
-          included?.relationships?.quote_token?.data?.id ===
-            `solana_${SOLANA_WRAPPED_ADDRESS}`
+        (included: PoolGeckoType) => included?.attributes?.name === 'SOL / USDC'
       )?.attributes?.price_change_percentage?.h24;
-
       if (result?.nativeBalance?.lamports) {
         walletPortfolioNormalized.push({
           address: solanaToken?.address,
           balance:
             result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
           decimals: solanaToken?.decimals,
-          name: 'SOLANA / SOL',
+          name: 'SOLANA',
           priceUsd: result?.nativeBalance?.price_per_sol,
           symbol: 'SOL',
           uiAmount:
