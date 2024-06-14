@@ -15,14 +15,14 @@ interface ToolbarProps {
   portfolio: WalletPortfolioNormilizedType;
   withShare?: boolean;
   tokenPrice?: number;
-  hasWalletAddress?: boolean;
+  hideWithdraw?: boolean;
 }
 
 export const Toolbar = ({
   withShare,
   portfolio,
   tokenPrice,
-  hasWalletAddress
+  hideWithdraw
 }: ToolbarProps) => {
   const { mdScreen } = useWidth();
 
@@ -52,10 +52,12 @@ export const Toolbar = ({
         width="100%"
         maxWidth="390px"
         direction="row"
-        justify={portfolio?.totalUsd ? 'between' : 'center'}
         gap="2"
-        mb="8"
+        my="4"
         px={withShare ? '5' : '7'}
+        style={{
+          justifyContent: 'space-around'
+        }}
       >
         <Flex direction="column" align="center" gap="1">
           <IconButton
@@ -74,7 +76,7 @@ export const Toolbar = ({
           />
           <Text size={mdScreen ? '4' : '2'}>Deposit</Text>
         </Flex>
-        {hasWalletAddress && (
+        {!hideWithdraw && (
           <Flex direction="column" align="center" gap="1">
             <IconButton
               icon="withdraw"

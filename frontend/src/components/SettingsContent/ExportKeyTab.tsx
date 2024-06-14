@@ -132,16 +132,13 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   useEffect(() => {
     if (
       exportDelay &&
-      //TODO change to new Date()
-      exportDelay < addDays(new Date(), EXPORT_DELAY_DAYS) &&
+      exportDelay < new Date() &&
       exportWindow &&
-      //TODO change to new Date()
-      exportWindow < addDays(new Date(), EXPORT_WINDOW_DAYS)
+      exportWindow < new Date()
     ) {
       getMnemonic().finally(() => setLoading(false));
     }
   }, [exportDelay, exportWindow, getMnemonic]);
-
   return (
     <Flex
       width="100%"
@@ -171,7 +168,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
         </Box>
       </Flex>
       {loading && <Spinner size="3" />}
-      {!loading && !exportDelay && !exportWindow && (
+      {!loading && !mnemonic && !exportDelay && !exportWindow && (
         <>
           <Flex
             width="100%"
@@ -249,11 +246,9 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
           </Button>
         </>
       )}
-      {!loading &&
-        exportDelay &&
-        exportDelay > addDays(new Date(), EXPORT_DELAY_DAYS) && (
-          <ExportRemaining delayRemaining={exportDelay} />
-        )}
+      {!loading && exportDelay && exportDelay > new Date() && (
+        <ExportRemaining delayRemaining={exportDelay} />
+      )}
       {!loading && mnemonic && <ExportMnemonic mnemonic={mnemonic} />}
     </Flex>
   );

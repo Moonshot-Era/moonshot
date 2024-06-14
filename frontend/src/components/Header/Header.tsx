@@ -46,7 +46,9 @@ export const Header = ({ isPublic }: { isPublic?: boolean }) => {
               <Link href="/explore">
                 <NavButton
                   className={`${mdScreen ? 'h-14' : 'h-10'} ${
-                    pathname === '/explore' ? 'nav-button-active' : ''
+                    pathname === '/explore' || pathname.includes('/culture')
+                      ? 'nav-button-active'
+                      : ''
                   }`}
                 >
                   <div>

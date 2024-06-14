@@ -1,5 +1,4 @@
 import { FC } from 'react';
-import axios from 'axios';
 import { Flex, Text } from '@radix-ui/themes';
 
 import { useWidth } from '@/hooks/useWidth';
@@ -11,20 +10,20 @@ interface Props {
 }
 
 const getDelayLabel = (delayRemaining: Date) => {
-  if (new Date(delayRemaining).getDay() > new Date().getDay()) {
-    return `${new Date(delayRemaining).getDay() - new Date().getDay()} ${
-      new Date(delayRemaining).getHours() > 1 ? 'days' : 'day'
+  if (delayRemaining.getDate() > new Date().getDate()) {
+    return `${delayRemaining.getDate() - new Date().getDate()} ${
+      delayRemaining.getDate() > 1 ? 'days' : 'day'
     }`;
   }
-  if (new Date(delayRemaining).getHours() > new Date().getHours()) {
-    return `${new Date(delayRemaining).getHours() - new Date().getHours()} ${
-      new Date(delayRemaining).getHours() > 1 ? 'hours' : 'hour'
+  if (delayRemaining.getHours() > new Date().getHours()) {
+    return `${delayRemaining.getHours() - new Date().getHours()} ${
+      delayRemaining.getHours() > 1 ? 'hours' : 'hour'
     }`;
   }
-  if (new Date(delayRemaining).getMinutes() > new Date().getMinutes()) {
-    return `${
-      new Date(delayRemaining).getMinutes() - new Date().getMinutes()
-    } ${new Date(delayRemaining).getMinutes() > 1 ? 'minutes' : 'minute'}`;
+  if (delayRemaining.getMinutes() > new Date().getMinutes()) {
+    return `${delayRemaining.getMinutes() - new Date().getMinutes()} ${
+      delayRemaining.getMinutes() > 1 ? 'minutes' : 'minute'
+    }`;
   }
 };
 

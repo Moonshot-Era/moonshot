@@ -186,7 +186,9 @@ export const ConvertForm = memo(
                     selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
                   ).format(
                     // @ts-ignore
-                    swapRoutes.outAmount / LAMPORTS_PER_SOL
+                    swapRoutes.outAmount /
+                      (selectedTokens?.to?.tokenOverview?.attributes
+                        ?.decimals || 1)
                   )
                 : swapRoutes}
             </Text>
