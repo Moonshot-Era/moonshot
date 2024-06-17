@@ -58,22 +58,11 @@ export const ExploreContent = () => {
   };
 
   const debouncedSearchPools = useCallback(
-    debounce(async (searchQuery, refetchQuery = false) => {
-      if (refetchQuery) {
-        scrollerRef?.current?.scroll({ top: 0, behavior: 'smooth' });
-        await searchRefetch(searchQuery);
-      } else {
-        await searchFetchNextPage(searchQuery);
-      }
+    debounce(async (searchQuery) => {
+      await searchFetchNextPage(searchQuery);
     }, 300),
     [searchFetchNextPage]
   );
-
-  useEffect(() => {
-    if (search) {
-      debouncedSearchPools(search, true);
-    }
-  }, [search]);
 
   const debouncedFetchNextPage = useCallback(
     debounce(async () => {
@@ -174,20 +163,24 @@ export const ExploreContent = () => {
             )
           )}
           {search && searchPools?.length
-            ? searchPools?.map((pool) => (
-                <TokenCard
-                  key={pool?.id}
-                  token={pool}
-                  onClick={() => handleGoToDetails(pool)}
-                />
-              ))
-            : poolsList?.map((pool) => (
-                <TokenCard
-                  key={pool?.id}
-                  token={pool}
-                  onClick={() => handleGoToDetails(pool)}
-                />
-              ))}
+            ? searchPools?.map((pool) =>
+                pool?.id ? (
+                  <TokenCard
+                    key={pool?.id}
+                    token={pool}
+                    onClick={() => handleGoToDetails(pool)}
+                  />
+                ) : null
+              )
+            : poolsList?.map((pool) =>
+                pool?.id ? (
+                  <TokenCard
+                    key={pool?.id}
+                    token={pool}
+                    onClick={() => handleGoToDetails(pool)}
+                  />
+                ) : null
+              )}
           {(isFetchingNextPage || isFetching) && (
             <Flex
               className="sticky-spinner"
