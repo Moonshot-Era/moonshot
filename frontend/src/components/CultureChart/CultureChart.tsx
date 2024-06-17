@@ -7,14 +7,16 @@ import {
   LinearScale,
   PointElement
 } from 'chart.js';
+import { format } from 'date-fns';
 import {
   AreaData,
   ColorType,
-  ISeriesApi,
+  CrosshairMode,
   Time,
   createChart
 } from 'lightweight-charts';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import './style.scss';
 
 ChartJS.register(Filler);
 
@@ -32,6 +34,7 @@ export const CultureChart = ({
   loadMoreBars
 }: CultureChartProps) => {
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   const [lineSeries, setLineSeries] = useState<any>(null);
   const [chart, setChart] = useState<any>(null);
 
@@ -68,7 +71,22 @@ export const CultureChart = ({
       },
       timeScale: {
         timeVisible: true,
-        secondsVisible: true
+        secondsVisible: true,
+        ticksVisible: true,
+        rightOffset: 0,
+        barSpacing: 10
+      },
+      rightPriceScale: {
+        visible: false
+      },
+      crosshair: {
+        mode: CrosshairMode.Normal,
+        vertLine: {
+          labelVisible: false
+        },
+        horzLine: {
+          labelVisible: false
+        }
       }
     });
 
@@ -87,7 +105,9 @@ export const CultureChart = ({
             return formatNumberToUsd(Math.abs(tokenDecimals)).format(+price);
           }
         }
-      }
+      },
+      priceLineVisible: false,
+      crosshairMarkerVisible: false
     });
 
     setLineSeries(lineSeries);
@@ -118,5 +138,43 @@ export const CultureChart = ({
     }
   }, [data, lineSeries]);
 
-  return <div ref={chartContainerRef} style={{ width: '100%' }}></div>;
+  useEffect(() => {
+    if (!chart || !tooltipRef.current) return;
+
+    const tooltip = tooltipRef.current;
+    const handleCrosshairMove = (param: any) => {
+      if (!param || !param.time || !param.seriesData) {
+        tooltip.style.display = 'none';
+        return;
+      }
+
+      const price = param.seriesData.get(lineSeries);
+      if (!price || !param.sourceEvent || !chartContainerRef.current) {
+        tooltip.style.display = 'none';
+        return;
+      }
+
+      tooltip.style.display = 'block';
+      tooltip.style.left = `${param.point.x}px`;
+      tooltip.style.top = `${param.point.y}px`;
+      tooltip.innerHTML = `<div>Price: ${price.value.toFixed(
+        4
+      )}</div><div>Time: ${format(
+        new Date(param.time * 1000),
+        'P hh:mm:ss'
+      )}</div>`;
+    };
+
+    chart.subscribeCrosshairMove(handleCrosshairMove);
+
+    return () => {
+      chart.unsubscribeCrosshairMove(handleCrosshairMove);
+    };
+  }, [chart, lineSeries]);
+
+  return (
+    <div ref={chartContainerRef} className="chart">
+      <div ref={tooltipRef} className="charTooltip"></div>
+    </div>
+  );
 };
