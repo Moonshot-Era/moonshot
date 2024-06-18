@@ -33,23 +33,24 @@ export async function GET(request: Request) {
     const supabaseServerClient = createServerClient();
     const {
       data: { user },
-      error
+      error: signInWithIdTokenError
     } = await supabaseServerClient.auth.signInWithIdToken({
       provider: 'google',
       token: googleAuthResponse.id_token
     });
 
-    if (error) {
-      throw error;
+    if (signInWithIdTokenError) {
+      throw signInWithIdTokenError;
     }
 
     if (user) {
       if (cultureRef) {
-        const { error } = await supabaseServerClient.rpc('insert_culture_ref', {
-          culture_ref: cultureRef
-        });
-        if (error) {
-          throw error;
+        const { error: rpcInsertCultureRefError } =
+          await supabaseServerClient.rpc('insert_culture_ref', {
+            culture_ref: cultureRef
+          });
+        if (rpcInsertCultureRefError) {
+          throw rpcInsertCultureRefError;
         }
       }
 

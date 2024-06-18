@@ -7,7 +7,6 @@ import { Flex, Text } from '@radix-ui/themes';
 import { Button, Icon } from '@/legos';
 import { useWidth } from '@/hooks/useWidth';
 import { QUERY_PARAM_CULTURE_REF } from '@/utils';
-import { SplashScreen } from '../SplashScreen/SplashScreen';
 import cubistLogo from '../../assets/images/cubist_logo.svg';
 
 interface Props {
@@ -26,9 +25,16 @@ export const LoginContent = ({ cultureRef }: Props) => {
     );
   };
 
+  const handleTwitterLogin = () => {
+    router.push(
+      `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/twitter?${
+        cultureRef ? `${QUERY_PARAM_CULTURE_REF}=${cultureRef}` : ''
+      }`
+    );
+  };
+
   return (
     <>
-      <SplashScreen />
       <Flex
         className="main-wrapper"
         height="100vh"
@@ -61,6 +67,14 @@ export const LoginContent = ({ cultureRef }: Props) => {
               <Icon icon="google" width={16} />
               <Text size={mdScreen ? '4' : '2'} weight="medium">
                 Sign in with Google
+              </Text>
+            </Button>
+          </Flex>
+          <Flex direction="column" gap="4" width="100%">
+            <Button className="bg-white" onClick={handleTwitterLogin}>
+              <Icon icon="twitter" width={16} />
+              <Text size={mdScreen ? '4' : '2'} weight="medium">
+                Sign in with Twitter
               </Text>
             </Button>
           </Flex>

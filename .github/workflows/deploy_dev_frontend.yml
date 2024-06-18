@@ -25,12 +25,18 @@ env:
   SOLANA_RPC_PROVIDER: ${{ secrets.SOLANA_RPC_PROVIDER }}
 
   TWITTER_AUTH_REDIRECT_URL: ${{ secrets.TWITTER_AUTH_REDIRECT_URL_DEV }}
+  TWITTER_CLIENT_ID: ${{ secrets.TWITTER_CLIENT_ID }}
 
   JUPITER_URL: ${{ secrets.JUPITER_URL }}
 
   HELIUS_URL_API: ${{ secrets.HELIUS_URL_API }}
   HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
   HELIUS_XYZ_URL_API: ${{ secrets.HELIUS_XYZ_URL_API }}
+
+  CUBE_SIGNER_URL: ${{ secrets.CUBE_SIGNER_URL_DEV }}
+  CUBE_SIGNER_ORG_ID: ${{  secrets.CUBE_SIGNER_ORG_ID_DEV}}
+
+  PASSWORD_SECRET: ${{ secrets.PASSWORD_SECRET }}
 
 jobs:
   Update-server:

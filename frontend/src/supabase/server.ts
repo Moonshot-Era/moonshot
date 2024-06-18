@@ -1,6 +1,6 @@
 import {
   createServerClient as createClient,
-  type CookieOptions,
+  type CookieOptions
 } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { Database } from './schema';
@@ -33,8 +33,8 @@ export const createServerClient = () => {
             // This can be ignored if you have middleware refreshing
             // user sessions.
           }
-        },
-      },
-    },
+        }
+      }
+    }
   );
 };

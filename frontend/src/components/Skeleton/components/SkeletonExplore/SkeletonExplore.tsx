@@ -11,8 +11,9 @@ export const SkeletonExplore = () => (
     direction="column"
     align="center"
     width="100%"
-    height="100vh"
+    overflow="hidden"
     className="main-wrapper"
+    pt="70px"
   >
     <Flex
       direction="row"

@@ -43,7 +43,7 @@ export const DepositItem = ({ walletAddress }: { walletAddress: string }) => {
       )}
       <Box className="deposit-info-card" py="2" px="4" mb="9">
         <Text size={mdScreen ? '3' : '1'} weight="medium">
-          Only deposit token from the Solana network. Deposits of other assets
+          Only deposit tokens from the Solana network. Deposits of other assets
           or from other networks will be lost.
         </Text>
       </Box>
