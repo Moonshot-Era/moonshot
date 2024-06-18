@@ -4,6 +4,8 @@ import { getMfaSecret } from '@/services/helpers/getMfaSecret';
 import { HEADER_PROVIDER, HEADER_PROVIDER_TOKEN, ROUTES } from '@/utils';
 import { ErrResponse } from '@cubist-labs/cubesigner-sdk';
 import { getResponseToRefreshToken } from '@/utils/getResponse';
+import { jwtDecode } from 'jwt-decode';
+import { createServerClient } from '@/supabase/server';
 
 export async function POST(request: NextRequest) {
   const token = request.headers.get(HEADER_PROVIDER_TOKEN);
@@ -16,7 +18,20 @@ export async function POST(request: NextRequest) {
 
     const totpSecret = await getMfaSecret();
 
-    const wallet = await getUserWallet(token, totpSecret || '');
+    const decodedToken = jwtDecode<{ email: string }>(token);
+    let email: string | undefined = decodedToken.email;
+
+    if (!email) {
+      const supabaseClient = await createServerClient();
+      const user = await supabaseClient.auth.getUser();
+      email = user.data.user?.email;
+    }
+
+    if (!email) {
+      throw Error('Email is missing');
+    }
+
+    const wallet = await getUserWallet(token, totpSecret || '', email);
 
     return NextResponse.json({ wallet });
   } catch (err: any) {

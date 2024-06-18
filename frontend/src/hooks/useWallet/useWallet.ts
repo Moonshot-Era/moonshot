@@ -18,6 +18,10 @@ export const useWallet = () => {
     queryKey: ['wallet', token],
     queryFn: async () => {
       try {
+        if (!token || !provider) {
+          throw Error('Token or provider is missing');
+        }
+
         const { data, config } = await fetchWallet({
           provider,
           token
