@@ -161,7 +161,7 @@ export const CultureChart = ({
         4
       )}</div><div>Time: ${format(
         new Date(param.time * 1000),
-        'P hh:mm:ss'
+        'P kk:mm:ss'
       )}</div>`;
     };
 
