@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ wallet });
   } catch (err: any) {
+    console.log('debug > err ==== ', err);
     if (
       (err as ErrResponse)?.errorCode === 'InvalidOidcToken' ||
       ((err as ErrResponse)?.statusText === 'Forbidden' &&
