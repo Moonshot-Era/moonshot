@@ -84,13 +84,16 @@ export const CultureItem = ({
     setTimeFrame({ aggregate: aggregateValue, time: timeFrameValue });
   };
 
-  const chartData: { time: number; value: number[] }[] | [] = ohlcv
-    .filter((item, index) => {
-      return ohlcv.indexOf(item) == index;
-    })
-    .sort((a, b) => {
-      return a.time - b.time;
-    });
+  const uniqueOhlcvValues = (arr: { time: number; value: number[] }[] | []) => {
+    const map = new Map(arr.map((obj) => [obj.time, obj]));
+    return [...map.values()];
+  };
+
+  const chartData: { time: number; value: number[] }[] | [] = uniqueOhlcvValues(
+    ohlcv
+  ).sort((a, b) => {
+    return a.time - b.time;
+  });
 
   const loadMoreBars = useCallback(() => {
     setBeforeTimestamp(chartData[0].time);
