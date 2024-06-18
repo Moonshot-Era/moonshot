@@ -59,15 +59,17 @@ export const Toolbar = ({
           justifyContent: 'space-around'
         }}
       >
-        <Flex direction="column" align="center" gap="1">
-          <IconButton
-            icon="transfer"
-            className="bg-yellow"
-            // @ts-ignore
-            onClick={() => convertDrawerRef.current?.open()}
-          />
-          <Text size={mdScreen ? '4' : '2'}>Convert</Text>
-        </Flex>
+        {!!portfolio?.walletAssets?.length && (
+          <Flex direction="column" align="center" gap="1">
+            <IconButton
+              icon="transfer"
+              className="bg-yellow"
+              // @ts-ignore
+              onClick={() => convertDrawerRef.current?.open()}
+            />
+            <Text size={mdScreen ? '4' : '2'}>Convert</Text>
+          </Flex>
+        )}
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="deposit"
@@ -76,16 +78,18 @@ export const Toolbar = ({
           />
           <Text size={mdScreen ? '4' : '2'}>Deposit</Text>
         </Flex>
-        {!hideWithdraw && (
-          <Flex direction="column" align="center" gap="1">
-            <IconButton
-              icon="withdraw"
-              className="bg-violet"
-              onClick={toggleWithdrawDrawer}
-            />
-            <Text size={mdScreen ? '4' : '2'}>Withdraw</Text>
-          </Flex>
-        )}
+        {!!portfolio?.walletAssets?.length
+          ? !hideWithdraw && (
+              <Flex direction="column" align="center" gap="1">
+                <IconButton
+                  icon="withdraw"
+                  className="bg-violet"
+                  onClick={toggleWithdrawDrawer}
+                />
+                <Text size={mdScreen ? '4' : '2'}>Withdraw</Text>
+              </Flex>
+            )
+          : null}
         {withShare && tokenPrice ? (
           <Dialog.Root open={isShareOpen} onOpenChange={setIsShareOpen}>
             <Dialog.Trigger>
