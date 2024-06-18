@@ -7,7 +7,7 @@ import {
   LinearScale,
   PointElement
 } from 'chart.js';
-import { format } from 'date-fns';
+import { format, subMinutes } from 'date-fns';
 import {
   AreaData,
   ColorType,
@@ -153,6 +153,7 @@ export const CultureChart = ({
         tooltip.style.display = 'none';
         return;
       }
+      const offsetMinutes = new Date(param.time * 1000).getTimezoneOffset();
 
       tooltip.style.display = 'block';
       tooltip.style.left = `${param.point.x}px`;
@@ -160,7 +161,7 @@ export const CultureChart = ({
       tooltip.innerHTML = `<div>Price: ${price.value.toFixed(
         4
       )}</div><div>Time: ${format(
-        new Date(param.time * 1000),
+        subMinutes(new Date(param.time * 1000), -1 * offsetMinutes),
         'P kk:mm:ss'
       )}</div>`;
     };
