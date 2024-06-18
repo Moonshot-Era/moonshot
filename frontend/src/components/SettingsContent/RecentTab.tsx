@@ -1,22 +1,19 @@
 'use client';
 
-import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
-import { format } from 'date-fns';
-import Image, { StaticImageData } from 'next/image';
-import { FC } from 'react';
-
 import {
   formatNumberToUsFormat,
   tokenAddressWithDots
 } from '@/helpers/helpers';
 import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
-import { Icon } from '@/legos';
 import { useWidth } from '@/hooks/useWidth';
+import { Icon } from '@/legos';
+import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
+import { format } from 'date-fns';
+import Image, { StaticImageData } from 'next/image';
+import { FC } from 'react';
 import solanaIcon from '../../assets/images/solana-icon.png';
-
 import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
 import './style.scss';
-import { useWallet } from '@/hooks';
 
 interface FormattedTransactionType {
   id?: string;
@@ -51,7 +48,14 @@ interface Props {
 export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
   const { mdScreen } = useWidth();
 
-  const { walletData } = useWallet();
+  // const { walletData } = useWallet();
+  const walletData = {
+    wallet: 'CNPdPrt1smECmRqFFhN9iZzDRV6BiqDVxQThgydsDT64'
+  };
+  // const walletData = {
+  //   wallet: 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh'
+  // };
+
   const { transactionsHistory, isFetching: transactionLoading } =
     useTransactionsHistory(walletData?.wallet);
 
@@ -75,26 +79,28 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
       )
       ?.flatMap((transaction) => {
         if (transaction.type === 'SWAP') {
+          const tokenAmountPattern =
+            /swapped (\d+\.?\d*) (\$\w+|\w+) for (\d+\.?\d*) (\$\w+|\w+)/;
+          const match = tokenAmountPattern.exec(transaction.description);
+          let amountSwapped = 0;
+          let tokenSwapped = '';
+          let amountReceived = 0;
+          let tokenReceived = '';
+
+          if (match) {
+            amountSwapped = parseFloat(match[1]);
+            tokenSwapped = match[2];
+            amountReceived = parseFloat(match[3]);
+            tokenReceived = match[4];
+          }
           return {
             id: transaction.signature,
             transactionType: 'Convert',
             tokenAmount: 0,
-            tokenAmountConvertFrom: Number(
-              transaction.events?.swap?.innerSwaps[0]?.tokenInputs[0]
-                ?.tokenAmount ||
-                transaction.events?.swap?.tokenInputs[0]?.rawTokenAmount
-                  .tokenAmount ||
-                0
-            ),
-            tokenAmountConvertTo: Number(
-              transaction.events?.swap?.innerSwaps[0]?.tokenOutputs[0]
-                ?.tokenAmount ||
-                transaction.events?.swap?.tokenOutputs[0]?.rawTokenAmount
-                  .tokenAmount ||
-                0
-            ),
-            tokenConvertFromSymbol: '',
-            tokenConvertToSymbol: '',
+            tokenAmountConvertFrom: amountSwapped,
+            tokenAmountConvertTo: amountReceived,
+            tokenConvertFromSymbol: tokenSwapped,
+            tokenConvertToSymbol: tokenReceived,
             transactionDate: transaction.timestamp * 1000,
             tokenConvertFromImage: '',
             tokenConvertToImage: ''
@@ -121,7 +127,7 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
             tokenName: name,
             mint: transaction.tokenTransfers[0].mint,
             transactionDate: transaction.timestamp * 1000,
-            imageUrl: ''
+            imageUrl: name === 'SOL' ? solanaIcon : ''
           };
         } else if (transaction.nativeTransfers.length > 0) {
           const transactionType = determineOperationType(
@@ -262,7 +268,7 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                                       ? formatNumberToUsFormat(9).format(
                                           amount / 10 ** 9
                                         )
-                                      : formatNumberToUsFormat().format(amount)
+                                      : formatNumberToUsFormat(3).format(amount)
                                   } ${tokenName}`
                                 : transactionType === 'Withdraw'
                                 ? `-${
@@ -270,16 +276,16 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                                       ? formatNumberToUsFormat(9).format(
                                           amount / 10 ** 9
                                         )
-                                      : formatNumberToUsFormat().format(amount)
+                                      : formatNumberToUsFormat(3).format(amount)
                                   } ${tokenName}`
-                                : `+${formatNumberToUsFormat().format(
+                                : `+${formatNumberToUsFormat(3).format(
                                     tokenAmountConvertFrom || 0
                                   )} ${tokenConvertFromSymbol}`}
                             </Text>
                             {transactionDate && (
                               <Text className="font-size-xs">
                                 {transactionType === 'Convert'
-                                  ? `-${formatNumberToUsFormat().format(
+                                  ? `-${formatNumberToUsFormat(3).format(
                                       tokenAmountConvertTo || 0
                                     )} ${tokenConvertToSymbol}`
                                   : format(transactionDate, 'hh:mm a')}
