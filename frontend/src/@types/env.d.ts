@@ -13,6 +13,7 @@ namespace NodeJS {
     TWITTER_SECRET: string;
     TWITTER_API_KEY: string;
     TWITTER_CLIENT_ID: string;
+    TWITTER_AUTH_REDIRECT_URL: string;
 
     GECKO_URL_API: string;
     GECKO_API_KEY: string;
@@ -23,5 +24,10 @@ namespace NodeJS {
     NEXT_PUBLIC_PROGRESSIER_ID: string;
     NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
     NEXT_PUBLIC_SUPABASE_URL: string;
+
+    CUBE_SIGNER_URL: string;
+    CUBE_SIGNER_ORG_ID: string;
+
+    PASSWORD_SECRET: string;
   }
 }
