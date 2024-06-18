@@ -24,7 +24,6 @@ class CubeSigner {
 
   async getUserSessionClient(oidcToken: string): Promise<CubeSignerClient> {
     const managerSessionClient = await this.getManagementSessionClient();
-    console.log('debug > managerSessionClient ==== ', managerSessionClient);
 
     const resp = await CubeSignerClient.createOidcSession(
       managerSessionClient.env,
@@ -39,15 +38,14 @@ class CubeSigner {
   parseOidcToken(token: string): {
     iss: string;
     sub: string;
-    email: string;
   } {
     const payload = JSON.parse(
       Buffer.from(token.split('.')[1], 'base64url').toString('utf8')
     );
     const iss = payload.iss;
     const sub = payload.sub;
-    const email = payload.email;
-    return { iss, sub, email };
+
+    return { iss, sub };
   }
 }
 
@@ -56,14 +54,6 @@ export const CubeSignerInstance = new CubeSigner();
 const getCubistUsers = async () => {
   const client = await CubeSignerInstance.getManagementSessionClient();
   return client.org().users();
-};
-
-const findUser = async (email: string) => {
-  const users = await getCubistUsers();
-  // console.log('debug > users ==== ', users);
-  return users.find(
-    (user) => user.email === email && user.membership === 'Alien'
-  );
 };
 
 const getLatestKey = (keys: Key[]) => {
@@ -78,15 +68,22 @@ const getLatestKey = (keys: Key[]) => {
 
 export const getUserWallet = async (
   oidcToken: string,
-  totpSecret: string
+  totpSecret: string,
+  email: string
 ): Promise<string | null> => {
   let key;
+
   try {
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();
-    const { email, iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
-    const user = await findUser(email);
+    const { iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
 
-    if (!user) {
+    const proveOidcIdentity = await CubeSignerClient.proveOidcIdentity(
+      cubeClient.env,
+      cubeClient.orgId,
+      oidcToken
+    );
+
+    if (!proveOidcIdentity.user_info) {
       const org = cubeClient.org();
 
       const userId = await org.createOidcUser({ iss, sub }, email, {

@@ -3,8 +3,8 @@ import { HEADER_PROVIDER, HEADER_PROVIDER_TOKEN } from '@/utils';
 import { AxiosResponse } from 'axios';
 
 type FetchWalletParams = {
-  token?: string;
-  provider?: string;
+  token: string;
+  provider: string;
 };
 
 export const fetchWallet = ({ token, provider }: FetchWalletParams) => {
