@@ -51,6 +51,9 @@ export const OnboardingLayout = () => {
         type: 'bullets',
         clickable: true
       }}
+      navigation={{
+        nextEl: '.swiper-button-next'
+      }}
       onSlideChange={(swiper) => setActiveSlide(swiper.realIndex)}
     >
       {onboardingData.map(
@@ -72,7 +75,7 @@ export const OnboardingLayout = () => {
                 mx="7"
               >
                 <div className={labelClassName}></div>
-                <Text size={mdScreen ? '5' : '4'} weight="bold" mb="4">
+                <Text size={mdScreen ? '5' : '4'} weight="bold" mb="4" mr="2">
                   {title}
                 </Text>
                 <Text size="3" weight="medium">
@@ -91,8 +94,8 @@ export const OnboardingLayout = () => {
       <div
         className={`swiper-pagination swiper-pagination-bg-${activeSlide}`}
       ></div>
-      <div className="swiper-button-next">
-        <Icon icon="chevronRight" />
+      <div className={`swiper-button-next swiper-button-bg-${activeSlide}`}>
+        <Icon icon="chevronRight" color="#000" />
       </div>
     </Swiper>
   );

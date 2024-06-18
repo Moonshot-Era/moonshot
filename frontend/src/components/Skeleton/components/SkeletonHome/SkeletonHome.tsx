@@ -12,10 +12,10 @@ export const SkeletonHome = () => {
       align="center"
       width="100%"
       height="100vh"
-      mt="147px"
+      maxHeight="100vh"
       className="main-wrapper"
     >
-      <Box width="100%" maxWidth="256px" mb="3">
+      <Box width="100%" maxWidth="256px" mt="147px" mb="3">
         <Skeleton />
       </Box>
       <Box width="100%" maxWidth="128px" mb="134px">
