@@ -1,9 +1,10 @@
 'use client';
 
 import {
-  formatNumberToUsFormat,
+  formatNumberToUsKeepDecimals,
   tokenAddressWithDots
 } from '@/helpers/helpers';
+import { useWallet } from '@/hooks';
 import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
 import { useWidth } from '@/hooks/useWidth';
 import { Icon } from '@/legos';
@@ -47,14 +48,7 @@ interface Props {
 
 export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
   const { mdScreen } = useWidth();
-
-  // const { walletData } = useWallet();
-  const walletData = {
-    wallet: 'CNPdPrt1smECmRqFFhN9iZzDRV6BiqDVxQThgydsDT64'
-  };
-  // const walletData = {
-  //   wallet: 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh'
-  // };
+  const { walletData } = useWallet();
 
   const { transactionsHistory, isFetching: transactionLoading } =
     useTransactionsHistory(walletData?.wallet);
@@ -265,27 +259,31 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                               {transactionType === 'Deposit'
                                 ? `+${
                                     tokenName === 'SOL'
-                                      ? formatNumberToUsFormat(9).format(
+                                      ? formatNumberToUsKeepDecimals().format(
                                           amount / 10 ** 9
                                         )
-                                      : formatNumberToUsFormat(3).format(amount)
+                                      : formatNumberToUsKeepDecimals().format(
+                                          amount
+                                        )
                                   } ${tokenName}`
                                 : transactionType === 'Withdraw'
                                 ? `-${
                                     tokenName === 'SOL'
-                                      ? formatNumberToUsFormat(9).format(
+                                      ? formatNumberToUsKeepDecimals().format(
                                           amount / 10 ** 9
                                         )
-                                      : formatNumberToUsFormat(3).format(amount)
+                                      : formatNumberToUsKeepDecimals().format(
+                                          amount
+                                        )
                                   } ${tokenName}`
-                                : `+${formatNumberToUsFormat(3).format(
+                                : `+${formatNumberToUsKeepDecimals().format(
                                     tokenAmountConvertFrom || 0
                                   )} ${tokenConvertFromSymbol}`}
                             </Text>
                             {transactionDate && (
                               <Text className="font-size-xs">
                                 {transactionType === 'Convert'
-                                  ? `-${formatNumberToUsFormat(3).format(
+                                  ? `-${formatNumberToUsKeepDecimals().format(
                                       tokenAmountConvertTo || 0
                                     )} ${tokenConvertToSymbol}`
                                   : format(transactionDate, 'hh:mm a')}
