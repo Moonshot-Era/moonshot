@@ -37,7 +37,7 @@ export const CultureItem = ({
 }) => {
   const { mdScreen } = useWidth();
   const router = useRouter();
-  const { walletData, isFetching } = useWallet();
+  const { walletData, isFetching } = useWallet(isPublic);
   const { portfolio, refetch: refetchPortfolio } = usePortfolio(
     walletData?.wallet
   );
@@ -184,18 +184,19 @@ export const CultureItem = ({
               )}
             </Flex>
           </Flex>
-          {!isFetching ? (
-            <Toolbar
-              portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
-              withShare
-              tokenPrice={+tokenData.price_usd}
-              hideWithdraw={!asset}
-            />
-          ) : (
-            <Flex align="center" justify="center" width="100%">
-              <Spinner size="3" />
-            </Flex>
-          )}
+          {!isPublic &&
+            (!isFetching ? (
+              <Toolbar
+                portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
+                withShare
+                tokenPrice={+tokenData.price_usd}
+                hideWithdraw={!asset}
+              />
+            ) : (
+              <Flex align="center" justify="center" width="100%">
+                <Spinner size="3" />
+              </Flex>
+            ))}
 
           {asset && (
             <Flex

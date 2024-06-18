@@ -192,6 +192,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
           placeholder="Amount"
           value={transactionAmount}
           error={!!amountError}
+          errorText={amountError}
           onChange={handleChangeAmount}
           type={'number'}
           endAdornment={<Text>{amountInputInUsd ? 'USD' : asset?.name}</Text>}

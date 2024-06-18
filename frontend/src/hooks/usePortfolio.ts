@@ -5,6 +5,7 @@ import { fetchPortfolio } from '@/utils/fetchPortfolio';
 
 export const usePortfolio = (walletAddress?: string) => {
   const { data, refetch, ...rest } = useQuery({
+    enabled: !!walletAddress,
     queryKey: ['portfolio'],
     queryFn: () => {
       if (!walletAddress) {
