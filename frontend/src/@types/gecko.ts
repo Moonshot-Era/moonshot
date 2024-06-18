@@ -58,13 +58,13 @@ interface VolumeUSD {
 }
 
 export interface PoolAttributes {
+  address: string;
   base_token_price_usd: string;
   base_token_price_native_currency: string;
   quote_token_price_usd: string;
   quote_token_price_native_currency: string;
   base_token_price_quote_token: string;
   quote_token_price_base_token: string;
-  address: string;
   name: string;
   pool_created_at: string;
   fdv_usd: string;

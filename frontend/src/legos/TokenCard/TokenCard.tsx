@@ -4,7 +4,7 @@ import { Flex, Text } from '@radix-ui/themes';
 import './style.scss';
 import { Icon } from '../Icon';
 import { useWidth } from '@/hooks/useWidth';
-import { tokenAddressWithDots } from '@/helpers/helpers';
+import { isSolanaAddress, tokenAddressWithDots } from '@/helpers/helpers';
 import { PoolGeckoType } from '@/@types/gecko';
 import { TokenPrice } from '../TokenPrice/TokenPrice';
 
@@ -19,7 +19,9 @@ export const TokenCard = ({ onClick, token, searchTo }: Props) => {
 
   const tokenItem = token?.attributes;
   const percentageChange = +(tokenItem?.price_change_percentage?.h24 || 0);
-  const name = token?.attributes?.name;
+  const name = isSolanaAddress(tokenItem?.address)
+    ? 'SOL'
+    : token?.attributes?.name;
 
   return (
     <Flex

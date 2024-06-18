@@ -4,6 +4,7 @@ import {
   TokenItemGeckoType
 } from '@/@types/gecko';
 import { TokenItemHeliusType } from '@/@types/helius';
+import { isSolanaAddress } from '@/helpers/helpers';
 import { SOLANA_WRAPPED_ADDRESS } from '@/utils';
 import axios from 'axios';
 
@@ -93,7 +94,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
           balance:
             result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
           decimals: solanaToken?.decimals,
-          name: 'SOLANA',
+          name: 'SOL',
           priceUsd: result?.nativeBalance?.price_per_sol,
           symbol: 'SOL',
           uiAmount:
@@ -123,9 +124,11 @@ export const getWalletPortfolio = async (walletAddress: string) => {
             asset?.token_info?.balance /
             10 ** (asset?.token_info?.decimals || 1),
           decimals: asset?.token_info?.decimals,
-          name: included?.name || '',
+          name: isSolanaAddress(asset?.id) ? 'SOL' : included?.name || '',
           priceUsd: asset?.token_info?.price_info?.price_per_token,
-          symbol: asset?.token_info?.symbol,
+          symbol: isSolanaAddress(asset?.id)
+            ? 'SOL'
+            : asset?.token_info?.symbol,
           uiAmount:
             asset?.token_info?.balance /
             10 ** (asset?.token_info?.decimals || 1),
