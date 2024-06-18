@@ -117,11 +117,16 @@ export const ExploreContent = () => {
 
   return (
     <Flex
-      className="main-wrapper explore-wrapper"
+      className={`main-wrapper ${
+        isFetchingTrendingPools && !poolsList?.length ? '' : 'explore-wrapper'
+      }`}
       direction="column"
       align="center"
       justify="center"
       width="100%"
+      maxHeight={
+        isFetchingTrendingPools && !poolsList?.length ? '100vh' : 'auto'
+      }
     >
       <Flex
         width="100%"
@@ -130,7 +135,10 @@ export const ExploreContent = () => {
         gap="4"
         position="relative"
       >
-        <Box pr="2">
+        <Box
+          pr="2"
+          mt={isFetchingTrendingPools && !poolsList?.length ? '70px' : '0'}
+        >
           <Input
             placeholder="Search assets"
             type="search"

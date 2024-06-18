@@ -6,9 +6,16 @@ import { Icon } from '@/legos';
 import './style.scss';
 
 export const SkeletonExploreList = () => (
-  <Flex width="100%" direction="column" gap="4">
-    {Array(10)
-      .fill(10)
+  <Flex
+    width="100%"
+    direction="column"
+    gap="4"
+    overflow="hidden"
+    pr="1"
+    pb="2px"
+  >
+    {Array(7)
+      .fill(7)
       .map((item, index) => (
         <Flex
           key={index}
@@ -17,7 +24,7 @@ export const SkeletonExploreList = () => (
           justify="between"
           gap="2"
           width="100%"
-          height="fit-content"
+          overflow="hidden"
           className={`border-1 bg-white skeleton-empty-card`}
           p="3"
           pt="2"

@@ -2,17 +2,23 @@ export const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);
 };
 
+export const formatNumberToUsKeepDecimals = () =>
+  new Intl.NumberFormat('en-US', {
+    notation: 'standard',
+    maximumFractionDigits: 20
+  });
+
 export const formatNumberToUsFormat = (decimals?: number) =>
   new Intl.NumberFormat('en-US', {
     notation: 'standard',
-    maximumFractionDigits: decimals || 2,
+    maximumFractionDigits: decimals || 2
   });
 
 export const formatNumberToUsd = (decimals?: number) =>
   new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    maximumFractionDigits: decimals || 2,
+    maximumFractionDigits: decimals || 2
   });
 
 export const formatCashNumber = (decimals?: number) =>
@@ -20,7 +26,7 @@ export const formatCashNumber = (decimals?: number) =>
     style: 'currency',
     currency: 'USD',
     notation: 'compact',
-    maximumFractionDigits: decimals || 0,
+    maximumFractionDigits: decimals || 0
   });
 
 export const formatNumber = new Intl.NumberFormat('en-US');

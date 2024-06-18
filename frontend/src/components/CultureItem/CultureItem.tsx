@@ -103,7 +103,7 @@ export const CultureItem = ({
         align="center"
         justify="start"
         width="100%"
-        className="main-wrapper explore-wrapper"
+        className="main-wrapper explore-culture-wrapper"
         pr="2"
       >
         <Flex direction="column" width="100%" gap="4">
@@ -237,21 +237,25 @@ export const CultureItem = ({
             </Flex>
           )}
 
-          <Flex
-            direction="column"
-            p="4"
-            justify="between"
-            className="explore-card"
-          >
-            <Text
-              size={mdScreen ? '4' : '3'}
-              weight="medium"
-              mb="2"
-            >{`About ${tokenInfo.name}`}</Text>
-            {tokenInfo?.description && (
-              <Text size={mdScreen ? '3' : '1'}>{tokenInfo?.description}</Text>
-            )}
-          </Flex>
+          {tokenInfo?.description ? (
+            <Flex
+              direction="column"
+              p="4"
+              justify="between"
+              className="explore-card"
+            >
+              <Text
+                size={mdScreen ? '4' : '3'}
+                weight="medium"
+                mb="2"
+              >{`About ${tokenInfo.name}`}</Text>
+              {tokenInfo?.description && (
+                <Text size={mdScreen ? '3' : '1'}>
+                  {tokenInfo?.description}
+                </Text>
+              )}
+            </Flex>
+          ) : null}
           <Flex
             direction="column"
             p="4"

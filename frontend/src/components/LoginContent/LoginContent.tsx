@@ -7,7 +7,6 @@ import { Flex, Text } from '@radix-ui/themes';
 import { Button, Icon } from '@/legos';
 import { useWidth } from '@/hooks/useWidth';
 import { QUERY_PARAM_CULTURE_REF } from '@/utils';
-import { SplashScreen } from '../SplashScreen/SplashScreen';
 import cubistLogo from '../../assets/images/cubist_logo.svg';
 
 interface Props {
@@ -36,7 +35,6 @@ export const LoginContent = ({ cultureRef }: Props) => {
 
   return (
     <>
-      <SplashScreen />
       <Flex
         className="main-wrapper"
         height="100vh"
