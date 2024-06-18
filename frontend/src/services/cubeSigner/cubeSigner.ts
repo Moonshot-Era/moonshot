@@ -38,23 +38,20 @@ class CubeSigner {
   parseOidcToken(token: string): {
     iss: string;
     sub: string;
+    email?: string;
   } {
     const payload = JSON.parse(
       Buffer.from(token.split('.')[1], 'base64url').toString('utf8')
     );
     const iss = payload.iss;
     const sub = payload.sub;
+    const email = payload.email;
 
-    return { iss, sub };
+    return { iss, sub, email };
   }
 }
 
 export const CubeSignerInstance = new CubeSigner();
-
-const getCubistUsers = async () => {
-  const client = await CubeSignerInstance.getManagementSessionClient();
-  return client.org().users();
-};
 
 const getLatestKey = (keys: Key[]) => {
   const latestKey = keys?.sort((a, b) =>
@@ -69,13 +66,12 @@ const getLatestKey = (keys: Key[]) => {
 export const getUserWallet = async (
   oidcToken: string,
   totpSecret: string,
-  email: string
+  userEmail?: string
 ): Promise<string | null> => {
   let key;
 
   try {
     const cubeClient = await CubeSignerInstance.getManagementSessionClient();
-    const { iss, sub } = CubeSignerInstance.parseOidcToken(oidcToken);
 
     const proveOidcIdentity = await CubeSignerClient.proveOidcIdentity(
       cubeClient.env,
@@ -85,11 +81,15 @@ export const getUserWallet = async (
 
     if (!proveOidcIdentity.user_info) {
       const org = cubeClient.org();
-
-      const userId = await org.createOidcUser({ iss, sub }, email, {
-        mfaPolicy: undefined,
-        memberRole: 'Alien'
-      });
+      const { iss, sub, email } = CubeSignerInstance.parseOidcToken(oidcToken);
+      const userId = await org.createOidcUser(
+        { iss, sub },
+        email || userEmail,
+        {
+          mfaPolicy: undefined,
+          memberRole: 'Alien'
+        }
+      );
 
       key = await org.createKey(Ed25519.Solana, userId, {
         // @ts-ignore
