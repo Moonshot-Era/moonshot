@@ -113,15 +113,36 @@
 }
 
 .swiper-pagination-bg-0 .swiper-pagination-bullet-active {
-  background-color: $warning;
+  background-color: $greeny;
 }
 
 .swiper-pagination-bg-1 .swiper-pagination-bullet-active {
-  background-color: $blue;
+  background-color: $warning;
 }
 
 .swiper-pagination-bg-2 .swiper-pagination-bullet-active {
-  background-color: $magenta;
+  background-color: $error;
+}
+
+.swiper-pagination-bg-3 .swiper-pagination-bullet-active {
+  background-color: $yellow;
+}
+
+.swiper-button-bg-0 {
+  background-color: $greeny !important;
+}
+
+.swiper-button-bg-1 {
+  background-color: $warning !important;
+}
+
+.swiper-button-bg-2 {
+  background-color: $error !important;
+}
+
+.swiper-button-bg-3 {
+  background-color: $yellow !important;
+  display: none !important;
 }
 
 .swiper-button-next,
@@ -130,7 +151,13 @@
   border-radius: 100%;
   width: 40px !important;
   height: 40px !important;
-  top: 93% !important;
+  top: 95% !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: $shadow-3;
+  @include border-dark;
 }
 
 .swiper-button-next::after,
