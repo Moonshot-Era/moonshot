@@ -6,6 +6,7 @@ export interface FeeDataType {
   amount: number;
   tokenAddress: string;
   tokenDecimals: number;
+  tokenSymbol: string;
 }
 
 export type SelectedTokens =

@@ -20,6 +20,7 @@ interface Props {
   tokenAddress: string;
   amount: number;
   tokenDecimals: number;
+  tokenSymbol: string;
   tx: Transaction;
   connection: Connection;
 }
@@ -30,6 +31,7 @@ export const createTokensTxInstruction = async ({
   tokenAddress,
   amount,
   tokenDecimals,
+  tokenSymbol,
   tx,
   connection
 }: Props) => {
@@ -37,7 +39,9 @@ export const createTokensTxInstruction = async ({
 
   const mintPubkey = new PublicKey(tokenAddress);
 
-  console.log(`Transferring ${amount} from ${fromPublicKey} to ${toPubkey}`);
+  console.log(
+    `Transferring ${amount} ${tokenSymbol} from ${fromPublicKey} to ${toPubkey}`
+  );
 
   // Get the associated token accounts for the sender and receiver
   const fromTokenAccount = await getAssociatedTokenAddress(

@@ -71,7 +71,8 @@ export const ConvertForm = memo(
                 fromAddress: walletAddress,
                 amount,
                 tokenAddress: selectedTokens?.from?.address,
-                tokenDecimals: selectedTokens?.from?.decimals
+                tokenDecimals: selectedTokens?.from?.decimals,
+                tokenSymbol: selectedTokens?.from?.symbol
               }
             }
           )
@@ -80,8 +81,8 @@ export const ConvertForm = memo(
             if (res?.data?.error?.statusText === 'Forbidden') {
               logout();
             }
-            if (res?.data?.error?.statusText) {
-              snackbar('error', res?.data?.error?.statusText);
+            if (res?.data?.error) {
+              snackbar('error', res?.data?.error);
             }
             if (res?.data?.txid) {
               snackbar('success', `Finished converting!`);

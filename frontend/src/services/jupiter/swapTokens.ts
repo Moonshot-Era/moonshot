@@ -104,6 +104,7 @@ export const swapTokens = async (
           tokenAddress: feeData.tokenAddress,
           amount: feeData.amount * MOONSHOT_FEE,
           tokenDecimals: feeData.tokenDecimals,
+          tokenSymbol: feeData.tokenSymbol,
           tx: transaction,
           connection
         });
@@ -115,6 +116,7 @@ export const swapTokens = async (
             tokenAddress: feeData.tokenAddress,
             amount: feeData.amount * REF_FEE,
             tokenDecimals: feeData.tokenDecimals,
+            tokenSymbol: feeData.tokenSymbol,
             tx: transaction,
             connection
           });
@@ -168,7 +170,6 @@ export const swapTokens = async (
       return txid;
     }
   } catch (err) {
-    console.log('Error:' + err);
     throw err;
   }
 };
