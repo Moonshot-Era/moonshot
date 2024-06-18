@@ -45,7 +45,9 @@ export const useWallet = () => {
         await logout();
         return null;
       }
-    }
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   });
 
   return {

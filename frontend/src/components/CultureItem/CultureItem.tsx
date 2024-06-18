@@ -25,6 +25,7 @@ import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
+import { uniqBy } from 'lodash';
 
 export const CultureItem = ({
   tokenInfo,
@@ -37,10 +38,12 @@ export const CultureItem = ({
 }) => {
   const { mdScreen } = useWidth();
   const router = useRouter();
-  const { walletData, isFetching } = useWallet();
-  const { portfolio, refetch: refetchPortfolio } = usePortfolio(
-    walletData?.wallet
-  );
+  const { walletData, isFetching: isWalletFetching } = useWallet();
+  const {
+    portfolio,
+    isFetching: isPortfolioFetching,
+    refetch: refetchPortfolio
+  } = usePortfolio(walletData?.wallet);
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const [beforeTimestamp, setBeforeTimestamp] = useState<number | undefined>();
   const {
@@ -84,13 +87,12 @@ export const CultureItem = ({
     setTimeFrame({ aggregate: aggregateValue, time: timeFrameValue });
   };
 
-  const chartData: { time: number; value: number[] }[] | [] = ohlcv
-    .filter((item, index) => {
-      return ohlcv.indexOf(item) == index;
-    })
-    .sort((a, b) => {
-      return a.time - b.time;
-    });
+  const chartData: { time: number; value: number[] }[] | [] = uniqBy(
+    ohlcv,
+    'time'
+  ).sort((a, b) => {
+    return a.time - b.time;
+  });
 
   const loadMoreBars = useCallback(() => {
     setBeforeTimestamp(chartData[0].time);
@@ -184,12 +186,16 @@ export const CultureItem = ({
               )}
             </Flex>
           </Flex>
-          {!isFetching ? (
+          {!isWalletFetching && !isPortfolioFetching ? (
             <Toolbar
               portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
               withShare
               tokenPrice={+tokenData.price_usd}
               hideWithdraw={!asset}
+              tokenPrefill={{
+                ...tokenInfo,
+                ...tokenData
+              }}
             />
           ) : (
             <Flex align="center" justify="center" width="100%">
