@@ -8,7 +8,7 @@ import Script from 'next/script';
 import { Toaster } from 'sonner';
 
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
-import { SplashScreen } from '@/components/SplashScreen/SplashScreen';
+
 import './globals.css';
 import './globals.scss';
 
@@ -83,7 +83,6 @@ export default function RootLayout({
         />
         <Toaster />
         <ServiceWorkerRegister />
-        <SplashScreen />
         <CookiesProvider>
           <ReactQueryProvider>
             <Theme

@@ -72,7 +72,7 @@ export const OnboardingLayout = () => {
                 mx="7"
               >
                 <div className={labelClassName}></div>
-                <Text size={mdScreen ? '5' : '4'} weight="bold" mb="4">
+                <Text size={mdScreen ? '5' : '4'} weight="bold" mb="4" mr="2">
                   {title}
                 </Text>
                 <Text size="3" weight="medium">
