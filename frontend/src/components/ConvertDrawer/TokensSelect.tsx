@@ -6,15 +6,26 @@ import debounce from 'lodash.debounce';
 
 import './style.scss';
 import { useWidth } from '@/hooks/useWidth';
-import { PoolGeckoType } from '@/@types/gecko';
+import {
+  GeckoTokenOverview,
+  PoolGeckoType,
+  TokenItemGeckoType
+} from '@/@types/gecko';
 import { AssetCard, Input, TokenCard } from '@/legos';
-import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
+import {
+  OverviewTokenSelectedType,
+  WalletPortfolioAssetType
+} from '@/services/helius/getWalletPortfolio';
 import { isSolanaAddress } from '@/helpers/helpers';
 import { USDC_ADDRESS } from '@/utils';
+import { useDefaultTokens } from '@/hooks/useDefaultTokens';
+import { skip } from 'node:test';
 
 interface Props {
   tokensList: WalletPortfolioAssetType[] | PoolGeckoType[];
-  handleTokenSelect: (token: WalletPortfolioAssetType | PoolGeckoType) => void;
+  handleTokenSelect: (
+    token: WalletPortfolioAssetType | PoolGeckoType | OverviewTokenSelectedType
+  ) => void;
   selectMode: 'to' | 'from';
   searchTo?: string;
   handleChangeSearchTo?: (query: string) => void;
@@ -36,6 +47,9 @@ export const TokensSelect: FC<Props> = ({
     WalletPortfolioAssetType[]
   >([]);
 
+  const { defaultTokens, isFetching: isDefaultTokensFetching } =
+    useDefaultTokens({ skip: selectMode === 'from' });
+  console.log('debug > defaultTokens===', defaultTokens);
   const debouncedSearchPools = useCallback(
     debounce(async (searchQuery) => {
       setFilteredPools(
@@ -162,8 +176,42 @@ export const TokensSelect: FC<Props> = ({
             </>
           )
         ) : null}
-        {selectMode === 'to'
-          ? (tokensList as PoolGeckoType[])?.map((token: PoolGeckoType) => {
+        {selectMode === 'to' ? (
+          <>
+            {isDefaultTokensFetching ? (
+              <Spinner size="3" style={{ margin: 'auto' }} />
+            ) : (
+              (defaultTokens as TokenItemGeckoType[])?.map(
+                (token: TokenItemGeckoType) => {
+                  return (
+                    <TokenCard
+                      key={`${token?.attributes?.address || token?.id}`}
+                      token={token}
+                      onClick={() =>
+                        handleTokenSelect({
+                          name: isSolanaAddress(token?.attributes?.address)
+                            ? 'SOL'
+                            : token?.attributes?.name || '',
+                          uiAmount: 0,
+                          decimals: token?.attributes?.decimals || 0,
+                          address: token?.attributes?.address || '',
+                          symbol: token?.attributes?.symbol || ''
+                        } as OverviewTokenSelectedType)
+                      }
+                      isDefaultToken
+                    />
+                  );
+                }
+              )
+            )}
+            <div
+              style={{
+                width: '100%',
+                height: '1px',
+                backgroundColor: 'gray'
+              }}
+            />
+            {(tokensList as PoolGeckoType[])?.map((token: PoolGeckoType) => {
               return (
                 <TokenCard
                   key={`${token?.attributes?.address || token?.id}`}
@@ -171,8 +219,9 @@ export const TokensSelect: FC<Props> = ({
                   onClick={() => handleTokenSelect(token)}
                 />
               );
-            })
-          : null}
+            })}
+          </>
+        ) : null}
       </Flex>
     </Flex>
   );

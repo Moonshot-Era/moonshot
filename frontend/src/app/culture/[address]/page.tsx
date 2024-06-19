@@ -11,10 +11,7 @@ export default async function CultureItemPage({
   params,
   searchParams
 }: ServerPageProps<{ address: string }>) {
-  let walletAddress = '';
   const user = await checkProtectedRoute(searchParams, false);
-  const oidc = cookies()?.get('pt')?.value;
-  const cookiesAll = cookies()?.getAll();
 
   const tokenAddress = params?.address;
   const { data: tokenOverview } = await axios.post(

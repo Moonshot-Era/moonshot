@@ -21,6 +21,7 @@ import { SelectedTokens } from './types';
 import { usePoolsList } from '@/hooks/useTrendingPoolsList';
 import { useSearchPools } from '@/hooks/useSearchPools';
 import {
+  OverviewTokenSelectedType,
   WalletPortfolioAssetType,
   WalletPortfolioNormilizedType
 } from '@/services/helius/getWalletPortfolio';
@@ -56,6 +57,7 @@ export const ConvertDrawer: FC<Props> = memo(
       useState<SelectedTokens>(DEFAULT_TOKENS);
     const { poolsList, fetchNextPage, hasNextPage, isFetchingNextPage } =
       usePoolsList();
+
     const {
       searchPools,
       fetchNextPage: searchFetchNextPage,
@@ -65,7 +67,10 @@ export const ConvertDrawer: FC<Props> = memo(
     } = useSearchPools(searchTo, true);
 
     const handleTokenSelect = (
-      token: WalletPortfolioAssetType | PoolGeckoType
+      token:
+        | WalletPortfolioAssetType
+        | PoolGeckoType
+        | OverviewTokenSelectedType
     ) => {
       setSelectedTokens({
         ...selectedTokens,

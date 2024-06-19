@@ -32,6 +32,14 @@ export interface WalletPortfolioAssetType {
   percentage_change_h24: any;
 }
 
+export interface OverviewTokenSelectedType {
+  address: string;
+  decimals: number;
+  name: string;
+  symbol: string;
+  uiAmount: number;
+}
+
 export interface WalletPortfolioNormilizedType {
   walletAssets: WalletPortfolioAssetType[];
   totalUsd: number;

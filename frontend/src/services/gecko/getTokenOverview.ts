@@ -22,9 +22,6 @@ export const getTokenOverview = async (tokenAddress: string) => {
           headers: {
             'Content-Type': 'application/json',
             'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`
-          },
-          params: {
-            include: 'top_pools'
           }
         }
       );
