@@ -29,5 +29,6 @@ namespace NodeJS {
     CUBE_SIGNER_ORG_ID: string;
 
     PASSWORD_SECRET: string;
+    PATH_TO_DEPLOY: string;
   }
 }
