@@ -9,6 +9,8 @@ import { useWidth } from '@/hooks/useWidth';
 import { PoolGeckoType } from '@/@types/gecko';
 import { AssetCard, Input, TokenCard } from '@/legos';
 import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
+import { isSolanaAddress } from '@/helpers/helpers';
+import { USDC_ADDRESS } from '@/utils';
 
 interface Props {
   tokensList: WalletPortfolioAssetType[] | PoolGeckoType[];
@@ -63,6 +65,24 @@ export const TokensSelect: FC<Props> = ({
     setSearchFrom(event.target.value);
   };
 
+  const sortByDefault =
+    selectMode === 'from'
+      ? (tokensList as WalletPortfolioAssetType[])?.reduce(
+          (acc, cur) => {
+            if (isSolanaAddress(cur.address) || cur.address === USDC_ADDRESS) {
+              acc.defaultTokens.push(cur);
+            } else {
+              acc.restTokens.push(cur);
+            }
+            return acc;
+          },
+          {
+            defaultTokens: [] as WalletPortfolioAssetType[],
+            restTokens: [] as WalletPortfolioAssetType[]
+          }
+        )
+      : undefined;
+
   return (
     <Flex
       width="100%"
@@ -101,29 +121,47 @@ export const TokensSelect: FC<Props> = ({
         )}
       </Flex>
       <Flex width="100%" direction="column" gap="4" px="4">
-        {selectMode === 'from'
-          ? searchFrom && filteredPools?.length
-            ? filteredPools?.map((token) => {
-                return (
+        {selectMode === 'from' ? (
+          searchFrom && filteredPools?.length ? (
+            filteredPools?.map((token) => {
+              return (
+                <AssetCard
+                  key={token?.address}
+                  asset={token}
+                  onClick={() => handleTokenSelect(token)}
+                />
+              );
+            })
+          ) : (
+            <>
+              {sortByDefault?.defaultTokens?.map(
+                (asset: WalletPortfolioAssetType) => (
                   <AssetCard
-                    key={token?.address}
-                    asset={token}
-                    onClick={() => handleTokenSelect(token)}
+                    key={asset.address}
+                    asset={asset}
+                    onClick={() => handleTokenSelect(asset)}
                   />
-                );
-              })
-            : (tokensList as WalletPortfolioAssetType[])?.map(
-                (token: WalletPortfolioAssetType) => {
-                  return (
-                    <AssetCard
-                      key={token?.address}
-                      asset={token}
-                      onClick={() => handleTokenSelect(token)}
-                    />
-                  );
-                }
-              )
-          : null}
+                )
+              )}
+              <div
+                style={{
+                  width: '100%',
+                  height: '1px',
+                  backgroundColor: 'gray'
+                }}
+              />
+              {sortByDefault?.restTokens?.map(
+                (asset: WalletPortfolioAssetType) => (
+                  <AssetCard
+                    key={asset.address}
+                    asset={asset}
+                    onClick={() => handleTokenSelect(asset)}
+                  />
+                )
+              )}
+            </>
+          )
+        ) : null}
         {selectMode === 'to'
           ? (tokensList as PoolGeckoType[])?.map((token: PoolGeckoType) => {
               return (
