@@ -3,7 +3,7 @@ import pino from 'pino';
 import fs from 'fs';
 import { createStream } from 'rotating-file-stream';
 
-const logDir = `${process.env.PATH_TO_DEPLOY}/logs`;
+const logDir = `${process.env.PATH_TO_DEPLOY}`;
 
 // Ensure logs directory exists
 if (!fs.existsSync(logDir)) {
