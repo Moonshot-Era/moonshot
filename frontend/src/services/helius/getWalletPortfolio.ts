@@ -80,27 +80,31 @@ export const getWalletPortfolio = async (walletAddress: string) => {
           }
         }
       );
-      const solanaToken: TokenAttributes = tokensListGecko?.data?.find(
+      const solanaToken: TokenItemGeckoType = tokensListGecko?.data?.find(
         (token: TokenItemGeckoType) =>
           token.attributes.address === SOLANA_WRAPPED_ADDRESS
-      )?.attributes;
+      );
 
       const solana_percentage_change_h24 = tokensListGecko?.included?.find(
-        (included: PoolGeckoType) => included?.attributes?.name === 'SOL / USDC'
+        (included: PoolGeckoType) =>
+          included?.id === solanaToken?.relationships?.top_pools?.data?.[0].id
       )?.attributes?.price_change_percentage?.h24;
+
       if (result?.nativeBalance?.lamports) {
         walletPortfolioNormalized.push({
-          address: solanaToken?.address,
+          address: solanaToken?.attributes?.address,
           balance:
-            result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
-          decimals: solanaToken?.decimals,
+            result?.nativeBalance?.lamports /
+            10 ** solanaToken?.attributes?.decimals,
+          decimals: solanaToken?.attributes?.decimals,
           name: 'SOL',
           priceUsd: result?.nativeBalance?.price_per_sol,
           symbol: 'SOL',
           uiAmount:
-            result?.nativeBalance?.lamports / 10 ** solanaToken?.decimals,
+            result?.nativeBalance?.lamports /
+            10 ** solanaToken?.attributes?.decimals,
           valueUsd: result?.nativeBalance?.total_price,
-          imageUrl: solanaToken?.image_url,
+          imageUrl: solanaToken?.attributes?.image_url,
           percentage_change_h24: solana_percentage_change_h24
         });
       }
