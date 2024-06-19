@@ -30,13 +30,12 @@ export const Toolbar = ({
 }: ToolbarProps) => {
   const { mdScreen } = useWidth();
 
-  const convertDrawerRef: MutableRefObject<null> = useRef(null);
+  const withdrawDrawerRef = useRef<any>();
+  const convertDrawerRef: MutableRefObject<any> = useRef();
   const [isDepositOpen, setIsDepositOpen] = useState(false);
-  const [isWithdrawOpen, setIsWithdrawOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
   const toggleDepositDrawer = () => setIsDepositOpen(!isDepositOpen);
-  const toggleWithdrawDrawer = () => setIsWithdrawOpen(!isWithdrawOpen);
 
   return (
     <>
@@ -47,11 +46,7 @@ export const Toolbar = ({
         toggleOpen={toggleDepositDrawer}
         walletAddress={portfolio?.wallet}
       />
-      <WithdrawDrawer
-        isOpen={isWithdrawOpen}
-        toggleOpen={toggleWithdrawDrawer}
-        portfolio={portfolio}
-      />
+      <WithdrawDrawer ref={withdrawDrawerRef} portfolio={portfolio} />
       <Flex
         width="100%"
         maxWidth="390px"
@@ -69,7 +64,7 @@ export const Toolbar = ({
               icon="transfer"
               className="bg-yellow"
               // @ts-ignore
-              onClick={() => convertDrawerRef.current?.open()}
+              onClick={() => convertDrawerRef.current?.open(tokenPrefill)}
             />
             <Text size={mdScreen ? '4' : '2'}>Convert</Text>
           </Flex>
@@ -88,7 +83,7 @@ export const Toolbar = ({
                 <IconButton
                   icon="withdraw"
                   className="bg-violet"
-                  onClick={toggleWithdrawDrawer}
+                  onClick={() => withdrawDrawerRef.current?.open(tokenPrefill)}
                 />
                 <Text size={mdScreen ? '4' : '2'}>Withdraw</Text>
               </Flex>
