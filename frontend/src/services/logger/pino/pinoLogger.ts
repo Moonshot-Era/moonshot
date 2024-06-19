@@ -38,11 +38,11 @@ const pinoLogger = pino(
 
 export const logger = {
   info: (...msg: any) =>
-    !isProduction
+    isProduction
       ? pinoLogger.info(msg)
       : console.log('\x1b[34m%s\x1b[0m', 'Info: ', ...msg),
   error: (...msg: any) =>
-    !isProduction
+    isProduction
       ? pinoLogger.error(msg)
       : console.log('\x1b[31m%s\x1b[0m', 'Error: ', ...msg)
 };
