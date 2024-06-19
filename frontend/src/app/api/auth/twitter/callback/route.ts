@@ -117,6 +117,7 @@ export async function GET(request: Request) {
 
     return NextResponse.redirect(`${process.env.SITE_URL}`);
   } catch (err: any) {
+    console.log('debug > err===', err);
     logger.error('twitter callback error => ', err?.message ?? err);
     return NextResponse.redirect(`${process.env.SITE_URL}${ROUTES.login}`);
   }
