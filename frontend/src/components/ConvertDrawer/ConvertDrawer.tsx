@@ -193,6 +193,8 @@ export const ConvertDrawer: FC<Props> = memo(
       return null;
     }
 
+    console.log('searchPools', searchPools);
+
     return (
       <>
         <SheetDrawer

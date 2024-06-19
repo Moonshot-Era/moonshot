@@ -41,12 +41,12 @@ export const isSolanaAddress = (address: string) => {
   return false;
 };
 
-export const tokenAddressWithDots = (tokenAddress: string) =>
+export const tokenAddressWithDots = (tokenAddress: string) => tokenAddress ? 
   `${tokenAddress.slice(0, 5)}...
   ${tokenAddress.slice(
     tokenAddress.length - 5 > 0 ? tokenAddress.length - 5 : 0,
     tokenAddress.length
-  )}`;
+  )}` : null;
 
 export const formatTokenPrice = (price: string) => {
   if (+price > 1) {
