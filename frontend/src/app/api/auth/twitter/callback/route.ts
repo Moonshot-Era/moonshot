@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 
 import { createServerClient } from '@/supabase/server';
 import { COOKIE_PROVIDER, COOKIE_PROVIDER_TOKEN, ROUTES } from '@/utils';
+import { logger } from '@/services/logger/pino';
 
 export async function GET(request: Request) {
   try {
@@ -116,6 +117,7 @@ export async function GET(request: Request) {
 
     return NextResponse.redirect(`${process.env.SITE_URL}`);
   } catch (err: any) {
+    logger.error('twitter callback error => ', err?.message ?? err);
     return NextResponse.redirect(`${process.env.SITE_URL}${ROUTES.login}`);
   }
 }
