@@ -38,6 +38,8 @@ env:
 
   PASSWORD_SECRET: ${{ secrets.PASSWORD_SECRET }}
 
+  PATH_TO_DEPLOY: ${{ vars.DEV_PATH_TO_DEPLOY }}
+
 jobs:
   Update-server:
     runs-on: ubuntu-latest
