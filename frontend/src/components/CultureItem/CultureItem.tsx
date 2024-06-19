@@ -87,9 +87,13 @@ export const CultureItem = ({
     setTimeFrame({ aggregate: aggregateValue, time: timeFrameValue });
   };
 
-  const chartData: { time: number; value: number[] }[] | [] = uniqBy(
-    ohlcv,
-    'time'
+  const uniqueOhlcvValues = (arr: { time: number; value: number[] }[] | []) => {
+    const map = new Map(arr.map((obj) => [obj.time, obj]));
+    return [...map.values()];
+  };
+
+  const chartData: { time: number; value: number[] }[] | [] = uniqueOhlcvValues(
+    ohlcv
   ).sort((a, b) => {
     return a.time - b.time;
   });
