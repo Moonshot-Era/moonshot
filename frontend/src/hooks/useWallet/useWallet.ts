@@ -19,6 +19,10 @@ export const useWallet = (isPublic = false) => {
     queryKey: ['wallet', token],
     queryFn: async () => {
       try {
+        if (!token || !provider) {
+          throw Error('Token or provider is missing');
+        }
+
         const { data, config } = await fetchWallet({
           provider,
           token
@@ -42,7 +46,9 @@ export const useWallet = (isPublic = false) => {
         await logout();
         return null;
       }
-    }
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   });
 
   return {

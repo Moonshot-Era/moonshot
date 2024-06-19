@@ -9,9 +9,9 @@ export interface FeeDataType {
   tokenSymbol: string;
 }
 
-export type SelectedTokens =
-  | {
-      from: WalletPortfolioAssetType;
-      to: PoolGeckoType;
-    }
-  | { from: null; to: null };
+export type SelectedToken = (WalletPortfolioAssetType & PoolGeckoType) | null;
+
+export type SelectedTokens = {
+  from: SelectedToken;
+  to: SelectedToken;
+}

@@ -10,19 +10,23 @@ import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
 import { ShareModal } from '../ShareModal/ShareModal';
 import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
+import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
+import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 
 interface ToolbarProps {
   portfolio: WalletPortfolioNormilizedType;
   withShare?: boolean;
   tokenPrice?: number;
   hideWithdraw?: boolean;
+  tokenPrefill?: NormilizedTokenDataOverview & NormilizedTokenInfoOverview;
 }
 
 export const Toolbar = ({
   withShare,
   portfolio,
   tokenPrice,
-  hideWithdraw
+  hideWithdraw,
+  tokenPrefill
 }: ToolbarProps) => {
   const { mdScreen } = useWidth();
 

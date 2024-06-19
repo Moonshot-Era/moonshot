@@ -24,6 +24,8 @@ import {
   WalletPortfolioAssetType,
   WalletPortfolioNormilizedType
 } from '@/services/helius/getWalletPortfolio';
+import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
+import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 
 interface Props {
   portfolio: WalletPortfolioNormilizedType;
@@ -36,14 +38,22 @@ const DEFAULT_TOKENS = {
   to: null
 };
 
+const BASE_SOLANA_TOKEN = {
+  address: 'So11111111111111111111111111111111111111112',
+  decimals: 9,
+  imageUrl:
+    'https://coin-images.coingecko.com/coins/images/21629/small/solana.jpg?1696520989',
+  name: 'SOLANA',
+  symbol: 'SOL'
+};
+
 export const ConvertDrawer: FC<Props> = memo(
   forwardRef(function ConvertDrawer({ portfolio }, ref) {
     const [state, setState] = useState<string | null>(null);
     const [searchTo, setSearchTo] = useState('');
     const [scrollToTop, setScrollToTop] = useState(false);
-    const [selectedTokens, setSelectedTokens] = useState<
-      SelectedTokens | { from: null; to: null }
-    >(DEFAULT_TOKENS);
+    const [selectedTokens, setSelectedTokens] =
+      useState<SelectedTokens>(DEFAULT_TOKENS);
     const { poolsList, fetchNextPage, hasNextPage, isFetchingNextPage } =
       usePoolsList();
     const {
@@ -73,12 +83,57 @@ export const ConvertDrawer: FC<Props> = memo(
       ref,
       () => {
         return {
-          open: () => setState('convert'),
+          open: (
+            tokenPrefill: NormilizedTokenDataOverview &
+              NormilizedTokenInfoOverview
+          ) => {
+            if (tokenPrefill) {
+              setSelectedTokens({
+                // @ts-ignore
+                from:
+                  (portfolio?.walletAssets as WalletPortfolioAssetType[])?.find(
+                    ({ address }) =>
+                      address === 'So11111111111111111111111111111111111111112'
+                  ) || BASE_SOLANA_TOKEN,
+                to: {
+                  tokenOverview: {
+                    // @ts-ignore
+                    attributes: {
+                      decimals: tokenPrefill.decimals as number
+                    }
+                  },
+                  included: {
+                    // @ts-ignore
+                    attributes: {
+                      name: tokenPrefill.name,
+                      address: tokenPrefill.address
+                    }
+                  }
+                }
+              });
+            }
+            setState('convert');
+          },
           close: () => setState(null)
         };
       },
-      []
+      [portfolio]
     );
+
+    const swapSelectedTokensPlaces = () => {
+      setSelectedTokens({
+        // @ts-ignore
+        from:
+          selectedTokens?.to && !selectedTokens?.to?.uiAmount
+            ? portfolio?.walletAssets?.find(
+                (asset) =>
+                  asset.address ===
+                  selectedTokens.to?.included?.attributes.address
+              )
+            : selectedTokens.to,
+        to: selectedTokens.from
+      });
+    };
 
     const debouncedFetchNextPage = useCallback(
       debounce(async () => {
@@ -202,6 +257,7 @@ export const ConvertDrawer: FC<Props> = memo(
             changeSelected={(reselect) => setState(reselect)}
             closeDrawer={handleClose}
             walletAddress={portfolio?.wallet}
+            swapSelectedTokensPlaces={swapSelectedTokensPlaces}
           />
         </SheetDrawer>
       </>

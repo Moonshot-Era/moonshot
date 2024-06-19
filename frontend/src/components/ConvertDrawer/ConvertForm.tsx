@@ -4,20 +4,47 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import { convertToInteger } from '@/helpers/convertAmountToInt';
-import { Icon, Select, SlideButton, TokenNumberInput } from '@/legos';
+import {
+  Icon,
+  IconButton,
+  Select,
+  SlideButton,
+  TokenNumberInput
+} from '@/legos';
 
-import { SelectedTokens } from './types';
+import { SelectedToken, SelectedTokens } from './types';
 import { useSwapMutation, useSwapRoutes } from './hooks';
 import './style.scss';
 import { snackbar } from '@/helpers/snackbar';
 import { formatNumberToUsFormat } from '@/helpers/helpers';
 import { useLogout } from '@/hooks';
+import { ConvertIconArrow } from './ConvertIconArrow';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
   selectedTokens: SelectedTokens;
   closeDrawer: () => void;
   walletAddress: string;
+  swapSelectedTokensPlaces: () => void;
+};
+
+const getTokenData = (token: SelectedToken) =>
+  token
+    ? {
+        name: token?.name || token?.included?.attributes.name || '',
+        uiAmount: token?.uiAmount || 0,
+        decimals:
+          token?.decimals || token?.tokenOverview?.attributes?.decimals || 0,
+        address: token?.address || token?.included?.attributes.address || '',
+        symbol: token?.symbol || token?.included?.attributes.symbol || ''
+      }
+    : null;
+
+const normalizeSelectedTokensData = (selectedTokens: SelectedTokens) => {
+  return {
+    from: getTokenData(selectedTokens?.from),
+    to: getTokenData(selectedTokens?.to)
+  };
 };
 
 export const ConvertForm = memo(
@@ -25,38 +52,45 @@ export const ConvertForm = memo(
     selectedTokens,
     changeSelected,
     closeDrawer,
-    walletAddress
+    walletAddress,
+    swapSelectedTokensPlaces
   }: ConvertForm) => {
+    const normalizedSelectedTokens =
+      normalizeSelectedTokensData(selectedTokens);
     const [amount, setAmount] = useState<number | string>(0.001);
-    const btnRef = useRef();
+    const btnRef = useRef<{ resetSlide: () => void }>();
     const [isValidAmount, setIsValidAmount] = useState(true);
     const logout = useLogout();
 
     const label =
-      selectedTokens?.from && selectedTokens?.to
-        ? `
-      Convert ${selectedTokens?.from?.name} to ${selectedTokens.to?.included?.attributes.name}
-    `
+      normalizedSelectedTokens?.from && normalizedSelectedTokens?.to
+        ? `Convert ${normalizedSelectedTokens?.from?.name} to ${normalizedSelectedTokens.to?.name}`
         : 'Convert';
 
     useEffect(() => {
       const numericAmount = +amount;
-      const isValid =
-        numericAmount > 0 && numericAmount <= selectedTokens?.from?.uiAmount!;
-      setIsValidAmount(isValid);
-    }, [amount, selectedTokens?.from?.uiAmount]);
 
+      if (normalizedSelectedTokens?.from?.uiAmount) {
+        const isValid =
+          numericAmount > 0 &&
+          numericAmount <= normalizedSelectedTokens?.from?.uiAmount;
+        setIsValidAmount(isValid);
+      } else {
+        setIsValidAmount(true);
+      }
+    }, [amount, normalizedSelectedTokens?.from?.uiAmount]);
+
+    const mutation = useSwapMutation();
     const { swapRoutes, isLoading: isSwapRoutesLoading } = useSwapRoutes(
       selectedTokens,
-      convertToInteger(+amount, selectedTokens?.from?.decimals as number),
+      convertToInteger(+amount, normalizedSelectedTokens?.from?.decimals || 0),
       50,
       isValidAmount
     );
 
-    const mutation = useSwapMutation();
-
     useEffect(() => {
       if (mutation.isError) {
+        snackbar('error', 'An error occurred during the swap.');
       }
     }, [mutation.isError]);
 
@@ -70,14 +104,13 @@ export const ConvertForm = memo(
               feeData: {
                 fromAddress: walletAddress,
                 amount,
-                tokenAddress: selectedTokens?.from?.address,
-                tokenDecimals: selectedTokens?.from?.decimals,
-                tokenSymbol: selectedTokens?.from?.symbol
+                tokenAddress: normalizedSelectedTokens?.from?.address,
+                tokenDecimals: normalizedSelectedTokens?.from?.decimals,
+                tokenSymbol: normalizedSelectedTokens?.from?.symbol
               }
             }
           )
           .then((res) => {
-            console.log(res);
             if (res?.data?.error?.statusText === 'Forbidden') {
               logout();
             }
@@ -92,26 +125,20 @@ export const ConvertForm = memo(
           .catch((err) => {
             snackbar(
               'error',
-              err?.message || `Something went wrong, please try again.`
+              err?.message || 'Something went wrong, please try again.'
             );
-            //@ts-ignore
             btnRef.current?.resetSlide();
           })
-          //@ts-ignore
           .finally(() => btnRef.current?.resetSlide()),
         {
-          loading: `Converting ${amount} ${selectedTokens?.from?.name} into ${
-            // @ts-ignore
-            formatNumberToUsFormat(
-              selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
-            ).format(
-              // @ts-ignore
-              swapRoutes.outAmount /
-                (10 **
-                  (selectedTokens?.to?.tokenOverview?.attributes?.decimals ||
-                    0) || 1)
-            )
-          } ${selectedTokens?.to?.included?.attributes.name}`,
+          loading: `Converting ${amount} ${
+            normalizedSelectedTokens?.from?.name
+          } into ${formatNumberToUsFormat(
+            normalizedSelectedTokens?.to?.decimals
+          ).format(
+            (swapRoutes?.outAmount || 0) /
+              10 ** (normalizedSelectedTokens?.to?.decimals || 0)
+          )} ${normalizedSelectedTokens?.to?.name}`,
           dismissible: true,
           className: 'snackbar-promise',
           position: 'top-center'
@@ -139,10 +166,10 @@ export const ConvertForm = memo(
           px="4"
           className="bg-yellow transfer-card"
         >
-          {selectedTokens.from ? (
+          {normalizedSelectedTokens.from ? (
             <Flex direction="column" justify="between" gap="1">
               <TokenNumberInput
-                decimalLimit={selectedTokens?.from?.decimals as number}
+                decimalLimit={normalizedSelectedTokens?.from?.decimals}
                 value={'' + amount}
                 onChange={setAmount}
                 hasError={!isValidAmount}
@@ -153,7 +180,7 @@ export const ConvertForm = memo(
                   available amount
                 </Text>
               )}
-              <Text size="1">{`Available: ${selectedTokens?.from?.uiAmount}`}</Text>
+              <Text size="1">{`Available: ${normalizedSelectedTokens?.from?.uiAmount}`}</Text>
             </Flex>
           ) : (
             <Text size="5" weight="bold">
@@ -164,23 +191,30 @@ export const ConvertForm = memo(
             <Select
               mode="btn"
               onClick={() => changeSelected('from')}
-              value={selectedTokens?.from?.name}
+              value={normalizedSelectedTokens?.from?.name}
             />
 
-            {selectedTokens.from && (
+            {normalizedSelectedTokens.from && (
               <Text
                 size="1"
                 className="transfer-card-max"
-                onClick={() => setAmount(selectedTokens?.from?.uiAmount || 0)}
+                onClick={() =>
+                  setAmount(normalizedSelectedTokens?.from?.uiAmount || 0)
+                }
               >
                 Max
               </Text>
             )}
           </Flex>
         </Flex>
-        <Box className="convert-icon-arrow">
-          <Icon icon="arrowRight" />
-        </Box>
+
+        <ConvertIconArrow
+          swapSelectedTokensPlaces={() => {
+            swapSelectedTokensPlaces();
+            setAmount(swapRoutes?.outAmount || 0.01);
+          }}
+        />
+
         <Flex
           width="100%"
           justify="between"
@@ -189,7 +223,7 @@ export const ConvertForm = memo(
           px="4"
           className="bg-yellow transfer-card"
         >
-          {!selectedTokens.to && (
+          {!normalizedSelectedTokens.to && (
             <Text size="5" weight="bold">
               Select culture
             </Text>
@@ -201,13 +235,10 @@ export const ConvertForm = memo(
             <Text size="5" weight="bold">
               {swapRoutes
                 ? formatNumberToUsFormat(
-                    selectedTokens?.to?.tokenOverview?.attributes?.decimals || 0
+                    normalizedSelectedTokens?.to?.decimals
                   ).format(
-                    // @ts-ignore
                     swapRoutes.outAmount /
-                      (10 **
-                        (selectedTokens?.to?.tokenOverview?.attributes
-                          ?.decimals || 0) || 1)
+                      10 ** (normalizedSelectedTokens?.to?.decimals || 0)
                   )
                 : swapRoutes}
             </Text>
@@ -217,10 +248,10 @@ export const ConvertForm = memo(
             mode="btn"
             onClick={() => changeSelected('to')}
             defaultValue={2}
-            value={selectedTokens?.to?.included?.attributes.name}
+            value={normalizedSelectedTokens?.to?.name}
           />
         </Flex>
-        {selectedTokens.from && selectedTokens.to && (
+        {normalizedSelectedTokens.from && normalizedSelectedTokens.to && (
           <SlideButton
             ref={btnRef}
             disabled={
