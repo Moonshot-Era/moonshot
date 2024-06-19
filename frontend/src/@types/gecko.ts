@@ -26,6 +26,7 @@ export interface TokenItemGeckoType {
   type: string;
   attributes: TokenAttributes;
   relationships: TokenRelationships;
+  included?: GeckoTokenIncluded | PoolGeckoType;
 }
 
 interface PriceChangePercentage {
