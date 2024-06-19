@@ -10,7 +10,7 @@ const fetchSearchPools = (
   page: number = 1
 ): Promise<PoolGeckoType[]> =>
   axios
-    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/search-pools`, {
+    .post(`${process.env.NEXT_PUBLIC_SITE_URL}api/search-pools`, {
       query,
       page,
       withTokensOverview
