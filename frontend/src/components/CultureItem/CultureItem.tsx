@@ -186,7 +186,7 @@ export const CultureItem = ({
               )}
             </Flex>
           </Flex>
-          {!isWalletFetching && !isPortfolioFetching ? (
+          {!isPublic && (!isWalletFetching && !isPortfolioFetching ? (
             <Toolbar
               portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
               withShare
@@ -201,7 +201,7 @@ export const CultureItem = ({
             <Flex align="center" justify="center" width="100%">
               <Spinner size="3" />
             </Flex>
-          )}
+          ))}
 
           {asset && (
             <Flex

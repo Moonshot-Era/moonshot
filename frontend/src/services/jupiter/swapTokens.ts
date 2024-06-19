@@ -4,8 +4,7 @@ import {
   Transaction,
 } from '@solana/web3.js';
 import axios from 'axios';
-import { CubeSignerInstance, getUserWallet } from '../cubeSigner';
-import { CubeSignerClient } from '@cubist-labs/cubesigner-sdk';
+import { getUserSessionClient, getUserWallet } from '../cubeSigner';
 import { authenticator } from 'otplib';
 import { getMfaSecret } from '../helpers/getMfaSecret';
 import { createNativeTxInstruction } from '../solana/createNativeTxInstruction';
@@ -31,29 +30,8 @@ export const swapTokens = async (
   try {
     console.log('Initializing client session...');
     const totpSecret = await getMfaSecret();
-    let userClient: CubeSignerClient | undefined = undefined;
 
-    const cubeClient = await CubeSignerInstance.getManagementSessionClient();
-
-    const userSessionResp = await CubeSignerClient.createOidcSession(
-      cubeClient.env,
-      cubeClient.orgId,
-      oidcToken,
-      ['sign:*', 'manage:*']
-    );
-
-    if (userSessionResp.requiresMfa()) {
-      const tmpClient = await userSessionResp.mfaClient()!;
-      if (tmpClient) {
-        const totpResp = await userSessionResp.totpApprove(
-          tmpClient,
-          authenticator.generate(totpSecret)
-        );
-        userClient = await CubeSignerClient.create(totpResp.data());
-      }
-    } else {
-      userClient = await CubeSignerClient.create(userSessionResp.data());
-    }
+    const userClient = await getUserSessionClient(oidcToken);
 
     if (userClient) {
       const walletAddress = await getUserWallet(oidcToken, totpSecret);

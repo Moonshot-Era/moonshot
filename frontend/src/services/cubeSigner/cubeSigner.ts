@@ -1,3 +1,5 @@
+'use server';
+
 import { authenticator } from 'otplib';
 import {
   CubeSignerClient,
@@ -10,48 +12,83 @@ import { defaultManagementSessionManager } from '@cubist-labs/cubesigner-sdk-fs-
 import { getMfaSecret } from '../helpers/getMfaSecret';
 import { setMfaSecret } from '../helpers/setMfaSecret';
 
-class CubeSigner {
-  private managementSessionClient?: CubeSignerClient;
+let managementSessionClient: CubeSignerClient | undefined;
 
-  async getManagementSessionClient(): Promise<CubeSignerClient> {
-    if (!this.managementSessionClient) {
-      this.managementSessionClient = await CubeSignerClient.create(
-        defaultManagementSessionManager()
-      );
-    }
-    return this.managementSessionClient;
+const getManagementSessionClient = async (): Promise<CubeSignerClient> => {
+  if (!managementSessionClient) {
+    managementSessionClient = await CubeSignerClient.create(
+      defaultManagementSessionManager()
+    );
   }
+  return managementSessionClient;
+};
 
-  async getUserSessionClient(oidcToken: string): Promise<CubeSignerClient> {
-    const managerSessionClient = await this.getManagementSessionClient();
+export const getUserSessionClient = async (
+  oidcToken: string
+): Promise<CubeSignerClient> => {
+  let userClient: CubeSignerClient | undefined = undefined;
+  try {
+    const managerSessionClient = await getManagementSessionClient();
 
-    const resp = await CubeSignerClient.createOidcSession(
+    const userSessionResp = await CubeSignerClient.createOidcSession(
       managerSessionClient.env,
       managerSessionClient.orgId,
       oidcToken,
-      ['sign:*', 'manage:*']
+      ['sign:*', 'manage:*', 'export:*', 'export:user:*']
     );
 
-    return CubeSignerClient.create(resp.data());
+    if (userSessionResp.requiresMfa()) {
+      const totpSecret = await getMfaSecret();
+
+      if (totpSecret) {
+        const tmpClient = await userSessionResp.mfaClient()!;
+        if (tmpClient) {
+          const totpResp = await userSessionResp.totpApprove(
+            tmpClient,
+            authenticator.generate(totpSecret)
+          );
+          userClient = await CubeSignerClient.create(totpResp.data());
+        }
+      }
+    } else {
+      userClient = await CubeSignerClient.create(userSessionResp.data());
+      let totpResetResp = await userClient.resetTotp();
+      const totpChallenge = totpResetResp.data();
+      if (totpChallenge.url) {
+        const newTotpSecret =
+          new URL(totpChallenge.url).searchParams.get('secret') || '';
+
+        await setMfaSecret(newTotpSecret);
+        await totpChallenge.answer(authenticator.generate(newTotpSecret));
+      }
+    }
+
+    if (!userClient) {
+      throw Error('User client error');
+    }
+
+    return userClient;
+  } catch (err) {
+    throw err;
   }
+};
 
-  parseOidcToken(token: string): {
-    iss: string;
-    sub: string;
-    email?: string;
-  } {
-    const payload = JSON.parse(
-      Buffer.from(token.split('.')[1], 'base64url').toString('utf8')
-    );
-    const iss = payload.iss;
-    const sub = payload.sub;
-    const email = payload.email;
+const parseOidcToken = (
+  token: string
+): {
+  iss: string;
+  sub: string;
+  email?: string;
+} => {
+  const payload = JSON.parse(
+    Buffer.from(token.split('.')[1], 'base64url').toString('utf8')
+  );
+  const iss = payload.iss;
+  const sub = payload.sub;
+  const email = payload.email;
 
-    return { iss, sub, email };
-  }
-}
-
-export const CubeSignerInstance = new CubeSigner();
+  return { iss, sub, email };
+};
 
 const getLatestKey = (keys: Key[]) => {
   const latestKey = keys?.sort((a, b) =>
@@ -65,13 +102,12 @@ const getLatestKey = (keys: Key[]) => {
 
 export const getUserWallet = async (
   oidcToken: string,
-  totpSecret: string,
   userEmail?: string
 ): Promise<string | null> => {
   let key;
 
   try {
-    const cubeClient = await CubeSignerInstance.getManagementSessionClient();
+    const cubeClient = await getManagementSessionClient();
 
     const proveOidcIdentity = await CubeSignerClient.proveOidcIdentity(
       cubeClient.env,
@@ -81,7 +117,7 @@ export const getUserWallet = async (
 
     if (!proveOidcIdentity.user_info) {
       const org = cubeClient.org();
-      const { iss, sub, email } = CubeSignerInstance.parseOidcToken(oidcToken);
+      const { iss, sub, email } = parseOidcToken(oidcToken);
       const userId = await org.createOidcUser(
         { iss, sub },
         email || userEmail,
@@ -95,38 +131,17 @@ export const getUserWallet = async (
         // @ts-ignore
         policy: ['AllowRawBlobSigning']
       });
-    } else {
-      const oidcSessionResp = await CubeSignerClient.createOidcSession(
-        cubeClient.env,
-        cubeClient.orgId,
-        oidcToken,
-        ['sign:*', 'manage:*', 'export:*']
-      );
 
-      if (oidcSessionResp.requiresMfa()) {
-        if (!totpSecret) {
-          throw Error('Wrong TOTP secret');
-        }
-        const tmpClient = await oidcSessionResp.mfaClient()!;
-        if (tmpClient) {
-          const totpOidcCode = authenticator.generate(totpSecret);
-          const totpResp = await oidcSessionResp.totpApprove(
-            tmpClient,
-            totpOidcCode
-          );
-
-          const userCubeSigner = await CubeSignerClient.create(totpResp.data());
-          const keys = await userCubeSigner.sessionKeys();
-          key = getLatestKey(keys);
-        }
-      } else {
-        const userCubeSigner = await CubeSignerClient.create(
-          oidcSessionResp.data()
-        );
-        const keys = await userCubeSigner.sessionKeys();
-        key = getLatestKey(keys);
+      if (!key || !key?.materialId) {
+        throw Error('Wallet not created');
       }
+      return key.materialId;
     }
+
+    const userCubeSigner = await getUserSessionClient(oidcToken);
+
+    const keys = await userCubeSigner.sessionKeys();
+    key = getLatestKey(keys);
 
     if (!key || !key?.materialId) {
       throw Error('Wallet not created');
@@ -134,46 +149,13 @@ export const getUserWallet = async (
   } catch (err: any) {
     throw err;
   }
-  return key?.materialId;
+  return key.materialId;
 };
 
-export const fetchInitiateExportKeys = async (
-  oidcToken: string,
-  mfaSecret: string
-) => {
-  let userClient: CubeSignerClient | undefined = undefined;
-  let totpSecret = mfaSecret;
-  const cubeClient = await CubeSignerInstance.getManagementSessionClient();
-
+export const fetchInitiateExportKeys = async (oidcToken: string) => {
   try {
-    const userSessionResp = await CubeSignerClient.createOidcSession(
-      cubeClient.env,
-      cubeClient.orgId,
-      oidcToken,
-      ['sign:*', 'export:user:*', 'manage:*']
-    );
-
-    if (userSessionResp.requiresMfa()) {
-      const tmpClient = await userSessionResp.mfaClient()!;
-      if (tmpClient) {
-        const totpResp = await userSessionResp.totpApprove(
-          tmpClient,
-          authenticator.generate(totpSecret)
-        );
-        userClient = await CubeSignerClient.create(totpResp.data());
-      }
-    } else {
-      userClient = await CubeSignerClient.create(userSessionResp.data());
-      let totpResetResp = await userClient.resetTotp();
-      const totpChallenge = totpResetResp.data();
-      if (totpChallenge.url) {
-        totpSecret =
-          new URL(totpChallenge.url).searchParams.get('secret') || '';
-
-        await setMfaSecret(totpSecret);
-        await totpChallenge.answer(authenticator.generate(totpSecret));
-      }
-    }
+    const totpSecret = await getMfaSecret();
+    const userClient = await getUserSessionClient(oidcToken);
 
     if (userClient) {
       const keys = await userClient.sessionKeys();
@@ -197,40 +179,10 @@ export const fetchInitiateExportKeys = async (
   }
 };
 
-export const fetchExportKeys = async (oidcToken: string, mfaSecret: string) => {
-  let userClient: CubeSignerClient | undefined = undefined;
-  let totpSecret = mfaSecret;
-  const cubeClient = await CubeSignerInstance.getManagementSessionClient();
-
+export const fetchExportKeys = async (oidcToken: string) => {
   try {
-    const userSessionResp = await CubeSignerClient.createOidcSession(
-      cubeClient.env,
-      cubeClient.orgId,
-      oidcToken,
-      ['sign:*', 'export:user:*', 'manage:*']
-    );
-
-    if (userSessionResp.requiresMfa()) {
-      const tmpClient = await userSessionResp.mfaClient()!;
-      if (tmpClient) {
-        const totpResp = await userSessionResp.totpApprove(
-          tmpClient,
-          authenticator.generate(totpSecret)
-        );
-        userClient = await CubeSignerClient.create(totpResp.data());
-      }
-    } else {
-      userClient = await CubeSignerClient.create(userSessionResp.data());
-      let totpResetResp = await userClient.resetTotp();
-      const totpChallenge = totpResetResp.data();
-      if (totpChallenge.url) {
-        totpSecret =
-          new URL(totpChallenge.url).searchParams.get('secret') || '';
-
-        await setMfaSecret(totpSecret);
-        await totpChallenge.answer(authenticator.generate(totpSecret));
-      }
-    }
+    const totpSecret = await getMfaSecret();
+    const userClient = await getUserSessionClient(oidcToken);
 
     if (userClient) {
       const keys = await userClient.sessionKeys();
