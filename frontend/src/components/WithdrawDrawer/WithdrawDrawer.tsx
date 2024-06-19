@@ -148,3 +148,5 @@ export const WithdrawDrawer: FC<Props & { ref: any }> = forwardRef(
     );
   }
 );
+
+WithdrawDrawer.displayName = 'WithdrawDrawer';
