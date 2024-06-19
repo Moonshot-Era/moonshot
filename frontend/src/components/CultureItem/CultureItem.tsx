@@ -25,7 +25,6 @@ import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
-import { uniqBy } from 'lodash';
 
 export const CultureItem = ({
   tokenInfo,
@@ -102,6 +101,10 @@ export const CultureItem = ({
     setBeforeTimestamp(chartData[0].time);
   }, [chartData]);
 
+  const tokenName = isSolanaAddress(tokenInfo?.address)
+    ? 'SOL'
+    : tokenInfo?.name;
+
   return tokenInfo ? (
     <>
       <Flex
@@ -134,7 +137,7 @@ export const CultureItem = ({
               </Flex>
             )}
             <Text size={mdScreen ? '5' : '4'} weight="bold">
-              {tokenInfo.name}
+              {tokenName}
             </Text>
             {!isPublic && (
               <Box
@@ -190,22 +193,23 @@ export const CultureItem = ({
               )}
             </Flex>
           </Flex>
-          {!isPublic && (!isWalletFetching && !isPortfolioFetching ? (
-            <Toolbar
-              portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
-              withShare
-              tokenPrice={+tokenData.price_usd}
-              hideWithdraw={!asset}
-              tokenPrefill={{
-                ...tokenInfo,
-                ...tokenData
-              }}
-            />
-          ) : (
-            <Flex align="center" justify="center" width="100%">
-              <Spinner size="3" />
-            </Flex>
-          ))}
+          {!isPublic &&
+            (!isWalletFetching && !isPortfolioFetching ? (
+              <Toolbar
+                portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
+                withShare
+                tokenPrice={+tokenData.price_usd}
+                hideWithdraw={!asset}
+                tokenPrefill={{
+                  ...tokenInfo,
+                  ...tokenData
+                }}
+              />
+            ) : (
+              <Flex align="center" justify="center" width="100%">
+                <Spinner size="3" />
+              </Flex>
+            ))}
 
           {asset && (
             <Flex
@@ -258,7 +262,7 @@ export const CultureItem = ({
                 size={mdScreen ? '4' : '3'}
                 weight="medium"
                 mb="2"
-              >{`About ${tokenInfo.name}`}</Text>
+              >{`About ${tokenName}`}</Text>
               {tokenInfo?.description && (
                 <Text size={mdScreen ? '3' : '1'}>
                   {tokenInfo?.description}
