@@ -8,13 +8,14 @@ import {
 } from '@/utils';
 import { useLogout } from '../useLogout';
 
-export const useWallet = () => {
+export const useWallet = (isPublic = false) => {
   const logout = useLogout();
   const cookies = useCookies();
   const provider = cookies.get(COOKIE_PROVIDER);
   const token = cookies.get(COOKIE_PROVIDER_TOKEN);
 
   const { data, ...rest } = useQuery<Wallet | null>({
+    enabled: !isPublic,
     queryKey: ['wallet', token],
     queryFn: async () => {
       try {
@@ -45,7 +46,9 @@ export const useWallet = () => {
         await logout();
         return null;
       }
-    }
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   });
 
   return {

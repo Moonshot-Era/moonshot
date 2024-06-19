@@ -2,14 +2,16 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { FeeDataType, SelectedTokens } from "./types";
 import axios from "axios";
 
-type SwapRoute = {};
+type SwapRoute = {
+  outAmount: number
+};
 
 const fetchSwapRoutes = (
   inputMint: string,
   outputMint: string,
   amount: string | number,
   slippageBps: number
-): Promise<SwapRoute[]> =>
+): Promise<SwapRoute> =>
   axios
     .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/get-swap-routes`, {
       inputMint,
@@ -29,7 +31,7 @@ export const useSwapRoutes = (
   { from, to }: SelectedTokens,
   amount: number,
   slippageBps: number,
-  isValidAmount: boolean
+  isValidAmount: boolean,
 ) => {
   const { data, ...rest } = useQuery({
     queryKey: [
@@ -37,12 +39,14 @@ export const useSwapRoutes = (
     ],
     queryFn: () =>
       fetchSwapRoutes(
-        from?.address || '',
-        to?.included?.attributes.address || '',
+        from?.address || from?.included?.attributes.address || '',
+        to?.address || to?.included?.attributes.address || '',
         amount,
         slippageBps
       ),
-    enabled: !!(isValidAmount && amount && from && to && slippageBps)
+    enabled: !!(isValidAmount && amount && from && to && slippageBps),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   });
 
   return { swapRoutes: data, ...rest };

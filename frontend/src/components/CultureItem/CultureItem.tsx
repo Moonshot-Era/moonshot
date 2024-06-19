@@ -25,6 +25,7 @@ import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
+import { uniqBy } from 'lodash';
 
 export const CultureItem = ({
   tokenInfo,
@@ -37,10 +38,12 @@ export const CultureItem = ({
 }) => {
   const { mdScreen } = useWidth();
   const router = useRouter();
-  const { walletData, isFetching } = useWallet();
-  const { portfolio, refetch: refetchPortfolio } = usePortfolio(
-    walletData?.wallet
-  );
+  const { walletData, isFetching: isWalletFetching } = useWallet();
+  const {
+    portfolio,
+    isFetching: isPortfolioFetching,
+    refetch: refetchPortfolio
+  } = usePortfolio(walletData?.wallet);
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const [beforeTimestamp, setBeforeTimestamp] = useState<number | undefined>();
   const {
@@ -187,18 +190,22 @@ export const CultureItem = ({
               )}
             </Flex>
           </Flex>
-          {!isFetching ? (
+          {!isPublic && (!isWalletFetching && !isPortfolioFetching ? (
             <Toolbar
               portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
               withShare
               tokenPrice={+tokenData.price_usd}
               hideWithdraw={!asset}
+              tokenPrefill={{
+                ...tokenInfo,
+                ...tokenData
+              }}
             />
           ) : (
             <Flex align="center" justify="center" width="100%">
               <Spinner size="3" />
             </Flex>
-          )}
+          ))}
 
           {asset && (
             <Flex

@@ -16,8 +16,6 @@ export async function POST(request: NextRequest) {
       throw Error('There is no token or provider in the headers');
     }
 
-    const totpSecret = await getMfaSecret();
-
     const decodedToken = jwtDecode<{ email: string }>(token);
     let email: string | undefined = decodedToken.email;
 
@@ -31,7 +29,7 @@ export async function POST(request: NextRequest) {
       throw Error('Email is missing');
     }
 
-    const wallet = await getUserWallet(token, totpSecret || '', email);
+    const wallet = await getUserWallet(token, email);
 
     return NextResponse.json({ wallet });
   } catch (err: any) {

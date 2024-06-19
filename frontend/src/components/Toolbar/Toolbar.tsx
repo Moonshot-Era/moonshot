@@ -10,19 +10,23 @@ import { ConvertDrawer } from '../ConvertDrawer/ConvertDrawer';
 import { DepositDrawer } from '../DepositDrawer/DepositDrawer';
 import { ShareModal } from '../ShareModal/ShareModal';
 import { WithdrawDrawer } from '../WithdrawDrawer/WithdrawDrawer';
+import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
+import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 
 interface ToolbarProps {
   portfolio: WalletPortfolioNormilizedType;
   withShare?: boolean;
   tokenPrice?: number;
   hideWithdraw?: boolean;
+  tokenPrefill?: NormilizedTokenDataOverview & NormilizedTokenInfoOverview;
 }
 
 export const Toolbar = ({
   withShare,
   portfolio,
   tokenPrice,
-  hideWithdraw
+  hideWithdraw,
+  tokenPrefill
 }: ToolbarProps) => {
   const { mdScreen } = useWidth();
 
@@ -59,15 +63,17 @@ export const Toolbar = ({
           justifyContent: 'space-around'
         }}
       >
-        <Flex direction="column" align="center" gap="1">
-          <IconButton
-            icon="transfer"
-            className="bg-yellow"
-            // @ts-ignore
-            onClick={() => convertDrawerRef.current?.open()}
-          />
-          <Text size={mdScreen ? '4' : '2'}>Convert</Text>
-        </Flex>
+        {!!portfolio?.walletAssets?.length && (
+          <Flex direction="column" align="center" gap="1">
+            <IconButton
+              icon="transfer"
+              className="bg-yellow"
+              // @ts-ignore
+              onClick={() => convertDrawerRef.current?.open()}
+            />
+            <Text size={mdScreen ? '4' : '2'}>Convert</Text>
+          </Flex>
+        )}
         <Flex direction="column" align="center" gap="1">
           <IconButton
             icon="deposit"
@@ -76,16 +82,18 @@ export const Toolbar = ({
           />
           <Text size={mdScreen ? '4' : '2'}>Deposit</Text>
         </Flex>
-        {!hideWithdraw && (
-          <Flex direction="column" align="center" gap="1">
-            <IconButton
-              icon="withdraw"
-              className="bg-violet"
-              onClick={toggleWithdrawDrawer}
-            />
-            <Text size={mdScreen ? '4' : '2'}>Withdraw</Text>
-          </Flex>
-        )}
+        {!!portfolio?.walletAssets?.length
+          ? !hideWithdraw && (
+              <Flex direction="column" align="center" gap="1">
+                <IconButton
+                  icon="withdraw"
+                  className="bg-violet"
+                  onClick={toggleWithdrawDrawer}
+                />
+                <Text size={mdScreen ? '4' : '2'}>Withdraw</Text>
+              </Flex>
+            )
+          : null}
         {withShare && tokenPrice ? (
           <Dialog.Root open={isShareOpen} onOpenChange={setIsShareOpen}>
             <Dialog.Trigger>

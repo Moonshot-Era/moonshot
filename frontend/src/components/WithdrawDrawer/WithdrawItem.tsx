@@ -109,9 +109,14 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         return;
       }
       if (toAddress && transactionAmount) {
+        const amount = amountInputInUsd
+          ? (+(transactionAmount || 0) / (asset?.priceUsd || 0)).toFixed(
+              transactionAmount && +transactionAmount ? decimalLength : 0
+            )
+          : transactionAmount;
         await onSlideHandler(
           toAddress,
-          transactionAmount,
+          amount,
           asset?.priceUsd || 0,
           asset?.symbol || ''
         );
@@ -123,6 +128,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
       setWithdrawLoading(false);
     }
   };
+
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
       <Text size={mdScreen ? '5' : '4'} weight="bold">
@@ -192,14 +198,17 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
           placeholder="Amount"
           value={transactionAmount}
           error={!!amountError}
+          errorText={amountError}
           onChange={handleChangeAmount}
           type={'number'}
           endAdornment={<Text>{amountInputInUsd ? 'USD' : asset?.name}</Text>}
         />
-        <Flex justify="between">
-          <Text size={mdScreen ? '3' : '2'}>
-            Available {asset?.uiAmount} {asset?.name}
-          </Text>
+        <Flex justify={!!amountError ? 'end' : 'between'}>
+          {!amountError && (
+            <Text size={mdScreen ? '3' : '2'}>
+              Available {asset?.uiAmount} {asset?.name}
+            </Text>
+          )}
           <Text
             size={mdScreen ? '3' : '1'}
             className="transfer-card-max"
