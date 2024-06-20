@@ -25,6 +25,7 @@ const getDelayLabel = (delayRemaining: Date) => {
       delayRemaining.getMinutes() > 1 ? 'minutes' : 'minute'
     }`;
   }
+  return ''
 };
 
 export const ExportRemaining: FC<Props> = ({ delayRemaining }) => {
