@@ -9,8 +9,8 @@ import { COOKIE_PROVIDER, COOKIE_PROVIDER_TOKEN, ROUTES } from '@/utils';
 import { logger } from '@/services/logger/pino/pinoLogger';
 
 export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
   try {
-    const { searchParams } = new URL(request.url);
     const code = searchParams.get('code') as string;
     const state = searchParams.get('state') as string;
     const [codeChallenge, cultureRef] = state.split('~~~');
