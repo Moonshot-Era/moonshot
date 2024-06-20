@@ -6,7 +6,7 @@ import { ErrResponse } from '@cubist-labs/cubesigner-sdk';
 import { getResponseToRefreshToken } from '@/utils/getResponse';
 import { jwtDecode } from 'jwt-decode';
 import { createServerClient } from '@/supabase/server';
-import { logger } from '@/services/logger/pino';
+import { logger } from '@/services/logger/pino/pinoLogger';
 
 export async function POST(request: NextRequest) {
   const token = request.headers.get(HEADER_PROVIDER_TOKEN);
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ wallet });
   } catch (err: any) {
-    logger.error('route get-wallet =>', err.message ?? err);
+    logger.error(err, 'route get-wallet');
     if (
       (err as ErrResponse)?.errorCode === 'InvalidOidcToken' ||
       ((err as ErrResponse)?.statusText === 'Forbidden' &&

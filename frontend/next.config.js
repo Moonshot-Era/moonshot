@@ -18,6 +18,13 @@ const nextConfig = {
       }
     ]
   },
+  experimental: {
+    serverComponentsExternalPackages: [
+      'pino',
+      'rotating-file-stream',
+      'pino-pretty'
+    ]
+  },
   async rewrites() {
     return [
       {
