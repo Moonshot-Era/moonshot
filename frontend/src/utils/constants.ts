@@ -1,9 +1,3 @@
-export const COOKIE_PROVIDER = 'p';
-export const COOKIE_PROVIDER_TOKEN = 'pt';
-
-export const HEADER_PROVIDER_TOKEN = 'authorization';
-export const HEADER_PROVIDER = 'authorization-provider';
-
 export const ROUTES = {
   home: '/',
   login: '/login',
@@ -19,8 +13,10 @@ export const SOLANA_WRAPPED_ADDRESS =
 
 export const USDC_ADDRESS = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
-export const MOONSHOT_WALLET_ADDRESS = 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh';
-export const REF_WALLET_ADDRESS = 'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh';
+export const MOONSHOT_WALLET_ADDRESS =
+  'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh';
+export const REF_WALLET_ADDRESS =
+  'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh';
 
 export const MOONSHOT_FEE = 0.005;
 export const REF_FEE = 0.0025;

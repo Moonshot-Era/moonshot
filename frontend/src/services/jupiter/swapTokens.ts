@@ -1,8 +1,4 @@
-import {
-  Connection,
-  PublicKey,
-  Transaction,
-} from '@solana/web3.js';
+import { Connection, PublicKey, Transaction } from '@solana/web3.js';
 import axios from 'axios';
 import { getUserSessionClient, getUserWallet } from '../cubeSigner';
 import { authenticator } from 'otplib';
@@ -22,19 +18,15 @@ const sleep = async (ms: number) => {
   return new Promise((r) => setTimeout(r, ms));
 };
 
-export const swapTokens = async (
-  oidcToken: string,
-  swapRoutes: any,
-  feeData: FeeDataType
-) => {
+export const swapTokens = async (swapRoutes: any, feeData: FeeDataType) => {
   try {
     console.log('Initializing client session...');
     const totpSecret = await getMfaSecret();
 
-    const userClient = await getUserSessionClient(oidcToken);
+    const userSessionClient = await getUserSessionClient();
 
-    if (userClient) {
-      const walletAddress = await getUserWallet(oidcToken, totpSecret);
+    if (userSessionClient) {
+      const walletAddress = await getUserWallet(userSessionClient);
       const connection = new Connection(
         process.env.SOLANA_RPC_PROVIDER,
         'confirmed'
@@ -101,14 +93,17 @@ export const swapTokens = async (
         }
       }
 
-      const resp = await userClient.apiClient.signSolana(walletAddress!, {
-        message_base64: transaction.serializeMessage().toString('base64')
-      });
+      const resp = await userSessionClient.apiClient.signSolana(
+        walletAddress!,
+        {
+          message_base64: transaction.serializeMessage().toString('base64')
+        }
+      );
 
       let sig;
       if (totpSecret) {
         sig = await resp.totpApprove(
-          userClient,
+          userSessionClient,
           authenticator.generate(totpSecret)
         );
       }

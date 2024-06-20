@@ -12,13 +12,12 @@ import { getUserSessionClient } from '../cubeSigner';
 import { getMfaSecret } from '../helpers/getMfaSecret';
 
 export const sendNativeTransaction = async (
-  oidcToken: string,
   fromAddress: string,
   toAddress: string,
   amount: number
 ) => {
   const totpSecret = await getMfaSecret();
-  const userClient = await getUserSessionClient(oidcToken);
+  const userClient = await getUserSessionClient();
 
   const connection = new Connection(
     process.env.SOLANA_RPC_PROVIDER,

@@ -80,6 +80,35 @@ export type Database = {
         }
         Relationships: []
       }
+      sessions: {
+        Row: {
+          created_at: string
+          mfa_s: string | null
+          session_data: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          mfa_s?: string | null
+          session_data?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          mfa_s?: string | null
+          session_data?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_session_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       transactions: {
         Row: {
           created_at: string
@@ -128,7 +157,7 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      get_refresh_token: {
+      get_session_data: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
@@ -144,9 +173,9 @@ export type Database = {
         }
         Returns: undefined
       }
-      store_refresh_token: {
+      store_session_data: {
         Args: {
-          refresh_token: string
+          session_data: string
         }
         Returns: undefined
       }

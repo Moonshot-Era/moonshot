@@ -1,5 +1,4 @@
 import { ReactQueryProvider } from '@/helpers/ReactQueryProvider';
-import { CookiesProvider } from 'next-client-cookies/server';
 import { Theme } from '@radix-ui/themes';
 import '@radix-ui/themes/styles.css';
 import type { Metadata, Viewport } from 'next';
@@ -83,16 +82,14 @@ export default function RootLayout({
         />
         <Toaster />
         <ServiceWorkerRegister />
-        <CookiesProvider>
-          <ReactQueryProvider>
-            <Theme
-              className="bg-transparent"
-              style={{ width: '100%', maxWidth: 430 }}
-            >
-              {children}
-            </Theme>
-          </ReactQueryProvider>
-        </CookiesProvider>
+        <ReactQueryProvider>
+          <Theme
+            className="bg-transparent"
+            style={{ width: '100%', maxWidth: 430 }}
+          >
+            {children}
+          </Theme>
+        </ReactQueryProvider>
       </body>
     </html>
   );

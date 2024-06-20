@@ -2,7 +2,7 @@ import {
   Connection,
   LAMPORTS_PER_SOL,
   PublicKey,
-  Transaction,
+  Transaction
 } from '@solana/web3.js';
 
 import { getUserSessionClient } from '../cubeSigner';
@@ -19,7 +19,6 @@ import { authenticator } from 'otplib';
 import { getMfaSecret } from '../helpers/getMfaSecret';
 
 export const sendTokensTransaction = async (
-  oidcToken: string,
   fromAddress: string,
   toAddress: string,
   amount: number,
@@ -27,7 +26,7 @@ export const sendTokensTransaction = async (
   tokenDecimals: number
 ) => {
   const totpSecret = await getMfaSecret();
-  const userClient = await getUserSessionClient(oidcToken);
+  const userClient = await getUserSessionClient();
 
   const connection = new Connection(
     process.env.SOLANA_RPC_PROVIDER,

@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 
 import { Header } from '@/components/Header/Header';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
