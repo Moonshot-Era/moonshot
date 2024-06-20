@@ -117,7 +117,8 @@ export async function GET(request: Request) {
 
     return NextResponse.redirect(`${process.env.SITE_URL}`);
   } catch (err: any) {
-    logger.error(err, 'route twitter/callback');
+    // logger.error(err, 'route twitter/callback');
+    console.error('twitter/callback route ==> ', err);
     return NextResponse.redirect(`${process.env.SITE_URL}${ROUTES.login}`);
   }
 }
