@@ -1,12 +1,11 @@
 import axios from 'axios';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { jwtDecode } from 'jwt-decode';
 
 import { createServerClient } from '@/supabase/server';
-import { COOKIE_PROVIDER, COOKIE_PROVIDER_TOKEN, ROUTES } from '@/utils';
-import { logger } from '@/services/logger/pino/pinoLogger';
+import { ROUTES } from '@/utils';
+import { storeCubeSignerSessionData } from '@/services';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -100,24 +99,10 @@ export async function GET(request: Request) {
       }
     }
 
-    if (twitterAuthResponse.refresh_token) {
-      const { error: storeRefreshTokenError } = await supabaseServerClient.rpc(
-        'store_refresh_token',
-        {
-          refresh_token: twitterAuthResponse.refresh_token
-        }
-      );
-      if (storeRefreshTokenError) {
-        throw storeRefreshTokenError;
-      }
-    }
-
-    cookies().set(COOKIE_PROVIDER, 't');
-    cookies().set(COOKIE_PROVIDER_TOKEN, twitterAuthResponse.id_token);
+    await storeCubeSignerSessionData(twitterAuthResponse.id_token, email);
 
     return NextResponse.redirect(`${process.env.SITE_URL}`);
   } catch (err: any) {
-    // logger.error(err, 'route twitter/callback');
     console.error('twitter/callback route ==> ', err);
     return NextResponse.redirect(`${process.env.SITE_URL}${ROUTES.login}`);
   }

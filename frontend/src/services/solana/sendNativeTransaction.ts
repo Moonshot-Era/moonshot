@@ -18,7 +18,7 @@ export const sendNativeTransaction = async (
   amount: number
 ) => {
   const totpSecret = await getMfaSecret();
-  const userClient = await getUserSessionClient(oidcToken);
+  const userClient = await getUserSessionClient();
 
   const connection = new Connection(
     process.env.SOLANA_RPC_PROVIDER,

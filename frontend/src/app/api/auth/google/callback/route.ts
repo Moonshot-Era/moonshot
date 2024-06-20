@@ -1,6 +1,6 @@
+import { storeCubeSignerSessionData } from '@/services';
 import { createServerClient } from '@/supabase/server';
-import { COOKIE_PROVIDER, COOKIE_PROVIDER_TOKEN, ROUTES } from '@/utils';
-import { cookies } from 'next/headers';
+import { ROUTES } from '@/utils';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -54,21 +54,13 @@ export async function GET(request: Request) {
         }
       }
 
-      if (googleAuthResponse.refresh_token) {
-        const { error } = await supabaseServerClient.rpc(
-          'store_refresh_token',
-          {
-            refresh_token: googleAuthResponse.refresh_token
-          }
-        );
-        if (error) {
-          throw error;
-        }
-      }
+      await storeCubeSignerSessionData(
+        googleAuthResponse.id_token,
+        user.email!
+      );
+    } else {
+      throw Error('User is not logged in');
     }
-
-    cookies().set(COOKIE_PROVIDER, 'g');
-    cookies().set(COOKIE_PROVIDER_TOKEN, googleAuthResponse.id_token);
 
     return NextResponse.redirect(`${process.env.SITE_URL}`);
   } catch (error) {

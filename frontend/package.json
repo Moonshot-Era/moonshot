@@ -8,7 +8,7 @@
     "sb:link": "source .env && supabase link --project-ref $SUPABASE_PROJECT_REF_ID",
     "sb:types": "source .env && supabase gen types typescript --linked --schema public | tail +1 > src/supabase/schema.tsx",
     "sb:db:pull": "source .env && supabase db pull -p $SUPABASE_DB_PASSWORD -s all",
-    "sb:db:diff": "source .env && supabase db diff --local",
+    "sb:db:diff": "source .env && supabase db diff --local --schema public",
     "sb:migration:new": "supabase migration new",
     "sb:migration:apply": "supabase migration up --linked",
     "sb:migration:ls": "source .env && supabase migration list"
@@ -39,7 +39,6 @@
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "next": "14.2.3",
-    "next-client-cookies": "^1.1.1",
     "next-pwa": "^5.6.0",
     "otplib": "12.0.1",
     "pino": "^9.2.0",
