@@ -102,7 +102,7 @@ const createCubeSignerSessionData = async (
       await totpChallenge.answer(authenticator.generate(newTotpSecret));
 
       await setMfaSecret(newTotpSecret);
-
+      // TODO Consider to delete user from cubesigner if error
       return sessionData;
     } else {
       throw Error('Totp challenge url is required');
