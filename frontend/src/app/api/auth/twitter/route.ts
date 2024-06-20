@@ -18,8 +18,7 @@ export async function GET(request: Request) {
     state: state,
     code_challenge: codeChallenge,
     code_challenge_method: 'plain',
-    // redirect_uri: process.env.TWITTER_AUTH_REDIRECT_URL
-    redirect_uri: 'https://dev.moonshot.tech/api/auth/twitter/callback'
+    redirect_uri: process.env.TWITTER_AUTH_REDIRECT_URL
   });
 
   return NextResponse.redirect(
