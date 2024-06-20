@@ -1,22 +1,18 @@
 import { NextResponse } from 'next/server';
 import { fetchExportKeys, fetchInitiateExportKeys } from '@/services';
-import { cookies } from 'next/headers';
 
 export async function POST(request: Request) {
-  const oidc = cookies()?.get('pt')?.value;
   const response = await request.json();
   let exportKeysData;
   let timestamp;
-  if (!oidc) {
-    return NextResponse.json({ error: { statusText: 'Forbidden' } });
-  }
+
   try {
     if (response.type === 'initiate') {
-      timestamp = await fetchInitiateExportKeys(oidc);
+      timestamp = await fetchInitiateExportKeys();
     }
 
     if (response.type === 'export') {
-      exportKeysData = await fetchExportKeys(oidc);
+      exportKeysData = await fetchExportKeys();
     }
 
     return NextResponse.json(exportKeysData || timestamp || {});

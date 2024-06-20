@@ -202,7 +202,7 @@ export const getUserWallet = async (
   return key.materialId;
 };
 
-export const fetchInitiateExportKeys = async (oidcToken: string) => {
+export const fetchInitiateExportKeys = async () => {
   try {
     const totpSecret = await getMfaSecret();
     const userClient = await getUserSessionClient();
@@ -229,7 +229,7 @@ export const fetchInitiateExportKeys = async (oidcToken: string) => {
   }
 };
 
-export const fetchExportKeys = async (oidcToken: string) => {
+export const fetchExportKeys = async () => {
   try {
     const totpSecret = await getMfaSecret();
     const userClient = await getUserSessionClient();

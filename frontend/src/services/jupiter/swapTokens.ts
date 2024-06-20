@@ -18,11 +18,7 @@ const sleep = async (ms: number) => {
   return new Promise((r) => setTimeout(r, ms));
 };
 
-export const swapTokens = async (
-  oidcToken: string,
-  swapRoutes: any,
-  feeData: FeeDataType
-) => {
+export const swapTokens = async (swapRoutes: any, feeData: FeeDataType) => {
   try {
     console.log('Initializing client session...');
     const totpSecret = await getMfaSecret();

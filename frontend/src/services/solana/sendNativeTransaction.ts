@@ -12,7 +12,6 @@ import { getUserSessionClient } from '../cubeSigner';
 import { getMfaSecret } from '../helpers/getMfaSecret';
 
 export const sendNativeTransaction = async (
-  oidcToken: string,
   fromAddress: string,
   toAddress: string,
   amount: number

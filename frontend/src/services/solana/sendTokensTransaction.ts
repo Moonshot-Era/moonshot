@@ -19,7 +19,6 @@ import { authenticator } from 'otplib';
 import { getMfaSecret } from '../helpers/getMfaSecret';
 
 export const sendTokensTransaction = async (
-  oidcToken: string,
   fromAddress: string,
   toAddress: string,
   amount: number,
