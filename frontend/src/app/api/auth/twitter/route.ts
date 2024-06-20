@@ -12,8 +12,7 @@ export async function GET(request: Request) {
 
   const params = new URLSearchParams({
     response_type: 'code',
-    // client_id: process.env.TWITTER_CLIENT_ID,
-    client_id: 'Q29sX3luNndHOUg4QWNGb05fa2I6MTpjaQ',
+    client_id: process.env.TWITTER_CLIENT_ID,
     scope: 'users.read follows.read tweet.read follows.write',
     state: state,
     code_challenge: codeChallenge,
