@@ -39,7 +39,7 @@ const clashDisplayFont = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: 'Moonshot',
-  description: 'Moonshot application',
+  description: 'Make It All Back',
   generator: 'Next.js',
   manifest: '/manifest.json',
   keywords: ['nextjs', 'nextjs14', 'next14', 'pwa', 'next-pwa'],
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     images: {
-      url: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/og-image`
+      url: 'images/white_logo.png',
     }
   }
 };

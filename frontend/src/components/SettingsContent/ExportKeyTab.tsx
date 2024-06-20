@@ -65,6 +65,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   const toggleChecked = () => setChecked(!checked);
 
   const handleInitiateExportKeys = async () => {
+    setLoading(true);
     const { data } = await axios.post(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/export-keys`,
       {
@@ -134,11 +135,12 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
       exportDelay &&
       exportDelay < new Date() &&
       exportWindow &&
-      exportWindow < new Date()
+      exportWindow > new Date()
     ) {
       getMnemonic().finally(() => setLoading(false));
     }
   }, [exportDelay, exportWindow, getMnemonic]);
+
   return (
     <Flex
       width="100%"
@@ -242,7 +244,6 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
             <Text size={mdScreen ? '4' : '3'} weight="medium">
               Continue
             </Text>
-            {loading && <Spinner size="3" />}
           </Button>
         </>
       )}
