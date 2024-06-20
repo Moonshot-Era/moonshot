@@ -20,8 +20,11 @@ export async function GET(request: Request) {
     }
 
     const { data: twitterAuthResponse } = await axios.post(
-      `${process.env.CUBE_SIGNER_URL}/v0/org/${encodeURIComponent(
-        process.env.CUBE_SIGNER_ORG_ID
+      // `${process.env.CUBE_SIGNER_URL}/v0/org/${encodeURIComponent(
+      //   process.env.CUBE_SIGNER_ORG_ID
+      // )}/oauth2/twitter`,
+      `https://gamma.signer.cubist.dev/v0/org/${encodeURIComponent(
+        'Org#daf763f9-8147-491f-84d2-bdf8be4b0eee'
       )}/oauth2/twitter`,
       new URLSearchParams({
         code,
