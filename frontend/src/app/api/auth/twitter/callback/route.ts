@@ -28,7 +28,8 @@ export async function GET(request: Request) {
         grant_type: 'authorization_code',
         // client_id: process.env.TWITTER_CLIENT_ID!,
         client_id: 'Q29sX3luNndHOUg4QWNGb05fa2I6MTpjaQ',
-        redirect_uri: process.env.TWITTER_AUTH_REDIRECT_URL,
+        // redirect_uri: process.env.TWITTER_AUTH_REDIRECT_URL,
+        redirect_uri: 'https://dev.moonshot.tech/api/auth/twitter/callback',
         code_verifier: codeChallenge
       }),
       {
