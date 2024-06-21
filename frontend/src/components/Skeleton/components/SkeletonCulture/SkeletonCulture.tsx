@@ -4,35 +4,38 @@ import { Box, Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
 
-const toolbarTitles = ['Convert', 'Deposit', 'Withdraw', 'Share'];
-
 export const SkeletonCulture = () => {
   return (
     <Flex
       direction="column"
       align="center"
       width="100%"
-      height="100vh"
-      mt="76px"
+      maxHeight="100vh"
+      overflow="hidden"
       className="main-wrapper"
     >
-      <Box mb="218px">
+      <Box mt="76px" mb="4">
         <Skeleton width={128} height={28} />
       </Box>
-      <Flex width="100%" direction="row" justify="between" mb="4" px="2">
-        {toolbarTitles.map((title, index) => (
-          <Flex key={index} direction="column" align="center" gap="1">
-            <Box>
-              <Skeleton
-                width={48}
-                height={48}
-                className="skeleton-empty-card-icon"
-              />
-            </Box>
-            <Text size={'1'}>{title}</Text>
-          </Flex>
-        ))}
+      <Flex
+        direction="column"
+        width="100%"
+        height="275px"
+        className={`border-1 bg-white skeleton-empty-card`}
+        py="3"
+        px="25px"
+        mb="4"
+      >
+        <Box mb="6">
+          <Skeleton height={24} />
+        </Box>
+        <Box>
+          <Skeleton height={186} />
+        </Box>
       </Flex>
+      <Box width="100%" mb="4">
+        <Skeleton height={28} />
+      </Box>
       <Flex width="100%" direction="column" gap="4">
         <Flex
           direction="column"
