@@ -12,20 +12,22 @@ interface Props {
 const getDelayLabel = (delayRemaining: Date) => {
   if (delayRemaining.getDate() > new Date().getDate()) {
     return `${delayRemaining.getDate() - new Date().getDate()} ${
-      delayRemaining.getDate() > 1 ? 'days' : 'day'
+      delayRemaining.getDate() - new Date().getDate() > 1 ? 'days' : 'day'
     }`;
   }
   if (delayRemaining.getHours() > new Date().getHours()) {
     return `${delayRemaining.getHours() - new Date().getHours()} ${
-      delayRemaining.getHours() > 1 ? 'hours' : 'hour'
+      delayRemaining.getHours() - new Date().getHours() > 1 ? 'hours' : 'hour'
     }`;
   }
   if (delayRemaining.getMinutes() > new Date().getMinutes()) {
     return `${delayRemaining.getMinutes() - new Date().getMinutes()} ${
-      delayRemaining.getMinutes() > 1 ? 'minutes' : 'minute'
+      delayRemaining.getMinutes() - new Date().getMinutes() > 1
+        ? 'minutes'
+        : 'minute'
     }`;
   }
-  return ''
+  return '';
 };
 
 export const ExportRemaining: FC<Props> = ({ delayRemaining }) => {
@@ -34,6 +36,11 @@ export const ExportRemaining: FC<Props> = ({ delayRemaining }) => {
   const delayRemainingLabel = delayRemaining
     ? getDelayLabel(delayRemaining)
     : '';
+
+  console.log(
+    'debug > delayRemaining===',
+    delayRemaining ? delayRemaining.getDate() > new Date().getDate() : 0
+  );
 
   return delayRemaining ? (
     <Flex
