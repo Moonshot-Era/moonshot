@@ -4,6 +4,8 @@ import { Header } from '@/components/Header/Header';
 import { checkProtectedRoute } from '@/utils/checkProtectedRoute';
 import { CultureItem } from '@/components/CultureItem/CultureItem';
 import { CultureError } from '@/components/CultureError/CultureError';
+import { Skeleton } from '@/components/Skeleton/Skeleton';
+import { Suspense } from 'react';
 
 export default async function CultureItemPage({
   params,
@@ -12,12 +14,7 @@ export default async function CultureItemPage({
   const user = await checkProtectedRoute(searchParams, false);
 
   const tokenAddress = params?.address;
-  const { data: tokenOverview } = await axios.post(
-    `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-overview`,
-    {
-      tokenAddress
-    }
-  );
+
   const { data: tokenInfo } = await axios.post(
     `${process.env.NEXT_PUBLIC_SITE_URL}/api/get-token-info`,
     {
@@ -28,15 +25,17 @@ export default async function CultureItemPage({
   return (
     <>
       <Header isPublic={!user?.id} />
-      {tokenInfo?.name ? (
-        <CultureItem
-          isPublic={!user?.id}
-          tokenData={tokenOverview}
-          tokenInfo={tokenInfo}
-        />
-      ) : (
-        <CultureError />
-      )}
+      <Suspense fallback={<Skeleton variant="culture" />}>
+        {tokenInfo?.name ? (
+          <CultureItem
+            isPublic={!user?.id}
+            tokenAddress={tokenAddress}
+            tokenInfo={tokenInfo}
+          />
+        ) : (
+          <CultureError />
+        )}
+      </Suspense>
     </>
   );
 }
