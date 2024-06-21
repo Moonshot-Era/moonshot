@@ -14,6 +14,7 @@ import { FC } from 'react';
 import solanaIcon from '../../assets/images/solana-icon.png';
 import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
 import './style.scss';
+import { useWallet } from '@/hooks';
 
 interface FormattedTransactionType {
   id?: string;
