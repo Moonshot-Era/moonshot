@@ -20,29 +20,36 @@ import { useWallet } from '@/hooks';
 import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { useWidth } from '@/hooks/useWidth';
-import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
-import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
+import { Skeleton } from '../Skeleton/Skeleton';
+import { useTokenOverview } from '@/hooks/useTokenOverview';
+import { useTokenInfo } from '@/hooks/useTokenInfo';
+import { CultureError } from '../CultureError/CultureError';
 
 export const CultureItem = ({
-  tokenInfo,
-  tokenData,
+  tokenAddress,
   isPublic
 }: {
-  tokenData: NormilizedTokenDataOverview;
-  tokenInfo: NormilizedTokenInfoOverview;
+  tokenAddress: string;
   isPublic?: boolean;
 }) => {
   const { mdScreen } = useWidth();
   const router = useRouter();
   const { walletData, isFetching: isWalletFetching } = useWallet();
+  const { tokenOverview, isFetching: isTokenOverviewFetching } =
+    useTokenOverview({ tokenAddress });
+  const { tokenInfo, isFetching: isTokenInfoFetching } = useTokenInfo({
+    tokenAddress
+  });
+
   const {
     portfolio,
     isFetching: isPortfolioFetching,
     refetch: refetchPortfolio
   } = usePortfolio(walletData?.wallet);
+
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const [beforeTimestamp, setBeforeTimestamp] = useState<number | undefined>();
   const {
@@ -52,7 +59,7 @@ export const CultureItem = ({
     refetch,
     fetchNextPage
   } = useOhlcv(
-    tokenData?.poolAddress,
+    tokenOverview?.poolAddress,
     timeFrame.time,
     timeFrame.aggregate,
     beforeTimestamp
@@ -67,6 +74,12 @@ export const CultureItem = ({
   useEffect(() => {
     refetch();
   }, [timeFrame]);
+
+  useEffect(() => {
+    if (!ohlcv?.length && tokenOverview?.poolAddress) {
+      refetch();
+    }
+  }, [ohlcv?.length, refetch, tokenOverview?.poolAddress]);
 
   useEffect(() => {
     if (walletData && !portfolio) {
@@ -105,7 +118,9 @@ export const CultureItem = ({
     ? 'SOL'
     : tokenInfo?.name;
 
-  return tokenInfo ? (
+  return isTokenInfoFetching || isTokenOverviewFetching ? (
+    <Skeleton variant="culture" />
+  ) : tokenInfo?.name ? (
     <>
       <Flex
         direction="column"
@@ -187,7 +202,7 @@ export const CultureItem = ({
                 <CultureChart
                   key={`${timeFrame.aggregate}-${timeFrame.time}`}
                   data={chartData}
-                  tokenDecimals={tokenData?.decimals || 0}
+                  tokenDecimals={tokenOverview?.decimals || 0}
                   loadMoreBars={loadMoreBars}
                 />
               )}
@@ -198,11 +213,11 @@ export const CultureItem = ({
               <Toolbar
                 portfolio={portfolio || ({} as WalletPortfolioNormilizedType)}
                 withShare
-                tokenPrice={+tokenData.price_usd}
+                tokenPrice={+tokenOverview.price_usd}
                 hideWithdraw={!asset}
                 tokenPrefill={{
                   ...tokenInfo,
-                  ...tokenData
+                  ...tokenOverview
                 }}
               />
             ) : (
@@ -300,7 +315,7 @@ export const CultureItem = ({
               </Flex>
             </Flex>
 
-            {!!tokenData?.mc && (
+            {!!tokenOverview?.mc && (
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="chartPie" width={14} height={14} />
@@ -309,11 +324,11 @@ export const CultureItem = ({
                   </Text>
                 </Flex>
                 <Text size={mdScreen ? '3' : '1'}>
-                  {formatCashNumber().format(+tokenData?.mc)}
+                  {formatCashNumber().format(+tokenOverview?.mc)}
                 </Text>
               </Flex>
             )}
-            {!!tokenData?.v24hUSD && (
+            {!!tokenOverview?.v24hUSD && (
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="chartBar" width={14} height={14} />
@@ -322,11 +337,11 @@ export const CultureItem = ({
                   </Text>
                 </Flex>
                 <Text size={mdScreen ? '3' : '1'}>
-                  {formatCashNumber().format(+tokenData?.v24hUSD)}
+                  {formatCashNumber().format(+tokenOverview?.v24hUSD)}
                 </Text>
               </Flex>
             )}
-            {!!tokenData?.liquidity && (
+            {!!tokenOverview?.liquidity && (
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="chartLine" width={14} height={14} />
@@ -335,11 +350,11 @@ export const CultureItem = ({
                   </Text>
                 </Flex>
                 <Text size={mdScreen ? '3' : '1'}>
-                  {formatCashNumber().format(+tokenData?.liquidity)}
+                  {formatCashNumber().format(+tokenOverview?.liquidity)}
                 </Text>
               </Flex>
             )}
-            {!!tokenData?.supply && (
+            {!!tokenOverview?.supply && (
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="coins" width={14} height={14} />
@@ -348,11 +363,11 @@ export const CultureItem = ({
                   </Text>
                 </Flex>
                 <Text size={mdScreen ? '3' : '1'}>
-                  {formatNumberToUsFormat().format(+tokenData?.supply)}
+                  {formatNumberToUsFormat().format(+tokenOverview?.supply)}
                 </Text>
               </Flex>
             )}
-            {!!tokenData?.holder && (
+            {!!tokenOverview?.holder && (
               <Flex direction="row" justify="between" align="center">
                 <Flex direction="row" gap="1">
                   <Icon icon="wallet" width={14} height={14} stroke={'2'} />
@@ -361,7 +376,7 @@ export const CultureItem = ({
                   </Text>
                 </Flex>
                 <Text size={mdScreen ? '3' : '1'}>
-                  {formatNumberToUsFormat().format(tokenData?.holder)}
+                  {formatNumberToUsFormat().format(tokenOverview?.holder)}
                 </Text>
               </Flex>
             )}
@@ -369,5 +384,7 @@ export const CultureItem = ({
         </Flex>
       </Flex>
     </>
-  ) : null;
+  ) : (
+    <CultureError />
+  );
 };

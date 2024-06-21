@@ -115,7 +115,15 @@ export const ConvertForm = memo(
               logout();
             }
             if (res?.data?.error) {
-              snackbar('error', res?.data?.error);
+              const errMessage = res?.data?.error?.includes(
+                'Transfer: insufficient lamports'
+              )
+                ? 'Transfer: insufficient lamports ' +
+                  res?.data?.error
+                    ?.split('Transfer: insufficient lamports')?.[1]
+                    .split('",')?.[0]
+                : res?.data?.error;
+              snackbar('error', errMessage);
             }
             if (res?.data?.txid) {
               snackbar('success', `Finished converting!`);

@@ -22,6 +22,8 @@ export const getSwapRoutes = async (
           amount: +amount - feeAmount,
           wrapAndUnwrapSol: true,
           asLegacyTransaction: true,
+          prioritizationFeeLamports: 'auto',
+          dynamicComputeUnitLimit: true,
           autoSlippage: true
         }
       }

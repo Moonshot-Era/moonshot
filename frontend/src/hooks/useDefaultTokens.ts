@@ -28,8 +28,6 @@ export const useDefaultTokens = ({ skip = false }: { skip: boolean }) => {
     refetchOnMount: false
   });
 
-  console.log('debug > data===', data);
-
   const normalizedTokenData = data?.tokensOverview?.data?.map(
     (token: TokenItemGeckoType) => ({
       ...token,
