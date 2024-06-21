@@ -4,7 +4,6 @@ import {
   formatNumberToUsKeepDecimals,
   tokenAddressWithDots
 } from '@/helpers/helpers';
-import { useWallet } from '@/hooks';
 import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
 import { useWidth } from '@/hooks/useWidth';
 import { Icon } from '@/legos';
@@ -277,15 +276,15 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                                         )
                                   } ${tokenName}`
                                 : `+${formatNumberToUsKeepDecimals().format(
-                                    tokenAmountConvertFrom || 0
-                                  )} ${tokenConvertFromSymbol}`}
+                                    tokenAmountConvertTo || 0
+                                  )} ${tokenConvertToSymbol}`}
                             </Text>
                             {transactionDate && (
                               <Text className="font-size-xs">
                                 {transactionType === 'Convert'
                                   ? `-${formatNumberToUsKeepDecimals().format(
-                                      tokenAmountConvertTo || 0
-                                    )} ${tokenConvertToSymbol}`
+                                      tokenAmountConvertFrom || 0
+                                    )} ${tokenConvertFromSymbol}`
                                   : format(transactionDate, 'hh:mm a')}
                               </Text>
                             )}
