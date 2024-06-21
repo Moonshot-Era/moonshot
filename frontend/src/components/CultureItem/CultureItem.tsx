@@ -20,32 +20,36 @@ import { useWallet } from '@/hooks';
 import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
 import { useWidth } from '@/hooks/useWidth';
-import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
 import { CultureChart } from '../CultureChart/CultureChart';
 import './style.scss';
 import { Skeleton } from '../Skeleton/Skeleton';
 import { useTokenOverview } from '@/hooks/useTokenOverview';
+import { useTokenInfo } from '@/hooks/useTokenInfo';
+import { CultureError } from '../CultureError/CultureError';
 
 export const CultureItem = ({
   tokenAddress,
-  tokenInfo,
   isPublic
 }: {
   tokenAddress: string;
-  tokenInfo: NormilizedTokenInfoOverview;
   isPublic?: boolean;
 }) => {
   const { mdScreen } = useWidth();
   const router = useRouter();
   const { walletData, isFetching: isWalletFetching } = useWallet();
-  const { tokenOverview } = useTokenOverview({ tokenAddress });
+  const { tokenOverview, isFetching: isTokenOverviewFetching } =
+    useTokenOverview({ tokenAddress });
+  const { tokenInfo, isFetching: isTokenInfoFetching } = useTokenInfo({
+    tokenAddress
+  });
 
   const {
     portfolio,
     isFetching: isPortfolioFetching,
     refetch: refetchPortfolio
   } = usePortfolio(walletData?.wallet);
+
   const [timeFrame, setTimeFrame] = useState({ aggregate: '1', time: 'hour' });
   const [beforeTimestamp, setBeforeTimestamp] = useState<number | undefined>();
   const {
@@ -70,6 +74,12 @@ export const CultureItem = ({
   useEffect(() => {
     refetch();
   }, [timeFrame]);
+
+  useEffect(() => {
+    if (!ohlcv?.length && tokenOverview?.poolAddress) {
+      refetch();
+    }
+  }, [ohlcv?.length, refetch, tokenOverview?.poolAddress]);
 
   useEffect(() => {
     if (walletData && !portfolio) {
@@ -108,7 +118,9 @@ export const CultureItem = ({
     ? 'SOL'
     : tokenInfo?.name;
 
-  return tokenInfo ? (
+  return isTokenInfoFetching || isTokenOverviewFetching ? (
+    <Skeleton variant="culture" />
+  ) : tokenInfo?.name ? (
     <>
       <Flex
         direction="column"
@@ -373,6 +385,6 @@ export const CultureItem = ({
       </Flex>
     </>
   ) : (
-    <Skeleton variant="culture" />
+    <CultureError />
   );
 };
