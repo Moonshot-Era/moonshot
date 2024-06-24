@@ -28,7 +28,7 @@ export const createNativeTxInstruction = ({
     SystemProgram.transfer({
       fromPubkey: fromPublicKey,
       toPubkey,
-      lamports: amount * LAMPORTS_PER_SOL
+      lamports: Math.trunc(amount * LAMPORTS_PER_SOL)
     })
   );
 };

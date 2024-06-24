@@ -89,7 +89,9 @@ export const createTokensTxInstruction = async ({
       mintPubkey, // mint
       toTokenAccount, // to
       fromPublicKey, // from's owner
-      amount * (10 ** +tokenDecimals / LAMPORTS_PER_SOL) * LAMPORTS_PER_SOL, // amount
+      Math.trunc(
+        amount * (10 ** +tokenDecimals / LAMPORTS_PER_SOL) * LAMPORTS_PER_SOL
+      ), // amount
       tokenDecimals // decimals
     )
   );
