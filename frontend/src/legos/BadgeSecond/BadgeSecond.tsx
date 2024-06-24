@@ -31,7 +31,7 @@ export const BadgeSecond: FC<Props> = ({ percent, total }) => {
         className="badge-second-percent"
         size={mdScreen ? '3' : '2'}
         weight="medium"
-      >{`${total >= 0 ? '' : '-'}${(100 - percent * 100).toFixed(2)}%`}</Text>
+      >{`${percent.toFixed(2)}%`}</Text>
     </div>
   );
 };

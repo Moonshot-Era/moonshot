@@ -29,7 +29,7 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
   const router = useRouter();
 
   const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {
-    return acc + cur?.valueUsd / (1 + cur?.percentage_change_h24 / 100);
+    return acc + cur?.valueUsd * ((100 + +cur?.percentage_change_h24) / 100);
   }, 0);
 
   const totalBalance =
@@ -92,7 +92,7 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
         <Box mb="8">
           {positiveBalance && totalH24 ? (
             <BadgeSecond
-              percent={totalBalance / totalH24}
+              percent={-(100 - (totalBalance / totalH24) * 100)}
               total={totalBalance - totalH24}
             />
           ) : (
