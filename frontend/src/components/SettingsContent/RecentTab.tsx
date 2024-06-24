@@ -70,90 +70,92 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
   };
 
   const processedData: FormattedTransactionType[] =
-    transactionsHistory
-      ?.filter(
-        (transaction) =>
-          !transaction.description.includes('to multiple accounts')
-      )
-      ?.flatMap((transaction) => {
-        if (transaction.type === 'SWAP') {
-          const tokenAmountPattern =
-            /swapped (\d+\.?\d*) (\$\w+|\w+) for (\d+\.?\d*) (\$\w+|\w+)/;
-          const match = tokenAmountPattern.exec(transaction.description);
-          let amountSwapped = 0;
-          let tokenSwapped = '';
-          let amountReceived = 0;
-          let tokenReceived = '';
+    (transactionsHistory &&
+      transactionsHistory
+        ?.filter(
+          (transaction) =>
+            !transaction.description.includes('to multiple accounts')
+        )
+        ?.flatMap((transaction) => {
+          if (transaction.type === 'SWAP') {
+            const tokenAmountPattern =
+              /swapped (\d+\.?\d*) (\$\w+|\w+) for (\d+\.?\d*) (\$\w+|\w+)/;
+            const match = tokenAmountPattern.exec(transaction.description);
+            let amountSwapped = 0;
+            let tokenSwapped = '';
+            let amountReceived = 0;
+            let tokenReceived = '';
 
-          if (match) {
-            amountSwapped = parseFloat(match[1]);
-            tokenSwapped = match[2];
-            amountReceived = parseFloat(match[3]);
-            tokenReceived = match[4];
+            if (match) {
+              amountSwapped = parseFloat(match[1]);
+              tokenSwapped = match[2];
+              amountReceived = parseFloat(match[3]);
+              tokenReceived = match[4];
+            }
+            return {
+              id: transaction.signature,
+              transactionType: 'Convert',
+              tokenAmount: 0,
+              tokenAmountConvertFrom: amountSwapped,
+              tokenAmountConvertTo: amountReceived,
+              tokenConvertFromSymbol: tokenSwapped,
+              tokenConvertToSymbol: tokenReceived,
+              transactionDate: transaction.timestamp * 1000,
+              tokenConvertFromImage: '',
+              tokenConvertToImage: '',
+              transactionSignature: transaction.signature
+            };
+          } else if (transaction.tokenTransfers.length > 0) {
+            const transactionType = determineOperationType(
+              transaction.tokenTransfers[0]
+            );
+            const namePattern = /\d+(\.\d+)?\s(\w+)\sto/;
+            const name = transaction.description.match(namePattern)?.[2] || '';
+
+            return {
+              id: transaction.signature,
+              transactionType,
+              fromWallet:
+                transactionType === 'Deposit'
+                  ? transaction.tokenTransfers[0].fromUserAccount
+                  : '',
+              toWallet:
+                transactionType === 'Withdraw'
+                  ? transaction.tokenTransfers[0].toUserAccount
+                  : '',
+              tokenAmount: transaction.tokenTransfers[0].tokenAmount || 0,
+              tokenName: name,
+              mint: transaction.tokenTransfers[0].mint,
+              transactionDate: transaction.timestamp * 1000,
+              imageUrl: name === 'SOL' ? solanaIcon : '',
+              transactionSignature: transaction.signature
+            };
+          } else if (transaction.nativeTransfers.length > 0) {
+            const transactionType = determineOperationType(
+              transaction.nativeTransfers[0]
+            );
+            return {
+              id: transaction.signature,
+              transactionType,
+              fromWallet:
+                transactionType === 'Deposit'
+                  ? transaction.nativeTransfers[0].fromUserAccount
+                  : '',
+              toWallet:
+                transactionType === 'Withdraw'
+                  ? transaction.nativeTransfers[0].toUserAccount
+                  : '',
+              tokenAmount: transaction.nativeTransfers[0].amount || 0,
+              tokenName: 'SOL',
+              transactionDate: transaction.timestamp * 1000,
+              imageUrl: solanaIcon,
+              transactionSignature: transaction.signature
+            };
           }
-          return {
-            id: transaction.signature,
-            transactionType: 'Convert',
-            tokenAmount: 0,
-            tokenAmountConvertFrom: amountSwapped,
-            tokenAmountConvertTo: amountReceived,
-            tokenConvertFromSymbol: tokenSwapped,
-            tokenConvertToSymbol: tokenReceived,
-            transactionDate: transaction.timestamp * 1000,
-            tokenConvertFromImage: '',
-            tokenConvertToImage: '',
-            transactionSignature: transaction.signature
-          };
-        } else if (transaction.tokenTransfers.length > 0) {
-          const transactionType = determineOperationType(
-            transaction.tokenTransfers[0]
-          );
-          const namePattern = /\d+(\.\d+)?\s(\w+)\sto/;
-          const name = transaction.description.match(namePattern)?.[2] || '';
 
-          return {
-            id: transaction.signature,
-            transactionType,
-            fromWallet:
-              transactionType === 'Deposit'
-                ? transaction.tokenTransfers[0].fromUserAccount
-                : '',
-            toWallet:
-              transactionType === 'Withdraw'
-                ? transaction.tokenTransfers[0].toUserAccount
-                : '',
-            tokenAmount: transaction.tokenTransfers[0].tokenAmount || 0,
-            tokenName: name,
-            mint: transaction.tokenTransfers[0].mint,
-            transactionDate: transaction.timestamp * 1000,
-            imageUrl: name === 'SOL' ? solanaIcon : '',
-            transactionSignature: transaction.signature
-          };
-        } else if (transaction.nativeTransfers.length > 0) {
-          const transactionType = determineOperationType(
-            transaction.nativeTransfers[0]
-          );
-          return {
-            id: transaction.signature,
-            transactionType,
-            fromWallet:
-              transactionType === 'Deposit'
-                ? transaction.nativeTransfers[0].fromUserAccount
-                : '',
-            toWallet:
-              transactionType === 'Withdraw'
-                ? transaction.nativeTransfers[0].toUserAccount
-                : '',
-            tokenAmount: transaction.nativeTransfers[0].amount || 0,
-            tokenName: 'SOL',
-            transactionDate: transaction.timestamp * 1000,
-            imageUrl: solanaIcon,
-            transactionSignature: transaction.signature
-          };
-        }
-
-        return {};
-      }) || [];
+          return {};
+        })) ||
+    [];
 
   const transactionGroups =
     processedData?.reduce((groups, item) => {

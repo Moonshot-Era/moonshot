@@ -19,14 +19,14 @@ import { Toolbar } from '../Toolbar/Toolbar';
 import { useWallet } from '@/hooks';
 import { useOhlcv } from '@/hooks/useOhlcvc';
 import { usePortfolio } from '@/hooks/usePortfolio';
+import { useTokenInfo } from '@/hooks/useTokenInfo';
+import { useTokenOverview } from '@/hooks/useTokenOverview';
 import { useWidth } from '@/hooks/useWidth';
 import { WalletPortfolioNormilizedType } from '@/services/helius/getWalletPortfolio';
 import { CultureChart } from '../CultureChart/CultureChart';
-import './style.scss';
-import { Skeleton } from '../Skeleton/Skeleton';
-import { useTokenOverview } from '@/hooks/useTokenOverview';
-import { useTokenInfo } from '@/hooks/useTokenInfo';
 import { CultureError } from '../CultureError/CultureError';
+import { Skeleton } from '../Skeleton/Skeleton';
+import './style.scss';
 
 export const CultureItem = ({
   tokenAddress,
@@ -176,7 +176,7 @@ export const CultureItem = ({
               <ToggleGroup.Item className="ToggleGroupItem" value="1-day">
                 1D
               </ToggleGroup.Item>
-              <ToggleGroup.Item className="ToggleGroupItem" value="12-h">
+              <ToggleGroup.Item className="ToggleGroupItem" value="12-hour">
                 12H
               </ToggleGroup.Item>
               <ToggleGroup.Item className="ToggleGroupItem" value="4-hour">
