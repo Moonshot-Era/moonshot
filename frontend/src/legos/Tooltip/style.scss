@@ -1,0 +1,13 @@
+.TooltipContent {
+  background-color: black;
+  color: #fff;
+  opacity: 0.7;
+  text-align: center;
+  padding: 5px;
+  border-radius: 6px;
+  z-index: 100;
+}
+
+.TooltipTrigger {
+  cursor: pointer;
+}

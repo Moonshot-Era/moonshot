@@ -4,17 +4,20 @@ import {
   formatNumberToUsKeepDecimals,
   tokenAddressWithDots
 } from '@/helpers/helpers';
+import { snackbar } from '@/helpers/snackbar';
+import { useWallet } from '@/hooks';
 import { useTransactionsHistory } from '@/hooks/useTransactionsHistory';
 import { useWidth } from '@/hooks/useWidth';
 import { Icon } from '@/legos';
+import { Tooltip } from '@/legos/Tooltip';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import { format } from 'date-fns';
-import Image, { StaticImageData } from 'next/image';
+import { StaticImageData } from 'next/image';
+import Link from 'next/link';
 import { FC } from 'react';
 import solanaIcon from '../../assets/images/solana-icon.png';
 import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
 import './style.scss';
-import { useWallet } from '@/hooks';
 
 interface FormattedTransactionType {
   id?: string;
@@ -33,6 +36,7 @@ interface FormattedTransactionType {
   tokenConvertToSymbol?: string;
   tokenConvertFromImage?: string;
   tokenConvertToImage?: string;
+  transactionSignature?: string;
 }
 
 interface TransactionGroupArraysType {
@@ -97,7 +101,8 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
             tokenConvertToSymbol: tokenReceived,
             transactionDate: transaction.timestamp * 1000,
             tokenConvertFromImage: '',
-            tokenConvertToImage: ''
+            tokenConvertToImage: '',
+            transactionSignature: transaction.signature
           };
         } else if (transaction.tokenTransfers.length > 0) {
           const transactionType = determineOperationType(
@@ -121,7 +126,8 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
             tokenName: name,
             mint: transaction.tokenTransfers[0].mint,
             transactionDate: transaction.timestamp * 1000,
-            imageUrl: name === 'SOL' ? solanaIcon : ''
+            imageUrl: name === 'SOL' ? solanaIcon : '',
+            transactionSignature: transaction.signature
           };
         } else if (transaction.nativeTransfers.length > 0) {
           const transactionType = determineOperationType(
@@ -141,7 +147,8 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
             tokenAmount: transaction.nativeTransfers[0].amount || 0,
             tokenName: 'SOL',
             transactionDate: transaction.timestamp * 1000,
-            imageUrl: solanaIcon
+            imageUrl: solanaIcon,
+            transactionSignature: transaction.signature
           };
         }
 
@@ -168,6 +175,12 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
       transactions: transactionGroups[date]
     };
   });
+
+  const handleCopyToClipboard = async (value: string) => {
+    navigator.clipboard
+      .writeText(value)
+      .then(() => snackbar('info', `Copied!`));
+  };
 
   return (
     <Flex width="100%" direction="column" align="center">
@@ -215,82 +228,106 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                       tokenAmountConvertFrom,
                       tokenAmountConvertTo,
                       tokenConvertFromSymbol,
-                      tokenConvertToSymbol
+                      tokenConvertToSymbol,
+                      transactionSignature
                     }) => {
                       const amount = tokenAmount || 0;
                       return transactionType ? (
-                        <Flex
-                          key={id}
-                          width="100%"
-                          justify="between"
-                          p="3"
-                          className="setting-recent-card"
+                        <Link
+                          href={`https://solscan.io/tx/${transactionSignature}`}
+                          target="_blank"
                         >
-                          <Flex direction="row" gap="2">
-                            {imageUrl && (
-                              <Image
-                                alt="user-icon"
-                                width={48}
-                                height={48}
-                                src={imageUrl}
-                              />
-                            )}
-                            <Flex direction="column" justify="between">
+                          <Flex
+                            key={id}
+                            width="100%"
+                            justify="between"
+                            p="3"
+                            className="setting-recent-card"
+                          >
+                            <Flex direction="row" gap="2">
+                              <Flex direction="column" justify="between">
+                                <Text
+                                  size={mdScreen ? '3' : '2'}
+                                  weight="medium"
+                                >
+                                  {transactionType}
+                                </Text>
+                                {transactionDate &&
+                                  (fromWallet ? (
+                                    <Tooltip helpText="Copy to clipboard">
+                                      <Text
+                                        className="font-size-xs"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          handleCopyToClipboard(
+                                            fromWallet || ''
+                                          );
+                                        }}
+                                      >
+                                        FROM {tokenAddressWithDots(fromWallet)}
+                                      </Text>
+                                    </Tooltip>
+                                  ) : toWallet ? (
+                                    <Tooltip helpText="Copy to clipboard">
+                                      <Text
+                                        className="font-size-xs"
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          handleCopyToClipboard(toWallet || '');
+                                        }}
+                                      >
+                                        TO {tokenAddressWithDots(toWallet)}
+                                      </Text>
+                                    </Tooltip>
+                                  ) : (
+                                    <Text className="font-size-xs">
+                                      {format(transactionDate, 'hh:mm a')}
+                                    </Text>
+                                  ))}
+                              </Flex>
+                            </Flex>
+                            <Flex
+                              direction="column"
+                              align="end"
+                              justify="between"
+                            >
                               <Text size={mdScreen ? '3' : '2'} weight="medium">
-                                {transactionType}
+                                {transactionType === 'Deposit'
+                                  ? `+${
+                                      tokenName === 'SOL'
+                                        ? formatNumberToUsKeepDecimals().format(
+                                            amount / 10 ** 9
+                                          )
+                                        : formatNumberToUsKeepDecimals().format(
+                                            amount
+                                          )
+                                    } ${tokenName}`
+                                  : transactionType === 'Withdraw'
+                                  ? `-${
+                                      tokenName === 'SOL'
+                                        ? formatNumberToUsKeepDecimals().format(
+                                            amount / 10 ** 9
+                                          )
+                                        : formatNumberToUsKeepDecimals().format(
+                                            amount
+                                          )
+                                    } ${tokenName}`
+                                  : `+${formatNumberToUsKeepDecimals().format(
+                                      tokenAmountConvertTo || 0
+                                    )} ${tokenConvertToSymbol}`}
                               </Text>
                               {transactionDate && (
                                 <Text className="font-size-xs">
-                                  {fromWallet
-                                    ? `FROM ${tokenAddressWithDots(fromWallet)}`
-                                    : toWallet
-                                    ? `TO ${tokenAddressWithDots(toWallet)}`
+                                  {transactionType === 'Convert'
+                                    ? `-${formatNumberToUsKeepDecimals().format(
+                                        tokenAmountConvertFrom || 0
+                                      )} ${tokenConvertFromSymbol}`
                                     : format(transactionDate, 'hh:mm a')}
                                 </Text>
                               )}
                             </Flex>
                           </Flex>
-                          <Flex
-                            direction="column"
-                            align="end"
-                            justify="between"
-                          >
-                            <Text size={mdScreen ? '3' : '2'} weight="medium">
-                              {transactionType === 'Deposit'
-                                ? `+${
-                                    tokenName === 'SOL'
-                                      ? formatNumberToUsKeepDecimals().format(
-                                          amount / 10 ** 9
-                                        )
-                                      : formatNumberToUsKeepDecimals().format(
-                                          amount
-                                        )
-                                  } ${tokenName}`
-                                : transactionType === 'Withdraw'
-                                ? `-${
-                                    tokenName === 'SOL'
-                                      ? formatNumberToUsKeepDecimals().format(
-                                          amount / 10 ** 9
-                                        )
-                                      : formatNumberToUsKeepDecimals().format(
-                                          amount
-                                        )
-                                  } ${tokenName}`
-                                : `+${formatNumberToUsKeepDecimals().format(
-                                    tokenAmountConvertTo || 0
-                                  )} ${tokenConvertToSymbol}`}
-                            </Text>
-                            {transactionDate && (
-                              <Text className="font-size-xs">
-                                {transactionType === 'Convert'
-                                  ? `-${formatNumberToUsKeepDecimals().format(
-                                      tokenAmountConvertFrom || 0
-                                    )} ${tokenConvertFromSymbol}`
-                                  : format(transactionDate, 'hh:mm a')}
-                              </Text>
-                            )}
-                          </Flex>
-                        </Flex>
+                        </Link>
                       ) : null;
                     }
                   )}
