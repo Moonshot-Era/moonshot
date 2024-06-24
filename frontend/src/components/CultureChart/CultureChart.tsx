@@ -154,16 +154,23 @@ export const CultureChart = ({
         return;
       }
       const offsetMinutes = new Date(param.time * 1000).getTimezoneOffset();
+      const formattedDate = format(
+        subMinutes(new Date(param.time * 1000), -1 * offsetMinutes),
+        'PP'
+      );
+      const formattedTime = format(
+        subMinutes(new Date(param.time * 1000), -1 * offsetMinutes),
+        'p'
+      );
 
       tooltip.style.display = 'block';
       tooltip.style.left = `${param.point.x}px`;
       tooltip.style.top = `${param.point.y}px`;
-      tooltip.innerHTML = `<div>Price: ${price.value.toFixed(
+      tooltip.innerHTML = `<div class="charTooltip__price">$${price.value.toFixed(
         4
-      )}</div><div>Time: ${format(
-        subMinutes(new Date(param.time * 1000), -1 * offsetMinutes),
-        'P kk:mm:ss'
-      )}</div>`;
+      )}</div>
+      <div class="charTooltip__date">${formattedDate}</div>
+      <div class="charTooltip__date">${formattedTime}</div>`;
     };
 
     chart.subscribeCrosshairMove(handleCrosshairMove);

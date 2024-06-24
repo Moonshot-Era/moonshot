@@ -74,6 +74,6 @@ button {
   background-color: #fff;
   padding: 25px 0 0 0;
   @include border-dark;
-  box-shadow: $shadow-2;
   border-radius: 8px;
+  overflow: hidden;
 }
