@@ -1,6 +1,9 @@
+@import '../../styles/variables.scss';
+
 .chart {
   width: 100%;
   position: relative;
+  border-radius: 8px;
 }
 
 .charTooltip {
@@ -14,9 +17,20 @@
   margin-top: -20px;
   pointer-events: none;
   background: #fff;
-  border: 1px solid #000;
+  @include border-dark;
+  box-shadow: $shadow-2;
+  border-radius: 8px;
   padding: 5px;
   border-radius: 3px;
   font-size: 12px;
   z-index: 100;
+
+  &__price {
+    font-size: 20px;
+    font-weight: 500;
+  }
+  &__date {
+    font-size: 12x;
+    font-weight: 400;
+  }
 }
