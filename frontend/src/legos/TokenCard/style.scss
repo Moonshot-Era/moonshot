@@ -6,6 +6,11 @@
   border-radius: 16px;
   box-shadow: 4px 2px 0px 0px #000000;
   cursor: pointer;
+  transition: all 0.3s;
+  &:active {
+    box-shadow: 2px 2px 0 0 $dark;
+    filter: brightness(0.9);
+  }
 }
 
 .token-card-label {

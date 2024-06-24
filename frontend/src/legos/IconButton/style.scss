@@ -1,6 +1,7 @@
 @import '../../styles/variables.scss';
 
 .icon-button {
+  cursor: pointer;
   @include flex-center;
   @include border-dark;
   border-radius: 100%;
