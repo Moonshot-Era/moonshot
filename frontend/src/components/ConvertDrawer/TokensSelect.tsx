@@ -49,7 +49,6 @@ export const TokensSelect: FC<Props> = ({
 
   const { defaultTokens, isFetching: isDefaultTokensFetching } =
     useDefaultTokens({ skip: selectMode === 'from' });
-  console.log('debug > defaultTokens===', defaultTokens);
   const debouncedSearchPools = useCallback(
     debounce(async (searchQuery) => {
       setFilteredPools(

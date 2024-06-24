@@ -74,11 +74,13 @@ export const getWalletPortfolio = async (walletAddress: string) => {
     const { result }: { result: HeliusWalletType } = await response.json();
 
     const tokensAddresses =
-      result?.items?.map((tok: TokenItemHeliusType) => tok.id).join(',') +
-      `,${SOLANA_WRAPPED_ADDRESS}`;
+      result?.items
+        ?.map((tok: TokenItemHeliusType) => {
+          return tok.id;
+        })
+        .join(',') + `,${SOLANA_WRAPPED_ADDRESS}`;
 
     let walletPortfolioNormalized: WalletPortfolioAssetType[] = [];
-
     if (tokensAddresses?.length) {
       const { data: tokensListGecko } = await axios.get(
         `${process.env.GECKO_URL_API}/onchain/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`,
@@ -88,6 +90,7 @@ export const getWalletPortfolio = async (walletAddress: string) => {
           }
         }
       );
+
       const solanaToken: TokenItemGeckoType = tokensListGecko?.data?.find(
         (token: TokenItemGeckoType) =>
           token.attributes.address === SOLANA_WRAPPED_ADDRESS
@@ -134,16 +137,14 @@ export const getWalletPortfolio = async (walletAddress: string) => {
           address: asset?.id,
           balance:
             asset?.token_info?.balance /
-            10 ** (asset?.token_info?.decimals || 1),
+            10 ** (asset?.token_info?.decimals || 0),
           decimals: asset?.token_info?.decimals,
-          name: isSolanaAddress(asset?.id) ? 'SOL' : included?.name || '',
-          priceUsd: asset?.token_info?.price_info?.price_per_token,
-          symbol: isSolanaAddress(asset?.id)
-            ? 'SOL'
-            : asset?.token_info?.symbol,
+          name: isSolanaAddress(asset?.id) ? 'SOL' : token?.name || '',
+          priceUsd: +token?.price_usd,
+          symbol: isSolanaAddress(asset?.id) ? 'SOL' : token?.symbol,
           uiAmount:
             asset?.token_info?.balance /
-            10 ** (asset?.token_info?.decimals || 1),
+            10 ** (asset?.token_info?.decimals || 0),
           valueUsd: asset?.token_info?.price_info?.total_price,
           imageUrl: token?.image_url,
           percentage_change_h24: included?.price_change_percentage?.h24

@@ -19,7 +19,9 @@ export const useWallet = (isPublic = false) => {
 
         throw Error('Can not receive wallet');
       } catch (err) {
-        await logout();
+        if (!isPublic) {
+          await logout();
+        }
         return null;
       }
     },
