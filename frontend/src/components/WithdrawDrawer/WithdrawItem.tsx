@@ -21,7 +21,6 @@ interface WithdrawItemProps {
 }
 
 const TO_ADDRESS_ERROR = 'Invalid Solana address';
-const AMOUNT_ERR = 'Please porvide correct value';
 
 export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const { mdScreen } = useWidth();
@@ -36,6 +35,8 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const btnRef = useRef({});
 
+  const assetName = asset?.name.split('/')[0];
+  const AMOUNT_ERR = `Insufficient ${amountInputInUsd ? assetName : 'USD'}`;
   const decimalLength = `${asset?.uiAmount}`.split('.')?.[1]?.length || 0;
 
   const handleChangeCurrency = () => {
@@ -132,21 +133,21 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
       <Text size={mdScreen ? '5' : '4'} weight="bold">
-        {`Withdraw ${asset?.name}`}
+        {`Withdraw ${assetName}`}
       </Text>
       <Flex
         width="100%"
         maxWidth="100%"
         justify="center"
         align="center"
-        gap="2"
-        direction="row"
+        gap="24px"
+        direction="column"
         wrap="wrap"
       >
-        <Flex direction="column" align="center" style={{ opacity: 0 }}>
+        <Flex direction="column" align="center" style={{ display: 'none' }}>
           <Icon icon="switchHorizontal" />
           <Text size={mdScreen ? '5' : '4'} weight="medium">
-            {asset?.name}
+            {assetName}
           </Text>
         </Flex>
         <Flex flexGrow="1" maxWidth="100%" justify="center" align="end">
@@ -170,13 +171,13 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
                 )}
           </Text>
           {amountInputInUsd && (
-            <Text size={mdScreen ? '5' : '4'}>{asset?.name}</Text>
+            <Text size={mdScreen ? '5' : '4'}>{assetName}</Text>
           )}
         </Flex>
         <Flex direction="column" align="center" onClick={handleChangeCurrency}>
           <Icon icon="switchHorizontal" />
           <Text size={mdScreen ? '5' : '4'} weight="medium">
-            {amountInputInUsd ? 'USD' : asset?.name}
+            {amountInputInUsd ? 'USD' : assetName}
           </Text>
         </Flex>
       </Flex>
@@ -201,12 +202,12 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
           errorText={amountError}
           onChange={handleChangeAmount}
           type={'number'}
-          endAdornment={<Text>{amountInputInUsd ? 'USD' : asset?.name}</Text>}
+          endAdornment={<Text>{amountInputInUsd ? 'USD' : assetName}</Text>}
         />
         <Flex justify={!!amountError ? 'end' : 'between'}>
           {!amountError && (
             <Text size={mdScreen ? '3' : '2'}>
-              Available {asset?.uiAmount} {asset?.name}
+              Available {asset?.uiAmount} {assetName}
             </Text>
           )}
           <Text
