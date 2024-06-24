@@ -14,9 +14,8 @@ export const SOLANA_WRAPPED_ADDRESS =
 export const USDC_ADDRESS = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 
 export const MOONSHOT_WALLET_ADDRESS =
-  'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh';
-export const REF_WALLET_ADDRESS =
-  'AY2QK7Roy6QHSjTsPZN3k9v6ff5gnu4jpdTxyauEtbbh';
+  '94UEpLL1DjH3dDVpTMP1EhFMKfV1kvjn3s1DhDsfyaFD';
+export const REF_WALLET_ADDRESS = '5KqWYn2CmNJNmPHM7j4mEFbh8U5bPzuA9fFFPkkez9mH';
 
 export const MOONSHOT_FEE = 0.005;
 export const REF_FEE = 0.0025;
