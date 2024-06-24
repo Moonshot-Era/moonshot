@@ -37,7 +37,8 @@ export const LoginContent = ({ cultureRef }: Props) => {
     <>
       <Flex
         className="main-wrapper"
-        height="100vh"
+        maxHeight="100vh"
+        height="100%"
         direction="column"
         align="center"
         justify="center"

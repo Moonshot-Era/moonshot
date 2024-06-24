@@ -42,61 +42,85 @@ export const OnboardingLayout = () => {
   };
 
   return (
-    <Swiper
-      modules={[Pagination, Navigation]}
-      direction="horizontal"
-      loop={false}
-      pagination={{
-        el: '.swiper-pagination',
-        type: 'bullets',
-        clickable: true
-      }}
-      navigation={{
-        nextEl: '.swiper-button-next'
-      }}
-      onSlideChange={(swiper) => setActiveSlide(swiper.realIndex)}
+    <Flex
+      justify="center"
+      height="100%"
+      className={onboardingData[activeSlide].bgClassName}
     >
-      {onboardingData.map(
-        (
-          { id, bgClassName, description, imgSrc, labelClassName, title },
-          index
-        ) => (
-          <SwiperSlide key={id}>
-            <Flex className={bgClassName} direction="column" align="center">
-              <Image
-                className="onboarding-image"
-                src={imgSrc}
-                alt="cubist-logo"
-              />
-              <Flex
-                className="onboarding-info bg-white"
-                direction="column"
-                p="4"
-                mx="7"
-              >
-                <div className={labelClassName}></div>
-                <Text size={mdScreen ? '5' : '4'} weight="bold" mb="4" mr="2">
-                  {title}
-                </Text>
-                <Text size="3" weight="medium">
-                  {description}
-                </Text>
-              </Flex>
-              {onboardingData.length - 1 === index ? (
-                <Box position="absolute" bottom={mdScreen ? '3' : '8'}>
-                  <IconButton icon="home" onClick={handleOnboardingComplete} />
-                </Box>
-              ) : null}
-            </Flex>
-          </SwiperSlide>
-        )
-      )}
-      <div
-        className={`swiper-pagination swiper-pagination-bg-${activeSlide}`}
-      ></div>
-      <div className={`swiper-button-next swiper-button-bg-${activeSlide}`}>
-        <Icon icon="chevronRight" color="#000" />
-      </div>
-    </Swiper>
+      <Flex
+        maxWidth="430px"
+        maxHeight="844px"
+        justify="center"
+        pt="33px"
+        my="auto"
+        mx="0"
+      >
+        <Swiper
+          modules={[Pagination, Navigation]}
+          direction="horizontal"
+          loop={false}
+          pagination={{
+            el: '.swiper-pagination',
+            type: 'bullets',
+            clickable: true
+          }}
+          navigation={{
+            nextEl: '.swiper-button-next'
+          }}
+          onSlideChange={(swiper) => setActiveSlide(swiper.realIndex)}
+        >
+          {onboardingData.map(
+            (
+              { id, bgClassName, description, imgSrc, labelClassName, title },
+              index
+            ) => (
+              <SwiperSlide key={id}>
+                <Flex direction="column" align="center" justify="center">
+                  <Image
+                    className="onboarding-image"
+                    src={imgSrc}
+                    alt="cubist-logo"
+                  />
+                  <Flex
+                    className="onboarding-info bg-white"
+                    direction="column"
+                    p="4"
+                    mx="7"
+                  >
+                    <div className={labelClassName}></div>
+                    <Text
+                      size={mdScreen ? '5' : '4'}
+                      weight="bold"
+                      mb="4"
+                      mr="2"
+                    >
+                      {title}
+                    </Text>
+                    <Text size="3" weight="medium">
+                      {description}
+                    </Text>
+                  </Flex>
+                  <div
+                    className={`swiper-button-next swiper-button-bg-${activeSlide}`}
+                    onClick={() => {
+                      if (onboardingData.length - 1 === index) {
+                        console.log('test');
+
+                        handleOnboardingComplete();
+                      }
+                    }}
+                  >
+                    <Icon icon="chevronRight" color="#000" />
+                  </div>
+                </Flex>
+              </SwiperSlide>
+            )
+          )}
+          <div
+            className={`swiper-pagination swiper-pagination-bg-${activeSlide}`}
+          ></div>
+        </Swiper>
+      </Flex>
+    </Flex>
   );
 };
