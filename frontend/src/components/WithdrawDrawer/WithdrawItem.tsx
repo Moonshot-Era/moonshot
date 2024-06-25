@@ -36,7 +36,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const btnRef = useRef({});
 
   const assetName = asset?.name.split('/')[0];
-  const AMOUNT_ERR = `Insufficient ${amountInputInUsd ? assetName : 'USD'}`;
+  const AMOUNT_ERR = `Insufficient ${amountInputInUsd ? 'USD' : assetName}`;
   const decimalLength = `${asset?.uiAmount}`.split('.')?.[1]?.length || 0;
 
   const handleChangeCurrency = () => {
