@@ -14,7 +14,7 @@ import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import { format } from 'date-fns';
 import { StaticImageData } from 'next/image';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import solanaIcon from '../../assets/images/solana-icon.png';
 import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
 import './style.scss';
@@ -54,8 +54,11 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
   const { mdScreen } = useWidth();
   const { walletData } = useWallet();
 
-  const { transactionsHistory, isFetching: transactionLoading } =
-    useTransactionsHistory(walletData?.wallet);
+  const {
+    transactionsHistory,
+    isFetching: transactionLoading,
+    refetch
+  } = useTransactionsHistory(walletData?.wallet);
 
   const determineOperationType = (transfer: {
     fromUserAccount: string;
@@ -68,6 +71,12 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
     }
     return null;
   };
+
+  useEffect(() => {
+    if (walletData?.wallet && !transactionsHistory?.length) {
+      refetch();
+    }
+  }, [walletData?.wallet, transactionsHistory?.length]);
 
   const processedData: FormattedTransactionType[] =
     (transactionsHistory &&

@@ -21,7 +21,10 @@ export const useTransactionsHistory = (walletAddress?: string) => {
       } else {
         return fetchTransactionsHistory(walletAddress);
       }
-    }
+    },
+    staleTime: 30000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false
   });
 
   return { transactionsHistory: data, ...rest };
