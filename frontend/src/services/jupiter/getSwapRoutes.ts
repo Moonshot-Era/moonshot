@@ -24,7 +24,14 @@ export const getSwapRoutes = async (
           asLegacyTransaction: true,
           prioritizationFeeLamports: 'auto',
           dynamicComputeUnitLimit: true,
-          autoSlippage: true
+          autoSlippage: true,
+          slippageBps: 300,
+          computeAutoSlippage: true,
+          onlyDirectRoutes: false,
+          swapMode: 'ExactIn',
+          maxAccounts: 64,
+          minimizeSlippage: false,
+          experimentalDexes: 'Jupiter LO'
         }
       }
     );

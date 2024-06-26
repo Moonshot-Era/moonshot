@@ -11,7 +11,6 @@ export async function POST(request: Request) {
       txid
     });
   } catch (err) {
-    console.log('debug > err===', err);
     return NextResponse.json({ error: `${err}` });
   }
 }

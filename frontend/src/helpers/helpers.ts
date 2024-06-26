@@ -18,7 +18,7 @@ export const formatNumberToUsd = (decimals?: number) =>
   new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    maximumFractionDigits: decimals || 2
+    maximumFractionDigits: decimals ?? 2
   });
 
 export const formatCashNumber = (decimals?: number) =>

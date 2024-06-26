@@ -77,10 +77,10 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
           {positiveBalance ? (
             <>
               <Text size="8" weight="bold">
-                {formatNumberToUsd().format(totalBalance).split('.')[0]}
+                {formatNumberToUsd(0).format(+`${totalBalance}`.split('.')[0])}
               </Text>
               <Text size={mdScreen ? '6' : '5'} weight="medium" mt="2" ml="2px">
-                {((totalBalance % 1) * 100).toFixed(0)}
+                {`${totalBalance}`.split('.')[1].slice(0, 2)}
               </Text>
             </>
           ) : (
