@@ -1,0 +1,13 @@
+@import '../../styles/variables.scss';
+
+.desktop-message-card {
+  position: fixed;
+  right: 15px;
+  bottom: 15px;
+  z-index: 10000;
+  padding: 16px;
+  @include border-dark;
+  box-shadow: $shadow-1;
+  border-radius: 8px;
+  background-color: $blue;
+}
