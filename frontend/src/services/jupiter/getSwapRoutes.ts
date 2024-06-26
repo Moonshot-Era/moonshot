@@ -8,8 +8,9 @@ export const getSwapRoutes = async (
   slippageBps: string,
 ) => {
   try {
-    const feeAmount = (+amount as number) * (REF_FEE + MOONSHOT_FEE);
-
+    const feeAmount = +((+amount as number) * (REF_FEE + MOONSHOT_FEE)).toFixed(
+      0
+    );
     const quoteResponse = await axios.get(
       `${process.env.JUPITER_URL}v6/quote`,
       {
@@ -24,19 +25,18 @@ export const getSwapRoutes = async (
           asLegacyTransaction: true,
           prioritizationFeeLamports: 'auto',
           dynamicComputeUnitLimit: true,
-          autoSlippage: true,
-          slippageBps: 300,
-          computeAutoSlippage: true,
-          onlyDirectRoutes: false,
-          swapMode: 'ExactIn',
-          maxAccounts: 64,
-          minimizeSlippage: false,
-          experimentalDexes: 'Jupiter LO'
+          autoSlippage: true
+          // slippageBps: 50,
+          // computeAutoSlippage: true,
+          // onlyDirectRoutes: false,
+          // swapMode: 'ExactIn',
+          // maxAccounts: 64,
+          // minimizeSlippage: false,
+          // experimentalDexes: 'Jupiter LO'
         }
       }
     );
-
-    return quoteResponse
+    return quoteResponse;
   } catch (err) {
     throw err;
   }
