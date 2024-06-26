@@ -219,7 +219,12 @@ export const ConvertForm = memo(
 
         <ConvertIconArrow
           swapSelectedTokensPlaces={() => {
+
             swapSelectedTokensPlaces();
+            setAmount(
+              (swapRoutes?.outAmount || 0) /
+                10 ** (normalizedSelectedTokens?.to?.decimals || 0) || 0.01
+            );
           }}
         />
 

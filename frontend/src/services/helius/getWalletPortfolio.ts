@@ -98,7 +98,9 @@ export const getWalletPortfolio = async (walletAddress: string) => {
 
       const solana_percentage_change_h24 = tokensListGecko?.included?.find(
         (included: PoolGeckoType) =>
-          included?.id === solanaToken?.relationships?.top_pools?.data?.[0].id
+          included?.id ===
+            solanaToken?.relationships?.top_pools?.data?.[0].id &&
+          included?.attributes?.name === 'SOL'
       )?.attributes?.price_change_percentage?.h24;
 
       if (result?.nativeBalance?.lamports) {
