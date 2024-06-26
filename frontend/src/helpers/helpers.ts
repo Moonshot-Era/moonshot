@@ -5,7 +5,7 @@ export const copyToClipboard = (text: string) => {
 export const formatNumberToUsKeepDecimals = () =>
   new Intl.NumberFormat('en-US', {
     notation: 'standard',
-    maximumFractionDigits: 20
+    maximumFractionDigits: 9
   });
 
 export const formatNumberToUsFormat = (decimals?: number) =>
