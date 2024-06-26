@@ -7,6 +7,7 @@ import Script from 'next/script';
 import { Toaster } from 'sonner';
 
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister';
+import { DesktopMessage } from '@/components/DesktopMessage/DesktopMessage';
 
 import './globals.css';
 import './globals.scss';
@@ -49,7 +50,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     images: {
-      url: 'images/white_logo.png',
+      url: 'images/white_logo.png'
     }
   }
 };
@@ -87,6 +88,7 @@ export default function RootLayout({
             className="bg-transparent"
             style={{ width: '100%', maxWidth: 430 }}
           >
+            <DesktopMessage />
             {children}
           </Theme>
         </ReactQueryProvider>

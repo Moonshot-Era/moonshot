@@ -17,6 +17,7 @@ export const useWidth = () => {
   }, [handleResize]);
   return {
     width,
-    mdScreen: width >= 768
+    mdScreen: width >= 768,
+    xlScreen: width >= 1280
   };
 };
