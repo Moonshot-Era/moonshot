@@ -73,14 +73,38 @@ export const getWalletPortfolio = async (walletAddress: string) => {
     });
     const { result }: { result: HeliusWalletType } = await response.json();
 
-    const tokensAddresses =
-      result?.items
-        ?.map((tok: TokenItemHeliusType) => {
-          return tok.id;
-        })
-        .join(',') + `,${SOLANA_WRAPPED_ADDRESS}`;
+    const tokensAddresses = result?.items
+      ?.map((tok: TokenItemHeliusType) => {
+        return tok.id;
+      })
+      .join(',');
 
     let walletPortfolioNormalized: WalletPortfolioAssetType[] = [];
+
+    if (result?.nativeBalance?.lamports) {
+      const { data: solanaData } = await axios.get(
+        `${process.env.GECKO_URL_API}//coins/markets?vs_currency=usd&ids=solana`,
+        {
+          headers: {
+            'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`
+          }
+        }
+      );
+
+      walletPortfolioNormalized.push({
+        address: SOLANA_WRAPPED_ADDRESS,
+        balance: result?.nativeBalance?.lamports / 10 ** 9,
+        decimals: 9,
+        name: 'SOL',
+        priceUsd: solanaData?.[0]?.current_price,
+        symbol: 'SOL',
+        uiAmount: result?.nativeBalance?.lamports / 10 ** 9,
+        valueUsd: result?.nativeBalance?.total_price,
+        imageUrl: solanaData?.[0]?.image,
+        percentage_change_h24: solanaData?.[0]?.price_change_percentage_24h || 0
+      });
+    }
+
     if (tokensAddresses?.length) {
       const { data: tokensListGecko } = await axios.get(
         `${process.env.GECKO_URL_API}/onchain/networks/solana/tokens/multi/${tokensAddresses}?include=top_pools`,
@@ -90,37 +114,6 @@ export const getWalletPortfolio = async (walletAddress: string) => {
           }
         }
       );
-
-      const solanaToken: TokenItemGeckoType = tokensListGecko?.data?.find(
-        (token: TokenItemGeckoType) =>
-          token.attributes.address === SOLANA_WRAPPED_ADDRESS
-      );
-
-      const solana_percentage_change_h24 = tokensListGecko?.included?.find(
-        (included: PoolGeckoType) =>
-          included?.id ===
-            solanaToken?.relationships?.top_pools?.data?.[0].id &&
-          included?.attributes?.name === 'SOL'
-      )?.attributes?.price_change_percentage?.h24;
-
-      if (result?.nativeBalance?.lamports) {
-        walletPortfolioNormalized.push({
-          address: solanaToken?.attributes?.address,
-          balance:
-            result?.nativeBalance?.lamports /
-            10 ** solanaToken?.attributes?.decimals,
-          decimals: solanaToken?.attributes?.decimals,
-          name: 'SOL',
-          priceUsd: result?.nativeBalance?.price_per_sol,
-          symbol: 'SOL',
-          uiAmount:
-            result?.nativeBalance?.lamports /
-            10 ** solanaToken?.attributes?.decimals,
-          valueUsd: result?.nativeBalance?.total_price,
-          imageUrl: solanaToken?.attributes?.image_url,
-          percentage_change_h24: solana_percentage_change_h24
-        });
-      }
 
       result?.items?.map((asset: TokenItemHeliusType) => {
         const token: TokenAttributes = tokensListGecko?.data?.find(
