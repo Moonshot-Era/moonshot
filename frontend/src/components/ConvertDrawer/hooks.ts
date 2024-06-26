@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { FeeDataType, SelectedTokens } from "./types";
 import axios from "axios";
+import { useDebounce } from '@uidotdev/usehooks';
 
 type SwapRoute = {
-  outAmount: number
+  outAmount: number;
 };
 
 const fetchSwapRoutes = (
@@ -31,17 +32,19 @@ export const useSwapRoutes = (
   { from, to }: SelectedTokens,
   amount: number,
   slippageBps: number,
-  isValidAmount: boolean,
+  isValidAmount: boolean
 ) => {
+  const debouncedAmount = useDebounce(amount, 500);
+
   const { data, ...rest } = useQuery({
     queryKey: [
-      `getSwapRoutes_${from?.address}_${to?.included?.attributes.address}_${amount}_${slippageBps}`
+      `getSwapRoutes_${from?.address}_${to?.included?.attributes.address}_${debouncedAmount}_${slippageBps}`
     ],
     queryFn: () =>
       fetchSwapRoutes(
         from?.address || from?.included?.attributes.address || '',
         to?.address || to?.included?.attributes.address || '',
-        amount,
+        debouncedAmount,
         slippageBps
       ),
     enabled: !!(isValidAmount && amount && from && to && slippageBps),
