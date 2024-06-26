@@ -10,7 +10,7 @@ const fetchSearchPools = (
   page: number = 1
 ): Promise<PoolGeckoType[]> =>
   axios
-    .post(`${process.env.NEXT_PUBLIC_SITE_URL}api/search-pools`, {
+    .post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/search-pools`, {
       query,
       page,
       withTokensOverview
@@ -47,11 +47,14 @@ export const useSearchPools = (query: string, withTokensOverview?: boolean) => {
       getNextPageParam: (lastPage, allPages) => {
         const nextPage = allPages.length + 1;
         return nextPage <= 10 ? nextPage : undefined;
-      }
+      },
+      staleTime: 30000,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false
     });
 
   return {
-    searchPools: data?.pages.flat().filter(val => val),
+    searchPools: data?.pages.flat().filter((val) => val),
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

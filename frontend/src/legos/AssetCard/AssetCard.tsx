@@ -62,14 +62,14 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
               <Flex direction="row" align="center" gap="1">
                 <div
                   className={
-                    +asset?.percentage_change_h24 > 0
+                    +asset.percentage_change_h24 > 0
                       ? 'icon-success-color'
                       : 'icon-error-color'
                   }
                 >
                   <Icon
                     icon={
-                      +asset?.percentage_change_h24 > 0
+                      +asset.percentage_change_h24 > 0
                         ? 'trendingUp'
                         : 'trendingDown'
                     }
@@ -79,13 +79,13 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
                 </div>
                 <Text
                   className={
-                    +asset?.percentage_change_h24 > 0
+                    +asset.percentage_change_h24 > 0
                       ? 'text-color-success'
                       : 'text-color-error'
                   }
                   size={mdScreen ? '3' : '1'}
                   weight="medium"
-                >{`${+asset?.percentage_change_h24}%`}</Text>
+                >{`${(+asset.percentage_change_h24).toFixed(2)}%`}</Text>
               </Flex>
             )}
           </Flex>
