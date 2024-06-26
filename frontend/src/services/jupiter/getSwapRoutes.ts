@@ -1,11 +1,16 @@
-import { MOONSHOT_FEE, REF_FEE } from '@/utils';
+import {
+  MOONSHOT_FEE,
+  REF_FEE,
+  SOLANA_ADDRESS,
+  SOLANA_WRAPPED_ADDRESS
+} from '@/utils';
 import axios from 'axios';
 
 export const getSwapRoutes = async (
   inputMint: string,
   outputMint: string,
   amount: string,
-  slippageBps: string,
+  slippageBps: string
 ) => {
   try {
     const feeAmount = +((+amount as number) * (REF_FEE + MOONSHOT_FEE)).toFixed(
@@ -16,9 +21,7 @@ export const getSwapRoutes = async (
       {
         params: {
           inputMint:
-            inputMint === 'So11111111111111111111111111111111111111111'
-              ? 'So11111111111111111111111111111111111111112'
-              : inputMint,
+            inputMint === SOLANA_ADDRESS ? SOLANA_WRAPPED_ADDRESS : inputMint,
           outputMint,
           amount: +amount - feeAmount,
           wrapAndUnwrapSol: true,
@@ -40,4 +43,4 @@ export const getSwapRoutes = async (
   } catch (err) {
     throw err;
   }
-}
+};

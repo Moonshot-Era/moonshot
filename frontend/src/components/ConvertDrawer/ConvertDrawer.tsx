@@ -100,21 +100,23 @@ export const ConvertDrawer: FC<Props> = memo(
                   (portfolio?.walletAssets as WalletPortfolioAssetType[])?.find(
                     ({ address }) => address === SOLANA_WRAPPED_ADDRESS
                   ) || BASE_SOLANA_TOKEN,
-                to: {
-                  tokenOverview: {
-                    // @ts-ignore
-                    attributes: {
-                      decimals: tokenPrefill.decimals as number
-                    }
-                  },
-                  included: {
-                    // @ts-ignore
-                    attributes: {
-                      name: tokenPrefill.name,
-                      address: tokenPrefill.address
+                ...(tokenPrefill.address !== SOLANA_WRAPPED_ADDRESS && {
+                  to: {
+                    tokenOverview: {
+                      // @ts-ignore
+                      attributes: {
+                        decimals: tokenPrefill.decimals as number
+                      }
+                    },
+                    included: {
+                      // @ts-ignore
+                      attributes: {
+                        name: tokenPrefill.name,
+                        address: tokenPrefill.address
+                      }
                     }
                   }
-                }
+                })
               });
             }
             setState('convert');
