@@ -7,16 +7,17 @@ export const ConvertIconArrow = ({
 }: {
   swapSelectedTokensPlaces: () => void;
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  // const [isHovered, setIsHovered] = useState(false);
 
   return (
     <Box
       className="convert-icon-arrow"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      // onMouseEnter={() => setIsHovered(true)}
+      // onMouseLeave={() => setIsHovered(false)}
       onClick={swapSelectedTokensPlaces}
     >
-      {isHovered ? <Icon icon="transfer" /> : <Icon icon="arrowRight" />}
+      <Icon icon="transfer" />
+      {/* {isHovered ? <Icon icon="transfer" /> : <Icon icon="arrowRight" />} */}
     </Box>
   );
 };

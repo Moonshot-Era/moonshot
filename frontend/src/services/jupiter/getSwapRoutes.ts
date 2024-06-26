@@ -31,6 +31,6 @@ export const getSwapRoutes = async (
 
     return quoteResponse
   } catch (err) {
-    throw Error(`Can't get swap routes: ${err}`);
+    throw err;
   }
 }

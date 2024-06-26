@@ -57,11 +57,12 @@ export const ConvertForm = memo(
   }: ConvertForm) => {
     const normalizedSelectedTokens =
       normalizeSelectedTokensData(selectedTokens);
-    const [amount, setAmount] = useState<number | string>(0.001);
+    const [amount, setAmount] = useState<number | string>(
+      normalizedSelectedTokens?.from?.uiAmount || 0.1
+    );
     const btnRef = useRef<{ resetSlide: () => void }>();
     const [isValidAmount, setIsValidAmount] = useState(true);
     const logout = useLogout();
-
     const label =
       normalizedSelectedTokens?.from && normalizedSelectedTokens?.to
         ? `Convert ${normalizedSelectedTokens?.from?.name} to ${normalizedSelectedTokens.to?.name}`
@@ -219,7 +220,6 @@ export const ConvertForm = memo(
         <ConvertIconArrow
           swapSelectedTokensPlaces={() => {
             swapSelectedTokensPlaces();
-            setAmount(swapRoutes?.outAmount || 0.01);
           }}
         />
 

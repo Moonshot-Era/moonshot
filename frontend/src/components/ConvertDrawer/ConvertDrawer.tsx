@@ -27,6 +27,7 @@ import {
 } from '@/services/helius/getWalletPortfolio';
 import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
+import { SOLANA_WRAPPED_ADDRESS } from '@/utils';
 
 interface Props {
   portfolio: WalletPortfolioNormilizedType;
@@ -40,7 +41,7 @@ const DEFAULT_TOKENS = {
 };
 
 const BASE_SOLANA_TOKEN = {
-  address: 'So11111111111111111111111111111111111111112',
+  address: SOLANA_WRAPPED_ADDRESS,
   decimals: 9,
   imageUrl:
     'https://coin-images.coingecko.com/coins/images/21629/small/solana.jpg?1696520989',
@@ -97,8 +98,7 @@ export const ConvertDrawer: FC<Props> = memo(
                 // @ts-ignore
                 from:
                   (portfolio?.walletAssets as WalletPortfolioAssetType[])?.find(
-                    ({ address }) =>
-                      address === 'So11111111111111111111111111111111111111112'
+                    ({ address }) => address === SOLANA_WRAPPED_ADDRESS
                   ) || BASE_SOLANA_TOKEN,
                 to: {
                   tokenOverview: {
