@@ -121,7 +121,6 @@ export const ConvertDrawer: FC<Props> = memo(
           handleClose={handleClose}
           snapPoints={[800, 450]}
           initialSnap={1}
-          withScroller
         >
           <TokensSelect
             handleTokenSelect={handleTokenSelect}
@@ -133,7 +132,6 @@ export const ConvertDrawer: FC<Props> = memo(
           handleClose={handleClose}
           snapPoints={[800, 450]}
           initialSnap={2}
-          withScroller={false}
         >
           <Text
             size={mdScreen ? '5' : '4'}
@@ -149,7 +147,6 @@ export const ConvertDrawer: FC<Props> = memo(
           isOpen={state === 'convert'}
           detent="content-height"
           handleClose={handleClose}
-          withScroller
         >
           <ConvertForm
             selectedTokens={selectedTokens}
