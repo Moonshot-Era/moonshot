@@ -19,11 +19,9 @@ export const Tooltip = ({ helpText, children }: TooltipProps) => {
         <Trigger className="TooltipTrigger" asChild>
           {children}
         </Trigger>
-        <Portal>
-          <Content className="TooltipContent" sideOffset={5}>
-            {helpText}
-          </Content>
-        </Portal>
+        <Content className="TooltipContent" sideOffset={5}>
+          {helpText}
+        </Content>
       </Root>
     </Provider>
   );

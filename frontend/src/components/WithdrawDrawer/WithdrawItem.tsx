@@ -1,13 +1,14 @@
 'use client';
 
 import axios from 'axios';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Flex, Text } from '@radix-ui/themes';
 
 import './style.scss';
+import { Tooltip } from '@/legos/Tooltip';
 import { useWidth } from '@/hooks/useWidth';
 import { Icon, Input, SlideButton } from '@/legos';
-import { formatNumberToUsd } from '@/helpers/helpers';
+import { formatNumberToUsd, formatNumberWithCommas } from '@/helpers/helpers';
 import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
 
 interface WithdrawItemProps {
@@ -36,12 +37,19 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const btnRef = useRef({});
 
   const assetName = asset?.name.split('/')[0];
-  const AMOUNT_ERR = `Insufficient ${amountInputInUsd ? 'USD' : assetName}`;
+  const AMOUNT_ERR = useMemo(
+    () => `Insufficient ${amountInputInUsd ? 'USD' : assetName}`,
+    [amountInputInUsd, assetName]
+  );
+
   const decimalLength = `${asset?.uiAmount}`.split('.')?.[1]?.length || 0;
 
   const handleChangeCurrency = () => {
-    setAmountInputInUsd(!amountInputInUsd);
-    if (!amountInputInUsd) {
+    setAmountInputInUsd((prev) => !prev);
+  };
+
+  useEffect(() => {
+    if (amountInputInUsd) {
       if (asset?.valueUsd && +(transactionAmount || 0) > +asset?.valueUsd) {
         setAmountError(AMOUNT_ERR);
       } else if (amountError) {
@@ -54,7 +62,14 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
         setAmountError('');
       }
     }
-  };
+  }, [
+    amountInputInUsd,
+    asset?.valueUsd,
+    asset?.uiAmount,
+    transactionAmount,
+    AMOUNT_ERR,
+    amountError
+  ]);
 
   const handleChangeToAddress = async (
     event: ChangeEvent<HTMLInputElement>
@@ -68,18 +83,8 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const handleChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
     if (amountInputInUsd && event.target.value) {
       setTransactionAmount(event.target.value);
-      if (asset?.valueUsd && +event.target.value > +asset?.valueUsd) {
-        setAmountError(AMOUNT_ERR);
-      } else if (amountError) {
-        setAmountError('');
-      }
     } else if (event.target.value || event.target.value === '') {
       setTransactionAmount(event.target.value);
-      if (asset?.uiAmount && +event.target.value > +asset?.uiAmount) {
-        setAmountError(AMOUNT_ERR);
-      } else if (amountError) {
-        setAmountError('');
-      }
     }
   };
 
@@ -88,9 +93,6 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
       setTransactionAmount(asset?.valueUsd.toFixed(2) || 0);
     } else {
       setTransactionAmount(asset?.uiAmount || 0);
-    }
-    if (amountError) {
-      setAmountError('');
     }
   };
 
@@ -130,6 +132,18 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
     }
   };
 
+  const totalAmount = amountInputInUsd
+    ? formatNumberWithCommas(
+        (+(transactionAmount || 0) / (asset?.priceUsd || 0)).toFixed(
+          transactionAmount && +transactionAmount ? decimalLength : 0
+        )
+      )
+    : formatNumberWithCommas(
+        formatNumberToUsd().format(
+          +(transactionAmount || 0) * (asset?.priceUsd || 0)
+        )
+      );
+
   return (
     <Flex width="100%" direction="column" align="center" px="4" pb="6" gap="6">
       <Text size={mdScreen ? '5' : '4'} weight="bold">
@@ -150,30 +164,28 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
             {assetName}
           </Text>
         </Flex>
-        <Flex flexGrow="1" maxWidth="100%" justify="center" align="end">
-          <Text
-            size="7"
-            weight="medium"
-            style={{
-              lineHeight: '46px',
-              maxWidth: '100%',
-              overflow: 'hidden',
-              textWrap: 'nowrap',
-              textOverflow: 'ellipsis'
-            }}
-          >
-            {amountInputInUsd
-              ? (+(transactionAmount || 0) / (asset?.priceUsd || 0)).toFixed(
-                  transactionAmount && +transactionAmount ? decimalLength : 0
-                )
-              : formatNumberToUsd().format(
-                  +(transactionAmount || 0) * (asset?.priceUsd || 0)
-                )}
-          </Text>
-          {amountInputInUsd && (
-            <Text size={mdScreen ? '5' : '4'}>{assetName}</Text>
-          )}
-        </Flex>
+        <Tooltip
+          helpText={`${totalAmount} ${amountInputInUsd ? assetName : ''}`}
+        >
+          <Flex flexGrow="1" maxWidth="100%" justify="center" align="end">
+            <Text
+              size="7"
+              weight="medium"
+              style={{
+                lineHeight: '46px',
+                maxWidth: '100%',
+                overflow: 'hidden',
+                textWrap: 'nowrap',
+                textOverflow: 'ellipsis'
+              }}
+            >
+              {totalAmount}
+            </Text>
+            {amountInputInUsd && (
+              <Text size={mdScreen ? '5' : '4'}>{assetName}</Text>
+            )}
+          </Flex>
+        </Tooltip>
         <Flex direction="column" align="center" onClick={handleChangeCurrency}>
           <Icon icon="switchHorizontal" />
           <Text size={mdScreen ? '5' : '4'} weight="medium">

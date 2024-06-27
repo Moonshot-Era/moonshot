@@ -64,12 +64,13 @@ export const SkeletonCulture = () => {
           className={`border-1 bg-white skeleton-empty-card`}
           p="3"
           pt="2"
+          overflow="hidden"
         >
           <Box>
             <Skeleton width={126} />
           </Box>
           <Box>
-            <Skeleton width={326} height={80} />
+            <Skeleton width={316} height={80} />
           </Box>
         </Flex>
         <Flex

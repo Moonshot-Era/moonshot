@@ -4,13 +4,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
 import { convertToInteger } from '@/helpers/convertAmountToInt';
-import {
-  Icon,
-  IconButton,
-  Select,
-  SlideButton,
-  TokenNumberInput
-} from '@/legos';
+import { Select, SlideButton, TokenNumberInput } from '@/legos';
 
 import { SelectedToken, SelectedTokens } from './types';
 import { useSwapMutation, useSwapRoutes } from './hooks';
@@ -167,6 +161,11 @@ export const ConvertForm = memo(
         <Text size="4" weight="bold">
           {label}
         </Text>
+        <Box width="100%" py="3" px="2" className="message-card">
+          <Text size="1" weight="medium">
+            You need at least 0.005 SOL to cover network fees.
+          </Text>
+        </Box>
         <Flex
           width="100%"
           justify="between"
@@ -219,7 +218,6 @@ export const ConvertForm = memo(
 
         <ConvertIconArrow
           swapSelectedTokensPlaces={() => {
-
             swapSelectedTokensPlaces();
             setAmount(
               (swapRoutes?.outAmount || 0) /
