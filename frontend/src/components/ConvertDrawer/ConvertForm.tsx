@@ -13,12 +13,14 @@ import { snackbar } from '@/helpers/snackbar';
 import { formatNumberToUsFormat } from '@/helpers/helpers';
 import { useLogout } from '@/hooks';
 import { ConvertIconArrow } from './ConvertIconArrow';
+import { MINIMUM_CONVERT_AMOUNT } from '@/utils';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
   selectedTokens: SelectedTokens;
   closeDrawer: () => void;
   walletAddress: string;
+  portfolioSolanaAmount?: number;
   swapSelectedTokensPlaces: () => void;
 };
 
@@ -47,6 +49,7 @@ export const ConvertForm = memo(
     changeSelected,
     closeDrawer,
     walletAddress,
+    portfolioSolanaAmount,
     swapSelectedTokensPlaces
   }: ConvertForm) => {
     const normalizedSelectedTokens =
@@ -148,7 +151,9 @@ export const ConvertForm = memo(
         }
       );
     };
-
+    const minimumNotMet = !!(
+      portfolioSolanaAmount && portfolioSolanaAmount < MINIMUM_CONVERT_AMOUNT
+    );
     return (
       <Flex
         width="100%"
@@ -161,11 +166,13 @@ export const ConvertForm = memo(
         <Text size="4" weight="bold">
           {label}
         </Text>
-        <Box width="100%" py="3" px="2" className="message-card">
-          <Text size="1" weight="medium">
-            You need at least 0.005 SOL to cover network fees.
-          </Text>
-        </Box>
+        {minimumNotMet && (
+          <Box width="100%" py="3" px="2" className="message-card">
+            <Text size="1" weight="medium">
+              {`You need at least ${MINIMUM_CONVERT_AMOUNT} SOL to cover network fees.`}
+            </Text>
+          </Box>
+        )}
         <Flex
           width="100%"
           justify="between"
@@ -269,7 +276,8 @@ export const ConvertForm = memo(
               !swapRoutes ||
               isSwapRoutesLoading ||
               mutation.isPending ||
-              !isValidAmount
+              !isValidAmount ||
+              minimumNotMet
             }
             handleSubmit={handleSwapSubmit}
             loading={mutation.isPending}

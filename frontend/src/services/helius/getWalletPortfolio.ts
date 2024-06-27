@@ -73,6 +73,9 @@ export const getWalletPortfolio = async (walletAddress: string) => {
     });
     const { result }: { result: HeliusWalletType } = await response.json();
 
+    if (!result) {
+      throw Error('Error fetching portfolio');
+    }
     const tokensAddresses = result?.items
       ?.map((tok: TokenItemHeliusType) => {
         return tok.id;
@@ -154,6 +157,6 @@ export const getWalletPortfolio = async (walletAddress: string) => {
     };
   } catch (err) {
     console.log('Error:' + err);
+    throw err;
   }
-  return {};
 };

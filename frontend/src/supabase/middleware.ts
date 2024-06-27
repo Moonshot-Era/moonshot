@@ -13,20 +13,16 @@ export const updateSession = async (request: NextRequest) => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        // @ts-ignore
         getAll() {
           return request.cookies.getAll();
         },
-        // @ts-ignore
         setAll(cookiesToSet) {
-          // @ts-ignore
           cookiesToSet.forEach(({ name, value, options }) =>
             request.cookies.set(name, value)
           );
           response = NextResponse.next({
             request
           });
-          // @ts-ignore
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           );

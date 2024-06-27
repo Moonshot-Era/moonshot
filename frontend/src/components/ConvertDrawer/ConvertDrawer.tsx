@@ -1,25 +1,14 @@
 'use client';
 
-import {
-  FC,
-  memo,
-  useState,
-  forwardRef,
-  useImperativeHandle,
-  useCallback,
-  useEffect
-} from 'react';
+import { FC, memo, useState, forwardRef, useImperativeHandle } from 'react';
 import './style.scss';
 import { SheetDrawer } from '@/legos';
 import { TokensSelect } from './TokensSelect';
 import { ConvertForm } from './ConvertForm';
-import { Flex, Spinner } from '@radix-ui/themes';
-import debounce from 'lodash.debounce';
+import { Text } from '@radix-ui/themes';
 
 import { PoolGeckoType } from '@/@types/gecko';
 import { SelectedTokens } from './types';
-import { usePoolsList } from '@/hooks/useTrendingPoolsList';
-import { useSearchPools } from '@/hooks/useSearchPools';
 import {
   OverviewTokenSelectedType,
   WalletPortfolioAssetType,
@@ -27,7 +16,9 @@ import {
 } from '@/services/helius/getWalletPortfolio';
 import { NormilizedTokenDataOverview } from '@/services/gecko/getTokenOverview';
 import { NormilizedTokenInfoOverview } from '@/services/gecko/getTokenInfo';
-import { SOLANA_WRAPPED_ADDRESS } from '@/utils';
+import { BASE_SOLANA_TOKEN, SOLANA_WRAPPED_ADDRESS } from '@/utils';
+import { ExploreContent } from '../ExploreContent/ExploreContent';
+import { useWidth } from '@/hooks/useWidth';
 
 interface Props {
   portfolio: WalletPortfolioNormilizedType;
@@ -40,32 +31,13 @@ const DEFAULT_TOKENS = {
   to: null
 };
 
-const BASE_SOLANA_TOKEN = {
-  address: SOLANA_WRAPPED_ADDRESS,
-  decimals: 9,
-  imageUrl:
-    'https://coin-images.coingecko.com/coins/images/21629/small/solana.jpg?1696520989',
-  name: 'SOLANA',
-  symbol: 'SOL'
-};
-
 export const ConvertDrawer: FC<Props> = memo(
   forwardRef(function ConvertDrawer({ portfolio }, ref) {
     const [state, setState] = useState<string | null>(null);
-    const [searchTo, setSearchTo] = useState('');
-    const [scrollToTop, setScrollToTop] = useState(false);
+    const [listBottomPadding, setListBottomPadding] = useState(260);
+
     const [selectedTokens, setSelectedTokens] =
       useState<SelectedTokens>(DEFAULT_TOKENS);
-    const { poolsList, fetchNextPage, hasNextPage, isFetchingNextPage } =
-      usePoolsList();
-
-    const {
-      searchPools,
-      fetchNextPage: searchFetchNextPage,
-      hasNextPage: searchHasNextPage,
-      isFetching: isFetchingSearchPools,
-      refetch: searchRefetch
-    } = useSearchPools(searchTo, true);
 
     const handleTokenSelect = (
       token:
@@ -142,66 +114,6 @@ export const ConvertDrawer: FC<Props> = memo(
       });
     };
 
-    const debouncedFetchNextPage = useCallback(
-      debounce(async () => {
-        await fetchNextPage();
-      }, 300),
-      [fetchNextPage]
-    );
-
-    const debouncedSearchPools = useCallback(
-      debounce(async (searchQuery, refetchQuery = false) => {
-        if (refetchQuery) {
-          await searchRefetch(searchQuery);
-        } else {
-          await searchFetchNextPage(searchQuery);
-        }
-      }, 300),
-      [searchFetchNextPage, searchRefetch]
-    );
-
-    const handleTokensListScroll = useCallback(
-      async (event: React.UIEvent<HTMLElement>) => {
-        const target = event.target as HTMLElement;
-        const { scrollTop, scrollHeight, clientHeight } = target;
-
-        if (scrollTop === 0) {
-          return;
-        }
-
-        if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-          if (
-            (searchTo && searchPools?.length && searchHasNextPage) ||
-            searchTo
-          ) {
-            debouncedSearchPools(searchTo);
-          } else if (hasNextPage) {
-            debouncedFetchNextPage();
-          }
-        }
-      },
-      [
-        debouncedFetchNextPage,
-        debouncedSearchPools,
-        hasNextPage,
-        searchHasNextPage,
-        searchPools?.length,
-        searchTo
-      ]
-    );
-
-    useEffect(() => {
-      if (searchTo) {
-        debouncedSearchPools(searchTo, true);
-      }
-    }, [debouncedSearchPools, searchTo]);
-
-    if (!portfolio?.walletAssets || !poolsList) {
-      return null;
-    }
-
-    console.log('searchPools', searchPools);
-
     return (
       <>
         <SheetDrawer
@@ -209,11 +121,18 @@ export const ConvertDrawer: FC<Props> = memo(
           handleClose={handleClose}
           snapPoints={[800, 450]}
           initialSnap={1}
+          onSnap={(snapPoints) => {
+            if (snapPoints === 1) {
+              setListBottomPadding(368);
+            } else {
+              setListBottomPadding(0);
+            }
+          }}
         >
           <TokensSelect
             handleTokenSelect={handleTokenSelect}
-            selectMode="from"
             tokensList={portfolio?.walletAssets as WalletPortfolioAssetType[]}
+            listBottomPadding={listBottomPadding}
           />
         </SheetDrawer>
         <SheetDrawer
@@ -221,40 +140,19 @@ export const ConvertDrawer: FC<Props> = memo(
           handleClose={handleClose}
           snapPoints={[800, 450]}
           initialSnap={1}
-          onScroll={handleTokensListScroll}
-          scrollToTop={scrollToTop}
-          toggleScrollToTop={() => setScrollToTop(false)}
-        >
-          <TokensSelect
-            handleTokenSelect={handleTokenSelect}
-            selectMode="to"
-            tokensList={
-              searchTo && searchPools?.length
-                ? (searchPools as PoolGeckoType[])
-                : (poolsList as PoolGeckoType[])
+          onSnap={(snapPoints) => {
+            if (snapPoints === 1) {
+              setListBottomPadding(368);
+            } else {
+              setListBottomPadding(0);
             }
-            searchTo={searchTo}
-            handleChangeSearchTo={(query) => {
-              if (!query && searchTo) {
-                setScrollToTop(true);
-              }
-              if (query && !searchTo) {
-                setScrollToTop(true);
-              }
-              setSearchTo(query);
-            }}
-            isLoading={isFetchingSearchPools}
+          }}
+        >
+          <ExploreContent
+            convertDrawer
+            onTokenClick={handleTokenSelect}
+            listBottomPadding={listBottomPadding}
           />
-          {isFetchingNextPage && (
-            <Flex
-              className="sticky-spinner"
-              align="center"
-              justify="center"
-              pb="5"
-            >
-              <Spinner size="3" />
-            </Flex>
-          )}
         </SheetDrawer>
         <SheetDrawer
           isOpen={state === 'convert'}
@@ -266,6 +164,11 @@ export const ConvertDrawer: FC<Props> = memo(
             changeSelected={(reselect) => setState(reselect)}
             closeDrawer={handleClose}
             walletAddress={portfolio?.wallet}
+            portfolioSolanaAmount={
+              portfolio?.walletAssets?.find((asset) => {
+                asset.address === SOLANA_WRAPPED_ADDRESS;
+              })?.uiAmount
+            }
             swapSelectedTokensPlaces={swapSelectedTokensPlaces}
           />
         </SheetDrawer>
