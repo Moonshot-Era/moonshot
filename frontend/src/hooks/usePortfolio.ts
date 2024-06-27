@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { fetchPortfolio } from '@/utils/fetchPortfolio';
 
+const wait = (waitFor: number) => new Promise((resolve) => setTimeout(resolve, waitFor))
+
 export const usePortfolio = (walletAddress?: string) => {
   const { data, refetch, ...rest } = useQuery({
     enabled: !!walletAddress,
@@ -16,29 +18,32 @@ export const usePortfolio = (walletAddress?: string) => {
     },
     staleTime: 30000,
     refetchOnWindowFocus: false,
-    refetchOnMount: false
+    refetchOnMount: false,
   });
 
   useEffect(() => {
+    const controller = new AbortController();
     // The hook that will listen for changes in account using our api.
     // It constantly wait for response
-    let cancelRequest = false;
-
     const waitForUpdate = async () => {
-      try {
-        while (true) {
+      while (!controller.signal.aborted) {
+        try {
           await axios.post(
-            `${process.env.NEXT_PUBLIC_SITE_URL}/api/wait-account-change`,
-            {
-              walletAddress
-            }
+            `${process.env.NEXT_PUBLIC_SITE_URL}api/wait-account-change`,
+            { walletAddress },
+            { signal: controller.signal }
           );
-          if (cancelRequest) return;
-          refetch();
+          if (!controller.signal.aborted) {
+            await wait(5000);
+            refetch();
+          }
+        } catch (error) {
+          if (!controller.signal.aborted) {
+            console.error('Error waiting for account change:', error);
+            refetch();
+            await wait(1000);
+          }
         }
-      } catch (error) {
-        console.error('Error waiting for account change:', error);
-        if (!cancelRequest) setTimeout(waitForUpdate, 1000);
       }
     };
 
@@ -47,7 +52,7 @@ export const usePortfolio = (walletAddress?: string) => {
     }
 
     return () => {
-      cancelRequest = true;
+      controller.abort();
     };
   }, [walletAddress, refetch]);
 
