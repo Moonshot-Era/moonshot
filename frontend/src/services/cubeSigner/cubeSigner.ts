@@ -138,40 +138,46 @@ const createCubeSignerUserIfNotExist = async (
 };
 
 export const getUserSessionClient = async (): Promise<CubeSignerClient> => {
-  let userClient: CubeSignerClient | undefined = undefined;
   const supabaseServerClient = createServerClient();
+  try {
+    let userClient: CubeSignerClient | undefined = undefined;
 
-  const { data: sessionDataResponse, error: sessionDataError } =
-    await supabaseServerClient.rpc('get_session_data');
+    const { data: sessionDataResponse, error: sessionDataError } =
+      await supabaseServerClient.rpc('get_session_data');
 
-  if (sessionDataError) {
-    throw Error(sessionDataError.message);
-  }
-
-  if (!sessionDataResponse) {
-    throw Error('Session data is missing.');
-  }
-
-  let sessionData: SessionData = JSON.parse(sessionDataResponse);
-  if (isStale(sessionData)) {
-    if (!isRefreshable(sessionData)) {
-      throw Error('Session cannot be refreshed. User needs to log in again');
+    if (sessionDataError) {
+      throw Error(sessionDataError.message);
     }
 
-    sessionData = await refresh(sessionData);
+    if (!sessionDataResponse) {
+      throw Error('Session data is missing.');
+    }
 
-    await supabaseServerClient.rpc('store_session_data', {
-      session_data: JSON.stringify(sessionData)
-    });
+    let sessionData: SessionData = JSON.parse(sessionDataResponse);
+    if (isStale(sessionData)) {
+      if (!isRefreshable(sessionData)) {
+        throw Error('Session cannot be refreshed. User needs to log in again');
+      }
+
+      sessionData = await refresh(sessionData);
+
+      await supabaseServerClient.rpc('store_session_data', {
+        session_data: JSON.stringify(sessionData)
+      });
+    }
+
+    userClient = await CubeSignerClient.create(sessionData);
+
+    if (!userClient) {
+      throw Error('CubeSignerClient does not created');
+    }
+
+    return userClient;
+  } catch (err) {
+    console.error('debug > getUserSessionClient err ==== ', err);
+    supabaseServerClient.auth.signOut();
+    throw err;
   }
-
-  userClient = await CubeSignerClient.create(sessionData);
-
-  if (!userClient) {
-    throw Error('CubeSignerClient does not created');
-  }
-
-  return userClient;
 };
 
 const getLatestKey = (keys: Key[]) => {
