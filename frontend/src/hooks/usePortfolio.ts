@@ -16,7 +16,10 @@ export const usePortfolio = (walletAddress?: string) => {
     },
     staleTime: 30000,
     refetchOnWindowFocus: false,
-    refetchOnMount: false
+    refetchOnMount: false,
+    retry: (failureCount, error) => {
+      return failureCount < 3;
+    }
   });
 
   useEffect(() => {
