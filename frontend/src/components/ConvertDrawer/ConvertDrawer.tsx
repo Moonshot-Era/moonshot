@@ -35,6 +35,7 @@ export const ConvertDrawer: FC<Props> = memo(
   forwardRef(function ConvertDrawer({ portfolio }, ref) {
     const [state, setState] = useState<string | null>(null);
     const { mdScreen } = useWidth();
+    const [listBottomPadding, setListBottomPadding] = useState(260);
 
     const [selectedTokens, setSelectedTokens] =
       useState<SelectedTokens>(DEFAULT_TOKENS);
@@ -121,17 +122,25 @@ export const ConvertDrawer: FC<Props> = memo(
           handleClose={handleClose}
           snapPoints={[800, 450]}
           initialSnap={1}
+          onSnap={(snapPoints) => {
+            if (snapPoints === 1) {
+              setListBottomPadding(368);
+            } else {
+              setListBottomPadding(0);
+            }
+          }}
         >
           <TokensSelect
             handleTokenSelect={handleTokenSelect}
             tokensList={portfolio?.walletAssets as WalletPortfolioAssetType[]}
+            listBottomPadding={listBottomPadding}
           />
         </SheetDrawer>
         <SheetDrawer
           isOpen={state === 'to'}
           handleClose={handleClose}
           snapPoints={[800, 450]}
-          initialSnap={2}
+          initialSnap={1}
         >
           <Text
             size={mdScreen ? '5' : '4'}

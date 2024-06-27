@@ -21,7 +21,7 @@
   left: 0;
   right: 0;
   top: -1px;
-  width: 100%;
+  width: calc(100% - 8px);
   z-index: 1000;
   background-color: $yellow-1;
 }

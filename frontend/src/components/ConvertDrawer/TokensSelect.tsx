@@ -20,12 +20,14 @@ interface Props {
   handleTokenSelect: (
     token: WalletPortfolioAssetType | PoolGeckoType | OverviewTokenSelectedType
   ) => void;
+  listBottomPadding: number;
   isLoading?: boolean;
 }
 
 export const TokensSelect: FC<Props> = ({
   tokensList,
   handleTokenSelect,
+  listBottomPadding,
   isLoading
 }) => {
   const { mdScreen } = useWidth();
@@ -85,7 +87,6 @@ export const TokensSelect: FC<Props> = ({
       direction="column"
       align="center"
       gap="4"
-      pb="6"
       position="relative"
     >
       <Flex className="search-input-holder" pb="2" px="4" direction="column">
@@ -117,7 +118,9 @@ export const TokensSelect: FC<Props> = ({
         direction="column"
         gap="4"
         px="4"
-        style={{ paddingBottom: '350px' }}
+        style={{
+          paddingBottom: listBottomPadding ? listBottomPadding : '24px'
+        }}
       >
         {searchFrom && filteredPools?.length ? (
           filteredPools?.map((token) => {
