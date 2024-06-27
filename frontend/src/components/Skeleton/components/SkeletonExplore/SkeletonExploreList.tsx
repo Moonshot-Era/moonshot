@@ -5,17 +5,21 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { Icon } from '@/legos';
 import './style.scss';
 
-export const SkeletonExploreList = () => (
+export const SkeletonExploreList = ({
+  cardLength
+}: {
+  cardLength?: number;
+}) => (
   <Flex
     width="100%"
     direction="column"
     gap="4"
     overflow="hidden"
-    pr="1"
+    pr="3"
     pb="2px"
   >
-    {Array(7)
-      .fill(7)
+    {Array(cardLength ?? 7)
+      .fill(cardLength ?? 7)
       .map((item, index) => (
         <Flex
           key={index}

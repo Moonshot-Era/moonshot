@@ -34,7 +34,6 @@ const DEFAULT_TOKENS = {
 export const ConvertDrawer: FC<Props> = memo(
   forwardRef(function ConvertDrawer({ portfolio }, ref) {
     const [state, setState] = useState<string | null>(null);
-    const { mdScreen } = useWidth();
     const [listBottomPadding, setListBottomPadding] = useState(260);
 
     const [selectedTokens, setSelectedTokens] =
@@ -141,16 +140,19 @@ export const ConvertDrawer: FC<Props> = memo(
           handleClose={handleClose}
           snapPoints={[800, 450]}
           initialSnap={1}
+          onSnap={(snapPoints) => {
+            if (snapPoints === 1) {
+              setListBottomPadding(368);
+            } else {
+              setListBottomPadding(0);
+            }
+          }}
         >
-          <Text
-            size={mdScreen ? '5' : '4'}
-            weight="bold"
-            align="center"
-            style={{ display: 'block' }}
-          >
-            Convert to
-          </Text>
-          <ExploreContent showDefault onTokenClick={handleTokenSelect} />
+          <ExploreContent
+            convertDrawer
+            onTokenClick={handleTokenSelect}
+            listBottomPadding={listBottomPadding}
+          />
         </SheetDrawer>
         <SheetDrawer
           isOpen={state === 'convert'}

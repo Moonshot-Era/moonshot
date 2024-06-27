@@ -6,6 +6,7 @@ import { useDefaultTokens } from '@/hooks/useDefaultTokens';
 import { OverviewTokenSelectedType } from '@/services/helius/getWalletPortfolio';
 
 import { TokenItemGeckoType } from '@/@types/gecko';
+import { SkeletonExploreList } from '../Skeleton/components/SkeletonExplore/SkeletonExploreList';
 
 export const DefaultTokens = ({
   handleTokenSelect
@@ -15,9 +16,9 @@ export const DefaultTokens = ({
   const { defaultTokens, isFetching: isDefaultTokensFetching } =
     useDefaultTokens();
   return (
-    <Flex pr="4" gap="4" direction="column">
+    <Flex pr={isDefaultTokensFetching ? '0' : '3'} gap="4" direction="column">
       {isDefaultTokensFetching ? (
-        <Spinner size="3" style={{ margin: 'auto' }} />
+        <SkeletonExploreList cardLength={2} />
       ) : (
         (defaultTokens as TokenItemGeckoType[])?.map(
           (token: TokenItemGeckoType) => {
@@ -44,9 +45,10 @@ export const DefaultTokens = ({
       )}
       <div
         style={{
-          width: '100%',
+          width: `calc(100% - ${isDefaultTokensFetching ? '12px' : '0px'})`,
           height: '1px',
-          backgroundColor: 'gray'
+          backgroundColor: 'gray',
+          marginBottom: 16
         }}
       />
     </Flex>
