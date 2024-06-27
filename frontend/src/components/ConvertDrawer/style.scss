@@ -33,3 +33,9 @@
   display: flex;
   justify-content: center;
 }
+
+.message-card {
+  background-color: $violet;
+  @include border-dark;
+  border-radius: 6px;
+}

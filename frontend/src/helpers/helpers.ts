@@ -41,12 +41,14 @@ export const isSolanaAddress = (address: string) => {
   return false;
 };
 
-export const tokenAddressWithDots = (tokenAddress: string) => tokenAddress ?
-  `${tokenAddress.slice(0, 5)}...
+export const tokenAddressWithDots = (tokenAddress: string) =>
+  tokenAddress
+    ? `${tokenAddress.slice(0, 5)}...
   ${tokenAddress.slice(
     tokenAddress.length - 5 > 0 ? tokenAddress.length - 5 : 0,
     tokenAddress.length
-  )}` : null;
+  )}`
+    : null;
 
 export const formatTokenPrice = (price: string) => {
   if (+price > 1) {
@@ -68,4 +70,19 @@ export const formatTokenPrice = (price: string) => {
     }
   }
   return '$' + formatted;
+};
+
+export const formatNumberWithCommas = (input: number | string): string => {
+  const numberStr = typeof input === 'number' ? input.toString() : input;
+
+  const [integerPart, decimalPart] = numberStr.split('.');
+
+  const formattedIntegerPart = integerPart.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ','
+  );
+
+  return decimalPart
+    ? `${formattedIntegerPart}.${decimalPart}`
+    : formattedIntegerPart;
 };
