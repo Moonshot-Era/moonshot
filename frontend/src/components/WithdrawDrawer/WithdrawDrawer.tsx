@@ -34,6 +34,7 @@ export const WithdrawDrawer: FC<Props & { ref: any }> = forwardRef(
     const [isOpen, setIsOpen] = useState(false);
     const [isTransfer, setIsTransfer] = useState(false);
     const [fromAsset, setFromAsset] = useState<WalletPortfolioAssetType>();
+    const [listBottomPadding, setListBottomPadding] = useState(260);
 
     useImperativeHandle(ref, () => ({
       open: (
@@ -126,10 +127,19 @@ export const WithdrawDrawer: FC<Props & { ref: any }> = forwardRef(
           handleClose={handleClose}
           snapPoints={[800, 540]}
           initialSnap={1}
+          scrollerId="withdrawal-assets-container"
+          onSnap={(snapPoints) => {
+            if (snapPoints === 1) {
+              setListBottomPadding(284);
+            } else {
+              setListBottomPadding(0);
+            }
+          }}
         >
           <WithdrawList
             toggleTransfer={toggleTransfer}
             walletAssets={portfolio?.walletAssets}
+            listBottomPadding={listBottomPadding}
           />
         </SheetDrawer>
         {fromAsset && (

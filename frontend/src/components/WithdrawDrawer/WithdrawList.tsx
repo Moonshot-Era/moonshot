@@ -1,7 +1,7 @@
 'use client';
 
-import { Flex, Text } from '@radix-ui/themes';
-import { FC } from 'react';
+import { Box, Flex, Text } from '@radix-ui/themes';
+import { FC, useRef } from 'react';
 
 import { AssetCard, Input } from '@/legos';
 import { WalletPortfolioAssetType } from '@/services/helius/getWalletPortfolio';
@@ -13,9 +13,14 @@ import { USDC_ADDRESS } from '@/utils';
 interface Props {
   toggleTransfer: (address: WalletPortfolioAssetType) => void;
   walletAssets: WalletPortfolioAssetType[];
+  listBottomPadding: number;
 }
 
-export const WithdrawList: FC<Props> = ({ toggleTransfer, walletAssets }) => {
+export const WithdrawList: FC<Props> = ({
+  toggleTransfer,
+  walletAssets,
+  listBottomPadding
+}) => {
   const { mdScreen } = useWidth();
 
   const sortByDefault = walletAssets?.reduce(
@@ -34,13 +39,25 @@ export const WithdrawList: FC<Props> = ({ toggleTransfer, walletAssets }) => {
   );
 
   return (
-    <Flex width="100%" direction="column" align="center" gap="4" px="4" pb="6">
+    <Flex
+      width="100%"
+      direction="column"
+      align="center"
+      gap="4"
+      px="4"
+      style={{
+        paddingBottom: listBottomPadding ? listBottomPadding : '24px'
+      }}
+    >
       <Text size={mdScreen ? '5' : '4'} weight="bold">
         Withdraw
       </Text>
 
-      <Input placeholder="Search assets" icon="search" />
-      <Flex width="100%" direction="column" gap="4">
+      <Box pr="2" width="100%">
+        <Input placeholder="Search assets" icon="search" />
+      </Box>
+
+      <Flex width="100%" direction="column" gap="4" pr="2" overflow="auto">
         {!!walletAssets?.length && (
           <>
             {sortByDefault?.defaultTokens?.map(

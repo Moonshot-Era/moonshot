@@ -54,7 +54,7 @@ export const useSearchPools = (query: string, withTokensOverview?: boolean) => {
     });
 
   return {
-    searchPools: data?.pages.flat().filter((val) => val),
+    searchPools: data?.pages.flat(),
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
