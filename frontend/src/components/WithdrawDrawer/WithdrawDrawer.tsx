@@ -124,8 +124,8 @@ export const WithdrawDrawer: FC<Props & { ref: any }> = forwardRef(
         <SheetDrawer
           isOpen={isOpen && !isTransfer}
           handleClose={handleClose}
-          snapPoints={[540, 800]}
-          initialSnap={0}
+          snapPoints={[800, 540]}
+          initialSnap={1}
         >
           <WithdrawList
             toggleTransfer={toggleTransfer}
