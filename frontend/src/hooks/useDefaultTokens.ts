@@ -17,10 +17,9 @@ export const fetchTokensOverview = async (tokenAddresses: string) => {
   return tokenOverview;
 };
 
-export const useDefaultTokens = ({ skip = false }: { skip: boolean }) => {
+export const useDefaultTokens = () => {
   const tokenAddresses = SOLANA_WRAPPED_ADDRESS + ',' + USDC_ADDRESS;
   const { data, ...rest } = useQuery({
-    enabled: !skip,
     queryKey: ['defaulf-tokens'],
     queryFn: () => fetchTokensOverview(tokenAddresses),
     staleTime: 30000,

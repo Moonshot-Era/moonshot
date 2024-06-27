@@ -24,3 +24,12 @@ export const MINIMUM_CONVERT_AMOUNT = 0.0005;
 
 export const EXPORT_DELAY_DAYS = 2;
 export const EXPORT_WINDOW_DAYS = 3;
+
+export const BASE_SOLANA_TOKEN = {
+  address: SOLANA_WRAPPED_ADDRESS,
+  decimals: 9,
+  imageUrl:
+    'https://coin-images.coingecko.com/coins/images/21629/small/solana.jpg?1696520989',
+  name: 'SOLANA',
+  symbol: 'SOL'
+};

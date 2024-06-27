@@ -13,9 +13,7 @@ interface Props {
   detent?: 'content-height' | 'full-height';
   disableDrag?: boolean;
   onSnap?: (snapPoint: number) => void;
-  onScroll?: (event: any) => Promise<void>;
-  scrollToTop?: boolean;
-  toggleScrollToTop?(): void;
+  withScroller: boolean;
 }
 
 export const SheetDrawer: FC<Props> = ({
@@ -27,38 +25,8 @@ export const SheetDrawer: FC<Props> = ({
   snapPoints,
   disableDrag,
   onSnap,
-  onScroll,
-  scrollToTop,
-  toggleScrollToTop
+  withScroller
 }) => {
-  const scrollerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const scroller = scrollerRef.current;
-
-    const handleScroll = (event: Event) => {
-      if (onScroll) {
-        onScroll(event);
-      }
-      if (scrollToTop && toggleScrollToTop) {
-        scrollerRef?.current?.scroll({ top: 0, behavior: 'smooth' });
-        toggleScrollToTop();
-      }
-    };
-
-    if (scroller) {
-      scroller.addEventListener('scroll', handleScroll);
-      scroller.addEventListener('touchmove', handleScroll);
-    }
-
-    return () => {
-      if (scroller) {
-        scroller.removeEventListener('scroll', handleScroll);
-        scroller.removeEventListener('touchmove', handleScroll);
-      }
-    };
-  }, [onScroll, scrollToTop, toggleScrollToTop]);
-
   return (
     <Sheet
       isOpen={isOpen}
@@ -84,9 +52,13 @@ export const SheetDrawer: FC<Props> = ({
       >
         <Sheet.Header />
         <Sheet.Content>
-          <Sheet.Scroller ref={scrollerRef} draggableAt="both">
+          {withScroller ? (
+            <Sheet.Scroller draggableAt="both">
+              <Theme>{children}</Theme>
+            </Sheet.Scroller>
+          ) : (
             <Theme>{children}</Theme>
-          </Sheet.Scroller>
+          )}
         </Sheet.Content>
       </Sheet.Container>
       <Sheet.Backdrop onTap={handleClose} />

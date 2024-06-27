@@ -1,16 +1,8 @@
 'use client';
 
-import {
-  ChangeEvent,
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, Flex, Spinner } from '@radix-ui/themes';
-import debounce from 'lodash.debounce';
 
 import { Input, TokenCard } from '@/legos';
 import { PoolGeckoType } from '@/@types/gecko';
@@ -19,34 +11,45 @@ import { usePoolsList } from '@/hooks/useTrendingPoolsList';
 
 import './style.scss';
 import { SkeletonExploreList } from '../Skeleton/components/SkeletonExplore/SkeletonExploreList';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { OverviewTokenSelectedType } from '@/services/helius/getWalletPortfolio';
+import { DefaultTokens } from '../DefaultTokens/DefaultTokens';
 
-export const ExploreContent = () => {
+export const ExploreContent = ({
+  showDefault,
+  onTokenClick
+}: {
+  showDefault?: boolean;
+  onTokenClick?(token: PoolGeckoType | OverviewTokenSelectedType): void;
+}) => {
   const router = useRouter();
   const [search, setSearch] = useState('');
+  const scrollDivRef = useRef<HTMLDivElement>(null);
 
   const {
     poolsList,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isFetching: isFetchingTrendingPools
+    fetchNextPage: trendingPoolsFetchNextPage,
+    hasNextPage: trendingPoolsHasNextPage,
+    isFetching: isFetchingTrendingPools,
+    refetch: trendingPoolsRefetch
   } = usePoolsList();
+
   const {
     searchPools,
     fetchNextPage: searchFetchNextPage,
     hasNextPage: searchHasNextPage,
-    isFetching,
+    isFetching: isFetchingSearchPools,
     refetch: searchRefetch
   } = useSearchPools(search);
 
-  const scrollerRef: MutableRefObject<HTMLDivElement | null> =
-    useRef<HTMLDivElement | null>(null);
-
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
+    if ((!search || !event.target.value) && scrollDivRef?.current) {
+      scrollDivRef?.current?.scroll({ top: 0, behavior: 'smooth' });
+    }
   };
 
-  const handleGoToDetails = (pool: PoolGeckoType) => {
+  const handleTokenClick = (pool: PoolGeckoType) => {
     if (pool?.attributes?.name) {
       router.push(
         `/culture/${pool?.relationships?.base_token?.data?.id.replace(
@@ -57,64 +60,6 @@ export const ExploreContent = () => {
     }
   };
 
-  const debouncedSearchPools = useCallback(
-    debounce(async (searchQuery) => {
-      await searchFetchNextPage(searchQuery);
-    }, 300),
-    [searchFetchNextPage]
-  );
-
-  const debouncedFetchNextPage = useCallback(
-    debounce(async () => {
-      await fetchNextPage();
-    }, 300),
-    [fetchNextPage]
-  );
-
-  const handleTokensListScroll = useCallback(
-    async (event: React.UIEvent<HTMLElement>) => {
-      const target = event.target as HTMLElement;
-      const { scrollTop, scrollHeight, clientHeight } = target;
-
-      if (scrollHeight - scrollTop <= clientHeight * 1.5) {
-        if ((search && searchPools?.length && searchHasNextPage) || search) {
-          await debouncedSearchPools(search);
-        } else if (hasNextPage) {
-          await debouncedFetchNextPage();
-        }
-      }
-    },
-    [
-      debouncedFetchNextPage,
-      debouncedSearchPools,
-      hasNextPage,
-      search,
-      searchHasNextPage,
-      searchPools?.length
-    ]
-  );
-
-  useEffect(() => {
-    const scroller = scrollerRef.current;
-    const handleScroll = (event: Event) => {
-      if (handleTokensListScroll) {
-        handleTokensListScroll(event as unknown as React.UIEvent<HTMLElement>);
-      }
-    };
-
-    if (scroller) {
-      scroller.addEventListener('scroll', handleScroll);
-      scroller.addEventListener('touchmove', handleScroll);
-    }
-
-    return () => {
-      if (scroller) {
-        scroller.removeEventListener('scroll', handleScroll);
-        scroller.removeEventListener('touchmove', handleScroll);
-      }
-    };
-  }, [handleTokensListScroll]);
-
   return (
     <Flex
       className={`main-wrapper ${
@@ -124,9 +69,7 @@ export const ExploreContent = () => {
       align="center"
       justify="center"
       width="100%"
-      maxHeight={
-        isFetchingTrendingPools && !poolsList?.length ? '100vh' : 'auto'
-      }
+      style={{ paddingTop: showDefault ? '16px' : '70px' }}
     >
       <Flex
         width="100%"
@@ -137,7 +80,11 @@ export const ExploreContent = () => {
       >
         <Box
           pr="2"
-          mt={isFetchingTrendingPools && !poolsList?.length ? '70px' : '0'}
+          mt={
+            !showDefault && isFetchingTrendingPools && !poolsList?.length
+              ? '70px'
+              : '0'
+          }
         >
           <Input
             placeholder="Search assets"
@@ -147,58 +94,112 @@ export const ExploreContent = () => {
             onChange={handleSearchChange}
           />
         </Box>
+        {showDefault && onTokenClick && (
+          <DefaultTokens handleTokenSelect={onTokenClick} />
+        )}
         <Flex
-          ref={scrollerRef}
+          id="scrollableDiv"
+          ref={scrollDivRef}
           width="100%"
+          height={showDefault ? '48%' : '80%'}
           direction="column"
-          gap="4"
           overflow="auto"
-          pr="3"
-          pb="2"
         >
-          {isFetchingTrendingPools && !poolsList?.length ? (
-            <SkeletonExploreList />
-          ) : (
-            isFetching && (
-              <Flex
-                className="sticky-spinner"
-                top="0"
-                align="center"
-                justify="center"
-              >
-                <Spinner size="3" />
-              </Flex>
-            )
-          )}
-          {search && searchPools?.length
-            ? searchPools?.map((pool) =>
-                pool?.id ? (
-                  <TokenCard
-                    key={pool?.id}
-                    token={pool}
-                    onClick={() => handleGoToDetails(pool)}
-                  />
-                ) : null
-              )
-            : poolsList?.map((pool) =>
-                pool?.id ? (
-                  <TokenCard
-                    key={pool?.id}
-                    token={pool}
-                    onClick={() => handleGoToDetails(pool)}
-                  />
-                ) : null
-              )}
-          {(isFetchingNextPage || isFetching) && (
-            <Flex
-              className="sticky-spinner"
-              align="center"
-              justify="center"
-              pb="5"
-            >
+          {isFetchingSearchPools && (
+            <Flex align="center" justify="center" pt="3" pb="3">
               <Spinner size="3" />
             </Flex>
           )}
+          {isFetchingTrendingPools && !poolsList?.length ? (
+            <SkeletonExploreList />
+          ) : search && searchPools?.length ? (
+            <InfiniteScroll
+              dataLength={searchPools?.length}
+              next={searchFetchNextPage}
+              hasMore={searchHasNextPage}
+              scrollableTarget="scrollableDiv"
+              loader={
+                isFetchingSearchPools ? (
+                  <Flex
+                    className="sticky-spinner"
+                    align="center"
+                    justify="center"
+                    pt="3"
+                    pb="5"
+                  >
+                    <Spinner size="3" />
+                  </Flex>
+                ) : null
+              }
+              endMessage={
+                <p style={{ textAlign: 'center' }}>
+                  <b>Yay! You have seen it all</b>
+                </p>
+              }
+              refreshFunction={searchRefetch}
+              pullDownToRefresh
+              pullDownToRefreshThreshold={50}
+            >
+              <Flex width="100%" direction="column" gap="4" pr="3" pb="2">
+                {searchPools?.map((pool) =>
+                  pool?.id ? (
+                    <TokenCard
+                      key={pool?.id}
+                      token={pool}
+                      onClick={() => {
+                        if (onTokenClick) {
+                          onTokenClick(pool);
+                        } else {
+                          handleTokenClick(pool);
+                        }
+                      }}
+                    />
+                  ) : null
+                )}
+              </Flex>
+            </InfiniteScroll>
+          ) : poolsList?.length ? (
+            <InfiniteScroll
+              dataLength={poolsList?.length}
+              next={trendingPoolsFetchNextPage}
+              hasMore={trendingPoolsHasNextPage}
+              scrollableTarget="scrollableDiv"
+              loader={
+                isFetchingTrendingPools ? (
+                  <Flex
+                    className="sticky-spinner"
+                    align="center"
+                    justify="center"
+                    pt="3"
+                    pb="5"
+                  >
+                    <Spinner size="3" />
+                  </Flex>
+                ) : null
+              }
+              refreshFunction={trendingPoolsRefetch}
+              pullDownToRefresh
+              pullDownToRefreshThreshold={50}
+            >
+              <Flex width="100%" direction="column" gap="4" pr="3" pb="2">
+                {poolsList?.map((pool) =>
+                  pool?.id ? (
+                    <TokenCard
+                      key={pool?.id}
+                      token={pool}
+                      onClick={() => {
+                        if (onTokenClick) {
+                          onTokenClick(pool);
+                        } else {
+                          handleTokenClick(pool);
+                        }
+                      }}
+                    />
+                  ) : null
+                )}
+              </Flex>
+            </InfiniteScroll>
+          ) : null}
         </Flex>
       </Flex>
     </Flex>

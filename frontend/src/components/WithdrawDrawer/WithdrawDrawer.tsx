@@ -126,6 +126,7 @@ export const WithdrawDrawer: FC<Props & { ref: any }> = forwardRef(
           handleClose={handleClose}
           snapPoints={[800, 540]}
           initialSnap={1}
+          withScroller
         >
           <WithdrawList
             toggleTransfer={toggleTransfer}
@@ -137,6 +138,7 @@ export const WithdrawDrawer: FC<Props & { ref: any }> = forwardRef(
             isOpen={isOpen && isTransfer}
             detent="content-height"
             handleClose={handleClose}
+            withScroller
           >
             <WithdrawItem
               asset={fromAsset}
