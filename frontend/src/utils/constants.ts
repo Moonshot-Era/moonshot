@@ -20,7 +20,7 @@ export const REF_WALLET_ADDRESS = '5KqWYn2CmNJNmPHM7j4mEFbh8U5bPzuA9fFFPkkez9mH'
 export const MOONSHOT_FEE = 0.005;
 export const REF_FEE = 0.0025;
 
-export const MINIMUM_CONVERT_AMOUNT = 0.0005;
+export const MINIMUM_CONVERT_AMOUNT = 0.005;
 
 export const EXPORT_DELAY_DAYS = 2;
 export const EXPORT_WINDOW_DAYS = 3;

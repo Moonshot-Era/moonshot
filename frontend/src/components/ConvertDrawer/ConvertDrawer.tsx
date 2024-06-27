@@ -156,6 +156,11 @@ export const ConvertDrawer: FC<Props> = memo(
             changeSelected={(reselect) => setState(reselect)}
             closeDrawer={handleClose}
             walletAddress={portfolio?.wallet}
+            portfolioSolanaAmount={
+              portfolio?.walletAssets?.find((asset) => {
+                asset.address === SOLANA_WRAPPED_ADDRESS;
+              })?.uiAmount
+            }
             swapSelectedTokensPlaces={swapSelectedTokensPlaces}
           />
         </SheetDrawer>
