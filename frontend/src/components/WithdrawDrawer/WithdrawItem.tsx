@@ -49,7 +49,7 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   };
 
   useEffect(() => {
-    if (!amountInputInUsd) {
+    if (amountInputInUsd) {
       if (asset?.valueUsd && +(transactionAmount || 0) > +asset?.valueUsd) {
         setAmountError(AMOUNT_ERR);
       } else if (amountError) {
@@ -83,18 +83,8 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
   const handleChangeAmount = (event: ChangeEvent<HTMLInputElement>) => {
     if (amountInputInUsd && event.target.value) {
       setTransactionAmount(event.target.value);
-      if (asset?.valueUsd && +event.target.value > +asset?.valueUsd) {
-        setAmountError(AMOUNT_ERR);
-      } else if (amountError) {
-        setAmountError('');
-      }
     } else if (event.target.value || event.target.value === '') {
       setTransactionAmount(event.target.value);
-      if (asset?.uiAmount && +event.target.value > +asset?.uiAmount) {
-        setAmountError(AMOUNT_ERR);
-      } else if (amountError) {
-        setAmountError('');
-      }
     }
   };
 
@@ -103,9 +93,6 @@ export const WithdrawItem = ({ asset, onSlideHandler }: WithdrawItemProps) => {
       setTransactionAmount(asset?.valueUsd.toFixed(2) || 0);
     } else {
       setTransactionAmount(asset?.uiAmount || 0);
-    }
-    if (amountError) {
-      setAmountError('');
     }
   };
 
