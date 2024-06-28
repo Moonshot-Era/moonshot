@@ -32,7 +32,7 @@ export const usePortfolio = (walletAddress?: string) => {
       while (!controller.signal.aborted) {
         try {
           await axios.post(
-            `${process.env.NEXT_PUBLIC_SITE_URL}api/wait-account-change`,
+            `${process.env.NEXT_PUBLIC_SITE_URL}/api/wait-account-change`,
             { walletAddress },
             { signal: controller.signal }
           );
