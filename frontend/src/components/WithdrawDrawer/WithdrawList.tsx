@@ -57,7 +57,14 @@ export const WithdrawList: FC<Props> = ({
         <Input placeholder="Search assets" icon="search" />
       </Box>
 
-      <Flex width="100%" direction="column" gap="4" pr="2" overflow="auto">
+      <Flex
+        width="100%"
+        direction="column"
+        gap="4"
+        pr="2"
+        pb="2"
+        overflow="auto"
+      >
         {!!walletAssets?.length && (
           <>
             {sortByDefault?.defaultTokens?.map(
