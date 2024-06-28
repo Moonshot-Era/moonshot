@@ -39,8 +39,12 @@ export const storeCubeSignerSessionData = async (
 
   const supabaseServerClient = createServerClient();
 
+  if (cubeSignerSessionData?.totpSecret) {
+    await setMfaSecret(cubeSignerSessionData?.totpSecret);
+  }
+
   await supabaseServerClient.rpc('store_session_data', {
-    session_data: JSON.stringify(cubeSignerSessionData)
+    session_data: JSON.stringify(cubeSignerSessionData?.session)
   });
 };
 
@@ -63,7 +67,7 @@ const parseOidcToken = (
 
 const createCubeSignerSessionData = async (
   oidcToken: string
-): Promise<SessionData> => {
+): Promise<{ session: SessionData; totpSecret?: string }> => {
   const managerSessionClient = await getManagementSessionClient();
 
   const userSessionResp = await CubeSignerClient.createOidcSession(
@@ -72,10 +76,8 @@ const createCubeSignerSessionData = async (
     oidcToken,
     ['sign:*', 'manage:*', 'export:*', 'export:user:*']
   );
-
   if (userSessionResp.requiresMfa()) {
     const totpSecret = await getMfaSecret();
-
     if (totpSecret) {
       const tmpClient = await userSessionResp.mfaClient();
       if (tmpClient) {
@@ -84,7 +86,7 @@ const createCubeSignerSessionData = async (
           authenticator.generate(totpSecret)
         );
 
-        return totpResp.data();
+        return { session: totpResp.data() };
       } else {
         throw Error('MFA client is required');
       }
@@ -100,10 +102,7 @@ const createCubeSignerSessionData = async (
       const newTotpSecret =
         new URL(totpChallenge.url).searchParams.get('secret') || '';
       await totpChallenge.answer(authenticator.generate(newTotpSecret));
-
-      await setMfaSecret(newTotpSecret);
-      // TODO Consider to delete user from cubesigner if error
-      return sessionData;
+      return { session: sessionData, totpSecret: newTotpSecret };
     } else {
       throw Error('Totp challenge url is required');
     }
@@ -174,7 +173,6 @@ export const getUserSessionClient = async (): Promise<CubeSignerClient> => {
 
     return userClient;
   } catch (err) {
-    console.error('debug > getUserSessionClient err ==== ', err);
     supabaseServerClient.auth.signOut();
     throw err;
   }
