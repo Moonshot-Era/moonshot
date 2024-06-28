@@ -14,6 +14,7 @@ import { useLogout } from '@/hooks';
 
 import './style.scss';
 import { EXPORT_DELAY_DAYS, EXPORT_WINDOW_DAYS } from '@/utils';
+import { snackbar } from '@/helpers/snackbar';
 
 interface Props {
   handleActiveTab: (
@@ -28,7 +29,6 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   const supabaseClient = createBrowserClient();
   const [exportDelay, setExportDelay] = useState<Date | null>(null);
   const [exportWindow, setExportWindow] = useState<Date | null>(null);
-  const logout = useLogout();
 
   const [checked, setChecked] = useState(false);
 
@@ -73,7 +73,10 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
       }
     );
     if (data?.error?.statusText === 'Forbidden') {
-      logout();
+      snackbar(
+        'error',
+        data?.error?.errorMessage || `Something went wrong, please try again.`
+      );
     } else {
       const { data: userData } = await supabaseClient.auth.getSession();
       const userId = userData.session?.user.id;
@@ -131,12 +134,7 @@ export const ExportKeyTab: FC<Props> = ({ handleActiveTab }) => {
   }, [handleCompleteExportKeys]);
 
   useEffect(() => {
-    if (
-      exportDelay &&
-      exportDelay < new Date() &&
-      exportWindow &&
-      exportWindow > new Date()
-    ) {
+    if (exportDelay && exportDelay < new Date() && exportWindow) {
       getMnemonic().finally(() => setLoading(false));
     }
   }, [exportDelay, exportWindow, getMnemonic]);

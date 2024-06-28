@@ -59,7 +59,7 @@ export const ConvertForm = memo(
     );
     const btnRef = useRef<{ resetSlide: () => void }>();
     const [isValidAmount, setIsValidAmount] = useState(true);
-    const logout = useLogout();
+
     const label =
       normalizedSelectedTokens?.from && normalizedSelectedTokens?.to
         ? `Convert ${normalizedSelectedTokens?.from?.name} to ${normalizedSelectedTokens.to?.name}`
@@ -110,7 +110,11 @@ export const ConvertForm = memo(
           )
           .then((res) => {
             if (res?.data?.error?.statusText === 'Forbidden') {
-              logout();
+              snackbar(
+                'error',
+                res?.data?.error?.errorMessage ||
+                  `Something went wrong, please try again.`
+              );
             }
             if (res?.data?.error) {
               const errMessage = res?.data?.error?.includes(

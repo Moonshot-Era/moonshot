@@ -150,7 +150,7 @@ export const ExploreContent = ({
             pullDownToRefresh
             pullDownToRefreshThreshold={50}
           >
-            <Flex width="100%" direction="column" gap="4" pr="3" pb="2">
+            <Flex width="100%" direction="column" gap="4" pr="3" pb="4">
               {searchPools?.map((pool) =>
                 pool?.id ? (
                   <TokenCard
@@ -191,7 +191,7 @@ export const ExploreContent = ({
             pullDownToRefresh
             pullDownToRefreshThreshold={50}
           >
-            <Flex width="100%" direction="column" gap="4" pr="3" pb="2">
+            <Flex width="100%" direction="column" gap="4" pr="3" pb="4">
               {poolsList?.map((pool) =>
                 pool?.id ? (
                   <TokenCard
