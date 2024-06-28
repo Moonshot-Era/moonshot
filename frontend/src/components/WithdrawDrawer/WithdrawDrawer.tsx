@@ -72,14 +72,17 @@ export const WithdrawDrawer: FC<Props & { ref: any }> = forwardRef(
       tokenPrice: number
     ) => {
       try {
-        await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
-          fromAddress: portfolio?.wallet,
-          toAddress: toAddress,
-          amount: amount,
-          tokenAddress: fromAsset?.address,
-          tokenDecimals: fromAsset?.decimals
-        });
-        if (toAddress !== portfolio?.wallet) {
+        const { data: withdrawData } = await axios.post(
+          `${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`,
+          {
+            fromAddress: portfolio?.wallet,
+            toAddress: toAddress,
+            amount: amount,
+            tokenAddress: fromAsset?.address,
+            tokenDecimals: fromAsset?.decimals
+          }
+        );
+        if (toAddress !== portfolio?.wallet && withdrawData?.txHash) {
           const supabaseClient = createBrowserClient();
           const userId = (await supabaseClient.auth.getUser()).data.user?.id;
           await supabaseClient.from('transactions').insert({
@@ -90,7 +93,9 @@ export const WithdrawDrawer: FC<Props & { ref: any }> = forwardRef(
             token_address: fromAsset?.address,
             token_amount: amount,
             token_price: `${tokenPrice ?? 0}`,
-            //  transaction_type: 'withdraw'
+            // transaction_type: 'withdraw'
+            // to_wallet_address: toAddress,
+            // tx_hash: withdrawData?.txHash,
             transaction_type: 'sell'
           });
         }

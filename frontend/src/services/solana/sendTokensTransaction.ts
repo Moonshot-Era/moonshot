@@ -114,6 +114,6 @@ export const sendTokensTransaction = async (
   // send transaction
   // @ts-ignore
   const txHash = await connection.sendRawTransaction(tx.serialize());
-  console.log(`txHash: ${txHash}`);
+
   return txHash;
 };
