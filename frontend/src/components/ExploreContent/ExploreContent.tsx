@@ -75,7 +75,7 @@ export const ExploreContent = ({
     >
       <Box
         className="expole-search-input-container"
-        pl={convertDrawer ? '1' : '5'}
+        pl={convertDrawer ? '0' : '4'}
         pr={convertDrawer ? '2' : '5'}
         pt={convertDrawer ? '0' : '9'}
         pb="4"
@@ -102,13 +102,14 @@ export const ExploreContent = ({
 
       <Flex
         // id="scrollableDiv"
-        pl="1"
         ref={scrollDivRef}
         width="100%"
         direction="column"
         overflow="auto"
         style={{
-          paddingBottom: listBottomPadding ?? 24
+          paddingLeft: 1,
+          paddingTop: convertDrawer ? 0 : 125,
+          paddingBottom: listBottomPadding ?? 64
         }}
       >
         {isFetchingSearchPools && (

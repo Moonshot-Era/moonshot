@@ -82,7 +82,7 @@ export const ConvertForm = memo(
     const { swapRoutes, isLoading: isSwapRoutesLoading } = useSwapRoutes(
       selectedTokens,
       convertToInteger(+amount, normalizedSelectedTokens?.from?.decimals || 0),
-      50,
+      300,
       isValidAmount
     );
 

@@ -28,8 +28,8 @@ export const getSwapRoutes = async (
           asLegacyTransaction: true,
           prioritizationFeeLamports: 'auto',
           dynamicComputeUnitLimit: true,
-          autoSlippage: true
-          // slippageBps: 50,
+          autoSlippage: true,
+          slippageBps: slippageBps
           // computeAutoSlippage: true,
           // onlyDirectRoutes: false,
           // swapMode: 'ExactIn',
