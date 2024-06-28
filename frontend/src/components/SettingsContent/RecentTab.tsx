@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { FC, useEffect } from 'react';
-import { StaticImageData } from 'next/image';
 import { Box, Flex, Text } from '@radix-ui/themes';
 
 import {
@@ -19,7 +18,6 @@ import {
 import { useWidth } from '@/hooks/useWidth';
 import { Icon } from '@/legos';
 import { Tooltip } from '@/legos/Tooltip';
-import solanaIcon from '../../assets/images/solana-icon.png';
 import { TransactionsEmpty } from '../TransactionsEmpty/TransactionsEmpty';
 import { SkeletonRecentActivity } from '../Skeleton/components/SkeletonRecentActivity/SkeletonRecentActivity';
 

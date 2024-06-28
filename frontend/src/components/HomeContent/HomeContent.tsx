@@ -29,7 +29,7 @@ export const HomeContent = ({ userId }: HomeContentProps) => {
   const router = useRouter();
 
   const totalH24 = portfolio?.walletAssets?.reduce((acc, cur) => {
-    return acc + cur?.valueUsd * ((100 + +cur?.percentage_change_h24) / 100);
+    return acc + cur?.valueUsd * ((100 - +cur?.percentage_change_h24) / 100);
   }, 0);
 
   const totalBalance =
