@@ -87,7 +87,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
           <Spinner />
         ) : (
           <>
-            <Box mx="auto" mb="2">
+            <Box mx="auto" mb="2" width="80px" height="80px">
               <Image
                 alt="user-photo"
                 src={avatar || userIcon}
