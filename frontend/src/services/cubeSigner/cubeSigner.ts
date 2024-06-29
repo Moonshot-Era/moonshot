@@ -38,15 +38,15 @@ export const storeCubeSignerSessionData = async (
 
   const supabaseServerClient = createServerClient();
 
-  if (cubeSignerSessionData?.totpSecret) {
-    await supabaseServerClient.rpc('store_mfa_secret', {
-      mfa_secret: cubeSignerSessionData?.totpSecret
-    });
-  }
-
   await supabaseServerClient.rpc('store_session_data', {
     session_data: JSON.stringify(cubeSignerSessionData?.session)
   });
+
+  if (cubeSignerSessionData?.totpSecret) {
+    await supabaseServerClient.rpc('store_mfa_secret', {
+       mfa_secret: cubeSignerSessionData?.totpSecret
+     });
+  }
 };
 
 const parseOidcToken = (

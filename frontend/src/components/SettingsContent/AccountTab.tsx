@@ -135,7 +135,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
         ></button>
       </Flex>
 
-      <Dialog.Root open={isRemoveUserOpen} onOpenChange={setIsRemoveUserOpen}>
+      {/* <Dialog.Root open={isRemoveUserOpen} onOpenChange={setIsRemoveUserOpen}>
         <Dialog.Trigger>
           <Button className="remove-account-button">
             <Text size={mdScreen ? '4' : '2'} weight="medium">
@@ -144,7 +144,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
           </Button>
         </Dialog.Trigger>
         {isRemoveUserOpen && <RemoveUserModal />}
-      </Dialog.Root>
+      </Dialog.Root> */}
     </Flex>
   );
 };
