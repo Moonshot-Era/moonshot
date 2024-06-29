@@ -16,7 +16,6 @@ import { defaultManagementSessionManager } from '@cubist-labs/cubesigner-sdk-fs-
 
 import { createServerClient } from '@/supabase/server';
 import { getMfaSecret } from '../helpers/getMfaSecret';
-import { setMfaSecret } from '../helpers/setMfaSecret';
 
 let managementSessionClient: CubeSignerClient | undefined;
 
@@ -40,7 +39,9 @@ export const storeCubeSignerSessionData = async (
   const supabaseServerClient = createServerClient();
 
   if (cubeSignerSessionData?.totpSecret) {
-    await setMfaSecret(cubeSignerSessionData?.totpSecret);
+    await supabaseServerClient.rpc('store_mfa_secret', {
+      mfa_secret: cubeSignerSessionData?.totpSecret
+    });
   }
 
   await supabaseServerClient.rpc('store_session_data', {
