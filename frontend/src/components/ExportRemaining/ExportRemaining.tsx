@@ -37,11 +37,6 @@ export const ExportRemaining: FC<Props> = ({ delayRemaining }) => {
     ? getDelayLabel(delayRemaining)
     : '';
 
-  console.log(
-    'debug > delayRemaining===',
-    delayRemaining ? delayRemaining.getDate() > new Date().getDate() : 0
-  );
-
   return delayRemaining ? (
     <Flex
       direction="column"

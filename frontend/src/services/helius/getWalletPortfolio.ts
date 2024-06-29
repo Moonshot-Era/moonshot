@@ -156,7 +156,6 @@ export const getWalletPortfolio = async (walletAddress: string) => {
       wallet: walletAddress
     };
   } catch (err) {
-    console.log('Error:' + err);
     throw err;
   }
 };

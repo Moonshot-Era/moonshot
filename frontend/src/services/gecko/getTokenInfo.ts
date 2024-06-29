@@ -38,7 +38,6 @@ export const getTokenInfo = async (tokenAddress: string) => {
 
     return normalizedTokenData;
   } catch (err) {
-    console.log('Error', err);
+    throw err;
   }
-  return {};
 };

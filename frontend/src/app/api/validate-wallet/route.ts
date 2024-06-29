@@ -4,9 +4,7 @@ import { validateIsSolanaWallet } from '@/services/solana/validateIsSolanaWallet
 export async function POST(request: Request) {
   const response = await request.json();
 
-  const isSolanaWallet = await validateIsSolanaWallet(response.wallet).catch(
-    (err) => console.log('Error:', err)
-  );
+  const isSolanaWallet = await validateIsSolanaWallet(response.wallet);
   if (!isSolanaWallet) {
     return NextResponse.json(false);
   }

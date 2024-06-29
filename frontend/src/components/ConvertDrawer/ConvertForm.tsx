@@ -39,7 +39,6 @@ const getTokenData = (token: SelectedToken) =>
     : null;
 
 const normalizeSelectedTokensData = (selectedTokens: SelectedTokens) => {
-  console.log('debug > selectedTokens?.to===', selectedTokens?.to);
   return {
     from: getTokenData(selectedTokens?.from),
     to: getTokenData(selectedTokens?.to)
@@ -186,11 +185,6 @@ export const ConvertForm = memo(
       portfolioSolanaAmount && portfolioSolanaAmount < MINIMUM_CONVERT_AMOUNT
     );
 
-    console.log(
-      'debug > amount===',
-      normalizedSelectedTokens?.from?.imageUrl,
-      normalizedSelectedTokens?.to?.imageUrl
-    );
     return (
       <Flex
         width="100%"
