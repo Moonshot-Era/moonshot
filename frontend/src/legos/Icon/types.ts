@@ -17,7 +17,6 @@ export type IconsNames =
   | 'send'
   | 'share'
   | 'solana'
-  | 'baseStatus'
   | 'message'
   | 'trendingDown'
   | 'fileDownload'

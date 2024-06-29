@@ -67,7 +67,13 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
     .map((date) => {
       return {
         date,
-        transactions: transactionGroups[date]
+        transactions: transactionGroups[date].sort((aTx, bTx) =>
+          aTx.transactionDate &&
+          bTx.transactionDate &&
+          aTx.transactionDate > bTx.transactionDate
+            ? -1
+            : 1
+        )
       };
     })
     .sort((a, b) => (a.date > b.date ? -1 : 1));
@@ -142,25 +148,62 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                             className="setting-recent-card"
                           >
                             <Flex direction="row" gap="2">
-                              <Flex position="relative" flexShrink="0">
-                                {tokenImageUrl &&
-                                  tokenImageUrl?.includes('http') && (
-                                    <Image
-                                      alt="img"
-                                      width={50}
-                                      height={50}
-                                      src={tokenImageUrl}
-                                      style={{
-                                        borderRadius: '50%',
-                                        height: 50,
-                                        width: 50
-                                      }}
-                                    />
-                                  )}
+                              <Flex
+                                position="relative"
+                                flexShrink="0"
+                                width="50px"
+                                height="50px"
+                              >
+                                {transactionType === 'convert'
+                                  ? tokenImageUrl &&
+                                    tokenConvertToImageUrl &&
+                                    tokenImageUrl?.includes('http') &&
+                                    tokenConvertToImageUrl?.includes(
+                                      'http'
+                                    ) && (
+                                      <>
+                                        <Image
+                                          alt="img"
+                                          width={30}
+                                          height={30}
+                                          src={tokenImageUrl}
+                                          style={{
+                                            position: 'absolute',
+                                            left: 0,
+                                            top: 0,
+                                            borderRadius: '50%'
+                                          }}
+                                        />
+                                        <Image
+                                          alt="img"
+                                          width={30}
+                                          height={30}
+                                          src={tokenConvertToImageUrl}
+                                          style={{
+                                            position: 'absolute',
+                                            right: 0,
+                                            bottom: 0,
+                                            borderRadius: '50%'
+                                          }}
+                                        />
+                                      </>
+                                    )
+                                  : tokenImageUrl &&
+                                    tokenImageUrl?.includes('http') && (
+                                      <Image
+                                        alt="img"
+                                        width={48}
+                                        height={48}
+                                        src={tokenImageUrl}
+                                        style={{
+                                          borderRadius: '50%'
+                                        }}
+                                      />
+                                    )}
                               </Flex>
                               <Flex direction="column" justify="between">
                                 <Text
-                                  size={mdScreen ? '3' : '2'}
+                                  size={mdScreen ? '4' : '3'}
                                   weight="medium"
                                   style={{
                                     textTransform: 'capitalize'
@@ -169,7 +212,7 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                                   {transactionType}
                                 </Text>
                                 {transactionDate &&
-                                  (fromWallet ? (
+                                  (transactionType === 'deposit' ? (
                                     <Tooltip helpText="Copy to clipboard">
                                       <Text
                                         className="font-size-xs"
@@ -180,10 +223,11 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                                           );
                                         }}
                                       >
-                                        FROM {tokenAddressWithDots(fromWallet)}
+                                        FROM{' '}
+                                        {tokenAddressWithDots(fromWallet || '')}
                                       </Text>
                                     </Tooltip>
-                                  ) : toWallet ? (
+                                  ) : transactionType === 'withdraw' ? (
                                     <Tooltip helpText="Copy to clipboard">
                                       <Text
                                         className="font-size-xs"
@@ -192,11 +236,12 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                                           handleCopyToClipboard(toWallet || '');
                                         }}
                                       >
-                                        TO {tokenAddressWithDots(toWallet)}
+                                        TO{' '}
+                                        {tokenAddressWithDots(toWallet || '')}
                                       </Text>
                                     </Tooltip>
                                   ) : (
-                                    <Text className="font-size-xs">
+                                    <Text size={mdScreen ? '3' : '2'}>
                                       {format(transactionDate, 'hh:mm a')}
                                     </Text>
                                   ))}
@@ -207,23 +252,23 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                               align="end"
                               justify="between"
                             >
-                              <Text size={mdScreen ? '3' : '2'} weight="medium">
+                              <Text size={mdScreen ? '4' : '3'} weight="medium">
                                 {transactionType === 'convert'
                                   ? `+${formatNumberToUsKeepDecimals().format(
                                       tokenConvertToAmount || 0
-                                    )} ${tokenConvertToSymbol}`
+                                    )} ${tokenConvertToSymbol?.toUpperCase()}`
                                   : `${
                                       transactionType === 'withdraw' ? '-' : '+'
                                     }${formatNumberToUsKeepDecimals().format(
                                       amount
-                                    )} ${tokenSymbol}`}
+                                    )} ${tokenSymbol?.toUpperCase()}`}
                               </Text>
                               {transactionDate && (
-                                <Text className="font-size-xs">
+                                <Text size={mdScreen ? '3' : '2'}>
                                   {transactionType === 'convert'
                                     ? `-${formatNumberToUsKeepDecimals().format(
                                         tokenAmount || 0
-                                      )} ${tokenSymbol}`
+                                      )} ${tokenSymbol?.toUpperCase()}`
                                     : format(transactionDate, 'hh:mm a')}
                                 </Text>
                               )}

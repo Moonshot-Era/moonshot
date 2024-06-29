@@ -69,7 +69,7 @@ export const useTransactionsHistory = (walletAddress?: string) => {
       }
     },
     staleTime: 30000,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     refetchOnMount: false
   });
 
@@ -116,7 +116,7 @@ export const useTransactionsHistory = (walletAddress?: string) => {
           tokenSymbol: transaction.token_symbol,
           tokenImageUrl: transaction?.token_image_url,
 
-          toWallet: transaction?.to_wallet_address,
+          toWallet: transaction?.to_wallet_address || '',
           tokenConvertToAmount: transaction.token_output_amount || 0,
           tokenConvertToName: transaction.token_output_name,
           tokenConvertToSymbol: transaction.token_output_symbol,

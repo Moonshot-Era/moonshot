@@ -32,14 +32,14 @@ export const AssetCard: FC<Props> = ({ asset, onClick }) => {
         </Flex>
       ) : null}
       <Flex direction="row">
-        <Flex position="relative" flexShrink="0">
+        <Flex position="relative" flexShrink="0" width="50px" height="50px">
           {asset?.imageUrl && asset?.imageUrl?.includes('http') && (
             <Image
               alt="img"
               width={50}
               height={50}
               src={asset?.imageUrl}
-              style={{ borderRadius: '50%', height: 50, width: 50 }}
+              style={{ borderRadius: '50%' }}
             />
           )}
         </Flex>
