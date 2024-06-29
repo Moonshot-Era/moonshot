@@ -104,8 +104,6 @@ export const OnboardingLayout = () => {
                     className={`swiper-button-next swiper-button-bg-${activeSlide}`}
                     onClick={() => {
                       if (onboardingData.length - 1 === index) {
-                        console.log('test');
-
                         handleOnboardingComplete();
                       }
                     }}

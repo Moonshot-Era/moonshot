@@ -58,5 +58,6 @@ export const sendNativeTransaction = async (
 
   // send transaction
   const txHash = await connection.sendRawTransaction(tx.serialize());
-  console.log(`txHash: ${txHash}`);
+
+  return txHash;
 };

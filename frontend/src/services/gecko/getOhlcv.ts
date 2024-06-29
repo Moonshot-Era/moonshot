@@ -27,7 +27,7 @@ export const getOhlcvData = async (
     );
     return data;
   } catch (err) {
-    console.log('Error:', err);
+    throw err;
   }
   return {};
 };

@@ -48,7 +48,6 @@ export const getTrendingPools = async (
       tokensOverview
     };
   } catch (err) {
-    console.log('Error while fetching trending pools', err);
+    throw err;
   }
-  return [];
 };

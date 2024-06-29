@@ -71,26 +71,33 @@ export const WithdrawDrawer: FC<Props & { ref: any }> = forwardRef(
       amount: number | string,
       tokenPrice: number
     ) => {
-      const supabaseClient = createBrowserClient();
-
       try {
-        await axios.post(`${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`, {
-          fromAddress: portfolio?.wallet,
-          toAddress: toAddress,
-          amount: amount,
-          tokenAddress: fromAsset?.address,
-          tokenDecimals: fromAsset?.decimals
-        });
-        if (toAddress !== portfolio?.wallet) {
+        const { data: withdrawData } = await axios.post(
+          `${process.env.NEXT_PUBLIC_SITE_URL}/api/send-tx`,
+          {
+            fromAddress: portfolio?.wallet,
+            toAddress: toAddress,
+            amount: amount,
+            tokenAddress: fromAsset?.address,
+            tokenDecimals: fromAsset?.decimals
+          }
+        );
+        if (toAddress !== portfolio?.wallet && withdrawData?.txHash) {
+          const supabaseClient = createBrowserClient();
+          const userId = (await supabaseClient.auth.getUser()).data.user?.id;
           await supabaseClient.from('transactions').insert({
             // @ts-ignore
             created_at: new Date().toISOString(),
-            user_id: '',
+            user_id: userId,
             token_name: fromAsset?.name,
+            token_symbol: fromAsset?.symbol,
             token_address: fromAsset?.address,
             token_amount: amount,
+            token_image_url: fromAsset?.imageUrl,
             token_price: `${tokenPrice ?? 0}`,
-            transaction_type: 'sell'
+            transaction_type: 'withdraw',
+            to_wallet_address: toAddress,
+            tx_hash: withdrawData?.txHash
           });
         }
         snackbar('success', `Withdrawal succeeded!`);

@@ -21,26 +21,32 @@ export const searchPools = async (query?: string, page: number = 1, withTokensOv
     let tokensOverview;
 
     if (withTokensOverview) {
-      const tokenAddresses = searchPoolsGecko.included.reduce((address: string, token: GeckoTokenIncluded) => {
-        return address.length ? address + ',' + token.attributes.address : token.attributes.address
-      }, '');
-  
-      tokensOverview = (await axios.get(
-        `${process.env.GECKO_URL_API}/onchain/networks/solana/tokens/multi/${tokenAddresses}`,
-        {
-          headers: {
-            'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`,
-          },
-        }
-      )).data;
+      const tokenAddresses = searchPoolsGecko.included.reduce(
+        (address: string, token: GeckoTokenIncluded) => {
+          return address.length
+            ? address + ',' + token.attributes.address
+            : token.attributes.address;
+        },
+        ''
+      );
+
+      tokensOverview = (
+        await axios.get(
+          `${process.env.GECKO_URL_API}/onchain/networks/solana/tokens/multi/${tokenAddresses}`,
+          {
+            headers: {
+              'x-cg-pro-api-key': `${process.env.GECKO_API_KEY}`
+            }
+          }
+        )
+      ).data;
     }
 
     return {
       ...searchPoolsGecko,
-      tokensOverview,
+      tokensOverview
     };
   } catch (err) {
-    console.log('Error', err);
+    throw err;
   }
-  return [];
 };

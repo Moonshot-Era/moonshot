@@ -6,16 +6,16 @@ import { isSolanaAddress } from '@/helpers/helpers';
 export async function POST(request: Request) {
   const response = await request.json();
 
-  let withdrawalResp;
+  let txHash;
   try {
     if (isSolanaAddress(response.tokenAddress)) {
-      withdrawalResp = await sendNativeTransaction(
+      txHash = await sendNativeTransaction(
         response.fromAddress,
         response.toAddress,
         response.amount
       );
     } else {
-      withdrawalResp = await sendTokensTransaction(
+      txHash = await sendTokensTransaction(
         response.fromAddress,
         response.toAddress,
         +response.amount,
@@ -29,5 +29,5 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
-  return NextResponse.json({ withdrawalResp });
+  return NextResponse.json({ txHash });
 }

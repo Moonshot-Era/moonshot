@@ -16,7 +16,6 @@ import {
   Send,
   Share,
   Solana,
-  BaseStatus,
   TrendingDown,
   Twitter,
   Message,
@@ -33,7 +32,7 @@ import {
   Logout,
   AlertTriangle,
   Telegram,
-  Monitor,
+  Monitor
 } from './Icons';
 
 export const IconsMap: IconsNamesMapType = {
@@ -53,7 +52,6 @@ export const IconsMap: IconsNamesMapType = {
   send: Send,
   share: Share,
   solana: Solana,
-  baseStatus: BaseStatus,
   trendingDown: TrendingDown,
   twitter: Twitter,
   message: Message,
@@ -70,5 +68,5 @@ export const IconsMap: IconsNamesMapType = {
   logout: Logout,
   alertTriangle: AlertTriangle,
   monitor: Monitor,
-  telegram: Telegram,
+  telegram: Telegram
 };

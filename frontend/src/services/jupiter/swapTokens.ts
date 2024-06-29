@@ -124,8 +124,6 @@ export const swapTokens = async (swapRoutes: any, feeData: FeeDataType) => {
       });
 
       console.log(`Transaction sent. Txid: ${txid}`);
-      // Wait for a short time before confirming the transaction
-      // await sleep(5000);
 
       console.log('Confirming transaction...', blockhash, lastValidBlockHeight);
       const confirmation = await connection.confirmTransaction(

@@ -1,3 +1,5 @@
+import { SOLANA_ADDRESS, SOLANA_WRAPPED_ADDRESS } from '@/utils';
+
 export const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text);
 };
@@ -32,11 +34,8 @@ export const formatCashNumber = (decimals?: number) =>
 export const formatNumber = new Intl.NumberFormat('en-US');
 
 export const isSolanaAddress = (address: string) => {
-  if (
-    address === 'So11111111111111111111111111111111111111111' ||
-    address === 'So11111111111111111111111111111111111111112'
-  ) {
-    return 'So11111111111111111111111111111111111111112';
+  if (address === SOLANA_ADDRESS || address === SOLANA_WRAPPED_ADDRESS) {
+    return SOLANA_WRAPPED_ADDRESS;
   }
   return false;
 };

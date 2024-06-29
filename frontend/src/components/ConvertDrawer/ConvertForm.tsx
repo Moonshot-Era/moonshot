@@ -14,6 +14,7 @@ import { formatNumberToUsFormat } from '@/helpers/helpers';
 import { useLogout } from '@/hooks';
 import { ConvertIconArrow } from './ConvertIconArrow';
 import { MINIMUM_CONVERT_AMOUNT } from '@/utils';
+import { createBrowserClient } from '@/supabase/client';
 
 type ConvertForm = {
   changeSelected: (reselect: string) => void;
@@ -32,7 +33,8 @@ const getTokenData = (token: SelectedToken) =>
         decimals:
           token?.decimals || token?.tokenOverview?.attributes?.decimals || 0,
         address: token?.address || token?.included?.attributes.address || '',
-        symbol: token?.symbol || token?.included?.attributes.symbol || ''
+        symbol: token?.symbol || token?.included?.attributes.symbol || '',
+        imageUrl: token?.imageUrl || token?.tokenOverview?.attributes?.image_url
       }
     : null;
 
@@ -108,7 +110,7 @@ export const ConvertForm = memo(
               }
             }
           )
-          .then((res) => {
+          .then(async (res) => {
             if (res?.data?.error?.statusText === 'Forbidden') {
               snackbar(
                 'error',
@@ -128,6 +130,30 @@ export const ConvertForm = memo(
               snackbar('error', errMessage);
             }
             if (res?.data?.txid) {
+              const supabaseClient = createBrowserClient();
+              const userId = (await supabaseClient.auth.getUser()).data.user
+                ?.id;
+              await supabaseClient.from('transactions').insert({
+                // @ts-ignore
+                created_at: new Date().toISOString(),
+                user_id: userId,
+                transaction_type: 'convert',
+                tx_hash: res?.data?.txid,
+
+                token_address: normalizedSelectedTokens?.from?.address,
+                token_name: normalizedSelectedTokens?.from?.name,
+                token_symbol: normalizedSelectedTokens?.from?.symbol,
+                token_amount: +amount,
+                token_image_url: normalizedSelectedTokens?.from?.imageUrl,
+
+                token_output_address: normalizedSelectedTokens?.to?.address,
+                token_output_name: normalizedSelectedTokens?.to?.name,
+                token_output_symbol: normalizedSelectedTokens?.to?.symbol,
+                token_output_amount:
+                  (swapRoutes?.outAmount || 0) /
+                  10 ** (normalizedSelectedTokens?.to?.decimals || 0),
+                token_output_image_url: normalizedSelectedTokens?.to?.imageUrl
+              });
               snackbar('success', `Finished converting!`);
               closeDrawer();
             }
@@ -158,6 +184,7 @@ export const ConvertForm = memo(
     const minimumNotMet = !!(
       portfolioSolanaAmount && portfolioSolanaAmount < MINIMUM_CONVERT_AMOUNT
     );
+
     return (
       <Flex
         width="100%"
