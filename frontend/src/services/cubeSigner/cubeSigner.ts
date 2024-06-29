@@ -137,6 +137,14 @@ const createCubeSignerUserIfNotExist = async (
   }
 };
 
+export const removeCubeSignerUser = async (userId: string) => {
+  const managerSessionClient = await getManagementSessionClient();
+  console.log('debug > users===', await managerSessionClient.org().users());
+  let res;
+  res = await managerSessionClient.org().deleteUser(userId);
+  return res;
+};
+
 export const getUserSessionClient = async (): Promise<CubeSignerClient> => {
   const supabaseServerClient = createServerClient();
   try {
