@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { format } from 'date-fns';
 import { FC, useEffect } from 'react';
 import { Box, Flex, Text } from '@radix-ui/themes';
@@ -36,13 +37,11 @@ interface Props {
 
 export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
   const { mdScreen } = useWidth();
-  const { walletData } = useWallet();
+  const { walletData, isFetching: isWalletFetching } = useWallet();
 
-  const {
-    transactionsHistory,
-    isFetching: transactionLoading,
-    refetch
-  } = useTransactionsHistory(walletData?.wallet);
+  const { transactionsHistory, isFetching, refetch } = useTransactionsHistory(
+    walletData?.wallet
+  );
 
   useEffect(() => {
     if (walletData?.wallet && !transactionsHistory?.length) {
@@ -64,12 +63,15 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
 
   const transactionGroupArrays: TransactionGroupArraysType[] = Object.keys(
     transactionGroups
-  ).map((date) => {
-    return {
-      date,
-      transactions: transactionGroups[date]
-    };
-  });
+  )
+    .map((date) => {
+      return {
+        date,
+        transactions: transactionGroups[date]
+      };
+    })
+    .sort((a, b) => (a.date > b.date ? -1 : 1));
+
   const handleCopyToClipboard = async (value: string) => {
     navigator.clipboard
       .writeText(value)
@@ -98,7 +100,9 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
           <Icon icon="arrowRight" />
         </Box>
       </Flex>
-      {transactionLoading ? (
+      {(walletData?.wallet && !transactionsHistory?.length && isFetching) ||
+      isFetching ||
+      isWalletFetching ? (
         <SkeletonRecentActivity />
       ) : (
         <Flex width="100%" direction="column" align="start" gap="24px">
@@ -112,37 +116,55 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                   {transactions.map(
                     ({
                       id,
-                      tokenName,
                       transactionDate,
-                      tokenAmount,
                       transactionType,
-                      imageUrl,
+                      transactionSignature,
                       fromWallet,
+                      tokenAmount,
+                      tokenSymbol,
+                      tokenImageUrl,
                       toWallet,
-                      tokenAmountConvertFrom,
-                      tokenAmountConvertTo,
-                      tokenConvertFromSymbol,
+                      tokenConvertToAmount,
                       tokenConvertToSymbol,
-                      transactionSignature
+                      tokenConvertToImageUrl
                     }) => {
                       const amount = tokenAmount || 0;
                       return transactionType ? (
                         <Link
+                          key={id}
                           href={`https://solscan.io/tx/${transactionSignature}`}
                           target="_blank"
                         >
                           <Flex
-                            key={id}
                             width="100%"
                             justify="between"
                             p="3"
                             className="setting-recent-card"
                           >
                             <Flex direction="row" gap="2">
+                              <Flex position="relative" flexShrink="0">
+                                {tokenImageUrl &&
+                                  tokenImageUrl?.includes('http') && (
+                                    <Image
+                                      alt="img"
+                                      width={50}
+                                      height={50}
+                                      src={tokenImageUrl}
+                                      style={{
+                                        borderRadius: '50%',
+                                        height: 50,
+                                        width: 50
+                                      }}
+                                    />
+                                  )}
+                              </Flex>
                               <Flex direction="column" justify="between">
                                 <Text
                                   size={mdScreen ? '3' : '2'}
                                   weight="medium"
+                                  style={{
+                                    textTransform: 'capitalize'
+                                  }}
                                 >
                                   {transactionType}
                                 </Text>
@@ -186,22 +208,22 @@ export const RecentTab: FC<Props> = ({ handleActiveTab }) => {
                               justify="between"
                             >
                               <Text size={mdScreen ? '3' : '2'} weight="medium">
-                                {transactionType === 'Convert'
+                                {transactionType === 'convert'
                                   ? `+${formatNumberToUsKeepDecimals().format(
-                                      tokenAmountConvertTo || 0
+                                      tokenConvertToAmount || 0
                                     )} ${tokenConvertToSymbol}`
                                   : `${
-                                      transactionType === 'Withdraw' ? '-' : '+'
+                                      transactionType === 'withdraw' ? '-' : '+'
                                     }${formatNumberToUsKeepDecimals().format(
                                       amount
-                                    )} ${tokenName}`}
+                                    )} ${tokenSymbol}`}
                               </Text>
                               {transactionDate && (
                                 <Text className="font-size-xs">
-                                  {transactionType === 'Convert'
+                                  {transactionType === 'convert'
                                     ? `-${formatNumberToUsKeepDecimals().format(
-                                        tokenAmountConvertFrom || 0
-                                      )} ${tokenConvertFromSymbol}`
+                                        tokenAmount || 0
+                                      )} ${tokenSymbol}`
                                     : format(transactionDate, 'hh:mm a')}
                                 </Text>
                               )}

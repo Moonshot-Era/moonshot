@@ -7,36 +7,46 @@ import { SOLANA_IMAGE_URL } from '@/utils';
 
 export interface TransactionHistoryType {
   public: Transaction[];
-  internal: {
-    created_at: string;
-    id: number;
-    token_address: string | null;
-    token_amount: number | null;
-    token_name: string | null;
-    token_price: number | null;
-    transaction_type: 'buy' | 'sell' | null;
-    user_id: string | null;
-  }[];
+  internal: TransactionDBType[];
 }
 
+export interface TransactionDBType {
+  created_at: string;
+  id: number;
+  token_address: string | null;
+  token_amount: number | null;
+  token_name: string | null;
+  token_price: number | null;
+  transaction_type: 'buy' | 'sell' | 'withdraw' | 'convert' | null;
+  user_id: string | null;
+  to_wallet_address: string | null;
+  token_image_url: string | null;
+  token_output_address: string | null;
+  token_output_amount: number | null;
+  token_output_image_url: string | null;
+  token_output_name: string | null;
+  token_output_price: number | null;
+  token_output_symbol: string | null;
+  token_symbol: string | null;
+  tx_hash: string | null;
+}
 export interface NormilizedTransactionType {
-  id?: string;
+  id?: string | number;
   transactionType?: string | null;
-  wallet?: string;
-  fromWallet?: string;
-  toWallet?: string;
-  mint?: string;
-  tokenAmount?: number;
-  tokenName?: string;
-  transactionDate?: number;
-  imageUrl?: string | StaticImageData;
-  tokenAmountConvertFrom?: number;
-  tokenAmountConvertTo?: number;
-  tokenConvertFromSymbol?: string;
-  tokenConvertToSymbol?: string;
-  tokenConvertFromImage?: string;
-  tokenConvertToImage?: string;
-  transactionSignature?: string;
+  transactionDate?: Date | null;
+  transactionSignature?: string | null;
+
+  fromWallet?: string | null;
+  tokenAmount?: number | null;
+  tokenName?: string | null;
+  tokenSymbol?: string | null;
+  tokenImageUrl?: string | null;
+
+  toWallet?: string | null;
+  tokenConvertToAmount?: number | null;
+  tokenConvertToName?: string | null;
+  tokenConvertToSymbol?: string | null;
+  tokenConvertToImageUrl?: string | null;
 }
 
 export const fetchTransactionsHistory = (walletAddress: string) =>
@@ -64,7 +74,6 @@ export const useTransactionsHistory = (walletAddress?: string) => {
   });
 
   let normilizedTransactionHistory: NormilizedTransactionType[] = [];
-
   if (data?.public?.length) {
     const processedData: NormilizedTransactionType[] = data.public
       .filter(
@@ -79,15 +88,47 @@ export const useTransactionsHistory = (walletAddress?: string) => {
           fromWallet: transaction.nativeTransfers[0].fromUserAccount,
           toWallet: '',
           tokenAmount: transaction.nativeTransfers[0].amount / 10 ** 9 || 0,
-          tokenName: 'SOL',
-          transactionDate: transaction.timestamp * 1000,
-          imageUrl: SOLANA_IMAGE_URL,
+          tokenName: 'Solana',
+          tokenSymbol: 'SOL',
+          transactionDate: new Date(transaction.timestamp * 1000),
+          tokenImageUrl: SOLANA_IMAGE_URL,
           transactionSignature: transaction.signature
         };
       });
 
     if (processedData?.length) {
       normilizedTransactionHistory = [...processedData];
+    }
+  }
+
+  if (data?.internal?.length) {
+    const processedInternalData: NormilizedTransactionType[] =
+      data.internal?.flatMap((transaction) => {
+        return {
+          id: transaction.id,
+          transactionType: `${transaction.transaction_type}`,
+          transactionDate: new Date(transaction?.created_at),
+          transactionSignature: transaction.tx_hash,
+
+          fromWallet: walletAddress,
+          tokenAmount: transaction.token_amount || 0,
+          tokenName: transaction.token_name,
+          tokenSymbol: transaction.token_symbol,
+          tokenImageUrl: transaction?.token_image_url,
+
+          toWallet: transaction?.to_wallet_address,
+          tokenConvertToAmount: transaction.token_output_amount || 0,
+          tokenConvertToName: transaction.token_output_name,
+          tokenConvertToSymbol: transaction.token_output_symbol,
+          tokenConvertToImageUrl: transaction.token_output_image_url
+        };
+      });
+
+    if (processedInternalData?.length) {
+      normilizedTransactionHistory = [
+        ...normilizedTransactionHistory,
+        ...processedInternalData
+      ];
     }
   }
 
