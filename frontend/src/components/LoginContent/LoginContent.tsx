@@ -43,10 +43,10 @@ export const LoginContent = ({ cultureRef }: Props) => {
         align="center"
         justify="center"
       >
-        <div className="login-figure1"></div>
-        <div className="login-figure2"></div>
-        <div className="login-figure3"></div>
-        <div className="login-figure4"></div>
+        <div className="login-figure login-figure1"></div>
+        <div className="login-figure login-figure2"></div>
+        <div className="login-figure login-figure3"></div>
+        <div className="login-figure login-figure4"></div>
         <Flex
           direction="column"
           align="center"

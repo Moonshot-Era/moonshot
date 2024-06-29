@@ -4,11 +4,12 @@ import { useAvatarImage } from '@/hooks/useAvatarImage';
 import { useWidth } from '@/hooks/useWidth';
 import { Button, Icon } from '@/legos';
 import { createBrowserClient } from '@/supabase/client';
-import { Box, Flex, Spinner, Text } from '@radix-ui/themes';
+import { Box, Dialog, Flex, Spinner, Text } from '@radix-ui/themes';
 import Image from 'next/image';
 import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import userIcon from '../../assets/images/user-icon.png';
 import './style.scss';
+import { RemoveUserModal } from '../RemoveUserModal/RemoveUserModal';
 
 interface Props {
   handleActiveTab: (
@@ -20,6 +21,7 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
   const inputFile = useRef(null);
   const [avatar, setAvatar] = useState('');
   const [isUserLoading, setIsUserLoading] = useState(false);
+  const [isRemoveUserOpen, setIsRemoveUserOpen] = useState(false);
   const supabaseClient = createBrowserClient();
   const { imageUrl, mutate, isPending } = useAvatarImage();
   const { mdScreen } = useWidth();
@@ -132,6 +134,17 @@ export const AccountTab: FC<Props> = ({ handleActiveTab }) => {
           data-blocked="Notifications blocked"
         ></button>
       </Flex>
+
+      {/* <Dialog.Root open={isRemoveUserOpen} onOpenChange={setIsRemoveUserOpen}>
+        <Dialog.Trigger>
+          <Button className="remove-account-button">
+            <Text size={mdScreen ? '4' : '2'} weight="medium">
+              ...
+            </Text>
+          </Button>
+        </Dialog.Trigger>
+        {isRemoveUserOpen && <RemoveUserModal />}
+      </Dialog.Root> */}
     </Flex>
   );
 };

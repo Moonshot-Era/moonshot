@@ -19,10 +19,8 @@ export type Database = {
           export_keys_window: string | null
           full_name: string | null
           get_notifications: boolean | null
-          mfa_s: string | null
           onboarding_completed: boolean | null
           roles: Database["public"]["Enums"]["role"][]
-          rt: string | null
           user_id: string
         }
         Insert: {
@@ -34,10 +32,8 @@ export type Database = {
           export_keys_window?: string | null
           full_name?: string | null
           get_notifications?: boolean | null
-          mfa_s?: string | null
           onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
-          rt?: string | null
           user_id: string
         }
         Update: {
@@ -49,10 +45,8 @@ export type Database = {
           export_keys_window?: string | null
           full_name?: string | null
           get_notifications?: boolean | null
-          mfa_s?: string | null
           onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
-          rt?: string | null
           user_id?: string
         }
         Relationships: [
@@ -113,37 +107,67 @@ export type Database = {
         Row: {
           created_at: string
           id: number
+          to_wallet_address: string | null
           token_address: string | null
           token_amount: number | null
+          token_image_url: string | null
           token_name: string | null
+          token_output_address: string | null
+          token_output_amount: number | null
+          token_output_image_url: string | null
+          token_output_name: string | null
+          token_output_price: number | null
+          token_output_symbol: string | null
           token_price: number | null
+          token_symbol: string | null
           transaction_type:
             | Database["public"]["Enums"]["transaction_type"]
             | null
+          tx_hash: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: number
+          to_wallet_address?: string | null
           token_address?: string | null
           token_amount?: number | null
+          token_image_url?: string | null
           token_name?: string | null
+          token_output_address?: string | null
+          token_output_amount?: number | null
+          token_output_image_url?: string | null
+          token_output_name?: string | null
+          token_output_price?: number | null
+          token_output_symbol?: string | null
           token_price?: number | null
+          token_symbol?: string | null
           transaction_type?:
             | Database["public"]["Enums"]["transaction_type"]
             | null
+          tx_hash?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: number
+          to_wallet_address?: string | null
           token_address?: string | null
           token_amount?: number | null
+          token_image_url?: string | null
           token_name?: string | null
+          token_output_address?: string | null
+          token_output_amount?: number | null
+          token_output_image_url?: string | null
+          token_output_name?: string | null
+          token_output_price?: number | null
+          token_output_symbol?: string | null
           token_price?: number | null
+          token_symbol?: string | null
           transaction_type?:
             | Database["public"]["Enums"]["transaction_type"]
             | null
+          tx_hash?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -182,7 +206,7 @@ export type Database = {
     }
     Enums: {
       role: "user" | "admin"
-      transaction_type: "buy" | "sell"
+      transaction_type: "buy" | "sell" | "convert" | "withdraw"
     }
     CompositeTypes: {
       [_ in never]: never
