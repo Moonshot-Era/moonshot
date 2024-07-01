@@ -22,6 +22,7 @@ export type Database = {
           onboarding_completed: boolean | null
           roles: Database["public"]["Enums"]["role"][]
           user_id: string
+          user_name: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -35,6 +36,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
           user_id: string
+          user_name?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -48,6 +50,7 @@ export type Database = {
           onboarding_completed?: boolean | null
           roles?: Database["public"]["Enums"]["role"][]
           user_id?: string
+          user_name?: string | null
         }
         Relationships: [
           {

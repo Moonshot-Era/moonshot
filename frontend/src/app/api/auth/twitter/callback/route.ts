@@ -72,7 +72,7 @@ export async function GET(request: Request) {
 
     if (signUpError?.message) {
       if (signUpError?.message === 'User already registered') {
-        const { error: signInError } =
+        const { error: signInError, data: userData } =
           await supabaseServerClient.auth.signInWithPassword({
             email,
             password
@@ -80,6 +80,16 @@ export async function GET(request: Request) {
 
         if (signInError) {
           throw signInError;
+        }
+
+        const { error: updateUserError } = await supabaseServerClient
+          .from('profiles')
+          .update({
+            user_name: decodedToken.preferred_username
+          })
+          .eq('user_id', userData.user.id);
+        if (updateUserError) {
+          throw updateUserError;
         }
       } else {
         throw signUpError;

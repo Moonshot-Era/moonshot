@@ -1,6 +1,7 @@
 import { storeCubeSignerSessionData } from '@/services';
 import { createServerClient } from '@/supabase/server';
 import { ROUTES } from '@/utils';
+import { jwtDecode } from 'jwt-decode';
 import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
@@ -39,6 +40,10 @@ export async function GET(request: Request) {
       token: googleAuthResponse.id_token
     });
 
+    const decodedToken = jwtDecode<{ name: string }>(
+      googleAuthResponse.id_token
+    );
+
     if (signInWithIdTokenError) {
       throw signInWithIdTokenError;
     }
@@ -53,6 +58,13 @@ export async function GET(request: Request) {
           throw rpcInsertCultureRefError;
         }
       }
+
+      await supabaseServerClient
+        .from('profiles')
+        .update({
+          user_name: decodedToken.name
+        })
+        .eq('user_id', user.id);
 
       await storeCubeSignerSessionData(
         googleAuthResponse.id_token,
